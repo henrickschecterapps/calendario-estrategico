@@ -36,12 +36,14 @@
   .logo span { color: var(--accent); }
   .header-right { display: flex; align-items: center; gap: 12px; }
   .today-badge { font-size: 0.75rem; font-weight: 500; background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(59,130,246,0.3); padding: 4px 10px; border-radius: 20px; }
+  
   .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-family: inherit; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
   .btn-icon:hover { background: var(--border); }
   .btn-icon.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  
   .btn-primary { background: var(--accent); color: #fff; border: none; padding: 8px 16px; border-radius: var(--radius-sm); cursor: pointer; font-family: inherit; font-size: 0.85rem; font-weight: 500; transition: 0.2s;}
   .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-  .btn-sync { background: var(--purple); margin-right: 10px; display: none; }
+  
   .alert-banner { background: rgba(245,158,11,0.15); border-left: 4px solid var(--amber); padding: 12px 24px; display: none; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text); }
   .alert-banner.active { display: flex; }
 
@@ -75,7 +77,7 @@
   .mini-day.today::after { display: none; }
   .mini-day.other-month { opacity: 0.3; }
 
-  /* Upcoming & Stats */
+  /* Upcoming */
   .upcoming-section { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
   .upcoming-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
   .upcoming-item:last-child { border-bottom: none; padding-bottom: 0; }
@@ -83,10 +85,6 @@
   .upcoming-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
   .upcoming-name { font-size: 0.78rem; font-weight: 500; color: var(--text); }
   .upcoming-date { font-size: 0.68rem; color: var(--muted); margin-top: 1px; }
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .stat-card { background: var(--surface2); border-radius: var(--radius-sm); padding: 12px; border: 1px solid var(--border); }
-  .stat-num { font-size: 1.4rem; font-weight: 700; line-height: 1; }
-  .stat-label { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
 
   /* VIEW CONTROLS */
   .view-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
@@ -111,8 +109,6 @@
   .event-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; display: flex; align-items: flex-start; gap: 16px; cursor: pointer; position: relative; overflow: hidden; }
   .event-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--card-color, var(--accent)); border-radius: 3px 0 0 3px; }
   .event-card:hover { border-color: var(--muted); transform: translateX(2px); }
-  .event-card.past { opacity: 0.6; }
-  .event-card.ongoing { border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.04); }
   .event-date-col { min-width: 56px; text-align: center; }
   .event-date-day { font-size: 1.5rem; font-weight: 700; line-height: 1; }
   .event-date-month { font-size: 0.68rem; font-weight: 500; color: var(--muted); text-transform: uppercase; }
@@ -132,7 +128,7 @@
   .badge-status-cancelado { background: rgba(239,68,68,0.2); color: var(--red); }
   .badge-formato { background: rgba(20,184,166,0.15); color: var(--teal); }
 
-  /* GRID CALENDAR */
+  /* GRID CALENDAR & WEEK */
   .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
   .cal-month-label { font-family: 'DM Serif Display', serif; font-size: 1.3rem; }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
@@ -142,13 +138,11 @@
   .cal-day.other-month { background: var(--bg); opacity: 0.4; }
   .cal-day.today { outline: 2px solid var(--accent); outline-offset: -2px; }
   .cal-day-num { font-size: 0.78rem; font-weight: 600; margin-bottom: 4px; color: var(--muted); }
-  .cal-day.today .cal-day-num { background: var(--accent); color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
   .cal-event-pill { font-size: 0.62rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .cal-event-pill.comercial { background: rgba(59,130,246,0.25); color: #93c5fd; }
   .cal-event-pill.interno { background: rgba(34,197,94,0.25); color: #86efac; }
   .cal-event-pill.feriado { background: rgba(245,158,11,0.2); color: #fcd34d; }
 
-  /* WEEK VIEW */
   .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
   .week-col { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); min-height: 300px; display: flex; flex-direction: column; }
   .week-col-header { text-align: center; padding: 10px; border-bottom: 1px solid var(--border); background: var(--surface2); font-size: 0.8rem; font-weight: 600; }
@@ -163,47 +157,48 @@
   .list-table tr:hover td { background: var(--surface2); }
   .no-results { text-align: center; padding: 60px 20px; color: var(--muted); }
 
-  /* MODAL (UI MELHORADA) */
+  /* --- DASHBOARD ADMIN --- */
+  .admin-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+  .admin-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; }
+  .admin-card-title { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .admin-card-value { font-size: 2rem; font-weight: 700; font-family: 'DM Serif Display', serif; color: var(--text); }
+  
+  .admin-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .admin-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .admin-panel h3 { font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .admin-input { width: 100%; padding: 10px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.85rem; margin-bottom: 12px; }
+  
+  .file-drop { border: 2px dashed var(--border); border-radius: var(--radius); padding: 32px; text-align: center; transition: 0.2s; cursor: pointer; margin-bottom: 16px; background: var(--surface2); }
+  .file-drop:hover { border-color: var(--accent); background: var(--accent-glow); }
+  .file-drop input[type="file"] { display: none; }
+
+  /* MODAL */
   .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 24px; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 40px 80px rgba(0,0,0,0.6); display: flex; flex-direction: column;}
   
-  /* Modal View - Header Colorido */
+  /* Modal View */
   .modal-header-view { padding: 32px 24px 24px; position: relative; border-bottom: 1px solid var(--border); }
   .modal-header-view::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: var(--card-color, var(--accent)); }
   .modal-title { font-family: 'DM Serif Display', serif; font-size: 1.6rem; line-height: 1.2; margin-bottom: 12px; }
   .modal-actions-top { position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; }
-  
-  /* Modal View - Grid de Detalhes */
   .modal-body { padding: 24px; }
   .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
   .detail-item { display: flex; align-items: flex-start; gap: 12px; background: var(--surface2); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
   .detail-icon { font-size: 1.2rem; background: var(--bg); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
   .detail-content { flex: 1; }
-  .detail-label { font-size: 0.65rem; text-transform: uppercase; color: var(--muted); font-weight: 600; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .detail-label { font-size: 0.65rem; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
   .detail-value { font-size: 0.85rem; font-weight: 500; color: var(--text); }
   
-  .detail-full { background: var(--surface2); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 16px; }
-  .detail-full-title { font-size: 0.75rem; font-weight: 600; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-
-  /* ADMIN FORM (Painel de Inclusão/Edição) */
+  /* Modal Edit */
   .modal-header-admin { padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: var(--surface2); }
-  .admin-section-title { font-size: 0.75rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
-  .admin-section-title:first-child { margin-top: 0; }
-  
+  .admin-section-title { font-size: 0.75rem; font-weight: 600; color: var(--accent); text-transform: uppercase; margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .form-full { grid-column: span 2; }
-  .form-group { display: flex; flex-direction: column; gap: 4px; }
-  .form-label { font-size: 0.75rem; font-weight: 600; color: var(--muted); }
-  .admin-input { width: 100%; padding: 10px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.85rem; transition: border-color 0.2s; }
-  .admin-input:focus { outline: none; border-color: var(--accent); }
-  textarea.admin-input { resize: vertical; min-height: 80px; }
-  
+  .form-label { font-size: 0.75rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; display: block; }
   .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: var(--surface2); }
   
   .hide { display: none !important; }
-  
-  /* Controle de Visibilidade Admin Global */
   .show-on-admin { display: none !important; }
   body.admin-mode .show-on-admin { display: flex !important; }
 
@@ -215,10 +210,9 @@
 <body>
 
 <header>
-  <div class="logo">Tripla <span>·</span> Eventos 2026</div>
+  <div class="logo">Tripla <span>·</span> Eventos</div>
   <div class="header-right">
     <div class="today-badge" id="today-badge"></div>
-    <button class="btn-primary btn-sync show-on-admin" id="btn-sync-data">☁️ Subir dados para o Firebase</button>
     <button class="btn-icon" id="btn-share" title="Copiar Link">🔗 Link</button>
     <button class="btn-icon" id="btn-export">📅 Exportar .ics</button>
     <button class="btn-icon" id="btn-theme">🌓 Tema</button>
@@ -276,18 +270,13 @@
         <button class="filter-btn" data-filter-status="Concluído">Concluído</button>
       </div>
     </div>
-
-    <div class="sidebar-section">
-      <h3>Resumo 2026</h3>
-      <div class="stats-grid" id="stats-grid"></div>
-    </div>
   </aside>
 
   <main class="main">
     <div class="view-controls">
       <div class="view-title">
         <span>Calendário Estratégico</span>
-        <small>Todos os eventos de 2026</small>
+        <small>Todos os eventos</small>
       </div>
       <div class="controls-right">
         <button class="btn-primary show-on-admin" id="btn-add-event">+ Novo Evento</button>
@@ -299,6 +288,7 @@
           <button class="view-tab" data-view="calendar">Mês</button>
           <button class="view-tab" data-view="week">Semana</button>
           <button class="view-tab" data-view="list">Lista</button>
+          <button class="view-tab show-on-admin" data-view="admin" style="color:var(--accent); font-weight:600">📊 Painel Admin</button>
         </div>
       </div>
     </div>
@@ -332,6 +322,61 @@
       </table>
       <div id="list-no-results" class="no-results" style="display:none"><div>Nenhum evento encontrado</div></div>
     </div>
+
+    <div id="view-admin" class="view-container">
+      
+      <div class="admin-grid">
+        <div class="admin-card">
+          <div class="admin-card-title">Total de Eventos</div>
+          <div class="admin-card-value" id="dash-total">0</div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-title" style="color:var(--c-comercial)">Eventos Comerciais</div>
+          <div class="admin-card-value" id="dash-comercial">0</div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-title" style="color:var(--c-interno)">Eventos Internos</div>
+          <div class="admin-card-value" id="dash-interno">0</div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-title" style="color:var(--green)">Status Confirmados</div>
+          <div class="admin-card-value" id="dash-confirmados">0</div>
+        </div>
+      </div>
+
+      <div class="admin-panels">
+        <div class="admin-panel">
+          <h3>📥 Importar Dados (Excel / CSV)</h3>
+          <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">
+            Baixe a planilha modelo, preencha com seus eventos e faça o upload para enviar tudo ao sistema de uma vez.
+          </p>
+          <button class="btn-icon" id="btn-download-csv" style="margin-bottom:16px">📄 Baixar Planilha Modelo</button>
+          
+          <div class="file-drop" id="file-dropzone" onclick="document.getElementById('csv-file').click()">
+            <div style="font-size:1.5rem; margin-bottom:8px">📁</div>
+            <div>Clique ou arraste sua planilha <b>.csv</b> aqui</div>
+            <input type="file" id="csv-file" accept=".csv">
+          </div>
+          
+          <button class="btn-primary" id="btn-upload-csv" style="width:100%" disabled>Iniciar Importação</button>
+        </div>
+
+        <div class="admin-panel">
+          <h3>👥 Cadastro de Responsáveis</h3>
+          <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">
+            Adicione nomes para aparecerem automaticamente nas listas de filtros e de novos eventos.
+          </p>
+          <div style="display:flex; gap:8px; margin-bottom:16px;">
+            <input type="text" id="new-resp-input" class="admin-input" style="margin:0" placeholder="Nome do novo responsável...">
+            <button class="btn-primary" id="btn-add-resp">Adicionar</button>
+          </div>
+          
+          <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 200px; overflow-y:auto; padding:8px;" id="resp-list-admin">
+            </div>
+        </div>
+      </div>
+
+    </div>
   </main>
 </div>
 
@@ -351,52 +396,21 @@
           <span id="view-resp">👤 Responsável</span>
         </div>
       </div>
-      
       <div class="modal-body">
         <div class="detail-grid">
-          <div class="detail-item">
-            <div class="detail-icon">📌</div>
-            <div class="detail-content">
-              <div class="detail-label">Status</div>
-              <div class="detail-value" id="view-status">-</div>
-            </div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-icon">📍</div>
-            <div class="detail-content">
-              <div class="detail-label">Formato</div>
-              <div class="detail-value" id="view-formato">-</div>
-            </div>
-          </div>
-          <div class="detail-item" id="block-cota">
-            <div class="detail-icon">🎖️</div>
-            <div class="detail-content">
-              <div class="detail-label">Cota Comercial</div>
-              <div class="detail-value" id="view-cota" style="color:var(--amber)">-</div>
-            </div>
-          </div>
-          <div class="detail-item" id="block-vagas">
-            <div class="detail-icon">🎟️</div>
-            <div class="detail-content">
-              <div class="detail-label">Vagas / Ingressos</div>
-              <div class="detail-value" id="view-vagas">-</div>
-            </div>
-          </div>
+          <div class="detail-item"><div class="detail-icon">📌</div><div class="detail-content"><div class="detail-label">Status</div><div class="detail-value" id="view-status">-</div></div></div>
+          <div class="detail-item"><div class="detail-icon">📍</div><div class="detail-content"><div class="detail-label">Formato</div><div class="detail-value" id="view-formato">-</div></div></div>
+          <div class="detail-item" id="block-cota"><div class="detail-icon">🎖️</div><div class="detail-content"><div class="detail-label">Cota Comercial</div><div class="detail-value" id="view-cota" style="color:var(--amber)">-</div></div></div>
+          <div class="detail-item" id="block-vagas"><div class="detail-icon">🎟️</div><div class="detail-content"><div class="detail-label">Vagas</div><div class="detail-value" id="view-vagas">-</div></div></div>
         </div>
-
-        <div class="detail-full" id="block-publico">
-          <div class="detail-full-title">👥 Público Alvo</div>
-          <div style="font-size:0.85rem; color:var(--muted);" id="view-publico"></div>
+        <div class="detail-full" id="block-publico" style="background:var(--surface2); padding:16px; border-radius:8px; border:1px solid var(--border); margin-bottom:16px;">
+          <div style="font-size:0.75rem; font-weight:600; margin-bottom:8px;">👥 Público Alvo</div><div style="font-size:0.85rem; color:var(--muted);" id="view-publico"></div>
         </div>
-
-        <div class="detail-full" id="block-beneficios">
-          <div class="detail-full-title">✨ Benefícios e Entregas</div>
-          <div style="font-size:0.85rem; color:var(--muted);" id="view-beneficios"></div>
+        <div class="detail-full" id="block-beneficios" style="background:var(--surface2); padding:16px; border-radius:8px; border:1px solid var(--border); margin-bottom:16px;">
+          <div style="font-size:0.75rem; font-weight:600; margin-bottom:8px;">✨ Benefícios e Entregas</div><div style="font-size:0.85rem; color:var(--muted);" id="view-beneficios"></div>
         </div>
-
-        <div class="detail-full" id="block-obs" style="background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2);">
-          <div class="detail-full-title" style="color:var(--amber)">⚠️ Observações Internas</div>
-          <div style="font-size:0.85rem; color:var(--text);" id="view-obs"></div>
+        <div class="detail-full" id="block-obs" style="background:rgba(245,158,11,0.05); padding:16px; border-radius:8px; border:1px solid rgba(245,158,11,0.2);">
+          <div style="font-size:0.75rem; font-weight:600; color:var(--amber); margin-bottom:8px;">⚠️ Observações Internas</div><div style="font-size:0.85rem; color:var(--text);" id="view-obs"></div>
         </div>
       </div>
     </div>
@@ -411,68 +425,30 @@
       </div>
       <div class="modal-body">
         <input type="hidden" id="edit-id">
-        
         <div class="admin-section-title">Informações Principais</div>
         <div class="form-grid">
-          <div class="form-group form-full">
-            <label class="form-label">Nome do Evento *</label>
-            <input type="text" class="admin-input" id="edit-nome" placeholder="Ex: Tripla Conecta">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Data Início *</label>
-            <input type="date" class="admin-input" id="edit-ini">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Data Fim</label>
-            <input type="date" class="admin-input" id="edit-fim">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Tipo de Evento</label>
-            <select class="admin-input select-css" id="edit-tipo" style="margin:0"><option>Comercial</option><option>Interno</option><option>Feriado</option></select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Status</label>
-            <select class="admin-input select-css" id="edit-status" style="margin:0"><option>Planejado</option><option>Confirmado</option><option>Em negociação</option><option>Concluído</option><option>Cancelado</option></select>
-          </div>
+          <div class="form-full"><label class="form-label">Nome do Evento *</label><input type="text" class="admin-input" id="edit-nome"></div>
+          <div><label class="form-label">Data Início *</label><input type="date" class="admin-input" id="edit-ini"></div>
+          <div><label class="form-label">Data Fim</label><input type="date" class="admin-input" id="edit-fim"></div>
+          <div><label class="form-label">Tipo</label><select class="admin-input" id="edit-tipo"><option>Comercial</option><option>Interno</option><option>Feriado</option></select></div>
+          <div><label class="form-label">Status</label><select class="admin-input" id="edit-status"><option>Planejado</option><option>Confirmado</option><option>Em negociação</option><option>Concluído</option><option>Cancelado</option></select></div>
         </div>
 
         <div class="admin-section-title">Detalhes Operacionais</div>
         <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">Responsável</label>
-            <input type="text" class="admin-input" id="edit-resp" placeholder="Ex: Jéss e Jê">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Formato</label>
-            <input type="text" class="admin-input" id="edit-formato" placeholder="Ex: Presencial ou Online">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Cota / Patrocínio</label>
-            <input type="text" class="admin-input" id="edit-cota" placeholder="Ex: Ouro, Diamond...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Vagas disponíveis</label>
-            <input type="text" class="admin-input" id="edit-vagas" placeholder="Ex: 5 executivos">
-          </div>
+          <div><label class="form-label">Responsável</label><select class="admin-input" id="edit-resp"><option value="">Selecione...</option></select></div>
+          <div><label class="form-label">Formato</label><input type="text" class="admin-input" id="edit-formato"></div>
+          <div><label class="form-label">Cota</label><input type="text" class="admin-input" id="edit-cota"></div>
+          <div><label class="form-label">Vagas</label><input type="text" class="admin-input" id="edit-vagas"></div>
         </div>
 
         <div class="admin-section-title">Informações Adicionais</div>
         <div class="form-grid">
-          <div class="form-group form-full">
-            <label class="form-label">Público Alvo</label>
-            <input type="text" class="admin-input" id="edit-publico" placeholder="Quem participará?">
-          </div>
-          <div class="form-group form-full">
-            <label class="form-label">Benefícios / Entregas</label>
-            <textarea class="admin-input" id="edit-beneficios" placeholder="Palestras, estande, brindes..."></textarea>
-          </div>
-          <div class="form-group form-full">
-            <label class="form-label">Observações Internas</label>
-            <textarea class="admin-input" id="edit-obs" placeholder="Notas ou links úteis..."></textarea>
-          </div>
+          <div class="form-full"><label class="form-label">Público Alvo</label><input type="text" class="admin-input" id="edit-publico"></div>
+          <div class="form-full"><label class="form-label">Benefícios</label><textarea class="admin-input" id="edit-beneficios"></textarea></div>
+          <div class="form-full"><label class="form-label">Observações</label><textarea class="admin-input" id="edit-obs"></textarea></div>
         </div>
       </div>
-      
       <div class="modal-footer">
         <button class="btn-icon" id="btn-delete" style="color:var(--red); border-color:var(--red); margin-right:auto;">🗑️ Excluir</button>
         <button class="btn-primary" id="btn-save">Salvar no Firebase</button>
@@ -500,121 +476,56 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // DADOS DE SEGURANÇA (OS 48 EVENTOS ORIGINAIS)
-  const ORIGINAL_EVENTS = [
-    {tipo:"Interno",responsavel:"Jéss e Jê",mes_ref:"Janeiro",data_ini:"2026-01-28",data_fim:"2026-01-30",evento:"Tripla Conecta",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:"kick-off vendas"},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Fevereiro",data_ini:"2026-02-17",data_fim:"2026-02-17",evento:"Carnaval",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"G&G",mes_ref:"Fevereiro",data_ini:"2026-02-26",data_fim:"2026-02-26",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-09",data_fim:"2026-03-09",evento:"Cybersecurity Forum 2026",cota:"",vagas:"13 convites",publico:"",beneficios:"Participação em um painel / Estande de 8m²",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"G&G",mes_ref:"Março",data_ini:"2026-03-12",data_fim:"2026-03-12",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Presencial",obs:"presencial"},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-17",data_fim:"2026-03-20",evento:"UTCAL Summit",cota:"",vagas:"8 executivos Tripla",publico:"",beneficios:"1 palestra 20 minutos",status:"Planejado",formato:"",obs:""},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-18",data_fim:"2026-03-22",evento:"CIO Brasil",cota:"",vagas:"8 executivos Tripla",publico:"",beneficios:"Palestras 20 min. 50 CIOs / Estande",status:"Planejado",formato:"",obs:""},
-    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Março",data_ini:"2026-03-19",data_fim:"2026-03-19",evento:"CIO Converge",cota:"",vagas:"1 executivo Tripla",publico:"",beneficios:"Jantar alto nível com CIOs MG",status:"Planejado",formato:"",obs:"Calendário original indicava 26/03"},
-    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Março",data_ini:"2026-03-23",data_fim:"2026-03-26",evento:"RSA Conference",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-25",data_fim:"2026-03-25",evento:"Happy Hour Comercial SP",cota:"",vagas:"",publico:"",beneficios:"",status:"",formato:"",obs:""},
-    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Março",data_ini:"2026-03-26",data_fim:"2026-03-26",evento:"GPTI Experience",cota:"Cota Ouro",vagas:"2",publico:"Até 30 profissionais de TI",beneficios:"1 palestra 15 minutos",status:"Planejado",formato:"",obs:""},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Abril",data_ini:"2026-04-03",data_fim:"2026-04-03",evento:"Sexta-feira Santa",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Abril",data_ini:"2026-04-09",data_fim:"2026-04-11",evento:"CIO Meeting",cota:"Cota Prata",vagas:"5 executivos Tripla",publico:"",beneficios:"Estande de 9m²",status:"Planejado",formato:"",obs:""},
-    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Abril",data_ini:"2026-04-14",data_fim:"2026-04-14",evento:"4CIO MG",cota:"",vagas:"4 executivos Tripla",publico:"",beneficios:"Apresentações para 50% dos CIOs / Estande",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"G&G",mes_ref:"Abril",data_ini:"2026-04-15",data_fim:"2026-04-15",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Abril",data_ini:"2026-04-15",data_fim:"2026-04-16",evento:"Cloudflare Immerse SP",cota:"Platinum",vagas:"5",publico:"",beneficios:"Backdrop / Promotora",status:"Confirmado",formato:"Presencial",obs:""},
-    {tipo:"Interno",responsavel:"Jéss",mes_ref:"Abril",data_ini:"2026-04-16",data_fim:"2026-04-16",evento:"Happy Hour after CIO Meeting",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Abril",data_ini:"2026-04-21",data_fim:"2026-04-21",evento:"Tiradentes",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Comercial",responsavel:"",mes_ref:"Abril",data_ini:"2026-04-22",data_fim:"2026-04-23",evento:"IAM Tech Day",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Maio",data_ini:"2026-05-01",data_fim:"2026-05-01",evento:"Dia do Trabalhador",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Maio",data_ini:"2026-05-12",data_fim:"2026-05-12",evento:"Security Leaders BH",cota:"",vagas:"6 executivos",publico:"",beneficios:"Case de sucesso (20 minutos)",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"Jess",mes_ref:"Maio",data_ini:"2026-05-14",data_fim:"2026-05-14",evento:"Happy Hour FO",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:"Experiência Gastronômica"},
-    {tipo:"Interno",responsavel:"G&G",mes_ref:"Maio",data_ini:"2026-05-15",data_fim:"2026-05-15",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Presencial",obs:"presencial"},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Maio",data_ini:"2026-05-20",data_fim:"2026-05-24",evento:"CIO Gov",cota:"Spot Network",vagas:"3 executivos",publico:"",beneficios:"Pitch de 5 minutos na plenária",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"G&G",mes_ref:"Junho",data_ini:"2026-06-18",data_fim:"2026-06-18",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Junho",data_ini:"2026-06-19",data_fim:"2026-06-19",evento:"Corpus Christi",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Comercial",responsavel:"",mes_ref:"Junho",data_ini:"2026-06-24",data_fim:"2026-06-28",evento:"CIO Cerrado",cota:"Cota Platina",vagas:"6 executivos",publico:"",beneficios:"Apresentação de 20 minutos / Estande",status:"Planejado",formato:"",obs:""},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Junho",data_ini:"2026-06-24",data_fim:"2026-06-24",evento:"São João",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"Jess",mes_ref:"Julho",data_ini:"2026-07-05",data_fim:"2026-07-05",evento:"Happy Hour Fortaleza",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"G&G",mes_ref:"Julho",data_ini:"2026-07-09",data_fim:"2026-07-09",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
-    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Agosto",data_ini:"2026-08-01",data_fim:"2026-08-01",evento:"BBQ Nerd",cota:"Diamante",vagas:"4 executivos",publico:"",beneficios:"Apresentação 10 min",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"G&G",mes_ref:"Agosto",data_ini:"2026-08-05",data_fim:"2026-08-05",evento:"PDL",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"Jéss e Jê",mes_ref:"Agosto",data_ini:"2026-08-12",data_fim:"2026-08-14",evento:"Tripla Summit / Tripla 11 anos",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Agosto",data_ini:"2026-08-15",data_fim:"2026-08-15",evento:"Dia de N. Sra. da Boa Viagem",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Comercial",responsavel:"",mes_ref:"Agosto",data_ini:"2026-08-19",data_fim:"2026-08-23",evento:"IT Forum Praia do Forte",cota:"",vagas:"3 executivos",publico:"",beneficios:"Reuniões 15 min",status:"Planejado",formato:"",obs:""},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Agosto",data_ini:"2026-08-24",data_fim:"2026-08-26",evento:"Febraban Tech",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Setembro",data_ini:"2026-09-07",data_fim:"2026-09-07",evento:"Independência do Brasil",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Setembro",data_ini:"2026-09-15",data_fim:"2026-09-17",evento:"Mind the Sec",cota:"Diamond",vagas:"",publico:"",beneficios:"Estande 48m²",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"G&G",mes_ref:"Setembro",data_ini:"2026-09-18",data_fim:"2026-09-18",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Outubro",data_ini:"2026-10-12",data_fim:"2026-10-12",evento:"Dia de N. Sra. Aparecida",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"G&G",mes_ref:"Outubro",data_ini:"2026-10-21",data_fim:"2026-10-21",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Presencial",obs:"presencial"},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Novembro",data_ini:"2026-11-02",data_fim:"2026-11-02",evento:"Finados",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"G&G",mes_ref:"Novembro",data_ini:"2026-11-12",data_fim:"2026-11-12",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Novembro",data_ini:"2026-11-15",data_fim:"2026-11-15",evento:"Proclamação da República",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Novembro",data_ini:"2026-11-20",data_fim:"2026-11-20",evento:"Dia da Consciência Negra",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Dezembro",data_ini:"2026-12-08",data_fim:"2026-12-08",evento:"Dia de N. Sra. da Conceição",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
-    {tipo:"Interno",responsavel:"G&G",mes_ref:"Dezembro",data_ini:"2026-12-10",data_fim:"2026-12-10",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Presencial",obs:"presencial"},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Dezembro",data_ini:"2026-12-25",data_fim:"2026-12-25",evento:"Natal",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""}
-  ];
-
   // STATE GLOBAIS
   let EVENTS = [];
+  let RESPONSAVEIS = [];
+  
   const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const DAYS_PT = ['D','S','T','Q','Q','S','S'];
-  
-  const today = new Date(); today.setHours(0,0,0,0);
-  let filterType = 'all', filterStatus = 'all', filterResp = 'all', searchQ = '';
-  let currentView = 'timeline', sortCol = 'data_ini', sortAsc = true;
-  let calMonth = today.getMonth(), calYear = today.getFullYear();
-  let miniMonth = today.getMonth(), miniYear = today.getFullYear();
-  let currentWeekStart = getStartOfWeek(today);
-  let isAdmin = false;
-  let currentEditId = null; // Armazena o ID sendo editado
-
   const STATUS_CLASS = {'Planejado':'planejado','Confirmado':'confirmado','Em negociação':'negociacao','Concluído':'concluido','Cancelado':'cancelado'};
   const TYPE_COLOR = { Comercial:'var(--c-comercial)', Interno:'var(--c-interno)', Feriado:'var(--c-feriado)' };
 
-  // ── FIREBASE LOAD & MIGRATE ──
-  async function loadEventsFromFirebase() {
+  // DATAS DEFAULT (Garante que vai abrir em Janeiro de 2026 para encontrar os eventos)
+  const today = new Date(); today.setHours(0,0,0,0);
+  let calMonth = 0, calYear = 2026; 
+  let miniMonth = 0, miniYear = 2026;
+  let currentWeekStart = new Date(2026, 0, 25); // Uma semana com eventos em Jan/2026
+  
+  let filterType = 'all', filterStatus = 'all', filterResp = 'all', searchQ = '';
+  let currentView = 'timeline', sortCol = 'data_ini', sortAsc = true;
+  let isAdmin = false;
+  let currentEditId = null;
+
+  // ── LOAD FIREBASE ──
+  async function loadDataFromFirebase() {
     try {
-      const querySnapshot = await getDocs(collection(db, "eventos"));
+      // Carrega Eventos
+      const evSnapshot = await getDocs(collection(db, "eventos"));
       EVENTS = [];
-      querySnapshot.forEach((doc) => { EVENTS.push({ id: doc.id, ...doc.data() }); });
+      evSnapshot.forEach(doc => { EVENTS.push({ id: doc.id, ...doc.data() }); });
       
-      // Se não tiver nada no banco, carrega o Mock Data para a tela e mostra o botão de Sync
-      if(EVENTS.length === 0) {
-        EVENTS = ORIGINAL_EVENTS.map((m, i) => ({ id: `mock_${i}`, ...m }));
-        document.getElementById('btn-sync-data').style.display = 'block'; // Mostra botão de Sincronizar
-        console.warn("Banco vazio. Dados locais carregados. Ative o modo admin e clique em Sincronizar.");
-      } else {
-        document.getElementById('btn-sync-data').style.display = 'none'; // Esconde botão se o banco tem dados
+      // Ajusta o mês inicial do calendário para o evento mais antigo (se houver)
+      if(EVENTS.length > 0) {
+        const earliest = EVENTS.map(e=>parseDate(e.data_ini)).filter(d=>d).sort((a,b)=>a-b)[0];
+        if(earliest) {
+          calMonth = earliest.getMonth(); calYear = earliest.getFullYear();
+          miniMonth = earliest.getMonth(); miniYear = earliest.getFullYear();
+          currentWeekStart = getStartOfWeek(earliest);
+        }
       }
+
+      // Carrega Responsáveis
+      const respSnapshot = await getDocs(collection(db, "responsaveis"));
+      RESPONSAVEIS = [];
+      respSnapshot.forEach(doc => { RESPONSAVEIS.push({ id: doc.id, ...doc.data() }); });
+
       initUI();
     } catch (error) {
       console.error("Erro Firebase:", error);
-      EVENTS = ORIGINAL_EVENTS.map((m, i) => ({ id: `mock_${i}`, ...m }));
-      initUI();
+      alert("Não foi possível conectar ao Firebase. Verifique sua conexão ou as regras do Firestore.");
     }
   }
-
-  // FUNÇÃO MÁGICA: Sincroniza os 48 eventos pro Firebase de uma vez
-  document.getElementById('btn-sync-data').onclick = async () => {
-    if(!confirm("Isso vai salvar todos os 48 eventos padrão no seu banco de dados Firebase. Deseja continuar?")) return;
-    const btn = document.getElementById('btn-sync-data');
-    btn.textContent = "⏳ Sincronizando..."; btn.disabled = true;
-    
-    try {
-      const batch = writeBatch(db);
-      ORIGINAL_EVENTS.forEach(ev => {
-        const docRef = doc(collection(db, "eventos")); // Cria nova referência com ID automático
-        batch.set(docRef, ev);
-      });
-      await batch.commit();
-      alert("✅ Todos os eventos foram salvos no Firebase com sucesso!");
-      await loadEventsFromFirebase(); // Recarrega
-    } catch (error) {
-      console.error("Erro ao sincronizar lote: ", error);
-      alert("Erro de permissão! Lembre-se de liberar 'read, write' nas regras do Firestore.");
-    } finally {
-      btn.textContent = "☁️ Subir dados para o Firebase"; btn.disabled = false;
-    }
-  };
 
   // ── UTILS ──
   function parseDate(s) { if (!s) return null; const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
@@ -637,25 +548,17 @@
   function statusBadge(s) { return s ? `<span class="badge badge-status-${STATUS_CLASS[s]||''}">${s}</span>` : ''; }
   function formatoBadge(f) { return f ? `<span class="badge badge-formato">${f}</span>` : ''; }
 
-  // ── INIT ──
+  // ── INIT & FILTERS ──
   function initUI() {
     document.getElementById('today-badge').textContent = today.toLocaleDateString('pt-BR', {weekday:'short', day:'numeric', month:'short'});
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    if(urlParams.get('tipo')) filterType = urlParams.get('tipo');
-    if(urlParams.get('status')) filterStatus = urlParams.get('status');
-    if(urlParams.get('resp')) filterResp = urlParams.get('resp');
-
-    document.querySelectorAll('[data-filter-type]').forEach(b => b.classList.toggle('active', b.dataset.filterType === filterType));
-    document.querySelectorAll('[data-filter-status]').forEach(b => b.classList.toggle('active', b.dataset.filterStatus === filterStatus));
-    
-    populateResponsibles();
+    updateResponsiblesUI();
     checkNotifications();
     renderAll();
   }
 
   function renderAll() {
-    renderMiniCal(); renderUpcoming(); renderStats(); renderCounts(); renderCurrentView();
+    renderMiniCal(); renderUpcoming(); renderCounts(); 
+    renderDashboardAdmin(); renderCurrentView();
   }
 
   function getFilteredEvents() {
@@ -671,16 +574,144 @@
     });
   }
 
-  function populateResponsibles() {
-    const resps = new Set(); EVENTS.forEach(e => { if(e.responsavel) resps.add(e.responsavel); });
-    const select = document.getElementById('filter-resp');
-    select.innerHTML = '<option value="all">Todos os responsáveis</option>';
-    resps.forEach(r => {
-      const opt = document.createElement('option'); opt.value = r; opt.textContent = r;
-      if(r === filterResp) opt.selected = true; select.appendChild(opt);
+  // ── GESTÃO DE RESPONSÁVEIS ──
+  function updateResponsiblesUI() {
+    // Mescla responsáveis cadastrados no banco + os que já estão preenchidos nos eventos (legacy)
+    const setResps = new Set(RESPONSAVEIS.map(r => r.nome));
+    EVENTS.forEach(e => { if(e.responsavel) setResps.add(e.responsavel); });
+    
+    const arr = Array.from(setResps).sort();
+    
+    // Atualiza Select do Filtro na Sidebar
+    const filterSel = document.getElementById('filter-resp');
+    filterSel.innerHTML = '<option value="all">Todos os responsáveis</option>';
+    
+    // Atualiza Select do Formulário (Modal)
+    const formSel = document.getElementById('edit-resp');
+    formSel.innerHTML = '<option value="">Sem responsável</option>';
+
+    // Atualiza a lista na aba Admin
+    const adminList = document.getElementById('resp-list-admin');
+    adminList.innerHTML = '';
+
+    arr.forEach(r => {
+      // Sidebar
+      const opt1 = document.createElement('option'); opt1.value = r; opt1.textContent = r;
+      if(r === filterResp) opt1.selected = true; filterSel.appendChild(opt1);
+      
+      // Form
+      const opt2 = document.createElement('option'); opt2.value = r; opt2.textContent = r;
+      formSel.appendChild(opt2);
+
+      // Admin List
+      const div = document.createElement('div');
+      div.style = "padding: 6px; border-bottom: 1px solid var(--border); font-size: 0.85rem; display:flex; justify-content:space-between;";
+      
+      // Checa se está no banco para permitir exclusão
+      const bdResp = RESPONSAVEIS.find(x => x.nome === r);
+      if(bdResp) {
+        div.innerHTML = `<span>👤 ${r}</span> <span style="color:var(--red); cursor:pointer" onclick="window.delResp('${bdResp.id}')">✕</span>`;
+      } else {
+        div.innerHTML = `<span>👤 ${r} <small style="color:var(--muted)">(via evento)</small></span>`;
+      }
+      adminList.appendChild(div);
     });
   }
 
+  document.getElementById('btn-add-resp').onclick = async () => {
+    const inp = document.getElementById('new-resp-input');
+    const nome = inp.value.trim();
+    if(!nome) return;
+    try {
+      inp.value = "Salvando..."; inp.disabled = true;
+      await addDoc(collection(db, "responsaveis"), { nome });
+      inp.value = "";
+      await loadDataFromFirebase();
+    } catch(e) { console.error(e); alert("Erro ao salvar."); }
+    finally { inp.disabled = false; }
+  };
+
+  window.delResp = async (id) => {
+    if(!confirm("Excluir este responsável? Ele não sumirá dos eventos antigos, apenas da lista de opções.")) return;
+    try { await deleteDoc(doc(db, "responsaveis", id)); await loadDataFromFirebase(); }
+    catch(e) { console.error(e); }
+  }
+
+  // ── DASHBOARD ADMIN ABA ──
+  function renderDashboardAdmin() {
+    document.getElementById('dash-total').textContent = EVENTS.length;
+    document.getElementById('dash-comercial').textContent = EVENTS.filter(e=>e.tipo==='Comercial').length;
+    document.getElementById('dash-interno').textContent = EVENTS.filter(e=>e.tipo==='Interno').length;
+    document.getElementById('dash-confirmados').textContent = EVENTS.filter(e=>e.status==='Confirmado').length;
+  }
+
+  // ── IMPORTAÇÃO CSV LÓGICA ──
+  document.getElementById('btn-download-csv').onclick = () => {
+    const csvContent = "evento,data_ini,data_fim,tipo,status,responsavel,formato,cota,vagas,publico,beneficios,obs\n" +
+                       "Exemplo Palestra,2026-05-10,2026-05-10,Comercial,Confirmado,Jéss e Jê,Online,Ouro,10,Clientes,Logo no site,Não esquecer link zoom\n";
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "template_eventos.csv"; a.click();
+  };
+
+  let fileToUpload = null;
+  document.getElementById('csv-file').onchange = (e) => {
+    fileToUpload = e.target.files[0];
+    const dropzone = document.getElementById('file-dropzone');
+    const btn = document.getElementById('btn-upload-csv');
+    if(fileToUpload) {
+      dropzone.innerHTML = `<div style="font-size:1.5rem; margin-bottom:8px">✅</div><div>Arquivo <b>${fileToUpload.name}</b> pronto!</div>`;
+      dropzone.style.borderColor = "var(--green)";
+      btn.disabled = false;
+    }
+  };
+
+  document.getElementById('btn-upload-csv').onclick = () => {
+    if(!fileToUpload) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const text = e.target.result;
+      const lines = text.split('\n').filter(l => l.trim() !== '');
+      if(lines.length < 2) return alert("Arquivo vazio ou formato inválido.");
+      
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      const batch = writeBatch(db);
+      let count = 0;
+
+      for(let i = 1; i < lines.length; i++) {
+        // Separação simples por vírgula (Recomenda-se não usar vírgulas dentro dos textos no Excel antes de exportar csv)
+        const row = lines[i].split(','); 
+        let obj = {};
+        headers.forEach((h, idx) => { obj[h] = row[idx] ? row[idx].trim() : ''; });
+        
+        if(obj.evento && obj.data_ini) {
+          obj.mes_ref = MONTHS_PT[parseDate(obj.data_ini).getMonth()] || '';
+          const docRef = doc(collection(db, "eventos"));
+          batch.set(docRef, obj);
+          count++;
+        }
+      }
+
+      if(count > 0) {
+        document.getElementById('btn-upload-csv').textContent = "Enviando...";
+        try {
+          await batch.commit();
+          alert(`✅ Importação concluída! ${count} eventos adicionados.`);
+          fileToUpload = null;
+          document.getElementById('file-dropzone').innerHTML = `<div style="font-size:1.5rem; margin-bottom:8px">📁</div><div>Clique ou arraste nova planilha</div>`;
+          document.getElementById('file-dropzone').style.borderColor = "var(--border)";
+          document.getElementById('btn-upload-csv').textContent = "Iniciar Importação";
+          document.getElementById('btn-upload-csv').disabled = true;
+          await loadDataFromFirebase();
+        } catch(err) { console.error(err); alert("Erro ao salvar dados no Firebase."); }
+      } else {
+        alert("Nenhum evento válido encontrado. Verifique as colunas 'evento' e 'data_ini'.");
+      }
+    };
+    reader.readAsText(fileToUpload);
+  };
+
+  // ── RENDERIZAÇÃO DAS OUTRAS VIEWS (Idêntica à versão anterior) ──
   function checkNotifications() {
     const banner = document.getElementById('notification-banner');
     const text = document.getElementById('notification-text');
@@ -694,12 +725,14 @@
     else { banner.classList.remove('active'); }
   }
 
-  // ── RENDER VIEWS (Timeline, Lista, Etc) ──
   function renderCurrentView() {
+    document.querySelectorAll('.view-container').forEach(c => c.classList.remove('active'));
+    document.getElementById(`view-${currentView}`).classList.add('active');
+    
     if (currentView === 'timeline') renderTimeline();
     else if (currentView === 'calendar') renderCalendar();
     else if (currentView === 'week') renderWeek();
-    else renderList();
+    else if (currentView === 'list') renderList();
   }
 
   function renderTimeline() {
@@ -774,7 +807,6 @@
     body.innerHTML = evs.map(e => `<tr onclick="window.openEventView('${e.id}')" class="${getStatus(e)}"><td>${dateFmt(e)}</td><td><strong>${e.evento}</strong></td><td>${typeBadge(e.tipo)}</td><td>${e.responsavel||'—'}</td><td>${statusBadge(e.status)}</td><td>${formatoBadge(e.formato)}</td><td>${e.cota||'—'}</td></tr>`).join('');
   }
 
-  // SIDEBAR WIDGETS
   function renderMiniCal() {
     document.getElementById('mini-month-label').textContent = `${MONTHS_SHORT[miniMonth]} ${miniYear}`;
     const fd = new Date(miniYear, miniMonth, 1).getDay(), dim = new Date(miniYear, miniMonth+1, 0).getDate();
@@ -787,17 +819,12 @@
     }
     document.getElementById('mini-cal-grid').innerHTML = html;
   }
+  
   function renderUpcoming() {
     const up = EVENTS.filter(e => parseDate(e.data_ini)>=today && e.tipo!=='Feriado').sort((a,b)=>parseDate(a.data_ini)-parseDate(b.data_ini)).slice(0,5);
     document.getElementById('upcoming-list').innerHTML = up.map(e => `<div class="upcoming-item" onclick="window.openEventView('${e.id}')"><div class="upcoming-dot" style="background:var(--c-${e.tipo.toLowerCase()})"></div><div><div class="upcoming-name">${e.evento}</div><div class="upcoming-date">${dateFmt(e)}</div></div></div>`).join('');
   }
-  function renderStats() {
-    document.getElementById('stats-grid').innerHTML = `
-      <div class="stat-card"><div class="stat-num" style="color:var(--c-comercial)">${EVENTS.filter(e=>e.tipo==='Comercial').length}</div><div class="stat-label">Comerciais</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--c-interno)">${EVENTS.filter(e=>e.tipo==='Interno').length}</div><div class="stat-label">Internos</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--green)">${EVENTS.filter(e=>e.status==='Confirmado').length}</div><div class="stat-label">Confirmados</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--muted)">${EVENTS.filter(e=>getStatus(e)==='past').length}</div><div class="stat-label">Realizados</div></div>`;
-  }
+  
   function renderCounts() {
     document.getElementById('count-all').textContent = EVENTS.length;
     document.getElementById('count-comercial').textContent = EVENTS.filter(e=>e.tipo==='Comercial').length;
@@ -805,83 +832,61 @@
     document.getElementById('count-feriado').textContent = EVENTS.filter(e=>e.tipo==='Feriado').length;
   }
 
-  // ── MODAL LOGIC (UI MELHORADA) ──
-  
-  // Abrir modo "Bonito" (Read-only)
+  // ── LOGICA DO MODAL EVENTOS ──
   window.openEventView = function(id) {
     const ev = EVENTS.find(e => e.id === id);
     if(!ev) return;
-    currentEditId = id; // Armazena para caso ele queira editar
+    currentEditId = id; 
     
-    // Atualiza cabeçalho
-    const color = TYPE_COLOR[ev.tipo] || 'var(--accent)';
-    document.getElementById('view-header').style.setProperty('--card-color', color);
+    document.getElementById('view-header').style.setProperty('--card-color', TYPE_COLOR[ev.tipo] || 'var(--accent)');
     document.getElementById('view-title').textContent = ev.evento;
     document.getElementById('view-badges').innerHTML = typeBadge(ev.tipo) + statusBadge(ev.status);
     document.getElementById('view-date').innerHTML = `📅 ${dateFmt(ev)}`;
     document.getElementById('view-resp').innerHTML = `👤 ${ev.responsavel || 'Sem responsável'}`;
 
-    // Atualiza itens do Grid
     document.getElementById('view-status').textContent = ev.status || '-';
     document.getElementById('view-formato').textContent = ev.formato || 'Não definido';
-    
     document.getElementById('view-cota').textContent = ev.cota || '-';
     document.getElementById('view-vagas').textContent = ev.vagas || '-';
     
-    // Mostra/esconde blocos conforme conteúdo
-    const toggleBlock = (id, val) => {
-      const el = document.getElementById(id);
-      if(val) { el.style.display = 'block'; document.getElementById(id.replace('block-','view-')).textContent = val; }
-      else { el.style.display = 'none'; }
-    };
-    
-    toggleBlock('block-publico', ev.publico);
-    toggleBlock('block-beneficios', ev.beneficios);
-    toggleBlock('block-obs', ev.obs);
+    const toggleBlock = (id, val) => { const el = document.getElementById(id); if(val) { el.style.display = 'block'; document.getElementById(id.replace('block-','view-')).textContent = val; } else { el.style.display = 'none'; } };
+    toggleBlock('block-publico', ev.publico); toggleBlock('block-beneficios', ev.beneficios); toggleBlock('block-obs', ev.obs);
 
-    // Troca divs
     document.getElementById('mode-view').classList.remove('hide');
     document.getElementById('mode-edit').classList.add('hide');
     document.getElementById('modal-overlay').classList.add('open');
   };
 
-  // Abrir Form de Edição / Novo Evento
   window.openAdminForm = function(id) {
     let ev = EVENTS.find(e => e.id === id);
-    
     if(!id || !ev) {
-      // É UM NOVO EVENTO
       ev = { id:"", evento:"", data_ini:"", data_fim:"", responsavel:"", tipo:"Comercial", status:"Planejado", cota:"", vagas:"", publico:"", beneficios:"", obs:"", formato:"" };
       document.getElementById('form-title').textContent = "+ Cadastrar Novo Evento";
       document.getElementById('btn-delete').style.display = 'none';
-      document.getElementById('btn-cancel-edit').style.display = 'none'; // Não tem pra onde voltar
+      document.getElementById('btn-cancel-edit').style.display = 'none'; 
     } else {
-      // EDITANDO EVENTO
       document.getElementById('form-title').textContent = "Editar Evento";
       document.getElementById('btn-delete').style.display = 'block';
-      document.getElementById('btn-cancel-edit').style.display = 'inline-block'; // Botão pra voltar pra visualização
+      document.getElementById('btn-cancel-edit').style.display = 'inline-block'; 
     }
 
-    // Preenche Inputs
     ['id','nome','ini','fim','resp','tipo','status','formato','cota','vagas','publico','beneficios','obs'].forEach(k => {
       const input = document.getElementById(`edit-${k}`);
       if(input) input.value = ev[k==='nome'?'evento': k==='ini'?'data_ini': k==='fim'?'data_fim': k] || "";
     });
 
-    // Troca divs
     document.getElementById('mode-view').classList.add('hide');
     document.getElementById('mode-edit').classList.remove('hide');
     document.getElementById('modal-overlay').classList.add('open');
   };
 
-  // Botões de navegação dentro do modal
   document.getElementById('btn-switch-edit').onclick = () => window.openAdminForm(currentEditId);
   document.getElementById('btn-cancel-edit').onclick = () => window.openEventView(currentEditId);
   document.getElementById('modal-close-view').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
   document.getElementById('modal-close-edit').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
   document.getElementById('btn-add-event').onclick = () => window.openAdminForm('');
 
-  // ── FIREBASE CRUD (SALVAR E EXCLUIR) ──
+  // ── FIREBASE CRUD ──
   document.getElementById('btn-save').onclick = async () => {
     const id = document.getElementById('edit-id').value;
     const btn = document.getElementById('btn-save');
@@ -892,43 +897,35 @@
     btn.textContent = "Salvando..."; btn.disabled = true;
     try {
       if(id && !id.startsWith('mock_')) { await updateDoc(doc(db, "eventos", id), data); }
-      else if (!id) { await addDoc(collection(db, "eventos"), data); }
-      else { /* Update Mock local para testar sem banco */ const idx = EVENTS.findIndex(e=>e.id===id); EVENTS[idx]={...EVENTS[idx], ...data}; }
+      else { await addDoc(collection(db, "eventos"), data); }
       
       document.getElementById('modal-overlay').classList.remove('open');
-      if(id && id.startsWith('mock_')) initUI(); else await loadEventsFromFirebase();
-    } catch (e) { console.error(e); alert("Erro ao salvar no banco. Verifique as regras (leitura/escrita) no Firestore."); }
+      await loadDataFromFirebase();
+    } catch (e) { console.error(e); alert("Erro ao salvar no banco."); }
     finally { btn.textContent = "Salvar no Firebase"; btn.disabled = false; }
   };
 
   document.getElementById('btn-delete').onclick = async () => {
     const id = document.getElementById('edit-id').value;
-    if(!confirm("Tem certeza que deseja excluir permanentemente este evento?")) return;
+    if(!confirm("Excluir permanentemente?")) return;
     try {
       if(id && !id.startsWith('mock_')) await deleteDoc(doc(db, "eventos", id));
-      else EVENTS = EVENTS.filter(e=>e.id!==id);
       document.getElementById('modal-overlay').classList.remove('open');
-      if(id && id.startsWith('mock_')) initUI(); else await loadEventsFromFirebase();
+      await loadDataFromFirebase();
     } catch (e) { console.error(e); }
   };
 
-  // ── INTERACTIONS ──
-  document.getElementById('btn-admin-toggle').onclick = () => { isAdmin = !isAdmin; document.body.classList.toggle('admin-mode', isAdmin); document.getElementById('btn-admin-toggle').classList.toggle('active', isAdmin); };
+  // ── INTERFACES & NAVEGAÇÃO ──
+  document.getElementById('btn-admin-toggle').onclick = () => { isAdmin = !isAdmin; document.body.classList.toggle('admin-mode', isAdmin); document.getElementById('btn-admin-toggle').classList.toggle('active', isAdmin); if(!isAdmin && currentView === 'admin'){ document.querySelector('.view-tab[data-view="timeline"]').click(); } };
   document.getElementById('btn-theme').onclick = () => { const html = document.documentElement; html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark'; };
-  document.getElementById('btn-share').onclick = () => { navigator.clipboard.writeText(window.location.href); alert("Link com os filtros atuais copiado!"); };
+  document.getElementById('btn-share').onclick = () => { navigator.clipboard.writeText(window.location.href); alert("Link com os filtros copiado!"); };
   
-  document.getElementById('btn-export').onclick = () => {
-    let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Tripla//Eventos//PT\n";
-    getFilteredEvents().forEach(e => { if(!e.data_ini) return; const start = e.data_ini.replace(/-/g, '') + 'T000000Z', end = (e.data_fim || e.data_ini).replace(/-/g, '') + 'T235959Z'; ics += `BEGIN:VEVENT\nDTSTART:${start}\nDTEND:${end}\nSUMMARY:${e.evento}\nDESCRIPTION:Resp: ${e.responsavel} | Status: ${e.status}\nEND:VEVENT\n`; });
-    ics += "END:VCALENDAR";
-    const a = document.createElement('a'); a.href = window.URL.createObjectURL(new Blob([ics], {type:'text/calendar'})); a.download = "eventos.ics"; a.click();
-  };
-
-  document.querySelectorAll('.view-tab').forEach(t => t.onclick = () => { document.querySelectorAll('.view-tab').forEach(b=>b.classList.remove('active')); document.querySelectorAll('.view-container').forEach(c=>c.classList.remove('active')); t.classList.add('active'); currentView = t.dataset.view; document.getElementById(`view-${currentView}`).classList.add('active'); renderCurrentView(); });
-  document.querySelectorAll('[data-filter-type]').forEach(b => b.onclick = (e) => { filterType = e.currentTarget.dataset.filterType; const url=new URL(window.location); url.searchParams.set('tipo', filterType); window.history.replaceState({},'',url); initUI(); });
-  document.querySelectorAll('[data-filter-status]').forEach(b => b.onclick = (e) => { filterStatus = e.currentTarget.dataset.filterStatus; const url=new URL(window.location); url.searchParams.set('status', filterStatus); window.history.replaceState({},'',url); initUI(); });
-  document.getElementById('filter-resp').onchange = (e) => { filterResp = e.target.value; const url=new URL(window.location); url.searchParams.set('resp', filterResp); window.history.replaceState({},'',url); initUI(); };
+  document.querySelectorAll('.view-tab').forEach(t => t.onclick = () => { document.querySelectorAll('.view-tab').forEach(b=>b.classList.remove('active')); t.classList.add('active'); currentView = t.dataset.view; renderCurrentView(); });
+  document.querySelectorAll('[data-filter-type]').forEach(b => b.onclick = (e) => { filterType = e.currentTarget.dataset.filterType; initUI(); });
+  document.querySelectorAll('[data-filter-status]').forEach(b => b.onclick = (e) => { filterStatus = e.currentTarget.dataset.filterStatus; initUI(); });
+  document.getElementById('filter-resp').onchange = (e) => { filterResp = e.target.value; initUI(); };
   document.getElementById('search-input').oninput = (e) => { searchQ = e.target.value; renderAll(); };
+  
   document.getElementById('mini-prev').onclick = () => { miniMonth--; if(miniMonth<0){miniMonth=11;miniYear--;} renderMiniCal(); };
   document.getElementById('mini-next').onclick = () => { miniMonth++; if(miniMonth>11){miniMonth=0;miniYear++;} renderMiniCal(); };
   document.getElementById('cal-prev').onclick = () => { calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); };
@@ -937,8 +934,8 @@
   document.getElementById('week-next').onclick = () => { currentWeekStart.setDate(currentWeekStart.getDate()+7); renderWeek(); };
   document.querySelectorAll('.list-table th[data-sort]').forEach(th => th.onclick = () => { if (sortCol === th.dataset.sort) sortAsc = !sortAsc; else { sortCol = th.dataset.sort; sortAsc = true; } renderList(); });
 
-  // BOOT
-  loadEventsFromFirebase();
+  // INICIAR
+  loadDataFromFirebase();
 </script>
 </body>
 </html>
