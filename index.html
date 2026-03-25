@@ -30,7 +30,7 @@
   html { scroll-behavior: smooth; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; transition: background-color 0.3s, color 0.3s; }
 
-  /* HEADER & BANNER */
+  /* HEADER */
   header { position: sticky; top: 0; z-index: 100; background: var(--surface); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px; box-shadow: var(--shadow); }
   .logo { font-family: 'DM Serif Display', serif; font-size: 1.25rem; letter-spacing: -0.01em; color: var(--text); }
   .logo span { color: var(--accent); }
@@ -38,7 +38,10 @@
   .today-badge { font-size: 0.75rem; font-weight: 500; background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(59,130,246,0.3); padding: 4px 10px; border-radius: 20px; }
   .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-family: inherit; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
   .btn-icon:hover { background: var(--border); }
-  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer; font-family: inherit; font-size: 0.85rem; font-weight: 500;}
+  .btn-icon.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 8px 16px; border-radius: var(--radius-sm); cursor: pointer; font-family: inherit; font-size: 0.85rem; font-weight: 500; transition: 0.2s;}
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-sync { background: var(--purple); margin-right: 10px; display: none; }
   .alert-banner { background: rgba(245,158,11,0.15); border-left: 4px solid var(--amber); padding: 12px 24px; display: none; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text); }
   .alert-banner.active { display: flex; }
 
@@ -49,7 +52,7 @@
   .main { flex: 1; min-width: 0; padding: 32px; }
 
   /* SIDEBAR COMPONENTS */
-  .select-css { width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-family: inherit; font-size: 0.85rem; appearance: none; outline: none; margin-bottom: 8px; }
+  .select-css { width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-family: inherit; font-size: 0.85rem; appearance: none; outline: none; margin-bottom: 8px; cursor: pointer;}
   .filter-group { display: flex; flex-direction: column; gap: 4px; }
   .filter-btn { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer; border: none; background: none; color: var(--muted); font-size: 0.82rem; font-weight: 500; width: 100%; text-align: left; transition: all 0.15s; }
   .filter-btn:hover, .filter-btn.active { background: var(--surface2); color: var(--text); }
@@ -95,7 +98,6 @@
   .view-tabs { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 3px; gap: 2px; }
   .view-tab { padding: 5px 12px; border-radius: 5px; cursor: pointer; border: none; background: none; color: var(--muted); font-size: 0.78rem; font-weight: 500; font-family: 'DM Sans', sans-serif; }
   .view-tab.active { background: var(--surface2); color: var(--text); }
-
   .view-container { display: none; }
   .view-container.active { display: block; }
 
@@ -161,24 +163,49 @@
   .list-table tr:hover td { background: var(--surface2); }
   .no-results { text-align: center; padding: 60px 20px; color: var(--muted); }
 
-  /* MODAL */
+  /* MODAL (UI MELHORADA) */
   .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 24px; }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; width: 100%; max-width: 560px; max-height: 85vh; overflow-y: auto; box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
-  .modal-header { padding: 20px 24px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--border); }
-  .modal-title { font-family: 'DM Serif Display', serif; font-size: 1.3rem; }
-  .modal-body { padding: 20px 24px; }
-  .modal-row { display: flex; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
-  .modal-row:last-child { border-bottom: none; }
-  .modal-label { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; min-width: 100px; }
-  .modal-value { font-size: 0.85rem; color: var(--text); flex: 1; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 40px 80px rgba(0,0,0,0.6); display: flex; flex-direction: column;}
   
-  /* ADMIN FORM */
-  .admin-input { width: 100%; padding: 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 4px; margin-bottom: 10px; font-family: inherit;}
-  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
-  .hide-non-admin { display: none !important; }
-  body.admin-mode .hide-non-admin { display: flex !important; }
-  body.admin-mode .hide-admin { display: none !important; }
+  /* Modal View - Header Colorido */
+  .modal-header-view { padding: 32px 24px 24px; position: relative; border-bottom: 1px solid var(--border); }
+  .modal-header-view::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: var(--card-color, var(--accent)); }
+  .modal-title { font-family: 'DM Serif Display', serif; font-size: 1.6rem; line-height: 1.2; margin-bottom: 12px; }
+  .modal-actions-top { position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; }
+  
+  /* Modal View - Grid de Detalhes */
+  .modal-body { padding: 24px; }
+  .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+  .detail-item { display: flex; align-items: flex-start; gap: 12px; background: var(--surface2); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+  .detail-icon { font-size: 1.2rem; background: var(--bg); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .detail-content { flex: 1; }
+  .detail-label { font-size: 0.65rem; text-transform: uppercase; color: var(--muted); font-weight: 600; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .detail-value { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+  
+  .detail-full { background: var(--surface2); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 16px; }
+  .detail-full-title { font-size: 0.75rem; font-weight: 600; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+
+  /* ADMIN FORM (Painel de Inclusão/Edição) */
+  .modal-header-admin { padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: var(--surface2); }
+  .admin-section-title { font-size: 0.75rem; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+  .admin-section-title:first-child { margin-top: 0; }
+  
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-full { grid-column: span 2; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-label { font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+  .admin-input { width: 100%; padding: 10px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.85rem; transition: border-color 0.2s; }
+  .admin-input:focus { outline: none; border-color: var(--accent); }
+  textarea.admin-input { resize: vertical; min-height: 80px; }
+  
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: var(--surface2); }
+  
+  .hide { display: none !important; }
+  
+  /* Controle de Visibilidade Admin Global */
+  .show-on-admin { display: none !important; }
+  body.admin-mode .show-on-admin { display: flex !important; }
 
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -191,10 +218,11 @@
   <div class="logo">Tripla <span>·</span> Eventos 2026</div>
   <div class="header-right">
     <div class="today-badge" id="today-badge"></div>
+    <button class="btn-primary btn-sync show-on-admin" id="btn-sync-data">☁️ Subir dados para o Firebase</button>
     <button class="btn-icon" id="btn-share" title="Copiar Link">🔗 Link</button>
-    <button class="btn-icon" id="btn-export">📅 .ics</button>
+    <button class="btn-icon" id="btn-export">📅 Exportar .ics</button>
     <button class="btn-icon" id="btn-theme">🌓 Tema</button>
-    <button class="btn-icon" id="btn-admin-toggle">⚙️ Admin</button>
+    <button class="btn-icon" id="btn-admin-toggle" title="Ativar Modo Edição">⚙️ Admin</button>
   </div>
 </header>
 
@@ -262,7 +290,7 @@
         <small>Todos os eventos de 2026</small>
       </div>
       <div class="controls-right">
-        <button class="btn-primary hide-non-admin" id="btn-add-event">+ Novo Evento</button>
+        <button class="btn-primary show-on-admin" id="btn-add-event">+ Novo Evento</button>
         <div class="search-box">
           <span>🔍</span><input type="text" id="search-input" placeholder="Buscar evento...">
         </div>
@@ -308,55 +336,149 @@
 </div>
 
 <div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modal-title">Evento</div>
-      <button class="btn-icon" id="modal-close">✕</button>
-    </div>
+  <div class="modal" id="modal-container">
     
-    <div class="modal-body hide-admin" id="modal-view-body"></div>
-    
-    <div class="modal-body hide-non-admin" id="modal-edit-body">
-      <input type="hidden" id="edit-id">
-      <label class="modal-label">Nome do Evento</label>
-      <input type="text" class="admin-input" id="edit-nome">
-      
-      <div style="display:flex; gap:10px;">
-        <div style="flex:1"><label class="modal-label">Início</label><input type="date" class="admin-input" id="edit-ini"></div>
-        <div style="flex:1"><label class="modal-label">Fim</label><input type="date" class="admin-input" id="edit-fim"></div>
+    <div id="mode-view">
+      <div class="modal-header-view" id="view-header">
+        <div class="modal-actions-top">
+          <button class="btn-icon show-on-admin" id="btn-switch-edit" title="Editar Evento">✏️ Editar</button>
+          <button class="btn-icon" id="modal-close-view">✕</button>
+        </div>
+        <div id="view-badges" style="margin-bottom: 12px; display:flex; gap:6px;"></div>
+        <h2 class="modal-title" id="view-title">Nome do Evento</h2>
+        <div style="font-size:0.85rem; color:var(--muted); display:flex; gap:16px;">
+          <span id="view-date">📅 Data</span>
+          <span id="view-resp">👤 Responsável</span>
+        </div>
       </div>
       
-      <div style="display:flex; gap:10px;">
-        <div style="flex:1"><label class="modal-label">Responsável</label><input type="text" class="admin-input" id="edit-resp"></div>
-        <div style="flex:1"><label class="modal-label">Formato</label><input type="text" class="admin-input" id="edit-formato"></div>
-      </div>
+      <div class="modal-body">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-icon">📌</div>
+            <div class="detail-content">
+              <div class="detail-label">Status</div>
+              <div class="detail-value" id="view-status">-</div>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-icon">📍</div>
+            <div class="detail-content">
+              <div class="detail-label">Formato</div>
+              <div class="detail-value" id="view-formato">-</div>
+            </div>
+          </div>
+          <div class="detail-item" id="block-cota">
+            <div class="detail-icon">🎖️</div>
+            <div class="detail-content">
+              <div class="detail-label">Cota Comercial</div>
+              <div class="detail-value" id="view-cota" style="color:var(--amber)">-</div>
+            </div>
+          </div>
+          <div class="detail-item" id="block-vagas">
+            <div class="detail-icon">🎟️</div>
+            <div class="detail-content">
+              <div class="detail-label">Vagas / Ingressos</div>
+              <div class="detail-value" id="view-vagas">-</div>
+            </div>
+          </div>
+        </div>
 
-      <div style="display:flex; gap:10px;">
-        <div style="flex:1">
-          <label class="modal-label">Tipo</label>
-          <select class="admin-input" id="edit-tipo"><option>Comercial</option><option>Interno</option><option>Feriado</option></select>
+        <div class="detail-full" id="block-publico">
+          <div class="detail-full-title">👥 Público Alvo</div>
+          <div style="font-size:0.85rem; color:var(--muted);" id="view-publico"></div>
         </div>
-        <div style="flex:1">
-          <label class="modal-label">Status</label>
-          <select class="admin-input" id="edit-status"><option>Planejado</option><option>Confirmado</option><option>Em negociação</option><option>Concluído</option><option>Cancelado</option></select>
+
+        <div class="detail-full" id="block-beneficios">
+          <div class="detail-full-title">✨ Benefícios e Entregas</div>
+          <div style="font-size:0.85rem; color:var(--muted);" id="view-beneficios"></div>
+        </div>
+
+        <div class="detail-full" id="block-obs" style="background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2);">
+          <div class="detail-full-title" style="color:var(--amber)">⚠️ Observações Internas</div>
+          <div style="font-size:0.85rem; color:var(--text);" id="view-obs"></div>
         </div>
       </div>
-      <label class="modal-label">Cota</label>
-      <input type="text" class="admin-input" id="edit-cota">
-      <label class="modal-label">Vagas</label>
-      <input type="text" class="admin-input" id="edit-vagas">
-      <label class="modal-label">Público</label>
-      <input type="text" class="admin-input" id="edit-publico">
-      <label class="modal-label">Benefícios</label>
-      <textarea class="admin-input" id="edit-beneficios"></textarea>
-      <label class="modal-label">Observações</label>
-      <textarea class="admin-input" id="edit-obs"></textarea>
     </div>
     
-    <div class="modal-footer hide-non-admin">
-      <button class="btn-icon" id="btn-delete" style="color:var(--red); border-color:var(--red)">Excluir</button>
-      <button class="btn-primary" id="btn-save">Salvar no Banco</button>
+    <div id="mode-edit" class="hide">
+      <div class="modal-header-admin">
+        <h3 style="font-size:1.1rem" id="form-title">Editar Evento</h3>
+        <div style="display:flex; gap:8px;">
+           <button class="btn-icon" id="btn-cancel-edit">Voltar</button>
+           <button class="btn-icon" id="modal-close-edit">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-id">
+        
+        <div class="admin-section-title">Informações Principais</div>
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label class="form-label">Nome do Evento *</label>
+            <input type="text" class="admin-input" id="edit-nome" placeholder="Ex: Tripla Conecta">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Data Início *</label>
+            <input type="date" class="admin-input" id="edit-ini">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Data Fim</label>
+            <input type="date" class="admin-input" id="edit-fim">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo de Evento</label>
+            <select class="admin-input select-css" id="edit-tipo" style="margin:0"><option>Comercial</option><option>Interno</option><option>Feriado</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="admin-input select-css" id="edit-status" style="margin:0"><option>Planejado</option><option>Confirmado</option><option>Em negociação</option><option>Concluído</option><option>Cancelado</option></select>
+          </div>
+        </div>
+
+        <div class="admin-section-title">Detalhes Operacionais</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Responsável</label>
+            <input type="text" class="admin-input" id="edit-resp" placeholder="Ex: Jéss e Jê">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Formato</label>
+            <input type="text" class="admin-input" id="edit-formato" placeholder="Ex: Presencial ou Online">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cota / Patrocínio</label>
+            <input type="text" class="admin-input" id="edit-cota" placeholder="Ex: Ouro, Diamond...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vagas disponíveis</label>
+            <input type="text" class="admin-input" id="edit-vagas" placeholder="Ex: 5 executivos">
+          </div>
+        </div>
+
+        <div class="admin-section-title">Informações Adicionais</div>
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label class="form-label">Público Alvo</label>
+            <input type="text" class="admin-input" id="edit-publico" placeholder="Quem participará?">
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Benefícios / Entregas</label>
+            <textarea class="admin-input" id="edit-beneficios" placeholder="Palestras, estande, brindes..."></textarea>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Observações Internas</label>
+            <textarea class="admin-input" id="edit-obs" placeholder="Notas ou links úteis..."></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-icon" id="btn-delete" style="color:var(--red); border-color:var(--red); margin-right:auto;">🗑️ Excluir</button>
+        <button class="btn-primary" id="btn-save">Salvar no Firebase</button>
+      </div>
     </div>
+    
   </div>
 </div>
 
@@ -365,7 +487,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, updateDoc, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-  // CONFIG (Adicione as suas reais aqui)
+  // FIREBASE CONFIG
   const firebaseConfig = {
     apiKey: "AIzaSyCmuDrq-ctHOGu4Fe9gHoK2Fxhcfg3BE9g",
     authDomain: "calendario-estrategico.firebaseapp.com",
@@ -378,7 +500,59 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // STATE
+  // DADOS DE SEGURANÇA (OS 48 EVENTOS ORIGINAIS)
+  const ORIGINAL_EVENTS = [
+    {tipo:"Interno",responsavel:"Jéss e Jê",mes_ref:"Janeiro",data_ini:"2026-01-28",data_fim:"2026-01-30",evento:"Tripla Conecta",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:"kick-off vendas"},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Fevereiro",data_ini:"2026-02-17",data_fim:"2026-02-17",evento:"Carnaval",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Fevereiro",data_ini:"2026-02-26",data_fim:"2026-02-26",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-09",data_fim:"2026-03-09",evento:"Cybersecurity Forum 2026",cota:"",vagas:"13 convites",publico:"",beneficios:"Participação em um painel / Estande de 8m²",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Março",data_ini:"2026-03-12",data_fim:"2026-03-12",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Presencial",obs:"presencial"},
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-17",data_fim:"2026-03-20",evento:"UTCAL Summit",cota:"",vagas:"8 executivos Tripla",publico:"",beneficios:"1 palestra 20 minutos",status:"Planejado",formato:"",obs:""},
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-18",data_fim:"2026-03-22",evento:"CIO Brasil",cota:"",vagas:"8 executivos Tripla",publico:"",beneficios:"Palestras 20 min. 50 CIOs / Estande",status:"Planejado",formato:"",obs:""},
+    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Março",data_ini:"2026-03-19",data_fim:"2026-03-19",evento:"CIO Converge",cota:"",vagas:"1 executivo Tripla",publico:"",beneficios:"Jantar alto nível com CIOs MG",status:"Planejado",formato:"",obs:"Calendário original indicava 26/03"},
+    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Março",data_ini:"2026-03-23",data_fim:"2026-03-26",evento:"RSA Conference",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-25",data_fim:"2026-03-25",evento:"Happy Hour Comercial SP",cota:"",vagas:"",publico:"",beneficios:"",status:"",formato:"",obs:""},
+    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Março",data_ini:"2026-03-26",data_fim:"2026-03-26",evento:"GPTI Experience",cota:"Cota Ouro",vagas:"2",publico:"Até 30 profissionais de TI",beneficios:"1 palestra 15 minutos",status:"Planejado",formato:"",obs:""},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Abril",data_ini:"2026-04-03",data_fim:"2026-04-03",evento:"Sexta-feira Santa",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Abril",data_ini:"2026-04-09",data_fim:"2026-04-11",evento:"CIO Meeting",cota:"Cota Prata",vagas:"5 executivos Tripla",publico:"",beneficios:"Estande de 9m²",status:"Planejado",formato:"",obs:""},
+    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Abril",data_ini:"2026-04-14",data_fim:"2026-04-14",evento:"4CIO MG",cota:"",vagas:"4 executivos Tripla",publico:"",beneficios:"Apresentações para 50% dos CIOs / Estande",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Abril",data_ini:"2026-04-15",data_fim:"2026-04-15",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Abril",data_ini:"2026-04-15",data_fim:"2026-04-16",evento:"Cloudflare Immerse SP",cota:"Platinum",vagas:"5",publico:"",beneficios:"Backdrop / Promotora",status:"Confirmado",formato:"Presencial",obs:""},
+    {tipo:"Interno",responsavel:"Jéss",mes_ref:"Abril",data_ini:"2026-04-16",data_fim:"2026-04-16",evento:"Happy Hour after CIO Meeting",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Abril",data_ini:"2026-04-21",data_fim:"2026-04-21",evento:"Tiradentes",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Comercial",responsavel:"",mes_ref:"Abril",data_ini:"2026-04-22",data_fim:"2026-04-23",evento:"IAM Tech Day",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Maio",data_ini:"2026-05-01",data_fim:"2026-05-01",evento:"Dia do Trabalhador",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Maio",data_ini:"2026-05-12",data_fim:"2026-05-12",evento:"Security Leaders BH",cota:"",vagas:"6 executivos",publico:"",beneficios:"Case de sucesso (20 minutos)",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"Jess",mes_ref:"Maio",data_ini:"2026-05-14",data_fim:"2026-05-14",evento:"Happy Hour FO",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:"Experiência Gastronômica"},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Maio",data_ini:"2026-05-15",data_fim:"2026-05-15",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Presencial",obs:"presencial"},
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Maio",data_ini:"2026-05-20",data_fim:"2026-05-24",evento:"CIO Gov",cota:"Spot Network",vagas:"3 executivos",publico:"",beneficios:"Pitch de 5 minutos na plenária",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Junho",data_ini:"2026-06-18",data_fim:"2026-06-18",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Junho",data_ini:"2026-06-19",data_fim:"2026-06-19",evento:"Corpus Christi",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Comercial",responsavel:"",mes_ref:"Junho",data_ini:"2026-06-24",data_fim:"2026-06-28",evento:"CIO Cerrado",cota:"Cota Platina",vagas:"6 executivos",publico:"",beneficios:"Apresentação de 20 minutos / Estande",status:"Planejado",formato:"",obs:""},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Junho",data_ini:"2026-06-24",data_fim:"2026-06-24",evento:"São João",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"Jess",mes_ref:"Julho",data_ini:"2026-07-05",data_fim:"2026-07-05",evento:"Happy Hour Fortaleza",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Julho",data_ini:"2026-07-09",data_fim:"2026-07-09",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
+    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Agosto",data_ini:"2026-08-01",data_fim:"2026-08-01",evento:"BBQ Nerd",cota:"Diamante",vagas:"4 executivos",publico:"",beneficios:"Apresentação 10 min",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Agosto",data_ini:"2026-08-05",data_fim:"2026-08-05",evento:"PDL",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"Jéss e Jê",mes_ref:"Agosto",data_ini:"2026-08-12",data_fim:"2026-08-14",evento:"Tripla Summit / Tripla 11 anos",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Agosto",data_ini:"2026-08-15",data_fim:"2026-08-15",evento:"Dia de N. Sra. da Boa Viagem",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Comercial",responsavel:"",mes_ref:"Agosto",data_ini:"2026-08-19",data_fim:"2026-08-23",evento:"IT Forum Praia do Forte",cota:"",vagas:"3 executivos",publico:"",beneficios:"Reuniões 15 min",status:"Planejado",formato:"",obs:""},
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Agosto",data_ini:"2026-08-24",data_fim:"2026-08-26",evento:"Febraban Tech",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Setembro",data_ini:"2026-09-07",data_fim:"2026-09-07",evento:"Independência do Brasil",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Setembro",data_ini:"2026-09-15",data_fim:"2026-09-17",evento:"Mind the Sec",cota:"Diamond",vagas:"",publico:"",beneficios:"Estande 48m²",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Setembro",data_ini:"2026-09-18",data_fim:"2026-09-18",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Outubro",data_ini:"2026-10-12",data_fim:"2026-10-12",evento:"Dia de N. Sra. Aparecida",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Outubro",data_ini:"2026-10-21",data_fim:"2026-10-21",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Presencial",obs:"presencial"},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Novembro",data_ini:"2026-11-02",data_fim:"2026-11-02",evento:"Finados",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Novembro",data_ini:"2026-11-12",data_fim:"2026-11-12",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Online",obs:"online"},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Novembro",data_ini:"2026-11-15",data_fim:"2026-11-15",evento:"Proclamação da República",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Novembro",data_ini:"2026-11-20",data_fim:"2026-11-20",evento:"Dia da Consciência Negra",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Dezembro",data_ini:"2026-12-08",data_fim:"2026-12-08",evento:"Dia de N. Sra. da Conceição",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Dezembro",data_ini:"2026-12-10",data_fim:"2026-12-10",evento:"Embarca Tripla",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"Presencial",obs:"presencial"},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Dezembro",data_ini:"2026-12-25",data_fim:"2026-12-25",evento:"Natal",cota:"",vagas:"",publico:"",beneficios:"",status:"Planejado",formato:"",obs:""}
+  ];
+
+  // STATE GLOBAIS
   let EVENTS = [];
   const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -391,35 +565,56 @@
   let miniMonth = today.getMonth(), miniYear = today.getFullYear();
   let currentWeekStart = getStartOfWeek(today);
   let isAdmin = false;
+  let currentEditId = null; // Armazena o ID sendo editado
 
   const STATUS_CLASS = {'Planejado':'planejado','Confirmado':'confirmado','Em negociação':'negociacao','Concluído':'concluido','Cancelado':'cancelado'};
+  const TYPE_COLOR = { Comercial:'var(--c-comercial)', Interno:'var(--c-interno)', Feriado:'var(--c-feriado)' };
 
-  // ── MOCK DATA DE SEGURANÇA (Se o banco estiver vazio) ──
-  const INITIAL_MOCK = [
-    {tipo:"Interno",responsavel:"Jéss e Jê",mes_ref:"Janeiro",data_ini:"2026-01-28",data_fim:"2026-01-30",evento:"Tripla Conecta",status:"Planejado",formato:"Presencial"},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Abril",data_ini:"2026-04-15",data_fim:"2026-04-16",evento:"Cloudflare Immerse SP 2026",status:"Confirmado",cota:"Platinum",vagas:"5"},
-    {tipo:"Feriado",responsavel:"",mes_ref:"Abril",data_ini:"2026-04-21",data_fim:"2026-04-21",evento:"Tiradentes",status:"Planejado"}
-  ];
-
-  // ── FIREBASE FUNCTIONS ──
+  // ── FIREBASE LOAD & MIGRATE ──
   async function loadEventsFromFirebase() {
     try {
       const querySnapshot = await getDocs(collection(db, "eventos"));
       EVENTS = [];
       querySnapshot.forEach((doc) => { EVENTS.push({ id: doc.id, ...doc.data() }); });
       
-      // Se não tiver nada no banco, carrega o Mock Data para não ficar vazio na tela.
+      // Se não tiver nada no banco, carrega o Mock Data para a tela e mostra o botão de Sync
       if(EVENTS.length === 0) {
-        EVENTS = INITIAL_MOCK.map((m, i) => ({ id: `mock_${i}`, ...m }));
-        console.warn("Banco vazio. Carregando dados de exemplo.");
+        EVENTS = ORIGINAL_EVENTS.map((m, i) => ({ id: `mock_${i}`, ...m }));
+        document.getElementById('btn-sync-data').style.display = 'block'; // Mostra botão de Sincronizar
+        console.warn("Banco vazio. Dados locais carregados. Ative o modo admin e clique em Sincronizar.");
+      } else {
+        document.getElementById('btn-sync-data').style.display = 'none'; // Esconde botão se o banco tem dados
       }
       initUI();
     } catch (error) {
       console.error("Erro Firebase:", error);
-      EVENTS = INITIAL_MOCK.map((m, i) => ({ id: `mock_${i}`, ...m }));
+      EVENTS = ORIGINAL_EVENTS.map((m, i) => ({ id: `mock_${i}`, ...m }));
       initUI();
     }
   }
+
+  // FUNÇÃO MÁGICA: Sincroniza os 48 eventos pro Firebase de uma vez
+  document.getElementById('btn-sync-data').onclick = async () => {
+    if(!confirm("Isso vai salvar todos os 48 eventos padrão no seu banco de dados Firebase. Deseja continuar?")) return;
+    const btn = document.getElementById('btn-sync-data');
+    btn.textContent = "⏳ Sincronizando..."; btn.disabled = true;
+    
+    try {
+      const batch = writeBatch(db);
+      ORIGINAL_EVENTS.forEach(ev => {
+        const docRef = doc(collection(db, "eventos")); // Cria nova referência com ID automático
+        batch.set(docRef, ev);
+      });
+      await batch.commit();
+      alert("✅ Todos os eventos foram salvos no Firebase com sucesso!");
+      await loadEventsFromFirebase(); // Recarrega
+    } catch (error) {
+      console.error("Erro ao sincronizar lote: ", error);
+      alert("Erro de permissão! Lembre-se de liberar 'read, write' nas regras do Firestore.");
+    } finally {
+      btn.textContent = "☁️ Subir dados para o Firebase"; btn.disabled = false;
+    }
+  };
 
   // ── UTILS ──
   function parseDate(s) { if (!s) return null; const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
@@ -499,7 +694,7 @@
     else { banner.classList.remove('active'); }
   }
 
-  // ── RENDER VIEWS ──
+  // ── RENDER VIEWS (Timeline, Lista, Etc) ──
   function renderCurrentView() {
     if (currentView === 'timeline') renderTimeline();
     else if (currentView === 'calendar') renderCalendar();
@@ -520,7 +715,8 @@
       html += `<div class="month-block"><div class="month-header"><span class="month-name">${m}</span><span class="month-count">${byMonth[m].length}</span><div class="month-line"></div></div><div class="event-list">`;
       byMonth[m].forEach(e => {
         const d = parseDate(e.data_ini);
-        html += `<div class="event-card ${getStatus(e)}" onclick="window.openModal('${e.id}')">
+        const color = TYPE_COLOR[e.tipo] || 'var(--accent)';
+        html += `<div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
           <div class="event-date-col"><div class="event-date-day">${d?d.getDate():'-'}</div><div class="event-date-month">${d?MONTHS_SHORT[d.getMonth()]:''}</div></div>
           <div class="event-body"><div class="event-name">${e.evento}</div><div class="event-meta">${typeBadge(e.tipo)}${statusBadge(e.status)}${formatoBadge(e.formato)}${e.responsavel?`<span>👤 ${e.responsavel}</span>`:''}</div></div>
         </div>`;
@@ -545,7 +741,7 @@
       const dNum = i - fd + 1, isOther = dNum<1||dNum>dim, isToday = !isOther&&dNum===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear();
       const evs = !isOther&&evMap[dNum] ? evMap[dNum] : [];
       html += `<div class="cal-day ${isOther?'other-month':''} ${isToday?'today':''}"><div class="cal-day-num">${isOther?'':dNum}</div>
-        ${evs.slice(0,3).map(e => `<div class="cal-event-pill ${(e.tipo||'').toLowerCase()}" onclick="event.stopPropagation(); window.openModal('${e.id}')">${e.evento}</div>`).join('')}
+        ${evs.slice(0,3).map(e => `<div class="cal-event-pill ${(e.tipo||'').toLowerCase()}" onclick="event.stopPropagation(); window.openEventView('${e.id}')">${e.evento}</div>`).join('')}
         ${evs.length>3 ? `<div style="font-size:0.6rem;color:var(--muted)">+${evs.length-3}</div>` : ''}
       </div>`;
     }
@@ -560,7 +756,7 @@
       const cD = new Date(s); cD.setDate(s.getDate() + i);
       const evs = getFilteredEvents().filter(ev => { const iD=parseDate(ev.data_ini), fD=parseDate(ev.data_fim)||iD; return cD>=iD && cD<=fD; });
       html += `<div class="week-col"><div class="week-col-header">${DAYS_PT[i]} ${cD.getDate()}</div><div class="week-col-body">
-        ${evs.map(ev => `<div class="week-event" style="border-color:var(--c-${(ev.tipo||'').toLowerCase()})" onclick="window.openModal('${ev.id}')">${ev.evento}</div>`).join('')}
+        ${evs.map(ev => `<div class="week-event" style="border-color:var(--c-${(ev.tipo||'').toLowerCase()})" onclick="window.openEventView('${ev.id}')">${ev.evento}</div>`).join('')}
       </div></div>`;
     }
     document.getElementById('week-grid').innerHTML = html;
@@ -575,7 +771,7 @@
     const body = document.getElementById('list-body'), noR = document.getElementById('list-no-results');
     if (evs.length===0) { body.innerHTML=''; noR.style.display='block'; return; }
     noR.style.display='none';
-    body.innerHTML = evs.map(e => `<tr onclick="window.openModal('${e.id}')" class="${getStatus(e)}"><td>${dateFmt(e)}</td><td><strong>${e.evento}</strong></td><td>${typeBadge(e.tipo)}</td><td>${e.responsavel||'—'}</td><td>${statusBadge(e.status)}</td><td>${formatoBadge(e.formato)}</td><td>${e.cota||'—'}</td></tr>`).join('');
+    body.innerHTML = evs.map(e => `<tr onclick="window.openEventView('${e.id}')" class="${getStatus(e)}"><td>${dateFmt(e)}</td><td><strong>${e.evento}</strong></td><td>${typeBadge(e.tipo)}</td><td>${e.responsavel||'—'}</td><td>${statusBadge(e.status)}</td><td>${formatoBadge(e.formato)}</td><td>${e.cota||'—'}</td></tr>`).join('');
   }
 
   // SIDEBAR WIDGETS
@@ -593,7 +789,7 @@
   }
   function renderUpcoming() {
     const up = EVENTS.filter(e => parseDate(e.data_ini)>=today && e.tipo!=='Feriado').sort((a,b)=>parseDate(a.data_ini)-parseDate(b.data_ini)).slice(0,5);
-    document.getElementById('upcoming-list').innerHTML = up.map(e => `<div class="upcoming-item" onclick="window.openModal('${e.id}')"><div class="upcoming-dot" style="background:var(--c-${e.tipo.toLowerCase()})"></div><div><div class="upcoming-name">${e.evento}</div><div class="upcoming-date">${dateFmt(e)}</div></div></div>`).join('');
+    document.getElementById('upcoming-list').innerHTML = up.map(e => `<div class="upcoming-item" onclick="window.openEventView('${e.id}')"><div class="upcoming-dot" style="background:var(--c-${e.tipo.toLowerCase()})"></div><div><div class="upcoming-name">${e.evento}</div><div class="upcoming-date">${dateFmt(e)}</div></div></div>`).join('');
   }
   function renderStats() {
     document.getElementById('stats-grid').innerHTML = `
@@ -609,53 +805,105 @@
     document.getElementById('count-feriado').textContent = EVENTS.filter(e=>e.tipo==='Feriado').length;
   }
 
-  // ── MODAL & CRUD ──
-  window.openModal = function(id) {
-    let ev = EVENTS.find(e => e.id === id);
-    if(!id || !ev) {
-      ev = { id:"", evento:"", data_ini:"", data_fim:"", responsavel:"", tipo:"Comercial", status:"Planejado", cota:"", vagas:"", publico:"", beneficios:"", obs:"", formato:"" };
-      document.getElementById('modal-title').textContent = "Novo Evento"; document.getElementById('btn-delete').style.display = 'none';
-    } else { document.getElementById('modal-title').textContent = ev.evento; document.getElementById('btn-delete').style.display = 'block'; }
+  // ── MODAL LOGIC (UI MELHORADA) ──
+  
+  // Abrir modo "Bonito" (Read-only)
+  window.openEventView = function(id) {
+    const ev = EVENTS.find(e => e.id === id);
+    if(!ev) return;
+    currentEditId = id; // Armazena para caso ele queira editar
+    
+    // Atualiza cabeçalho
+    const color = TYPE_COLOR[ev.tipo] || 'var(--accent)';
+    document.getElementById('view-header').style.setProperty('--card-color', color);
+    document.getElementById('view-title').textContent = ev.evento;
+    document.getElementById('view-badges').innerHTML = typeBadge(ev.tipo) + statusBadge(ev.status);
+    document.getElementById('view-date').innerHTML = `📅 ${dateFmt(ev)}`;
+    document.getElementById('view-resp').innerHTML = `👤 ${ev.responsavel || 'Sem responsável'}`;
 
-    // Read Mode
-    document.getElementById('modal-view-body').innerHTML = `
-      <div class="modal-row"><span class="modal-label">Período</span><span class="modal-value">${dateFmt(ev)}</span></div>
-      <div class="modal-row"><span class="modal-label">Tipo</span><span class="modal-value">${typeBadge(ev.tipo)}</span></div>
-      <div class="modal-row"><span class="modal-label">Status</span><span class="modal-value">${statusBadge(ev.status)||'—'}</span></div>
-      <div class="modal-row"><span class="modal-label">Responsável</span><span class="modal-value">${ev.responsavel||'—'}</span></div>
-      ${ev.formato?`<div class="modal-row"><span class="modal-label">Formato</span><span class="modal-value">${ev.formato}</span></div>`:''}
-      ${ev.cota?`<div class="modal-row"><span class="modal-label">Cota</span><span class="modal-value" style="color:var(--amber)">${ev.cota}</span></div>`:''}
-      ${ev.vagas?`<div class="modal-row"><span class="modal-label">Vagas</span><span class="modal-value">${ev.vagas}</span></div>`:''}
-      ${ev.obs?`<div class="modal-row"><span class="modal-label">Obs</span><span class="modal-value">${ev.obs}</span></div>`:''}
-    `;
-    // Edit Mode
+    // Atualiza itens do Grid
+    document.getElementById('view-status').textContent = ev.status || '-';
+    document.getElementById('view-formato').textContent = ev.formato || 'Não definido';
+    
+    document.getElementById('view-cota').textContent = ev.cota || '-';
+    document.getElementById('view-vagas').textContent = ev.vagas || '-';
+    
+    // Mostra/esconde blocos conforme conteúdo
+    const toggleBlock = (id, val) => {
+      const el = document.getElementById(id);
+      if(val) { el.style.display = 'block'; document.getElementById(id.replace('block-','view-')).textContent = val; }
+      else { el.style.display = 'none'; }
+    };
+    
+    toggleBlock('block-publico', ev.publico);
+    toggleBlock('block-beneficios', ev.beneficios);
+    toggleBlock('block-obs', ev.obs);
+
+    // Troca divs
+    document.getElementById('mode-view').classList.remove('hide');
+    document.getElementById('mode-edit').classList.add('hide');
+    document.getElementById('modal-overlay').classList.add('open');
+  };
+
+  // Abrir Form de Edição / Novo Evento
+  window.openAdminForm = function(id) {
+    let ev = EVENTS.find(e => e.id === id);
+    
+    if(!id || !ev) {
+      // É UM NOVO EVENTO
+      ev = { id:"", evento:"", data_ini:"", data_fim:"", responsavel:"", tipo:"Comercial", status:"Planejado", cota:"", vagas:"", publico:"", beneficios:"", obs:"", formato:"" };
+      document.getElementById('form-title').textContent = "+ Cadastrar Novo Evento";
+      document.getElementById('btn-delete').style.display = 'none';
+      document.getElementById('btn-cancel-edit').style.display = 'none'; // Não tem pra onde voltar
+    } else {
+      // EDITANDO EVENTO
+      document.getElementById('form-title').textContent = "Editar Evento";
+      document.getElementById('btn-delete').style.display = 'block';
+      document.getElementById('btn-cancel-edit').style.display = 'inline-block'; // Botão pra voltar pra visualização
+    }
+
+    // Preenche Inputs
     ['id','nome','ini','fim','resp','tipo','status','formato','cota','vagas','publico','beneficios','obs'].forEach(k => {
       const input = document.getElementById(`edit-${k}`);
       if(input) input.value = ev[k==='nome'?'evento': k==='ini'?'data_ini': k==='fim'?'data_fim': k] || "";
     });
-    document.getElementById('modal-overlay').classList.add('open');
-  }
 
+    // Troca divs
+    document.getElementById('mode-view').classList.add('hide');
+    document.getElementById('mode-edit').classList.remove('hide');
+    document.getElementById('modal-overlay').classList.add('open');
+  };
+
+  // Botões de navegação dentro do modal
+  document.getElementById('btn-switch-edit').onclick = () => window.openAdminForm(currentEditId);
+  document.getElementById('btn-cancel-edit').onclick = () => window.openEventView(currentEditId);
+  document.getElementById('modal-close-view').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('modal-close-edit').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('btn-add-event').onclick = () => window.openAdminForm('');
+
+  // ── FIREBASE CRUD (SALVAR E EXCLUIR) ──
   document.getElementById('btn-save').onclick = async () => {
     const id = document.getElementById('edit-id').value;
     const btn = document.getElementById('btn-save');
     const data = { evento:document.getElementById('edit-nome').value, data_ini:document.getElementById('edit-ini').value, data_fim:document.getElementById('edit-fim').value, responsavel:document.getElementById('edit-resp').value, tipo:document.getElementById('edit-tipo').value, status:document.getElementById('edit-status').value, formato:document.getElementById('edit-formato').value, cota:document.getElementById('edit-cota').value, vagas:document.getElementById('edit-vagas').value, publico:document.getElementById('edit-publico').value, beneficios:document.getElementById('edit-beneficios').value, obs:document.getElementById('edit-obs').value };
-    if(!data.evento || !data.data_ini) return alert("Nome e Data de Início são obrigatórios.");
+    if(!data.evento || !data.data_ini) return alert("Nome do evento e Data de Início são obrigatórios.");
     data.mes_ref = MONTHS_PT[parseDate(data.data_ini).getMonth()];
+    
     btn.textContent = "Salvando..."; btn.disabled = true;
     try {
       if(id && !id.startsWith('mock_')) { await updateDoc(doc(db, "eventos", id), data); }
       else if (!id) { await addDoc(collection(db, "eventos"), data); }
-      else { /* Update Mock local */ const idx = EVENTS.findIndex(e=>e.id===id); EVENTS[idx]={...EVENTS[idx], ...data}; }
+      else { /* Update Mock local para testar sem banco */ const idx = EVENTS.findIndex(e=>e.id===id); EVENTS[idx]={...EVENTS[idx], ...data}; }
+      
       document.getElementById('modal-overlay').classList.remove('open');
       if(id && id.startsWith('mock_')) initUI(); else await loadEventsFromFirebase();
-    } catch (e) { console.error(e); alert("Erro ao salvar no banco."); }
-    finally { btn.textContent = "Salvar no Banco"; btn.disabled = false; }
+    } catch (e) { console.error(e); alert("Erro ao salvar no banco. Verifique as regras (leitura/escrita) no Firestore."); }
+    finally { btn.textContent = "Salvar no Firebase"; btn.disabled = false; }
   };
 
   document.getElementById('btn-delete').onclick = async () => {
     const id = document.getElementById('edit-id').value;
-    if(!confirm("Excluir evento?")) return;
+    if(!confirm("Tem certeza que deseja excluir permanentemente este evento?")) return;
     try {
       if(id && !id.startsWith('mock_')) await deleteDoc(doc(db, "eventos", id));
       else EVENTS = EVENTS.filter(e=>e.id!==id);
@@ -665,9 +913,7 @@
   };
 
   // ── INTERACTIONS ──
-  document.getElementById('modal-close').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
-  document.getElementById('btn-add-event').onclick = () => window.openModal('');
-  document.getElementById('btn-admin-toggle').onclick = () => { isAdmin = !isAdmin; document.body.classList.toggle('admin-mode', isAdmin); };
+  document.getElementById('btn-admin-toggle').onclick = () => { isAdmin = !isAdmin; document.body.classList.toggle('admin-mode', isAdmin); document.getElementById('btn-admin-toggle').classList.toggle('active', isAdmin); };
   document.getElementById('btn-theme').onclick = () => { const html = document.documentElement; html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark'; };
   document.getElementById('btn-share').onclick = () => { navigator.clipboard.writeText(window.location.href); alert("Link com os filtros atuais copiado!"); };
   
