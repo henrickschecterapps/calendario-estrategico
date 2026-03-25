@@ -149,7 +149,7 @@
   .week-col-body { padding: 8px; display: flex; flex-direction: column; gap: 6px; }
   .week-event { font-size: 0.7rem; padding: 6px; border-radius: 4px; background: var(--surface2); border-left: 3px solid var(--accent); cursor: pointer; }
 
-  /* LIST VIEW */
+  /* LIST VIEW & ADMIN LIST */
   .list-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
   .list-table th { text-align: left; padding: 10px 14px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; color: var(--muted); background: var(--surface); border-bottom: 1px solid var(--border); cursor: pointer; }
   .list-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
@@ -324,58 +324,53 @@
     </div>
 
     <div id="view-admin" class="view-container">
-      
       <div class="admin-grid">
-        <div class="admin-card">
-          <div class="admin-card-title">Total de Eventos</div>
-          <div class="admin-card-value" id="dash-total">0</div>
-        </div>
-        <div class="admin-card">
-          <div class="admin-card-title" style="color:var(--c-comercial)">Eventos Comerciais</div>
-          <div class="admin-card-value" id="dash-comercial">0</div>
-        </div>
-        <div class="admin-card">
-          <div class="admin-card-title" style="color:var(--c-interno)">Eventos Internos</div>
-          <div class="admin-card-value" id="dash-interno">0</div>
-        </div>
-        <div class="admin-card">
-          <div class="admin-card-title" style="color:var(--green)">Status Confirmados</div>
-          <div class="admin-card-value" id="dash-confirmados">0</div>
-        </div>
+        <div class="admin-card"><div class="admin-card-title">Total de Eventos</div><div class="admin-card-value" id="dash-total">0</div></div>
+        <div class="admin-card"><div class="admin-card-title" style="color:var(--c-comercial)">Comerciais</div><div class="admin-card-value" id="dash-comercial">0</div></div>
+        <div class="admin-card"><div class="admin-card-title" style="color:var(--c-interno)">Internos</div><div class="admin-card-value" id="dash-interno">0</div></div>
+        <div class="admin-card"><div class="admin-card-title" style="color:var(--green)">Confirmados</div><div class="admin-card-value" id="dash-confirmados">0</div></div>
       </div>
 
       <div class="admin-panels">
+        
         <div class="admin-panel">
-          <h3>📥 Importar Dados (Excel / CSV)</h3>
-          <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">
-            Baixe a planilha modelo, preencha com seus eventos e faça o upload para enviar tudo ao sistema de uma vez.
-          </p>
-          <button class="btn-icon" id="btn-download-csv" style="margin-bottom:16px">📄 Baixar Planilha Modelo</button>
-          
-          <div class="file-drop" id="file-dropzone" onclick="document.getElementById('csv-file').click()">
-            <div style="font-size:1.5rem; margin-bottom:8px">📁</div>
-            <div>Clique ou arraste sua planilha <b>.csv</b> aqui</div>
-            <input type="file" id="csv-file" accept=".csv">
-          </div>
-          
+          <h3>📥 Importar via Planilha</h3>
+          <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Baixe o modelo, preencha no Excel e importe múltiplos eventos de uma vez.</p>
+          <button class="btn-icon" id="btn-download-csv" style="margin-bottom:16px">📄 Baixar Modelo CSV</button>
+          <div class="file-drop" id="file-dropzone" onclick="document.getElementById('csv-file').click()"><div style="font-size:1.5rem; margin-bottom:8px">📁</div><div>Clique ou arraste o <b>.csv</b> aqui</div><input type="file" id="csv-file" accept=".csv"></div>
           <button class="btn-primary" id="btn-upload-csv" style="width:100%" disabled>Iniciar Importação</button>
         </div>
 
         <div class="admin-panel">
           <h3>👥 Cadastro de Responsáveis</h3>
-          <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">
-            Adicione nomes para aparecerem automaticamente nas listas de filtros e de novos eventos.
-          </p>
-          <div style="display:flex; gap:8px; margin-bottom:16px;">
-            <input type="text" id="new-resp-input" class="admin-input" style="margin:0" placeholder="Nome do novo responsável...">
-            <button class="btn-primary" id="btn-add-resp">Adicionar</button>
-          </div>
-          
-          <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 200px; overflow-y:auto; padding:8px;" id="resp-list-admin">
-            </div>
+          <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Adicione nomes para aparecerem nas opções de formulário.</p>
+          <div style="display:flex; gap:8px; margin-bottom:16px;"><input type="text" id="new-resp-input" class="admin-input" style="margin:0" placeholder="Nome..."><button class="btn-primary" id="btn-add-resp">Adicionar</button></div>
+          <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 200px; overflow-y:auto; padding:8px;" id="resp-list-admin"></div>
         </div>
-      </div>
 
+        <div class="admin-panel" style="grid-column: 1 / -1; margin-top: 8px;">
+          <h3>📋 Gerenciamento Rápido de Eventos</h3>
+          <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">
+            Edite ou exclua eventos rapidamente nesta lista (ela respeita os filtros da barra lateral).
+          </p>
+          <div style="overflow-x: auto;">
+            <table class="list-table">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Evento</th>
+                  <th>Responsável</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="admin-event-list-body">
+                </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
     </div>
   </main>
 </div>
@@ -392,8 +387,7 @@
         <div id="view-badges" style="margin-bottom: 12px; display:flex; gap:6px;"></div>
         <h2 class="modal-title" id="view-title">Nome do Evento</h2>
         <div style="font-size:0.85rem; color:var(--muted); display:flex; gap:16px;">
-          <span id="view-date">📅 Data</span>
-          <span id="view-resp">👤 Responsável</span>
+          <span id="view-date">📅 Data</span><span id="view-resp">👤 Responsável</span>
         </div>
       </div>
       <div class="modal-body">
@@ -418,10 +412,7 @@
     <div id="mode-edit" class="hide">
       <div class="modal-header-admin">
         <h3 style="font-size:1.1rem" id="form-title">Editar Evento</h3>
-        <div style="display:flex; gap:8px;">
-           <button class="btn-icon" id="btn-cancel-edit">Voltar</button>
-           <button class="btn-icon" id="modal-close-edit">✕</button>
-        </div>
+        <div style="display:flex; gap:8px;"><button class="btn-icon" id="btn-cancel-edit">Voltar</button><button class="btn-icon" id="modal-close-edit">✕</button></div>
       </div>
       <div class="modal-body">
         <input type="hidden" id="edit-id">
@@ -433,7 +424,6 @@
           <div><label class="form-label">Tipo</label><select class="admin-input" id="edit-tipo"><option>Comercial</option><option>Interno</option><option>Feriado</option></select></div>
           <div><label class="form-label">Status</label><select class="admin-input" id="edit-status"><option>Planejado</option><option>Confirmado</option><option>Em negociação</option><option>Concluído</option><option>Cancelado</option></select></div>
         </div>
-
         <div class="admin-section-title">Detalhes Operacionais</div>
         <div class="form-grid">
           <div><label class="form-label">Responsável</label><select class="admin-input" id="edit-resp"><option value="">Selecione...</option></select></div>
@@ -441,7 +431,6 @@
           <div><label class="form-label">Cota</label><input type="text" class="admin-input" id="edit-cota"></div>
           <div><label class="form-label">Vagas</label><input type="text" class="admin-input" id="edit-vagas"></div>
         </div>
-
         <div class="admin-section-title">Informações Adicionais</div>
         <div class="form-grid">
           <div class="form-full"><label class="form-label">Público Alvo</label><input type="text" class="admin-input" id="edit-publico"></div>
@@ -486,11 +475,10 @@
   const STATUS_CLASS = {'Planejado':'planejado','Confirmado':'confirmado','Em negociação':'negociacao','Concluído':'concluido','Cancelado':'cancelado'};
   const TYPE_COLOR = { Comercial:'var(--c-comercial)', Interno:'var(--c-interno)', Feriado:'var(--c-feriado)' };
 
-  // DATAS DEFAULT (Garante que vai abrir em Janeiro de 2026 para encontrar os eventos)
   const today = new Date(); today.setHours(0,0,0,0);
   let calMonth = 0, calYear = 2026; 
   let miniMonth = 0, miniYear = 2026;
-  let currentWeekStart = new Date(2026, 0, 25); // Uma semana com eventos em Jan/2026
+  let currentWeekStart = new Date(2026, 0, 25); 
   
   let filterType = 'all', filterStatus = 'all', filterResp = 'all', searchQ = '';
   let currentView = 'timeline', sortCol = 'data_ini', sortAsc = true;
@@ -500,12 +488,9 @@
   // ── LOAD FIREBASE ──
   async function loadDataFromFirebase() {
     try {
-      // Carrega Eventos
       const evSnapshot = await getDocs(collection(db, "eventos"));
-      EVENTS = [];
-      evSnapshot.forEach(doc => { EVENTS.push({ id: doc.id, ...doc.data() }); });
+      EVENTS = []; evSnapshot.forEach(doc => { EVENTS.push({ id: doc.id, ...doc.data() }); });
       
-      // Ajusta o mês inicial do calendário para o evento mais antigo (se houver)
       if(EVENTS.length > 0) {
         const earliest = EVENTS.map(e=>parseDate(e.data_ini)).filter(d=>d).sort((a,b)=>a-b)[0];
         if(earliest) {
@@ -515,35 +500,17 @@
         }
       }
 
-      // Carrega Responsáveis
       const respSnapshot = await getDocs(collection(db, "responsaveis"));
-      RESPONSAVEIS = [];
-      respSnapshot.forEach(doc => { RESPONSAVEIS.push({ id: doc.id, ...doc.data() }); });
-
+      RESPONSAVEIS = []; respSnapshot.forEach(doc => { RESPONSAVEIS.push({ id: doc.id, ...doc.data() }); });
       initUI();
-    } catch (error) {
-      console.error("Erro Firebase:", error);
-      alert("Não foi possível conectar ao Firebase. Verifique sua conexão ou as regras do Firestore.");
-    }
+    } catch (error) { console.error("Erro Firebase:", error); alert("Falha na conexão com Firebase."); }
   }
 
   // ── UTILS ──
   function parseDate(s) { if (!s) return null; const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
   function getStartOfWeek(date) { const d = new Date(date); const day = d.getDay(); const diff = d.getDate() - day; return new Date(d.setDate(diff)); }
-  function getStatus(ev) {
-    const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim);
-    if (!ini) return 'future';
-    if (fim && today >= ini && today <= fim) return 'ongoing';
-    if (today > (fim || ini)) return 'past';
-    return 'future';
-  }
-  function dateFmt(ev) {
-    const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim);
-    if (!ini) return ev.mes_ref || '';
-    const opts = { day:'numeric', month:'short' };
-    if (!fim || ev.data_ini === ev.data_fim) return ini.toLocaleDateString('pt-BR', opts);
-    return `${ini.toLocaleDateString('pt-BR',opts)} – ${fim.toLocaleDateString('pt-BR',opts)}`;
-  }
+  function getStatus(ev) { const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim); if (!ini) return 'future'; if (fim && today >= ini && today <= fim) return 'ongoing'; if (today > (fim || ini)) return 'past'; return 'future'; }
+  function dateFmt(ev) { const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim); if (!ini) return ev.mes_ref || ''; const opts = { day:'numeric', month:'short' }; if (!fim || ev.data_ini === ev.data_fim) return ini.toLocaleDateString('pt-BR', opts); return `${ini.toLocaleDateString('pt-BR',opts)} – ${fim.toLocaleDateString('pt-BR',opts)}`; }
   function typeBadge(t) { return t ? `<span class="badge badge-${t.toLowerCase()}">${t}</span>` : ''; }
   function statusBadge(s) { return s ? `<span class="badge badge-status-${STATUS_CLASS[s]||''}">${s}</span>` : ''; }
   function formatoBadge(f) { return f ? `<span class="badge badge-formato">${f}</span>` : ''; }
@@ -551,15 +518,10 @@
   // ── INIT & FILTERS ──
   function initUI() {
     document.getElementById('today-badge').textContent = today.toLocaleDateString('pt-BR', {weekday:'short', day:'numeric', month:'short'});
-    updateResponsiblesUI();
-    checkNotifications();
-    renderAll();
+    updateResponsiblesUI(); checkNotifications(); renderAll();
   }
 
-  function renderAll() {
-    renderMiniCal(); renderUpcoming(); renderCounts(); 
-    renderDashboardAdmin(); renderCurrentView();
-  }
+  function renderAll() { renderMiniCal(); renderUpcoming(); renderCounts(); renderDashboardAdmin(); renderCurrentView(); }
 
   function getFilteredEvents() {
     return EVENTS.filter(e => {
@@ -576,209 +538,151 @@
 
   // ── GESTÃO DE RESPONSÁVEIS ──
   function updateResponsiblesUI() {
-    // Mescla responsáveis cadastrados no banco + os que já estão preenchidos nos eventos (legacy)
     const setResps = new Set(RESPONSAVEIS.map(r => r.nome));
     EVENTS.forEach(e => { if(e.responsavel) setResps.add(e.responsavel); });
-    
     const arr = Array.from(setResps).sort();
     
-    // Atualiza Select do Filtro na Sidebar
-    const filterSel = document.getElementById('filter-resp');
-    filterSel.innerHTML = '<option value="all">Todos os responsáveis</option>';
-    
-    // Atualiza Select do Formulário (Modal)
-    const formSel = document.getElementById('edit-resp');
-    formSel.innerHTML = '<option value="">Sem responsável</option>';
-
-    // Atualiza a lista na aba Admin
-    const adminList = document.getElementById('resp-list-admin');
-    adminList.innerHTML = '';
+    const filterSel = document.getElementById('filter-resp'); filterSel.innerHTML = '<option value="all">Todos os responsáveis</option>';
+    const formSel = document.getElementById('edit-resp'); formSel.innerHTML = '<option value="">Sem responsável</option>';
+    const adminList = document.getElementById('resp-list-admin'); adminList.innerHTML = '';
 
     arr.forEach(r => {
-      // Sidebar
-      const opt1 = document.createElement('option'); opt1.value = r; opt1.textContent = r;
-      if(r === filterResp) opt1.selected = true; filterSel.appendChild(opt1);
-      
-      // Form
-      const opt2 = document.createElement('option'); opt2.value = r; opt2.textContent = r;
-      formSel.appendChild(opt2);
+      const opt1 = document.createElement('option'); opt1.value = r; opt1.textContent = r; if(r === filterResp) opt1.selected = true; filterSel.appendChild(opt1);
+      const opt2 = document.createElement('option'); opt2.value = r; opt2.textContent = r; formSel.appendChild(opt2);
 
-      // Admin List
-      const div = document.createElement('div');
-      div.style = "padding: 6px; border-bottom: 1px solid var(--border); font-size: 0.85rem; display:flex; justify-content:space-between;";
-      
-      // Checa se está no banco para permitir exclusão
+      const div = document.createElement('div'); div.style = "padding: 6px; border-bottom: 1px solid var(--border); font-size: 0.85rem; display:flex; justify-content:space-between;";
       const bdResp = RESPONSAVEIS.find(x => x.nome === r);
-      if(bdResp) {
-        div.innerHTML = `<span>👤 ${r}</span> <span style="color:var(--red); cursor:pointer" onclick="window.delResp('${bdResp.id}')">✕</span>`;
-      } else {
-        div.innerHTML = `<span>👤 ${r} <small style="color:var(--muted)">(via evento)</small></span>`;
-      }
+      if(bdResp) { div.innerHTML = `<span>👤 ${r}</span> <span style="color:var(--red); cursor:pointer" onclick="window.delResp('${bdResp.id}')">✕</span>`; } 
+      else { div.innerHTML = `<span>👤 ${r} <small style="color:var(--muted)">(via evento)</small></span>`; }
       adminList.appendChild(div);
     });
   }
 
   document.getElementById('btn-add-resp').onclick = async () => {
-    const inp = document.getElementById('new-resp-input');
-    const nome = inp.value.trim();
-    if(!nome) return;
-    try {
-      inp.value = "Salvando..."; inp.disabled = true;
-      await addDoc(collection(db, "responsaveis"), { nome });
-      inp.value = "";
-      await loadDataFromFirebase();
-    } catch(e) { console.error(e); alert("Erro ao salvar."); }
-    finally { inp.disabled = false; }
+    const inp = document.getElementById('new-resp-input'); const nome = inp.value.trim(); if(!nome) return;
+    try { inp.value = "Salvando..."; inp.disabled = true; await addDoc(collection(db, "responsaveis"), { nome }); inp.value = ""; await loadDataFromFirebase(); } 
+    catch(e) { console.error(e); alert("Erro ao salvar."); } finally { inp.disabled = false; }
   };
 
   window.delResp = async (id) => {
-    if(!confirm("Excluir este responsável? Ele não sumirá dos eventos antigos, apenas da lista de opções.")) return;
-    try { await deleteDoc(doc(db, "responsaveis", id)); await loadDataFromFirebase(); }
-    catch(e) { console.error(e); }
+    if(!confirm("Excluir este responsável das opções?")) return;
+    try { await deleteDoc(doc(db, "responsaveis", id)); await loadDataFromFirebase(); } catch(e) { console.error(e); }
   }
 
-  // ── DASHBOARD ADMIN ABA ──
+  // ── DASHBOARD ADMIN (INCLUI A TABELA DE EVENTOS) ──
   function renderDashboardAdmin() {
     document.getElementById('dash-total').textContent = EVENTS.length;
     document.getElementById('dash-comercial').textContent = EVENTS.filter(e=>e.tipo==='Comercial').length;
     document.getElementById('dash-interno').textContent = EVENTS.filter(e=>e.tipo==='Interno').length;
     document.getElementById('dash-confirmados').textContent = EVENTS.filter(e=>e.status==='Confirmado').length;
+    
+    // Tabela Rápida de Eventos
+    const tbody = document.getElementById('admin-event-list-body');
+    const evs = getFilteredEvents().sort((a,b) => (parseDate(a.data_ini) || new Date(2030,0)) - (parseDate(b.data_ini) || new Date(2030,0)));
+    
+    if(evs.length === 0) {
+       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--muted)">Nenhum evento listado.</td></tr>';
+       return;
+    }
+
+    tbody.innerHTML = evs.map(e => `
+      <tr style="border-bottom: 1px solid var(--border);">
+        <td style="padding: 10px 14px; font-size: 0.8rem;">${dateFmt(e)}</td>
+        <td style="padding: 10px 14px;"><strong>${e.evento}</strong></td>
+        <td style="padding: 10px 14px; font-size: 0.8rem;">${e.responsavel || '—'}</td>
+        <td style="padding: 10px 14px;">${statusBadge(e.status)}</td>
+        <td style="padding: 10px 14px; text-align: right; display:flex; gap:8px; justify-content:flex-end;">
+          <button class="btn-icon" onclick="window.openAdminForm('${e.id}')" title="Editar este evento" style="padding:4px 8px;">✏️</button>
+          <button class="btn-icon" onclick="window.quickDelete('${e.id}')" title="Excluir" style="padding:4px 8px; color:var(--red); border-color:var(--red)">🗑️</button>
+        </td>
+      </tr>
+    `).join('');
   }
+
+  // Deletar pela tabela rápida
+  window.quickDelete = async (id) => {
+    if(!confirm("Tem certeza absoluta que deseja excluir este evento? Esta ação não pode ser desfeita.")) return;
+    try {
+      if(id && !id.startsWith('mock_')) await deleteDoc(doc(db, "eventos", id));
+      await loadDataFromFirebase();
+    } catch(e) { console.error(e); alert("Erro de permissão ou falha na exclusão."); }
+  };
 
   // ── IMPORTAÇÃO CSV LÓGICA ──
   document.getElementById('btn-download-csv').onclick = () => {
-    const csvContent = "evento,data_ini,data_fim,tipo,status,responsavel,formato,cota,vagas,publico,beneficios,obs\n" +
-                       "Exemplo Palestra,2026-05-10,2026-05-10,Comercial,Confirmado,Jéss e Jê,Online,Ouro,10,Clientes,Logo no site,Não esquecer link zoom\n";
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob); a.download = "template_eventos.csv"; a.click();
+    const csvContent = "evento,data_ini,data_fim,tipo,status,responsavel,formato,cota,vagas,publico,beneficios,obs\nExemplo Palestra,2026-05-10,2026-05-10,Comercial,Confirmado,Jéss e Jê,Online,Ouro,10,Clientes,Logo no site,Não esquecer link zoom\n";
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "template_eventos.csv"; a.click();
   };
 
   let fileToUpload = null;
   document.getElementById('csv-file').onchange = (e) => {
     fileToUpload = e.target.files[0];
-    const dropzone = document.getElementById('file-dropzone');
-    const btn = document.getElementById('btn-upload-csv');
-    if(fileToUpload) {
-      dropzone.innerHTML = `<div style="font-size:1.5rem; margin-bottom:8px">✅</div><div>Arquivo <b>${fileToUpload.name}</b> pronto!</div>`;
-      dropzone.style.borderColor = "var(--green)";
-      btn.disabled = false;
-    }
+    const dropzone = document.getElementById('file-dropzone'), btn = document.getElementById('btn-upload-csv');
+    if(fileToUpload) { dropzone.innerHTML = `<div style="font-size:1.5rem; margin-bottom:8px">✅</div><div>Arquivo <b>${fileToUpload.name}</b> pronto!</div>`; dropzone.style.borderColor = "var(--green)"; btn.disabled = false; }
   };
 
   document.getElementById('btn-upload-csv').onclick = () => {
-    if(!fileToUpload) return;
-    const reader = new FileReader();
+    if(!fileToUpload) return; const reader = new FileReader();
     reader.onload = async (e) => {
-      const text = e.target.result;
-      const lines = text.split('\n').filter(l => l.trim() !== '');
+      const text = e.target.result; const lines = text.split('\n').filter(l => l.trim() !== '');
       if(lines.length < 2) return alert("Arquivo vazio ou formato inválido.");
       
-      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-      const batch = writeBatch(db);
-      let count = 0;
-
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase()); const batch = writeBatch(db); let count = 0;
       for(let i = 1; i < lines.length; i++) {
-        // Separação simples por vírgula (Recomenda-se não usar vírgulas dentro dos textos no Excel antes de exportar csv)
-        const row = lines[i].split(','); 
-        let obj = {};
+        const row = lines[i].split(','); let obj = {};
         headers.forEach((h, idx) => { obj[h] = row[idx] ? row[idx].trim() : ''; });
-        
-        if(obj.evento && obj.data_ini) {
-          obj.mes_ref = MONTHS_PT[parseDate(obj.data_ini).getMonth()] || '';
-          const docRef = doc(collection(db, "eventos"));
-          batch.set(docRef, obj);
-          count++;
-        }
+        if(obj.evento && obj.data_ini) { obj.mes_ref = MONTHS_PT[parseDate(obj.data_ini).getMonth()] || ''; batch.set(doc(collection(db, "eventos")), obj); count++; }
       }
-
       if(count > 0) {
         document.getElementById('btn-upload-csv').textContent = "Enviando...";
         try {
-          await batch.commit();
-          alert(`✅ Importação concluída! ${count} eventos adicionados.`);
-          fileToUpload = null;
+          await batch.commit(); alert(`✅ Importação concluída! ${count} eventos adicionados.`); fileToUpload = null;
           document.getElementById('file-dropzone').innerHTML = `<div style="font-size:1.5rem; margin-bottom:8px">📁</div><div>Clique ou arraste nova planilha</div>`;
-          document.getElementById('file-dropzone').style.borderColor = "var(--border)";
-          document.getElementById('btn-upload-csv').textContent = "Iniciar Importação";
-          document.getElementById('btn-upload-csv').disabled = true;
+          document.getElementById('file-dropzone').style.borderColor = "var(--border)"; document.getElementById('btn-upload-csv').textContent = "Iniciar Importação"; document.getElementById('btn-upload-csv').disabled = true;
           await loadDataFromFirebase();
         } catch(err) { console.error(err); alert("Erro ao salvar dados no Firebase."); }
-      } else {
-        alert("Nenhum evento válido encontrado. Verifique as colunas 'evento' e 'data_ini'.");
-      }
-    };
-    reader.readAsText(fileToUpload);
+      } else { alert("Nenhum evento válido encontrado."); }
+    }; reader.readAsText(fileToUpload);
   };
 
-  // ── RENDERIZAÇÃO DAS OUTRAS VIEWS (Idêntica à versão anterior) ──
+  // ── RENDERIZAÇÃO DAS OUTRAS VIEWS ──
   function checkNotifications() {
-    const banner = document.getElementById('notification-banner');
-    const text = document.getElementById('notification-text');
-    const upcoming = EVENTS.filter(e => {
-      if (e.status !== 'Confirmado') return false;
-      const d = parseDate(e.data_ini); if(!d) return false;
-      const diffDays = Math.ceil((d - today) / (1000 * 60 * 60 * 24));
-      return diffDays >= 0 && diffDays <= 7;
-    });
-    if (upcoming.length > 0) { text.innerHTML = `Eventos Confirmados próximos: <b>${upcoming.map(e=>e.evento).join(', ')}</b>`; banner.classList.add('active'); } 
-    else { banner.classList.remove('active'); }
+    const banner = document.getElementById('notification-banner'), text = document.getElementById('notification-text');
+    const upcoming = EVENTS.filter(e => { if (e.status !== 'Confirmado') return false; const d = parseDate(e.data_ini); if(!d) return false; return Math.ceil((d - today) / (1000 * 60 * 60 * 24)) >= 0 && Math.ceil((d - today) / (1000 * 60 * 60 * 24)) <= 7; });
+    if (upcoming.length > 0) { text.innerHTML = `Eventos Confirmados próximos: <b>${upcoming.map(e=>e.evento).join(', ')}</b>`; banner.classList.add('active'); } else { banner.classList.remove('active'); }
   }
 
   function renderCurrentView() {
     document.querySelectorAll('.view-container').forEach(c => c.classList.remove('active'));
     document.getElementById(`view-${currentView}`).classList.add('active');
-    
-    if (currentView === 'timeline') renderTimeline();
-    else if (currentView === 'calendar') renderCalendar();
-    else if (currentView === 'week') renderWeek();
-    else if (currentView === 'list') renderList();
+    if (currentView === 'timeline') renderTimeline(); else if (currentView === 'calendar') renderCalendar(); else if (currentView === 'week') renderWeek(); else if (currentView === 'list') renderList();
   }
 
   function renderTimeline() {
     const evs = getFilteredEvents().sort((a,b) => (parseDate(a.data_ini) || new Date(2030,0)) - (parseDate(b.data_ini) || new Date(2030,0)));
     const container = document.getElementById('timeline-content');
     if(evs.length === 0) { container.innerHTML = '<div class="no-results"><div>Nenhum evento encontrado</div></div>'; return; }
-
-    const byMonth = {};
-    evs.forEach(e => { const m = e.mes_ref || (parseDate(e.data_ini) ? MONTHS_PT[parseDate(e.data_ini).getMonth()] : 'Sem mês'); if(!byMonth[m]) byMonth[m]=[]; byMonth[m].push(e); });
-    
+    const byMonth = {}; evs.forEach(e => { const m = e.mes_ref || (parseDate(e.data_ini) ? MONTHS_PT[parseDate(e.data_ini).getMonth()] : 'Sem mês'); if(!byMonth[m]) byMonth[m]=[]; byMonth[m].push(e); });
     let html = '';
     Object.keys(byMonth).forEach(m => {
       html += `<div class="month-block"><div class="month-header"><span class="month-name">${m}</span><span class="month-count">${byMonth[m].length}</span><div class="month-line"></div></div><div class="event-list">`;
       byMonth[m].forEach(e => {
-        const d = parseDate(e.data_ini);
-        const color = TYPE_COLOR[e.tipo] || 'var(--accent)';
-        html += `<div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
-          <div class="event-date-col"><div class="event-date-day">${d?d.getDate():'-'}</div><div class="event-date-month">${d?MONTHS_SHORT[d.getMonth()]:''}</div></div>
-          <div class="event-body"><div class="event-name">${e.evento}</div><div class="event-meta">${typeBadge(e.tipo)}${statusBadge(e.status)}${formatoBadge(e.formato)}${e.responsavel?`<span>👤 ${e.responsavel}</span>`:''}</div></div>
-        </div>`;
+        const d = parseDate(e.data_ini); const color = TYPE_COLOR[e.tipo] || 'var(--accent)';
+        html += `<div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')"><div class="event-date-col"><div class="event-date-day">${d?d.getDate():'-'}</div><div class="event-date-month">${d?MONTHS_SHORT[d.getMonth()]:''}</div></div><div class="event-body"><div class="event-name">${e.evento}</div><div class="event-meta">${typeBadge(e.tipo)}${statusBadge(e.status)}${formatoBadge(e.formato)}${e.responsavel?`<span>👤 ${e.responsavel}</span>`:''}</div></div></div>`;
       });
       html += `</div></div>`;
-    });
-    container.innerHTML = html;
+    }); container.innerHTML = html;
   }
 
   function renderCalendar() {
     document.getElementById('cal-month-label').textContent = `${MONTHS_PT[calMonth]} ${calYear}`;
-    const fd = new Date(calYear, calMonth, 1).getDay(), dim = new Date(calYear, calMonth+1, 0).getDate();
-    const cells = Math.ceil((fd + dim) / 7) * 7;
-    const evMap = {};
-    getFilteredEvents().forEach(e => {
-      const ini = parseDate(e.data_ini), fim = parseDate(e.data_fim) || ini;
-      if (!ini) return; let d = new Date(ini);
-      while (d <= fim) { if(d.getFullYear()===calYear && d.getMonth()===calMonth){ if(!evMap[d.getDate()]) evMap[d.getDate()]=[]; evMap[d.getDate()].push(e); } d.setDate(d.getDate()+1); }
-    });
+    const fd = new Date(calYear, calMonth, 1).getDay(), dim = new Date(calYear, calMonth+1, 0).getDate(), cells = Math.ceil((fd + dim) / 7) * 7, evMap = {};
+    getFilteredEvents().forEach(e => { const ini = parseDate(e.data_ini), fim = parseDate(e.data_fim) || ini; if (!ini) return; let d = new Date(ini); while (d <= fim) { if(d.getFullYear()===calYear && d.getMonth()===calMonth){ if(!evMap[d.getDate()]) evMap[d.getDate()]=[]; evMap[d.getDate()].push(e); } d.setDate(d.getDate()+1); } });
     let html = DAYS_PT.map(d => `<div class="cal-dow">${d}</div>`).join('');
     for (let i = 0; i < cells; i++) {
-      const dNum = i - fd + 1, isOther = dNum<1||dNum>dim, isToday = !isOther&&dNum===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear();
-      const evs = !isOther&&evMap[dNum] ? evMap[dNum] : [];
-      html += `<div class="cal-day ${isOther?'other-month':''} ${isToday?'today':''}"><div class="cal-day-num">${isOther?'':dNum}</div>
-        ${evs.slice(0,3).map(e => `<div class="cal-event-pill ${(e.tipo||'').toLowerCase()}" onclick="event.stopPropagation(); window.openEventView('${e.id}')">${e.evento}</div>`).join('')}
-        ${evs.length>3 ? `<div style="font-size:0.6rem;color:var(--muted)">+${evs.length-3}</div>` : ''}
-      </div>`;
-    }
-    document.getElementById('cal-grid').innerHTML = html;
+      const dNum = i - fd + 1, isOther = dNum<1||dNum>dim, isToday = !isOther&&dNum===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear(), evs = !isOther&&evMap[dNum] ? evMap[dNum] : [];
+      html += `<div class="cal-day ${isOther?'other-month':''} ${isToday?'today':''}"><div class="cal-day-num">${isOther?'':dNum}</div>${evs.slice(0,3).map(e => `<div class="cal-event-pill ${(e.tipo||'').toLowerCase()}" onclick="event.stopPropagation(); window.openEventView('${e.id}')">${e.evento}</div>`).join('')}${evs.length>3 ? `<div style="font-size:0.6rem;color:var(--muted)">+${evs.length-3}</div>` : ''}</div>`;
+    } document.getElementById('cal-grid').innerHTML = html;
   }
 
   function renderWeek() {
@@ -786,38 +690,26 @@
     document.getElementById('week-label').textContent = `${s.getDate()}/${s.getMonth()+1} até ${e.getDate()}/${e.getMonth()+1}`;
     let html = '';
     for(let i=0; i<7; i++) {
-      const cD = new Date(s); cD.setDate(s.getDate() + i);
-      const evs = getFilteredEvents().filter(ev => { const iD=parseDate(ev.data_ini), fD=parseDate(ev.data_fim)||iD; return cD>=iD && cD<=fD; });
-      html += `<div class="week-col"><div class="week-col-header">${DAYS_PT[i]} ${cD.getDate()}</div><div class="week-col-body">
-        ${evs.map(ev => `<div class="week-event" style="border-color:var(--c-${(ev.tipo||'').toLowerCase()})" onclick="window.openEventView('${ev.id}')">${ev.evento}</div>`).join('')}
-      </div></div>`;
-    }
-    document.getElementById('week-grid').innerHTML = html;
+      const cD = new Date(s); cD.setDate(s.getDate() + i); const evs = getFilteredEvents().filter(ev => { const iD=parseDate(ev.data_ini), fD=parseDate(ev.data_fim)||iD; return cD>=iD && cD<=fD; });
+      html += `<div class="week-col"><div class="week-col-header">${DAYS_PT[i]} ${cD.getDate()}</div><div class="week-col-body">${evs.map(ev => `<div class="week-event" style="border-color:var(--c-${(ev.tipo||'').toLowerCase()})" onclick="window.openEventView('${ev.id}')">${ev.evento}</div>`).join('')}</div></div>`;
+    } document.getElementById('week-grid').innerHTML = html;
   }
 
   function renderList() {
-    const evs = getFilteredEvents().sort((a, b) => {
-      let va=a[sortCol]||'', vb=b[sortCol]||'';
-      if (sortCol==='data_ini') return sortAsc ? (parseDate(va)||new Date(2030,0))-(parseDate(vb)||new Date(2030,0)) : (parseDate(vb)||new Date(2030,0))-(parseDate(va)||new Date(2030,0));
-      return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
-    });
+    const evs = getFilteredEvents().sort((a, b) => { let va=a[sortCol]||'', vb=b[sortCol]||''; if (sortCol==='data_ini') return sortAsc ? (parseDate(va)||new Date(2030,0))-(parseDate(vb)||new Date(2030,0)) : (parseDate(vb)||new Date(2030,0))-(parseDate(va)||new Date(2030,0)); return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va); });
     const body = document.getElementById('list-body'), noR = document.getElementById('list-no-results');
-    if (evs.length===0) { body.innerHTML=''; noR.style.display='block'; return; }
-    noR.style.display='none';
+    if (evs.length===0) { body.innerHTML=''; noR.style.display='block'; return; } noR.style.display='none';
     body.innerHTML = evs.map(e => `<tr onclick="window.openEventView('${e.id}')" class="${getStatus(e)}"><td>${dateFmt(e)}</td><td><strong>${e.evento}</strong></td><td>${typeBadge(e.tipo)}</td><td>${e.responsavel||'—'}</td><td>${statusBadge(e.status)}</td><td>${formatoBadge(e.formato)}</td><td>${e.cota||'—'}</td></tr>`).join('');
   }
 
   function renderMiniCal() {
     document.getElementById('mini-month-label').textContent = `${MONTHS_SHORT[miniMonth]} ${miniYear}`;
-    const fd = new Date(miniYear, miniMonth, 1).getDay(), dim = new Date(miniYear, miniMonth+1, 0).getDate();
-    const cells = Math.ceil((fd + dim) / 7) * 7;
-    const evDays = new Set(); EVENTS.forEach(e => { const i=parseDate(e.data_ini), f=parseDate(e.data_fim)||i; if(!i)return; let d=new Date(i); while(d<=f){ if(d.getFullYear()===miniYear&&d.getMonth()===miniMonth)evDays.add(d.getDate()); d.setDate(d.getDate()+1); } });
+    const fd = new Date(miniYear, miniMonth, 1).getDay(), dim = new Date(miniYear, miniMonth+1, 0).getDate(), cells = Math.ceil((fd + dim) / 7) * 7, evDays = new Set(); EVENTS.forEach(e => { const i=parseDate(e.data_ini), f=parseDate(e.data_fim)||i; if(!i)return; let d=new Date(i); while(d<=f){ if(d.getFullYear()===miniYear&&d.getMonth()===miniMonth)evDays.add(d.getDate()); d.setDate(d.getDate()+1); } });
     let html = DAYS_PT.map(d => `<div class="mini-cal-dow">${d}</div>`).join('');
     for (let i=0; i<cells; i++) {
       const dNum=i-fd+1, isO=dNum<1||dNum>dim, isT=!isO&&dNum===today.getDate()&&miniMonth===today.getMonth()&&miniYear===today.getFullYear(), hasEv=!isO&&evDays.has(dNum);
       html += `<div class="mini-day ${isO?'other-month':''} ${isT?'today':''} ${hasEv?'has-event':''}">${isO?'':dNum}</div>`;
-    }
-    document.getElementById('mini-cal-grid').innerHTML = html;
+    } document.getElementById('mini-cal-grid').innerHTML = html;
   }
   
   function renderUpcoming() {
@@ -826,58 +718,29 @@
   }
   
   function renderCounts() {
-    document.getElementById('count-all').textContent = EVENTS.length;
-    document.getElementById('count-comercial').textContent = EVENTS.filter(e=>e.tipo==='Comercial').length;
-    document.getElementById('count-interno').textContent = EVENTS.filter(e=>e.tipo==='Interno').length;
-    document.getElementById('count-feriado').textContent = EVENTS.filter(e=>e.tipo==='Feriado').length;
+    document.getElementById('count-all').textContent = EVENTS.length; document.getElementById('count-comercial').textContent = EVENTS.filter(e=>e.tipo==='Comercial').length; document.getElementById('count-interno').textContent = EVENTS.filter(e=>e.tipo==='Interno').length; document.getElementById('count-feriado').textContent = EVENTS.filter(e=>e.tipo==='Feriado').length;
   }
 
   // ── LOGICA DO MODAL EVENTOS ──
   window.openEventView = function(id) {
-    const ev = EVENTS.find(e => e.id === id);
-    if(!ev) return;
-    currentEditId = id; 
-    
-    document.getElementById('view-header').style.setProperty('--card-color', TYPE_COLOR[ev.tipo] || 'var(--accent)');
-    document.getElementById('view-title').textContent = ev.evento;
-    document.getElementById('view-badges').innerHTML = typeBadge(ev.tipo) + statusBadge(ev.status);
-    document.getElementById('view-date').innerHTML = `📅 ${dateFmt(ev)}`;
-    document.getElementById('view-resp').innerHTML = `👤 ${ev.responsavel || 'Sem responsável'}`;
-
-    document.getElementById('view-status').textContent = ev.status || '-';
-    document.getElementById('view-formato').textContent = ev.formato || 'Não definido';
-    document.getElementById('view-cota').textContent = ev.cota || '-';
-    document.getElementById('view-vagas').textContent = ev.vagas || '-';
-    
+    const ev = EVENTS.find(e => e.id === id); if(!ev) return; currentEditId = id; 
+    document.getElementById('view-header').style.setProperty('--card-color', TYPE_COLOR[ev.tipo] || 'var(--accent)'); document.getElementById('view-title').textContent = ev.evento; document.getElementById('view-badges').innerHTML = typeBadge(ev.tipo) + statusBadge(ev.status); document.getElementById('view-date').innerHTML = `📅 ${dateFmt(ev)}`; document.getElementById('view-resp').innerHTML = `👤 ${ev.responsavel || 'Sem responsável'}`;
+    document.getElementById('view-status').textContent = ev.status || '-'; document.getElementById('view-formato').textContent = ev.formato || 'Não definido'; document.getElementById('view-cota').textContent = ev.cota || '-'; document.getElementById('view-vagas').textContent = ev.vagas || '-';
     const toggleBlock = (id, val) => { const el = document.getElementById(id); if(val) { el.style.display = 'block'; document.getElementById(id.replace('block-','view-')).textContent = val; } else { el.style.display = 'none'; } };
     toggleBlock('block-publico', ev.publico); toggleBlock('block-beneficios', ev.beneficios); toggleBlock('block-obs', ev.obs);
-
-    document.getElementById('mode-view').classList.remove('hide');
-    document.getElementById('mode-edit').classList.add('hide');
-    document.getElementById('modal-overlay').classList.add('open');
+    document.getElementById('mode-view').classList.remove('hide'); document.getElementById('mode-edit').classList.add('hide'); document.getElementById('modal-overlay').classList.add('open');
   };
 
   window.openAdminForm = function(id) {
     let ev = EVENTS.find(e => e.id === id);
     if(!id || !ev) {
       ev = { id:"", evento:"", data_ini:"", data_fim:"", responsavel:"", tipo:"Comercial", status:"Planejado", cota:"", vagas:"", publico:"", beneficios:"", obs:"", formato:"" };
-      document.getElementById('form-title').textContent = "+ Cadastrar Novo Evento";
-      document.getElementById('btn-delete').style.display = 'none';
-      document.getElementById('btn-cancel-edit').style.display = 'none'; 
+      document.getElementById('form-title').textContent = "+ Cadastrar Novo Evento"; document.getElementById('btn-delete').style.display = 'none'; document.getElementById('btn-cancel-edit').style.display = 'none'; 
     } else {
-      document.getElementById('form-title').textContent = "Editar Evento";
-      document.getElementById('btn-delete').style.display = 'block';
-      document.getElementById('btn-cancel-edit').style.display = 'inline-block'; 
+      document.getElementById('form-title').textContent = "Editar Evento"; document.getElementById('btn-delete').style.display = 'block'; document.getElementById('btn-cancel-edit').style.display = 'inline-block'; 
     }
-
-    ['id','nome','ini','fim','resp','tipo','status','formato','cota','vagas','publico','beneficios','obs'].forEach(k => {
-      const input = document.getElementById(`edit-${k}`);
-      if(input) input.value = ev[k==='nome'?'evento': k==='ini'?'data_ini': k==='fim'?'data_fim': k] || "";
-    });
-
-    document.getElementById('mode-view').classList.add('hide');
-    document.getElementById('mode-edit').classList.remove('hide');
-    document.getElementById('modal-overlay').classList.add('open');
+    ['id','nome','ini','fim','resp','tipo','status','formato','cota','vagas','publico','beneficios','obs'].forEach(k => { const input = document.getElementById(`edit-${k}`); if(input) input.value = ev[k==='nome'?'evento': k==='ini'?'data_ini': k==='fim'?'data_fim': k] || ""; });
+    document.getElementById('mode-view').classList.add('hide'); document.getElementById('mode-edit').classList.remove('hide'); document.getElementById('modal-overlay').classList.add('open');
   };
 
   document.getElementById('btn-switch-edit').onclick = () => window.openAdminForm(currentEditId);
@@ -888,31 +751,20 @@
 
   // ── FIREBASE CRUD ──
   document.getElementById('btn-save').onclick = async () => {
-    const id = document.getElementById('edit-id').value;
-    const btn = document.getElementById('btn-save');
+    const id = document.getElementById('edit-id').value; const btn = document.getElementById('btn-save');
     const data = { evento:document.getElementById('edit-nome').value, data_ini:document.getElementById('edit-ini').value, data_fim:document.getElementById('edit-fim').value, responsavel:document.getElementById('edit-resp').value, tipo:document.getElementById('edit-tipo').value, status:document.getElementById('edit-status').value, formato:document.getElementById('edit-formato').value, cota:document.getElementById('edit-cota').value, vagas:document.getElementById('edit-vagas').value, publico:document.getElementById('edit-publico').value, beneficios:document.getElementById('edit-beneficios').value, obs:document.getElementById('edit-obs').value };
-    if(!data.evento || !data.data_ini) return alert("Nome do evento e Data de Início são obrigatórios.");
-    data.mes_ref = MONTHS_PT[parseDate(data.data_ini).getMonth()];
+    if(!data.evento || !data.data_ini) return alert("Nome do evento e Data de Início são obrigatórios."); data.mes_ref = MONTHS_PT[parseDate(data.data_ini).getMonth()];
     
     btn.textContent = "Salvando..."; btn.disabled = true;
     try {
-      if(id && !id.startsWith('mock_')) { await updateDoc(doc(db, "eventos", id), data); }
-      else { await addDoc(collection(db, "eventos"), data); }
-      
-      document.getElementById('modal-overlay').classList.remove('open');
-      await loadDataFromFirebase();
-    } catch (e) { console.error(e); alert("Erro ao salvar no banco."); }
-    finally { btn.textContent = "Salvar no Firebase"; btn.disabled = false; }
+      if(id && !id.startsWith('mock_')) { await updateDoc(doc(db, "eventos", id), data); } else { await addDoc(collection(db, "eventos"), data); }
+      document.getElementById('modal-overlay').classList.remove('open'); await loadDataFromFirebase();
+    } catch (e) { console.error(e); alert("Erro ao salvar no banco."); } finally { btn.textContent = "Salvar no Firebase"; btn.disabled = false; }
   };
 
   document.getElementById('btn-delete').onclick = async () => {
-    const id = document.getElementById('edit-id').value;
-    if(!confirm("Excluir permanentemente?")) return;
-    try {
-      if(id && !id.startsWith('mock_')) await deleteDoc(doc(db, "eventos", id));
-      document.getElementById('modal-overlay').classList.remove('open');
-      await loadDataFromFirebase();
-    } catch (e) { console.error(e); }
+    const id = document.getElementById('edit-id').value; if(!confirm("Excluir permanentemente?")) return;
+    try { if(id && !id.startsWith('mock_')) await deleteDoc(doc(db, "eventos", id)); document.getElementById('modal-overlay').classList.remove('open'); await loadDataFromFirebase(); } catch (e) { console.error(e); }
   };
 
   // ── INTERFACES & NAVEGAÇÃO ──
@@ -920,6 +772,12 @@
   document.getElementById('btn-theme').onclick = () => { const html = document.documentElement; html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark'; };
   document.getElementById('btn-share').onclick = () => { navigator.clipboard.writeText(window.location.href); alert("Link com os filtros copiado!"); };
   
+  document.getElementById('btn-export').onclick = () => {
+    let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Tripla//Eventos//PT\n";
+    getFilteredEvents().forEach(e => { if(!e.data_ini) return; const start = e.data_ini.replace(/-/g, '') + 'T000000Z', end = (e.data_fim || e.data_ini).replace(/-/g, '') + 'T235959Z'; ics += `BEGIN:VEVENT\nDTSTART:${start}\nDTEND:${end}\nSUMMARY:${e.evento}\nDESCRIPTION:Resp: ${e.responsavel} | Status: ${e.status}\nEND:VEVENT\n`; });
+    ics += "END:VCALENDAR"; const a = document.createElement('a'); a.href = window.URL.createObjectURL(new Blob([ics], {type:'text/calendar'})); a.download = "eventos.ics"; a.click();
+  };
+
   document.querySelectorAll('.view-tab').forEach(t => t.onclick = () => { document.querySelectorAll('.view-tab').forEach(b=>b.classList.remove('active')); t.classList.add('active'); currentView = t.dataset.view; renderCurrentView(); });
   document.querySelectorAll('[data-filter-type]').forEach(b => b.onclick = (e) => { filterType = e.currentTarget.dataset.filterType; initUI(); });
   document.querySelectorAll('[data-filter-status]').forEach(b => b.onclick = (e) => { filterStatus = e.currentTarget.dataset.filterStatus; initUI(); });
