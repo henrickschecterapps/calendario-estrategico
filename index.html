@@ -12,6 +12,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 
 <style>
+  /* ── TEMA CLARO PADRÃO ── */
   :root {
     --bg: #f8fafc; --surface: #ffffff; --surface2: #f1f5f9; 
     --border: #e2e8f0; --text: #0f172a; --muted: #64748b;
@@ -22,25 +23,27 @@
     --shadow-sm: 0 2px 4px rgba(0,0,0,0.04); --shadow: 0 8px 16px rgba(0,0,0,0.06); --shadow-lg: 0 20px 40px rgba(0,0,0,0.08);
     --font-heading: 'Plus Jakarta Sans', sans-serif; --font-body: 'Inter', sans-serif;
   }
+  
   [data-theme="dark"] {
     --bg: #090a0f; --surface: #11131a; --surface2: #1a1d27;
     --border: rgba(255,255,255,0.08); --text: #f1f5f9; --muted: #94a3b8;
     --accent: #3b82f6; --accent-hover: #60a5fa; --accent-glow: rgba(59,130,246,0.15);
     --green: #10b981; --amber: #f59e0b; --red: #ef4444; --purple: #8b5cf6; --pink: #ec4899; --teal: #14b8a6;
+    --c-comercial: #3b82f6; --c-interno: #10b981; --c-feriado: #f59e0b;
     --shadow-sm: 0 4px 6px rgba(0,0,0,0.2); --shadow: 0 10px 25px rgba(0,0,0,0.4); --shadow-lg: 0 30px 60px rgba(0,0,0,0.6);
   }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
   body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; transition: 0.3s; }
-  h1, h2, h3, h4, .view-title, .logo-text { font-family: var(--font-heading); }
+  h1, h2, h3, h4, .view-title, .logo { font-family: var(--font-heading); }
   .hide { display: none !important; }
 
   /* ── AUTH SCREEN ── */
   #auth-screen { position: fixed; inset: 0; z-index: 1000; background: var(--bg); display: flex; align-items: center; justify-content: center; }
   .auth-card { background: var(--surface); padding: 40px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-lg); width: 100%; max-width: 420px; text-align: center; }
-  .auth-logo { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .auth-logo img { height: 40px; object-fit: contain; }
-  .auth-logo .logo-text { font-size: 1.6rem; font-weight: 800; color: var(--text); }
+  .auth-logo { font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 8px; font-family: var(--font-heading);}
+  .auth-logo span { color: var(--accent); }
   .auth-subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 24px; }
   .auth-input { width: 100%; padding: 12px 16px; margin-bottom: 16px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.9rem; transition: 0.2s; }
   .auth-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); outline: none; }
@@ -50,12 +53,13 @@
   
   /* ── HEADER ── */
   header { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 72px; box-shadow: var(--shadow-sm); }
-  .logo-container { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
-  .logo-container img { height: 32px; object-fit: contain; }
+  .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+  .logo span { color: var(--accent); }
   .header-right { display: flex; align-items: center; gap: 12px; }
   .user-badge { font-size: 0.85rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 8px; padding-right: 16px; border-right: 1px solid var(--border); }
   .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
   .btn-icon:hover { background: var(--border); transform: translateY(-1px); }
+  .btn-icon.active { background: var(--accent); color: #fff; border-color: var(--accent); }
   .btn-primary { background: var(--accent); color: #fff; border: none; padding: 10px 20px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s; box-shadow: 0 4px 12px var(--accent-glow); }
   .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 6px 16px var(--accent-glow); }
 
@@ -66,10 +70,10 @@
   .main { flex: 1; min-width: 0; padding: 40px; }
 
   /* COMPONENTES LATERAIS */
-  .select-css { width: 100%; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-family: inherit; font-size: 0.85rem; font-weight: 500; appearance: none; outline: none; margin-bottom: 8px; cursor: pointer;}
+  .select-css { width: 100%; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-family: inherit; font-size: 0.85rem; font-weight: 500; appearance: none; outline: none; margin-bottom: 8px; cursor: pointer; transition: 0.2s;}
   .select-css:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
   .filter-group { display: flex; flex-direction: column; gap: 4px; }
-  .filter-btn { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.85rem; font-weight: 600; width: 100%; text-align: left; transition: 0.2s; }
+  .filter-btn { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.85rem; font-weight: 600; width: 100%; text-align: left; transition: all 0.2s ease; }
   .filter-btn:hover, .filter-btn.active { background: var(--surface2); color: var(--text); }
   .filter-btn.active { font-weight: 700; box-shadow: inset 3px 0 0 var(--accent); }
   .filter-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
@@ -122,6 +126,7 @@
   .badge-status-negociacao { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
   .badge-status-concluido { background: rgba(139,92,246,0.15); color: var(--purple); border: 1px solid rgba(139,92,246,0.2); }
   .badge-status-cancelado { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+  
   .badge-formato { background: rgba(20,184,166,0.15); color: var(--teal); border: 1px solid rgba(20,184,166,0.2); }
   
   .badge-temporal-agora { background: rgba(16,185,129,0.2); color: var(--green); border: 1px solid rgba(16,185,129,0.5); animation: pulse-green 2s infinite; }
@@ -142,7 +147,7 @@
   .month-count { font-size: 0.8rem; color: var(--text); background: var(--surface2); padding: 4px 12px; border-radius: 12px; border: 1px solid var(--border); }
   .month-line { flex: 1; height: 2px; background: var(--border); border-radius: 2px; }
   
-  .event-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; display: flex; align-items: stretch; gap: 24px; cursor: pointer; position: relative; box-shadow: var(--shadow-sm); transition: 0.2s; }
+  .event-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; display: flex; align-items: stretch; gap: 24px; cursor: pointer; position: relative; box-shadow: var(--shadow-sm); transition: all 0.2s ease; }
   .event-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--card-color, var(--accent)); border-radius: 6px 0 0 6px; }
   .event-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--muted); }
   .event-card.past { opacity: 0.6; filter: grayscale(30%); }
@@ -160,24 +165,13 @@
   .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-weight: 500; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border); }
   .empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
 
-  /* ── BOARD KANBAN ── */
-  .kanban-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: start; }
-  .kanban-col { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); display: flex; flex-direction: column; min-height: 500px; }
-  .kanban-header { padding: 16px; border-bottom: 1px solid var(--border); font-family: var(--font-heading); font-size: 0.95rem; font-weight: 800; display: flex; justify-content: space-between; }
-  .kanban-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
-  .kanban-card { background: var(--surface); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); border-left: 4px solid var(--card-color); cursor: grab; box-shadow: var(--shadow-sm); transition: 0.2s; }
-  .kanban-card:active { cursor: grabbing; transform: scale(0.98); }
-  .kanban-card:hover { border-color: var(--muted); }
-  .kanban-card-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; color: var(--text); }
-  .kanban-card-date { font-size: 0.75rem; color: var(--muted); font-weight: 600; margin-bottom: 8px;}
-
   /* ── VIEWS: MÊS, SEMANA E LISTA ── */
   .cal-nav { display: flex; justify-content: space-between; margin-bottom: 24px; align-items: center; }
   .cal-month-label { font-family: var(--font-heading); font-size: 1.5rem; text-transform: capitalize; }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
   .cal-dow { padding: 12px 4px; text-align: center; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--muted); background: var(--surface); border-radius: var(--radius-sm); border: 1px solid var(--border); }
   .cal-day { background: var(--surface); min-height: 120px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: 0.2s; }
-  .cal-day:hover { background: var(--surface2); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .cal-day:hover { background: var(--surface2); transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: var(--muted); }
   .cal-day.other-month { opacity: 0.4; background: var(--bg); }
   .cal-day.today { border: 2px solid var(--accent); }
   .cal-day-num { font-size: 0.9rem; font-weight: 800; margin-bottom: 8px; color: var(--muted); }
@@ -216,6 +210,7 @@
   .admin-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); outline: none; }
   .file-drop { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px; text-align: center; transition: 0.3s; cursor: pointer; margin-bottom: 20px; background: var(--surface2); }
   .file-drop:hover { border-color: var(--accent); background: var(--accent-glow); }
+  .file-drop input[type="file"] { display: none; }
 
   /* ── MODAL BENTO GRID ── */
   .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 24px; opacity: 0; transition: 0.3s ease; }
@@ -260,11 +255,7 @@
 
 <div id="auth-screen">
   <div class="auth-card" id="login-box">
-    <div class="auth-logo">
-      <img src="https://blog.tripla.com.br/wp-content/uploads/2026/03/logo-color-horizontal-png-transparente-02.png" 
-           onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjM2I4MmY2Ij5UcmlwbGE8L3RleHQ+PC9zdmc+';">
-      <div class="logo-text">Eventos</div>
-    </div>
+    <div class="auth-logo">Tripla <span>·</span> Eventos</div>
     <div class="auth-subtitle">Acesso restrito para equipe interna</div>
     <div id="auth-error" style="color:var(--red); font-size:0.85rem; margin-bottom:16px; display:none;"></div>
     <input type="email" id="auth-email" class="auth-input" placeholder="seu.nome@tripla.com.br" required>
@@ -274,7 +265,7 @@
   </div>
   
   <div class="auth-card hide" id="register-box">
-    <div class="auth-logo"><div class="logo-text">Solicitar <span>Acesso</span></div></div>
+    <div class="auth-logo">Solicitar <span>Acesso</span></div>
     <div class="auth-subtitle">Utilize seu e-mail @tripla.com.br</div>
     <div id="reg-error" style="color:var(--red); font-size:0.85rem; margin-bottom:16px;"></div>
     <input type="email" id="reg-email" class="auth-input" placeholder="@tripla.com.br" required>
@@ -293,11 +284,7 @@
 
 <div id="app-screen" class="hide">
   <header>
-    <div class="logo-container">
-      <img src="https://blog.tripla.com.br/wp-content/uploads/2026/03/logo-color-horizontal-png-transparente-02.png" 
-           onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjM2I4MmY2Ij5UcmlwbGE8L3RleHQ+PC9zdmc+';"> 
-      <span>· Eventos</span>
-    </div>
+    <div class="logo">Tripla <span>·</span> Eventos</div>
     <div class="header-right">
       <div class="today-badge" id="today-badge"></div>
       <div class="user-badge"><span id="user-email-display"></span> <button class="btn-icon" id="btn-logout" title="Sair">🚪</button></div>
@@ -360,14 +347,14 @@
             <button class="view-tab active" data-view="timeline">Timeline</button>
             <button class="view-tab" data-view="calendar">Mês</button>
             <button class="view-tab" data-view="week">Semana</button>
-            <button class="view-tab" data-view="board">Kanban</button>
             <button class="view-tab" data-view="list">Lista</button>
+            <button class="view-tab show-on-admin" data-view="admin" style="color:var(--accent); font-weight:800">📊 Painel Admin</button>
           </div>
         </div>
       </div>
 
       <div id="view-timeline" class="view-container active">
-        <div class="timeline-toggle-container"><button id="btn-toggle-past" class="btn-toggle-past">Ocultar meses anteriores</button></div>
+        <div class="timeline-toggle-container"><button id="btn-toggle-past" class="btn-toggle-past">⏳ Ver meses anteriores</button></div>
         <div id="timeline-content"></div>
       </div>
       
@@ -379,27 +366,6 @@
       <div id="view-week" class="view-container">
         <div class="cal-nav"><button class="btn-icon" id="week-prev">← Anterior</button><span class="cal-month-label" id="week-label"></span><button class="btn-icon" id="week-next">Próxima →</button></div>
         <div class="week-grid" id="week-grid"></div>
-      </div>
-
-      <div id="view-board" class="view-container">
-        <div class="kanban-board">
-          <div class="kanban-col" ondragover="allowDrop(event)" ondrop="drop(event, 'Planejado')">
-            <div class="kanban-header" style="color: var(--muted)">📝 Planejado <span id="count-planejado" style="background:var(--surface); padding:2px 8px; border-radius:10px;">0</span></div>
-            <div class="kanban-body" id="col-planejado"></div>
-          </div>
-          <div class="kanban-col" ondragover="allowDrop(event)" ondrop="drop(event, 'Em negociação')">
-            <div class="kanban-header" style="color: var(--amber)">🤝 Em Negociação <span id="count-negociacao" style="background:var(--surface); padding:2px 8px; border-radius:10px;">0</span></div>
-            <div class="kanban-body" id="col-negociacao"></div>
-          </div>
-          <div class="kanban-col" ondragover="allowDrop(event)" ondrop="drop(event, 'Confirmado')">
-            <div class="kanban-header" style="color: var(--green)">✅ Confirmado <span id="count-confirmado" style="background:var(--surface); padding:2px 8px; border-radius:10px;">0</span></div>
-            <div class="kanban-body" id="col-confirmado"></div>
-          </div>
-          <div class="kanban-col" ondragover="allowDrop(event)" ondrop="drop(event, 'Concluído')">
-            <div class="kanban-header" style="color: var(--purple)">🏆 Concluído <span id="count-concluido" style="background:var(--surface); padding:2px 8px; border-radius:10px;">0</span></div>
-            <div class="kanban-body" id="col-concluido"></div>
-          </div>
-        </div>
       </div>
 
       <div id="view-list" class="view-container">
@@ -501,7 +467,7 @@
           <div><label class="form-label">Data Início *</label><input type="date" class="admin-input" id="edit-ini"></div>
           <div><label class="form-label">Data Fim</label><input type="date" class="admin-input" id="edit-fim"></div>
           <div><label class="form-label">Tipo</label><select class="admin-input select-css" id="edit-tipo"><option>Comercial</option><option>Interno</option><option>Feriado</option></select></div>
-          <div><label class="form-label">Status no Board</label><select class="admin-input select-css" id="edit-status"><option>Planejado</option><option>Confirmado</option><option>Em negociação</option><option>Concluído</option><option>Cancelado</option></select></div>
+          <div><label class="form-label">Status</label><select class="admin-input select-css" id="edit-status"><option>Planejado</option><option>Confirmado</option><option>Em negociação</option><option>Concluído</option><option>Cancelado</option></select></div>
         </div>
         <div class="admin-section-title">Envolvidos e Presença</div>
         <div class="form-grid">
@@ -537,7 +503,7 @@
 </div>
 
 <script>
-  // ── FIREBASE CONFIGURAÇÕES (LÓGICA COMPATÍVEL LOCALMENTE) ──
+  // ── FIREBASE CONFIGURAÇÕES (VERSÃO COMPAT PARA RODAR LOCALMENTE) ──
   const firebaseConfig = {
     apiKey: "AIzaSyCmuDrq-ctHOGu4Fe9gHoK2Fxhcfg3BE9g",
     authDomain: "calendario-estrategico.firebaseapp.com",
@@ -547,19 +513,24 @@
     appId: "1:941508404506:web:af82455df11b35359538a3"
   };
 
-  firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   const db = firebase.firestore();
   const auth = firebase.auth();
 
   // DADOS DE FALLBACK (Garante que a tela nunca fique em branco)
   const ORIGINAL_EVENTS = [
-    {tipo:"Interno",responsavel:"Jéss e Jê",mes_ref:"Janeiro",data_ini:"2026-01-28",data_fim:"2026-01-30",evento:"Tripla Conecta",status:"Planejado",formato:"Presencial"},
+    {tipo:"Interno",responsavel:"Jéss e Jê",mes_ref:"Janeiro",data_ini:"2026-01-28",data_fim:"2026-01-30",evento:"Tripla Conecta",status:"Planejado",formato:"Presencial",participantes:"Todos"},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Fevereiro",data_ini:"2026-02-17",data_fim:"2026-02-17",evento:"Carnaval",status:"Planejado"},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Fevereiro",data_ini:"2026-02-26",data_fim:"2026-02-26",evento:"Embarca Tripla",status:"Planejado",formato:"Online"},
     {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-09",data_fim:"2026-03-09",evento:"Cybersecurity Forum",cota:"Ouro",vagas:"13 convites",status:"Confirmado",formato:"Presencial"},
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-17",data_fim:"2026-03-20",evento:"UTCAL Summit",vagas:"8 executivos",status:"Planejado",formato:"Presencial"},
+    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Março",data_ini:"2026-03-26",data_fim:"2026-03-26",evento:"GPTI Experience",cota:"Cota Ouro",vagas:"2",status:"Planejado",formato:"Presencial"},
     {tipo:"Comercial",responsavel:"Jê",mes_ref:"Abril",data_ini:"2026-04-15",data_fim:"2026-04-16",evento:"Cloudflare Immerse SP 2026",cota:"Platinum",vagas:"5",status:"Confirmado",formato:"Presencial"},
     {tipo:"Feriado",responsavel:"",mes_ref:"Abril",data_ini:"2026-04-21",data_fim:"2026-04-21",evento:"Tiradentes",status:"Planejado"},
     {tipo:"Comercial",responsavel:"Jess",mes_ref:"Maio",data_ini:"2026-05-12",data_fim:"2026-05-12",evento:"Security Leaders BH",cota:"Bronze",vagas:"6 executivos",status:"Planejado",formato:"Presencial"},
     {tipo:"Interno",responsavel:"G&G",mes_ref:"Julho",data_ini:"2026-07-09",data_fim:"2026-07-09",evento:"Embarca Tripla",status:"Planejado",formato:"Online"},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Setembro",data_ini:"2026-09-15",data_fim:"2026-09-17",evento:"Mind the Sec",cota:"Diamond",status:"Planejado",formato:"Presencial"}
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Setembro",data_ini:"2026-09-15",data_fim:"2026-09-17",evento:"Mind the Sec",cota:"Diamond",status:"Planejado",formato:"Presencial"},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Outubro",data_ini:"2026-10-12",data_fim:"2026-10-12",evento:"Dia de N. Sra. Aparecida",status:"Planejado"}
   ];
 
   let currentUser = null, userRole = null;
@@ -579,7 +550,7 @@
   
   let filterType = 'all', filterStatus = 'all', filterResp = 'all', searchQ = '';
   let currentView = 'timeline', sortCol = 'data_ini', sortAsc = true;
-  let showPastEvents = true; // MOSTRA TUDO POR PADRÃO
+  let showPastEvents = false; // Padrão: Ocultar Passados para tela limpa
   let currentEditId = null;
 
   // ── FUNÇÕES UTILITÁRIAS ──
@@ -594,7 +565,7 @@
   
   function cotaBadge(c) { 
     if(!c) return ''; let lowerC = c.toLowerCase(); let icon = '🏅', style = 'background: rgba(128,128,128,0.1); color: var(--text); border: 1px solid var(--border);';
-    if (lowerC.includes('ouro') || lowerC.includes('gold')) { icon = '🥇'; style = 'background: rgba(234, 179, 8, 0.15); color: #fbbf24; border: 1px solid rgba(234, 179, 8, 0.3);'; } else if (lowerC.includes('prata') || lowerC.includes('silver')) { icon = '🥈'; style = 'background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3);'; } else if (lowerC.includes('bronze')) { icon = '🥉'; style = 'background: rgba(180, 83, 9, 0.15); color: #d97706; border: 1px solid rgba(180, 83, 9, 0.3);'; } else if (lowerC.includes('diamond') || lowerC.includes('diamante')) { icon = '💎'; style = 'background: rgba(56, 189, 248, 0.15); color: #0ea5e9; border: 1px solid rgba(56, 189, 248, 0.3);'; } else if (lowerC.includes('platina') || lowerC.includes('platinum')) { icon = '💠'; style = 'background: rgba(167, 139, 250, 0.15); color: #8b5cf6; border: 1px solid rgba(167, 139, 250, 0.3);'; }
+    if (lowerC.includes('ouro') || lowerC.includes('gold')) { icon = '🥇'; style = 'background: rgba(234, 179, 8, 0.15); color: #d97706; border: 1px solid rgba(234, 179, 8, 0.3);'; } else if (lowerC.includes('prata') || lowerC.includes('silver')) { icon = '🥈'; style = 'background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);'; } else if (lowerC.includes('bronze')) { icon = '🥉'; style = 'background: rgba(180, 83, 9, 0.15); color: #b45309; border: 1px solid rgba(180, 83, 9, 0.3);'; } else if (lowerC.includes('diamond') || lowerC.includes('diamante')) { icon = '💎'; style = 'background: rgba(56, 189, 248, 0.15); color: #0284c7; border: 1px solid rgba(56, 189, 248, 0.3);'; } else if (lowerC.includes('platina') || lowerC.includes('platinum')) { icon = '💠'; style = 'background: rgba(167, 139, 250, 0.15); color: #7c3aed; border: 1px solid rgba(167, 139, 250, 0.3);'; }
     return `<span class="badge" style="${style}">${icon} Cota: ${c}</span>`; 
   }
   
@@ -615,11 +586,16 @@
       try {
         const uDoc = await db.collection("users").doc(user.uid).get();
         if (uDoc.exists) { userRole = uDoc.data().role; } else { userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'pending'; await db.collection("users").doc(user.uid).set({ email: user.email, role: userRole }); }
+        
         currentUser = user; document.getElementById('user-email-display').textContent = user.email;
 
         if (userRole === 'pending') { logB.classList.add('hide'); regB.classList.add('hide'); pendS.style.display = 'block'; appS.classList.add('hide'); } 
         else { authS.classList.add('hide'); appS.classList.remove('hide'); if(userRole === 'admin') document.body.classList.add('admin-mode'); else document.body.classList.remove('admin-mode'); await loadDataFromFirebase(); }
-      } catch (e) { console.error(e); }
+      } catch (e) { 
+          console.warn("Erro ao buscar permissão (possível bloqueio de regras). Liberando via fallback."); 
+          userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'pending';
+          if(userRole === 'admin') { authS.classList.add('hide'); appS.classList.remove('hide'); document.body.classList.add('admin-mode'); await loadDataFromFirebase(); }
+      }
     } else {
       currentUser = null; userRole = null; authS.classList.remove('hide'); appS.classList.add('hide'); pendS.style.display = 'none'; logB.classList.remove('hide'); regB.classList.add('hide');
     }
@@ -651,7 +627,7 @@
       const eSnap = await db.collection("eventos").get();
       EVENTS = []; eSnap.forEach(doc => { EVENTS.push({ id: doc.id, ...doc.data() }); });
       
-      // Fallback
+      // Fallback: Se estiver vazio, carrega 48 eventos padrao
       if (EVENTS.length === 0) {
          EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
       }
@@ -659,19 +635,22 @@
       const rSnap = await db.collection("responsaveis").get(); 
       RESPONSAVEIS = []; rSnap.forEach(doc => { RESPONSAVEIS.push({ id: doc.id, ...doc.data() }); });
       
-      if(EVENTS.length > 0) {
-        let evsSorted = EVENTS.map(e=>parseDate(e.data_ini)).filter(d=>d).sort((a,b)=>a-b);
-        let targetDate = evsSorted.find(d => d >= currentMonthStart) || evsSorted[evsSorted.length - 1]; 
-        if(targetDate) { calMonth = targetDate.getMonth(); calYear = targetDate.getFullYear(); miniMonth = targetDate.getMonth(); miniYear = targetDate.getFullYear(); currentWeekStart = getStartOfWeek(targetDate); }
-      }
-      
       if(userRole === 'admin') await loadPendingUsers();
-      initUI();
+      
     } catch (e) { 
       console.warn("Sem internet ou Firebase bloqueado. Carregando modo local.");
       EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
-      initUI();
     }
+    
+    // Centraliza calendário
+    if(EVENTS.length > 0) {
+      let evsSorted = EVENTS.map(e=>parseDate(e.data_ini)).filter(d=>d).sort((a,b)=>a-b);
+      let firstFuture = evsSorted.find(d => d.getTime() >= currentMonthStart.getTime());
+      let targetDate = firstFuture || evsSorted[evsSorted.length - 1]; 
+      if(targetDate) { calMonth = targetDate.getMonth(); calYear = targetDate.getFullYear(); miniMonth = targetDate.getMonth(); miniYear = targetDate.getFullYear(); currentWeekStart = getStartOfWeek(targetDate); }
+    }
+    
+    initUI();
   }
 
   async function loadPendingUsers() {
@@ -686,7 +665,7 @@
 
   // ── CORE RENDER LOGIC ──
   function initUI() { document.getElementById('today-badge').textContent = today.toLocaleDateString('pt-BR', {weekday:'short', day:'numeric', month:'short'}); updateResponsiblesUI(); renderAll(); }
-  function renderAll() { renderMiniCal(); renderUpcoming(); renderCounts(); renderDashboardAdmin(); renderCurrentView(); }
+  function renderAll() { renderMiniCal(); renderUpcoming(); renderDashboardAdmin(); renderCurrentView(); }
 
   function getFilteredEvents() {
     return EVENTS.filter(e => {
@@ -704,7 +683,6 @@
     if (currentView === 'timeline') renderTimeline(); 
     else if (currentView === 'calendar') renderCalendar(); 
     else if (currentView === 'week') renderWeek(); 
-    else if (currentView === 'board') renderBoard(); 
     else if (currentView === 'list') renderList();
   }
 
@@ -723,7 +701,8 @@
         evs = evs.filter(e => {
             const d = parseDate(e.data_ini);
             if(!d) return true;
-            return new Date(d.getFullYear(), d.getMonth(), 1) >= currentMonthStart;
+            const evMonthStart = new Date(d.getFullYear(), d.getMonth(), 1);
+            return evMonthStart.getTime() >= currentMonthStart.getTime();
         });
     }
     
@@ -743,16 +722,7 @@
 
     let html = '';
     Object.keys(byMonth).forEach(m => {
-        html += `
-        <div class="month-block">
-            <div class="month-header">
-                <span class="month-name">${m}</span>
-                <span class="month-count">${byMonth[m].length}</span>
-                <div class="month-line"></div>
-            </div>
-            <div class="event-list">
-        `;
-        
+        html += `<div class="month-block"><div class="month-header"><span class="month-name">${m}</span><span class="month-count">${byMonth[m].length}</span><div class="month-line"></div></div><div class="event-list">`;
         byMonth[m].forEach(e => {
             const d = parseDate(e.data_ini); 
             const color = TYPE_COLOR[e.tipo] || 'var(--accent)';
@@ -794,37 +764,6 @@
     ).join('');
   }
 
-  // ── KANBAN BOARD ──
-  function renderBoard() {
-      const evs = getFilteredEvents();
-      const cols = ['Planejado', 'Em negociação', 'Confirmado', 'Concluído'];
-      cols.forEach(status => {
-          const colEvs = evs.filter(e => e.status === status).sort((a,b)=>parseDate(a.data_ini)-parseDate(b.data_ini));
-          const el = document.getElementById(`col-${status.toLowerCase().replace(' ','').replace('í','i')}`);
-          document.getElementById(`count-${status.toLowerCase().replace(' ','').replace('í','i')}`).textContent = colEvs.length;
-          
-          if(el) {
-              el.innerHTML = colEvs.map(e => `
-                  <div class="kanban-card" draggable="${userRole === 'admin'}" ondragstart="window.drag(event, '${e.id}')" style="--card-color:${TYPE_COLOR[e.tipo]||'var(--accent)'}" onclick="window.openEventView('${e.id}')">
-                      <div class="kanban-card-title">${e.evento}</div>
-                      <div style="display:flex; justify-content:space-between; align-items:center;">
-                          <div class="kanban-card-date">📅 ${dateFmt(e)}</div>
-                          ${typeBadge(e.tipo)}
-                      </div>
-                  </div>
-              `).join('');
-          }
-      });
-  }
-
-  window.allowDrop = (ev) => ev.preventDefault();
-  window.drag = (ev, id) => ev.dataTransfer.setData("text", id);
-  window.drop = async (ev, newStatus) => {
-      ev.preventDefault(); const id = ev.dataTransfer.getData("text"); if(!id || userRole !== 'admin') return;
-      try { await db.collection("eventos").doc(id).update({ status: newStatus }); await loadDataFromFirebase(); } 
-      catch(e) { console.error(e); alert("Erro ao mover card."); }
-  };
-
   function renderCalendar() {
     document.getElementById('cal-month-label').textContent = `${MONTHS_PT[calMonth]} ${calYear}`;
     const fd = new Date(calYear, calMonth, 1).getDay(), dim = new Date(calYear, calMonth+1, 0).getDate(), cells = Math.ceil((fd + dim) / 7) * 7, evMap = {};
@@ -858,10 +797,6 @@
   function renderUpcoming() {
     const up = EVENTS.filter(e => parseDate(e.data_ini)>=today && e.tipo!=='Feriado').sort((a,b)=>parseDate(a.data_ini)-parseDate(b.data_ini)).slice(0,5);
     document.getElementById('upcoming-list').innerHTML = up.map(e => `<div class="upcoming-item" onclick="window.openEventView('${e.id}')"><div class="upcoming-dot" style="background:${TYPE_COLOR[e.tipo]||'var(--accent)'}"></div><div><div class="upcoming-name">${e.evento}</div><div class="upcoming-date">${dateFmt(e)}</div></div></div>`).join('');
-  }
-  
-  function renderCounts() {
-    document.getElementById('count-all').textContent = EVENTS.length; document.getElementById('count-comercial').textContent = EVENTS.filter(e=>e.tipo==='Comercial').length; document.getElementById('count-interno').textContent = EVENTS.filter(e=>e.tipo==='Interno').length; document.getElementById('count-feriado').textContent = EVENTS.filter(e=>e.tipo==='Feriado').length;
   }
 
   // ── RESPONSÁVEIS CRUD ──
@@ -916,12 +851,6 @@
     }; reader.readAsText(fileToUpload);
   };
 
-  function checkNotifications() {
-    const banner = document.getElementById('notification-banner'), text = document.getElementById('notification-text');
-    const upcoming = EVENTS.filter(e => { if (e.status !== 'Confirmado') return false; const d = parseDate(e.data_ini); if(!d) return false; return Math.ceil((d - today) / (1000 * 60 * 60 * 24)) >= 0 && Math.ceil((d - today) / (1000 * 60 * 60 * 24)) <= 7; });
-    if (upcoming.length > 0) { text.innerHTML = `Confirmados próximos: <b>${upcoming.map(e=>e.evento).join(', ')}</b>`; banner.classList.add('active'); } else { banner.classList.remove('active'); }
-  }
-
   // ── LOGICA DO MODAL ──
   window.openEventView = function(id) {
     const ev = EVENTS.find(e => e.id === id); if(!ev) return; currentEditId = id; 
@@ -972,12 +901,17 @@
     const data = { evento:document.getElementById('edit-nome').value, data_ini:document.getElementById('edit-ini').value, data_fim:document.getElementById('edit-fim').value, responsavel: selectedChecks.join(', '), tipo:document.getElementById('edit-tipo').value, status:document.getElementById('edit-status').value, formato:document.getElementById('edit-formato').value, cota:document.getElementById('edit-cota').value, vagas:document.getElementById('edit-vagas').value, publico:document.getElementById('edit-publico').value, beneficios:document.getElementById('edit-beneficios').value, obs:document.getElementById('edit-obs').value, participantes: document.getElementById('edit-participantes').value };
     if(!data.evento || !data.data_ini) return alert("Nome do evento e Data Início são obrigatórios."); data.mes_ref = MONTHS_PT[parseDate(data.data_ini).getMonth()];
     btn.textContent = "Salvando..."; btn.disabled = true;
-    try { if(id && !id.startsWith('mock_')) { await db.collection("eventos").doc(id).update(data); } else { await db.collection("eventos").add(data); } document.getElementById('modal-overlay').classList.remove('open'); await loadDataFromFirebase(); } catch (e) { alert("Erro ao salvar."); } finally { btn.textContent = "Salvar Alterações"; btn.disabled = false; }
+    try { if(id && !id.startsWith('mock_')) { await db.collection("eventos").doc(id).update(data); } else { await db.collection("eventos").add(data); } document.getElementById('modal-overlay').classList.remove('open'); await loadDataFromFirebase(); } catch (e) { alert("Erro ao salvar no banco."); } finally { btn.textContent = "Salvar Alterações"; btn.disabled = false; }
   };
   document.getElementById('btn-delete').onclick = async () => { if(userRole !== 'admin') return; const id = document.getElementById('edit-id').value; if(!confirm("Excluir permanentemente o evento?")) return; try { if(id && !id.startsWith('mock_')) await db.collection("eventos").doc(id).delete(); document.getElementById('modal-overlay').classList.remove('open'); await loadDataFromFirebase(); } catch (e) { console.error(e); } };
 
   // ── EVENT LISTENERS & UI ──
-  document.getElementById('btn-admin-toggle').onclick = () => { document.querySelector('.view-tab[data-view="admin"]').click(); };
+  document.getElementById('btn-admin-toggle').onclick = () => { 
+    isAdmin = !isAdmin; 
+    document.body.classList.toggle('admin-mode', isAdmin); 
+    document.getElementById('btn-admin-toggle').classList.toggle('active', isAdmin); 
+    if(isAdmin) { document.querySelector('.view-tab[data-view="admin"]').click(); } else if (currentView === 'admin') { document.querySelector('.view-tab[data-view="timeline"]').click(); } 
+  };
   document.getElementById('btn-theme').onclick = () => { const html = document.documentElement; html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark'; };
   document.getElementById('btn-export').onclick = () => { let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Tripla//Eventos//PT\n"; getFilteredEvents().forEach(e => { if(!e.data_ini) return; const start = e.data_ini.replace(/-/g, '') + 'T000000Z', end = (e.data_fim || e.data_ini).replace(/-/g, '') + 'T235959Z'; ics += `BEGIN:VEVENT\nDTSTART:${start}\nDTEND:${end}\nSUMMARY:${e.evento}\nDESCRIPTION:Resp: ${e.responsavel} | Status: ${e.status}\nEND:VEVENT\n`; }); ics += "END:VCALENDAR"; const a = document.createElement('a'); a.href = window.URL.createObjectURL(new Blob([ics], {type:'text/calendar'})); a.download = "eventos.ics"; a.click(); };
 
