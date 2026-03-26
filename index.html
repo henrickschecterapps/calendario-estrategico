@@ -6,60 +6,41 @@
 <title>Calendário de Eventos Tripla</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  /* ── VARIÁVEIS DE TEMA PREMIUM ── */
-  :root {
-    --bg: #f8fafc; 
-    --surface: #ffffff; 
-    --surface2: #f1f5f9; 
-    --border: #e2e8f0; 
-    --text: #0f172a; 
-    --muted: #64748b;
-    --accent: #2563eb; 
-    --accent-hover: #1d4ed8; 
-    --accent-glow: rgba(37,99,235,0.15);
-    
-    --green: #059669; 
-    --amber: #d97706; 
-    --red: #dc2626; 
-    --purple: #7c3aed; 
-    --pink: #db2777; 
-    --teal: #0d9488;
-    
-    --c-comercial: #2563eb; 
-    --c-interno: #059669; 
-    --c-feriado: #d97706;
-    
-    --radius: 16px; 
-    --radius-sm: 10px; 
-    --shadow-sm: 0 2px 4px rgba(0,0,0,0.04); 
-    --shadow: 0 8px 16px rgba(0,0,0,0.06); 
-    --shadow-lg: 0 20px 40px rgba(0,0,0,0.08);
-    
-    --font-heading: 'Plus Jakarta Sans', sans-serif; 
-    --font-body: 'Inter', sans-serif;
-  }
 
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+
+<style>
+  :root {
+    --bg: #f8fafc; --surface: #ffffff; --surface2: #f1f5f9; 
+    --border: #e2e8f0; --text: #0f172a; --muted: #64748b;
+    --accent: #2563eb; --accent-hover: #1d4ed8; --accent-glow: rgba(37,99,235,0.15);
+    --green: #059669; --amber: #d97706; --red: #dc2626; --purple: #7c3aed; --pink: #db2777; --teal: #0d9488;
+    --c-comercial: #2563eb; --c-interno: #059669; --c-feriado: #d97706;
+    --radius: 16px; --radius-sm: 10px; 
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.04); --shadow: 0 8px 16px rgba(0,0,0,0.06); --shadow-lg: 0 20px 40px rgba(0,0,0,0.08);
+    --font-heading: 'Plus Jakarta Sans', sans-serif; --font-body: 'Inter', sans-serif;
+  }
   [data-theme="dark"] {
     --bg: #090a0f; --surface: #11131a; --surface2: #1a1d27;
     --border: rgba(255,255,255,0.08); --text: #f1f5f9; --muted: #94a3b8;
     --accent: #3b82f6; --accent-hover: #60a5fa; --accent-glow: rgba(59,130,246,0.15);
     --green: #10b981; --amber: #f59e0b; --red: #ef4444; --purple: #8b5cf6; --pink: #ec4899; --teal: #14b8a6;
-    --c-comercial: #3b82f6; --c-interno: #10b981; --c-feriado: #f59e0b;
     --shadow-sm: 0 4px 6px rgba(0,0,0,0.2); --shadow: 0 10px 25px rgba(0,0,0,0.4); --shadow-lg: 0 30px 60px rgba(0,0,0,0.6);
   }
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; transition: background-color 0.3s, color 0.3s; }
-  h1, h2, h3, h4, .view-title, .logo { font-family: var(--font-heading); }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; transition: 0.3s; }
+  h1, h2, h3, h4, .view-title, .logo-text { font-family: var(--font-heading); }
   .hide { display: none !important; }
 
   /* ── AUTH SCREEN ── */
   #auth-screen { position: fixed; inset: 0; z-index: 1000; background: var(--bg); display: flex; align-items: center; justify-content: center; }
   .auth-card { background: var(--surface); padding: 40px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-lg); width: 100%; max-width: 420px; text-align: center; }
-  .auth-logo { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 8px; font-family: var(--font-heading);}
-  .auth-logo img { height: 32px; object-fit: contain; }
+  .auth-logo { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .auth-logo img { height: 40px; object-fit: contain; }
+  .auth-logo .logo-text { font-size: 1.6rem; font-weight: 800; color: var(--text); }
   .auth-subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 24px; }
   .auth-input { width: 100%; padding: 12px 16px; margin-bottom: 16px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.9rem; transition: 0.2s; }
   .auth-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); outline: none; }
@@ -69,8 +50,8 @@
   
   /* ── HEADER ── */
   header { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 72px; box-shadow: var(--shadow-sm); }
-  .logo { display: flex; align-items: center; gap: 10px; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
-  .logo img { height: 28px; object-fit: contain; }
+  .logo-container { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+  .logo-container img { height: 32px; object-fit: contain; }
   .header-right { display: flex; align-items: center; gap: 12px; }
   .user-badge { font-size: 0.85rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 8px; padding-right: 16px; border-right: 1px solid var(--border); }
   .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
@@ -85,10 +66,10 @@
   .main { flex: 1; min-width: 0; padding: 40px; }
 
   /* COMPONENTES LATERAIS */
-  .select-css { width: 100%; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-family: inherit; font-size: 0.85rem; font-weight: 500; appearance: none; outline: none; margin-bottom: 8px; cursor: pointer; transition: 0.2s;}
+  .select-css { width: 100%; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-family: inherit; font-size: 0.85rem; font-weight: 500; appearance: none; outline: none; margin-bottom: 8px; cursor: pointer;}
   .select-css:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
   .filter-group { display: flex; flex-direction: column; gap: 4px; }
-  .filter-btn { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.85rem; font-weight: 600; width: 100%; text-align: left; transition: all 0.2s ease; }
+  .filter-btn { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.85rem; font-weight: 600; width: 100%; text-align: left; transition: 0.2s; }
   .filter-btn:hover, .filter-btn.active { background: var(--surface2); color: var(--text); }
   .filter-btn.active { font-weight: 700; box-shadow: inset 3px 0 0 var(--accent); }
   .filter-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
@@ -141,15 +122,13 @@
   .badge-status-negociacao { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
   .badge-status-concluido { background: rgba(139,92,246,0.15); color: var(--purple); border: 1px solid rgba(139,92,246,0.2); }
   .badge-status-cancelado { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
-  
   .badge-formato { background: rgba(20,184,166,0.15); color: var(--teal); border: 1px solid rgba(20,184,166,0.2); }
   
   .badge-temporal-agora { background: rgba(16,185,129,0.2); color: var(--green); border: 1px solid rgba(16,185,129,0.5); animation: pulse-green 2s infinite; }
   .badge-temporal-breve { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.4); text-transform: none; letter-spacing: 0;}
   @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); } 70% { box-shadow: 0 0 0 8px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
   
-  .resp-pill-group { display: flex; flex-wrap: wrap; gap: 6px; }
-  .resp-pill { font-size: 0.7rem; font-weight: 600; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 4px 10px; border-radius: 12px; }
+  .resp-pill { font-size: 0.7rem; font-weight: 700; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 3px 10px; border-radius: 12px; }
 
   /* ── TIMELINE ROBUSTA ── */
   .timeline-toggle-container { display: flex; justify-content: center; margin-bottom: 32px; position: relative; }
@@ -163,8 +142,7 @@
   .month-count { font-size: 0.8rem; color: var(--text); background: var(--surface2); padding: 4px 12px; border-radius: 12px; border: 1px solid var(--border); }
   .month-line { flex: 1; height: 2px; background: var(--border); border-radius: 2px; }
   
-  .event-list { display: flex; flex-direction: column; gap: 16px; }
-  .event-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: flex; align-items: stretch; gap: 24px; cursor: pointer; position: relative; box-shadow: var(--shadow-sm); transition: all 0.2s ease; }
+  .event-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; display: flex; align-items: stretch; gap: 24px; cursor: pointer; position: relative; box-shadow: var(--shadow-sm); transition: 0.2s; }
   .event-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--card-color, var(--accent)); border-radius: 6px 0 0 6px; }
   .event-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--muted); }
   .event-card.past { opacity: 0.6; filter: grayscale(30%); }
@@ -178,7 +156,6 @@
   .event-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
   .event-name { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--text); line-height: 1.3;}
   .event-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-  .event-resp-area { margin-left: 12px; padding-left: 12px; border-left: 2px solid var(--border); display: flex; align-items: center; }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-weight: 500; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border); }
   .empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
@@ -191,7 +168,7 @@
   .kanban-card { background: var(--surface); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); border-left: 4px solid var(--card-color); cursor: grab; box-shadow: var(--shadow-sm); transition: 0.2s; }
   .kanban-card:active { cursor: grabbing; transform: scale(0.98); }
   .kanban-card:hover { border-color: var(--muted); }
-  .kanban-card-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; line-height: 1.2; color: var(--text); }
+  .kanban-card-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; color: var(--text); }
   .kanban-card-date { font-size: 0.75rem; color: var(--muted); font-weight: 600; margin-bottom: 8px;}
 
   /* ── VIEWS: MÊS, SEMANA E LISTA ── */
@@ -222,7 +199,6 @@
   .list-table td { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 500;}
   .list-table tr { cursor: pointer; transition: 0.2s; }
   .list-table tr:hover { background: var(--surface2); }
-  .list-table tr:last-child td { border-bottom: none; }
 
   /* ── DASHBOARD ADMIN ── */
   .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
@@ -240,7 +216,6 @@
   .admin-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); outline: none; }
   .file-drop { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px; text-align: center; transition: 0.3s; cursor: pointer; margin-bottom: 20px; background: var(--surface2); }
   .file-drop:hover { border-color: var(--accent); background: var(--accent-glow); }
-  .file-drop input[type="file"] { display: none; }
 
   /* ── MODAL BENTO GRID ── */
   .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 24px; opacity: 0; transition: 0.3s ease; }
@@ -286,8 +261,9 @@
 <div id="auth-screen">
   <div class="auth-card" id="login-box">
     <div class="auth-logo">
-      <img src="https://blog.tripla.com.br/wp-content/uploads/2026/03/logo-color-horizontal-png-transparente-02.png" alt="Tripla Logo" style="height: 36px; margin-bottom: 4px;">
-      <br><span>Eventos</span>
+      <img src="https://blog.tripla.com.br/wp-content/uploads/2026/03/logo-color-horizontal-png-transparente-02.png" 
+           onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjM2I4MmY2Ij5UcmlwbGE8L3RleHQ+PC9zdmc+';">
+      <div class="logo-text">Eventos</div>
     </div>
     <div class="auth-subtitle">Acesso restrito para equipe interna</div>
     <div id="auth-error" style="color:var(--red); font-size:0.85rem; margin-bottom:16px; display:none;"></div>
@@ -298,7 +274,7 @@
   </div>
   
   <div class="auth-card hide" id="register-box">
-    <div class="auth-logo">Solicitar <span>Acesso</span></div>
+    <div class="auth-logo"><div class="logo-text">Solicitar <span>Acesso</span></div></div>
     <div class="auth-subtitle">Utilize seu e-mail @tripla.com.br</div>
     <div id="reg-error" style="color:var(--red); font-size:0.85rem; margin-bottom:16px;"></div>
     <input type="email" id="reg-email" class="auth-input" placeholder="@tripla.com.br" required>
@@ -317,9 +293,10 @@
 
 <div id="app-screen" class="hide">
   <header>
-    <div class="logo">
-      <img src="https://blog.tripla.com.br/wp-content/uploads/2026/03/logo-color-horizontal-png-transparente-02.png" alt="Tripla Logo"> 
-      <span>·</span> Eventos
+    <div class="logo-container">
+      <img src="https://blog.tripla.com.br/wp-content/uploads/2026/03/logo-color-horizontal-png-transparente-02.png" 
+           onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMzAiPjx0ZXh0IHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjM2I4MmY2Ij5UcmlwbGE8L3RleHQ+PC9zdmc+';"> 
+      <span>· Eventos</span>
     </div>
     <div class="header-right">
       <div class="today-badge" id="today-badge"></div>
@@ -430,7 +407,7 @@
           <thead><tr><th data-sort="data_ini">Data ↕</th><th data-sort="evento">Evento ↕</th><th data-sort="tipo">Tipo ↕</th><th data-sort="status">Status ↕</th><th>Participantes (Tripla)</th></tr></thead>
           <tbody id="list-body"></tbody>
         </table>
-        <div id="list-no-results" class="empty-state hide"><div class="empty-icon">📭</div><div>Nenhum evento encontrado nesta lista.</div></div>
+        <div id="list-no-results" class="empty-state hide"><div class="empty-icon">📭</div><div>Nenhum evento encontrado.</div></div>
       </div>
 
       <div id="view-admin" class="view-container">
@@ -559,12 +536,8 @@
   </div>
 </div>
 
-<script type="module">
-  // FIREBASE IMPORTS E CONFIGURAÇÕES
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, updateDoc, addDoc, deleteDoc, getDoc, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
+<script>
+  // ── FIREBASE CONFIGURAÇÕES (LÓGICA COMPATÍVEL LOCALMENTE) ──
   const firebaseConfig = {
     apiKey: "AIzaSyCmuDrq-ctHOGu4Fe9gHoK2Fxhcfg3BE9g",
     authDomain: "calendario-estrategico.firebaseapp.com",
@@ -574,11 +547,11 @@
     appId: "1:941508404506:web:af82455df11b35359538a3"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const auth = firebase.auth();
 
-  // DADOS DE FALLBACK CASO O FIREBASE FALHE OU ESTEJA VAZIO
+  // DADOS DE FALLBACK (Garante que a tela nunca fique em branco)
   const ORIGINAL_EVENTS = [
     {tipo:"Interno",responsavel:"Jéss e Jê",mes_ref:"Janeiro",data_ini:"2026-01-28",data_fim:"2026-01-30",evento:"Tripla Conecta",status:"Planejado",formato:"Presencial"},
     {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-09",data_fim:"2026-03-09",evento:"Cybersecurity Forum",cota:"Ouro",vagas:"13 convites",status:"Confirmado",formato:"Presencial"},
@@ -606,7 +579,7 @@
   
   let filterType = 'all', filterStatus = 'all', filterResp = 'all', searchQ = '';
   let currentView = 'timeline', sortCol = 'data_ini', sortAsc = true;
-  let showPastEvents = true; // MOSTRAR TUDO POR PADRÃO
+  let showPastEvents = true; // MOSTRA TUDO POR PADRÃO
   let currentEditId = null;
 
   // ── FUNÇÕES UTILITÁRIAS ──
@@ -636,12 +609,12 @@
   }
 
   // ── AUTENTICAÇÃO FIREBASE ──
-  onAuthStateChanged(auth, async (user) => {
+  auth.onAuthStateChanged(async (user) => {
     const authS = document.getElementById('auth-screen'), appS = document.getElementById('app-screen'), pendS = document.getElementById('pending-screen'), logB = document.getElementById('login-box'), regB = document.getElementById('register-box');
     if (user) {
       try {
-        const uDoc = await getDoc(doc(db, "users", user.uid));
-        if (uDoc.exists()) { userRole = uDoc.data().role; } else { userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'pending'; await setDoc(doc(db, "users", user.uid), { email: user.email, role: userRole }); }
+        const uDoc = await db.collection("users").doc(user.uid).get();
+        if (uDoc.exists) { userRole = uDoc.data().role; } else { userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'pending'; await db.collection("users").doc(user.uid).set({ email: user.email, role: userRole }); }
         currentUser = user; document.getElementById('user-email-display').textContent = user.email;
 
         if (userRole === 'pending') { logB.classList.add('hide'); regB.classList.add('hide'); pendS.style.display = 'block'; appS.classList.add('hide'); } 
@@ -658,7 +631,7 @@
   document.getElementById('btn-login-submit').onclick = async () => {
     const em = document.getElementById('auth-email').value, pw = document.getElementById('auth-pass').value, err = document.getElementById('auth-error');
     if(!em || !pw) return;
-    try { document.getElementById('btn-login-submit').textContent = "Aguarde..."; await signInWithEmailAndPassword(auth, em, pw); } catch(error) { err.textContent = "Email ou senha incorretos."; err.style.display = 'block'; document.getElementById('btn-login-submit').textContent = "Entrar"; }
+    try { document.getElementById('btn-login-submit').textContent = "Aguarde..."; await auth.signInWithEmailAndPassword(em, pw); } catch(error) { err.textContent = "Email ou senha incorretos."; err.style.display = 'block'; document.getElementById('btn-login-submit').textContent = "Entrar"; }
   };
 
   document.getElementById('btn-reg-submit').onclick = async () => {
@@ -666,25 +639,26 @@
     if(!em.endsWith('@tripla.com.br')) { err.textContent = "Apenas e-mails corporativos (@tripla.com.br) são permitidos."; return; }
     if(pw.length < 6) { err.textContent = "A senha deve ter no mínimo 6 caracteres."; return; }
     try {
-      document.getElementById('btn-reg-submit').textContent = "Criando..."; const userCred = await createUserWithEmailAndPassword(auth, em, pw);
-      const role = (em === 'admin@tripla.com.br') ? 'admin' : 'pending'; await setDoc(doc(db, "users", userCred.user.uid), { email: em, role: role });
+      document.getElementById('btn-reg-submit').textContent = "Criando..."; const userCred = await auth.createUserWithEmailAndPassword(em, pw);
+      const role = (em === 'admin@tripla.com.br') ? 'admin' : 'pending'; await db.collection("users").doc(userCred.user.uid).set({ email: em, role: role });
     } catch(error) { err.textContent = "Erro ao registrar. Email já existe?"; document.getElementById('btn-reg-submit').textContent = "Solicitar Acesso"; }
   };
-  document.getElementById('btn-logout').onclick = () => signOut(auth); document.getElementById('btn-logout-pending').onclick = () => signOut(auth);
+  document.getElementById('btn-logout').onclick = () => auth.signOut(); document.getElementById('btn-logout-pending').onclick = () => auth.signOut();
 
-  // ── DATA FETCHING COM FALLBACK ──
+  // ── DATA FETCHING (COM FALLBACK 100% GARANTIDO) ──
   async function loadDataFromFirebase() {
     try {
-      const eSnap = await getDocs(collection(db, "eventos")); EVENTS = []; eSnap.forEach(d => EVENTS.push({ id: d.id, ...d.data() }));
+      const eSnap = await db.collection("eventos").get();
+      EVENTS = []; eSnap.forEach(doc => { EVENTS.push({ id: doc.id, ...doc.data() }); });
       
-      // Fallback Se o banco estiver literalmente vazio (Novo Setup)
+      // Fallback
       if (EVENTS.length === 0) {
          EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
       }
       
-      const rSnap = await getDocs(collection(db, "responsaveis")); RESPONSAVEIS = []; rSnap.forEach(d => RESPONSAVEIS.push({ id: d.id, ...d.data() }));
+      const rSnap = await db.collection("responsaveis").get(); 
+      RESPONSAVEIS = []; rSnap.forEach(doc => { RESPONSAVEIS.push({ id: doc.id, ...doc.data() }); });
       
-      // Centraliza calendário em algum evento proximo
       if(EVENTS.length > 0) {
         let evsSorted = EVENTS.map(e=>parseDate(e.data_ini)).filter(d=>d).sort((a,b)=>a-b);
         let targetDate = evsSorted.find(d => d >= currentMonthStart) || evsSorted[evsSorted.length - 1]; 
@@ -694,8 +668,7 @@
       if(userRole === 'admin') await loadPendingUsers();
       initUI();
     } catch (e) { 
-      console.error("Firebase Error:", e);
-      // Fallback em caso de erro de conexão/permissão
+      console.warn("Sem internet ou Firebase bloqueado. Carregando modo local.");
       EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
       initUI();
     }
@@ -704,16 +677,16 @@
   async function loadPendingUsers() {
     const list = document.getElementById('users-pending-list');
     try {
-      const snap = await getDocs(collection(db, "users")); let html = '';
+      const snap = await db.collection("users").get(); let html = '';
       snap.forEach(doc => { let d = doc.data(); if(d.role === 'pending') html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--border);"><span style="font-weight:600; font-size:0.9rem;">${d.email}</span><button class="btn-icon" style="color:var(--green); border-color:var(--green)" onclick="window.approveUser('${doc.id}')">Aprovar</button></div>`; });
       list.innerHTML = html || '<div style="text-align:center; padding: 20px; color: var(--muted); font-size: 0.85rem;">Nenhuma solicitação pendente.</div>';
     } catch(e) {}
   }
-  window.approveUser = async (uid) => { try { await updateDoc(doc(db, "users", uid), { role: 'approved' }); loadPendingUsers(); } catch(e) { alert("Erro ao aprovar."); } }
+  window.approveUser = async (uid) => { try { await db.collection("users").doc(uid).update({ role: 'approved' }); loadPendingUsers(); } catch(e) { alert("Erro ao aprovar."); } }
 
   // ── CORE RENDER LOGIC ──
   function initUI() { document.getElementById('today-badge').textContent = today.toLocaleDateString('pt-BR', {weekday:'short', day:'numeric', month:'short'}); updateResponsiblesUI(); renderAll(); }
-  function renderAll() { renderMiniCal(); renderUpcoming(); renderDashboardAdmin(); renderCurrentView(); }
+  function renderAll() { renderMiniCal(); renderUpcoming(); renderCounts(); renderDashboardAdmin(); renderCurrentView(); }
 
   function getFilteredEvents() {
     return EVENTS.filter(e => {
@@ -770,15 +743,41 @@
 
     let html = '';
     Object.keys(byMonth).forEach(m => {
-        html += `<div class="month-block"><div class="month-header"><span class="month-name">${m}</span><span class="month-count">${byMonth[m].length}</span><div class="month-line"></div></div><div class="event-list">`;
+        html += `
+        <div class="month-block">
+            <div class="month-header">
+                <span class="month-name">${m}</span>
+                <span class="month-count">${byMonth[m].length}</span>
+                <div class="month-line"></div>
+            </div>
+            <div class="event-list">
+        `;
+        
         byMonth[m].forEach(e => {
             const d = parseDate(e.data_ini); 
             const color = TYPE_COLOR[e.tipo] || 'var(--accent)';
             let respPills = getRespArray(e.responsavel).map(r => `<span class="resp-pill">${r}</span>`).join('');
-            html += `<div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
-                <div class="event-date-col"><div class="event-date-day">${d ? d.getDate() : '-'}</div><div class="event-date-month">${d ? MONTHS_SHORT[d.getMonth()] : ''}</div></div>
-                <div class="event-body"><div class="event-header-row"><div class="event-name">${e.evento}</div><div>${temporalBadge(e)}</div></div>
-                <div class="event-meta">${typeBadge(e.tipo)}${statusBadge(e.status)}${formatoBadge(e.formato)}${cotaBadge(e.cota)}${respPills ? `<div class="event-resp-area">${respPills}</div>`:''}</div></div></div>`;
+            
+            html += `
+            <div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
+                <div class="event-date-col">
+                    <div class="event-date-day">${d ? d.getDate() : '-'}</div>
+                    <div class="event-date-month">${d ? MONTHS_SHORT[d.getMonth()] : ''}</div>
+                </div>
+                <div class="event-body">
+                    <div class="event-header-row">
+                        <div class="event-name">${e.evento}</div>
+                        <div>${temporalBadge(e)}</div>
+                    </div>
+                    <div class="event-meta">
+                        ${typeBadge(e.tipo)}
+                        ${statusBadge(e.status)}
+                        ${formatoBadge(e.formato)}
+                        ${cotaBadge(e.cota)} 
+                        ${respPills ? `<div class="event-resp-area">${respPills}</div>`:''}
+                    </div>
+                </div>
+            </div>`;
         });
         html += `</div></div>`;
     }); 
@@ -803,7 +802,18 @@
           const colEvs = evs.filter(e => e.status === status).sort((a,b)=>parseDate(a.data_ini)-parseDate(b.data_ini));
           const el = document.getElementById(`col-${status.toLowerCase().replace(' ','').replace('í','i')}`);
           document.getElementById(`count-${status.toLowerCase().replace(' ','').replace('í','i')}`).textContent = colEvs.length;
-          if(el) { el.innerHTML = colEvs.map(e => `<div class="kanban-card" draggable="${userRole === 'admin'}" ondragstart="window.drag(event, '${e.id}')" style="--card-color:${TYPE_COLOR[e.tipo]||'var(--accent)'}" onclick="window.openEventView('${e.id}')"><div class="kanban-card-title">${e.evento}</div><div style="display:flex; justify-content:space-between; align-items:center;"><div class="kanban-card-date">📅 ${dateFmt(e)}</div>${typeBadge(e.tipo)}</div></div>`).join(''); }
+          
+          if(el) {
+              el.innerHTML = colEvs.map(e => `
+                  <div class="kanban-card" draggable="${userRole === 'admin'}" ondragstart="window.drag(event, '${e.id}')" style="--card-color:${TYPE_COLOR[e.tipo]||'var(--accent)'}" onclick="window.openEventView('${e.id}')">
+                      <div class="kanban-card-title">${e.evento}</div>
+                      <div style="display:flex; justify-content:space-between; align-items:center;">
+                          <div class="kanban-card-date">📅 ${dateFmt(e)}</div>
+                          ${typeBadge(e.tipo)}
+                      </div>
+                  </div>
+              `).join('');
+          }
       });
   }
 
@@ -811,7 +821,8 @@
   window.drag = (ev, id) => ev.dataTransfer.setData("text", id);
   window.drop = async (ev, newStatus) => {
       ev.preventDefault(); const id = ev.dataTransfer.getData("text"); if(!id || userRole !== 'admin') return;
-      try { await updateDoc(doc(db, "eventos", id), { status: newStatus }); await loadDataFromFirebase(); } catch(e) { console.error(e); }
+      try { await db.collection("eventos").doc(id).update({ status: newStatus }); await loadDataFromFirebase(); } 
+      catch(e) { console.error(e); alert("Erro ao mover card."); }
   };
 
   function renderCalendar() {
@@ -848,6 +859,10 @@
     const up = EVENTS.filter(e => parseDate(e.data_ini)>=today && e.tipo!=='Feriado').sort((a,b)=>parseDate(a.data_ini)-parseDate(b.data_ini)).slice(0,5);
     document.getElementById('upcoming-list').innerHTML = up.map(e => `<div class="upcoming-item" onclick="window.openEventView('${e.id}')"><div class="upcoming-dot" style="background:${TYPE_COLOR[e.tipo]||'var(--accent)'}"></div><div><div class="upcoming-name">${e.evento}</div><div class="upcoming-date">${dateFmt(e)}</div></div></div>`).join('');
   }
+  
+  function renderCounts() {
+    document.getElementById('count-all').textContent = EVENTS.length; document.getElementById('count-comercial').textContent = EVENTS.filter(e=>e.tipo==='Comercial').length; document.getElementById('count-interno').textContent = EVENTS.filter(e=>e.tipo==='Interno').length; document.getElementById('count-feriado').textContent = EVENTS.filter(e=>e.tipo==='Feriado').length;
+  }
 
   // ── RESPONSÁVEIS CRUD ──
   function updateResponsiblesUI() {
@@ -867,11 +882,11 @@
     });
   }
 
-  document.getElementById('btn-add-resp').onclick = async () => { const inp = document.getElementById('new-resp-input'); const nome = inp.value.trim(); if(!nome) return; try { inp.value = "Salvando..."; inp.disabled = true; await addDoc(collection(db, "responsaveis"), { nome }); inp.value = ""; await loadDataFromFirebase(); } catch(e) {} finally { inp.disabled = false; } };
-  document.getElementById('btn-add-resp-modal').onclick = async (e) => { e.preventDefault(); const inp = document.getElementById('new-resp-input-modal'); const nome = inp.value.trim(); if(!nome) return; try { await addDoc(collection(db, "responsaveis"), { nome }); inp.value = ""; await loadDataFromFirebase(); const idEditing = document.getElementById('edit-id').value; if(idEditing) window.openAdminForm(idEditing); else window.openAdminForm(''); } catch(er) {} }
-  window.editResp = async (id, oldName) => { const newName = prompt(`Editando: ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await updateDoc(doc(db, "responsaveis", id), { nome: newName.trim() }); const batch = writeBatch(db); let changed = false; EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(doc(db, "eventos", ev.id), { responsavel: newArr.join(', ') }); changed = true; } }); if(changed) await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
-  window.editLegacyResp = async (oldName) => { const newName = prompt(`Editando (Legado): ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await addDoc(collection(db, "responsaveis"), { nome: newName.trim() }); const batch = writeBatch(db); EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(doc(db, "eventos", ev.id), { responsavel: newArr.join(', ') }); } }); await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
-  window.delResp = async (id) => { if(!confirm("Remover opção de responsável?")) return; try { await deleteDoc(doc(db, "responsaveis", id)); await loadDataFromFirebase(); } catch(e) { } }
+  document.getElementById('btn-add-resp').onclick = async () => { const inp = document.getElementById('new-resp-input'); const nome = inp.value.trim(); if(!nome) return; try { inp.value = "Salvando..."; inp.disabled = true; await db.collection("responsaveis").add({ nome }); inp.value = ""; await loadDataFromFirebase(); } catch(e) { console.error(e); } finally { inp.disabled = false; } };
+  document.getElementById('btn-add-resp-modal').onclick = async (e) => { e.preventDefault(); const inp = document.getElementById('new-resp-input-modal'); const nome = inp.value.trim(); if(!nome) return; try { await db.collection("responsaveis").add({ nome }); inp.value = ""; await loadDataFromFirebase(); const idEditing = document.getElementById('edit-id').value; if(idEditing) window.openAdminForm(idEditing); else window.openAdminForm(''); } catch(er) {} }
+  window.editResp = async (id, oldName) => { const newName = prompt(`Editando: ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await db.collection("responsaveis").doc(id).update({ nome: newName.trim() }); const batch = db.batch(); let changed = false; EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(db.collection("eventos").doc(ev.id), { responsavel: newArr.join(', ') }); changed = true; } }); if(changed) await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
+  window.editLegacyResp = async (oldName) => { const newName = prompt(`Editando (Legado): ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await db.collection("responsaveis").add({ nome: newName.trim() }); const batch = db.batch(); EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(db.collection("eventos").doc(ev.id), { responsavel: newArr.join(', ') }); } }); await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
+  window.delResp = async (id) => { if(!confirm("Remover opção de responsável?")) return; try { await db.collection("responsaveis").doc(id).delete(); await loadDataFromFirebase(); } catch(e) { } }
 
   // ── DASHBOARD ADMIN ──
   function renderDashboardAdmin() {
@@ -895,11 +910,17 @@
     if(!fileToUpload) return; const reader = new FileReader();
     reader.onload = async (e) => {
       const text = e.target.result; const lines = text.split('\n').filter(l => l.trim() !== ''); if(lines.length < 2) return alert("Arquivo vazio ou inválido.");
-      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase()); const batch = writeBatch(db); let count = 0;
-      for(let i = 1; i < lines.length; i++) { const row = parseCSVLine(lines[i]); let obj = {}; headers.forEach((h, idx) => { obj[h] = row[idx] ? row[idx] : ''; }); if(obj.evento && obj.data_ini) { obj.mes_ref = MONTHS_PT[parseDate(obj.data_ini).getMonth()] || ''; batch.set(doc(collection(db, "eventos")), obj); count++; } }
+      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase()); const batch = db.batch(); let count = 0;
+      for(let i = 1; i < lines.length; i++) { const row = parseCSVLine(lines[i]); let obj = {}; headers.forEach((h, idx) => { obj[h] = row[idx] ? row[idx] : ''; }); if(obj.evento && obj.data_ini) { obj.mes_ref = MONTHS_PT[parseDate(obj.data_ini).getMonth()] || ''; batch.set(db.collection("eventos").doc(), obj); count++; } }
       if(count > 0) { document.getElementById('btn-upload-csv').textContent = "Enviando..."; try { await batch.commit(); alert(`✅ ${count} adicionados!`); fileToUpload = null; document.getElementById('file-dropzone').innerHTML = `<div style="font-size:2.5rem; margin-bottom:12px">📁</div><div style="font-weight:600">Arraste o <b>.csv</b> aqui</div>`; document.getElementById('file-dropzone').style.borderColor = "var(--border)"; document.getElementById('btn-upload-csv').textContent = "Iniciar Importação"; document.getElementById('btn-upload-csv').disabled = true; await loadDataFromFirebase(); } catch(err) { alert("Erro ao salvar."); } }
     }; reader.readAsText(fileToUpload);
   };
+
+  function checkNotifications() {
+    const banner = document.getElementById('notification-banner'), text = document.getElementById('notification-text');
+    const upcoming = EVENTS.filter(e => { if (e.status !== 'Confirmado') return false; const d = parseDate(e.data_ini); if(!d) return false; return Math.ceil((d - today) / (1000 * 60 * 60 * 24)) >= 0 && Math.ceil((d - today) / (1000 * 60 * 60 * 24)) <= 7; });
+    if (upcoming.length > 0) { text.innerHTML = `Confirmados próximos: <b>${upcoming.map(e=>e.evento).join(', ')}</b>`; banner.classList.add('active'); } else { banner.classList.remove('active'); }
+  }
 
   // ── LOGICA DO MODAL ──
   window.openEventView = function(id) {
@@ -951,9 +972,9 @@
     const data = { evento:document.getElementById('edit-nome').value, data_ini:document.getElementById('edit-ini').value, data_fim:document.getElementById('edit-fim').value, responsavel: selectedChecks.join(', '), tipo:document.getElementById('edit-tipo').value, status:document.getElementById('edit-status').value, formato:document.getElementById('edit-formato').value, cota:document.getElementById('edit-cota').value, vagas:document.getElementById('edit-vagas').value, publico:document.getElementById('edit-publico').value, beneficios:document.getElementById('edit-beneficios').value, obs:document.getElementById('edit-obs').value, participantes: document.getElementById('edit-participantes').value };
     if(!data.evento || !data.data_ini) return alert("Nome do evento e Data Início são obrigatórios."); data.mes_ref = MONTHS_PT[parseDate(data.data_ini).getMonth()];
     btn.textContent = "Salvando..."; btn.disabled = true;
-    try { if(id) { await updateDoc(doc(db, "eventos", id), data); } else { await addDoc(collection(db, "eventos"), data); } document.getElementById('modal-overlay').classList.remove('open'); await loadDataFromFirebase(); } catch (e) { alert("Erro ao salvar no banco."); } finally { btn.textContent = "Salvar Alterações"; btn.disabled = false; }
+    try { if(id && !id.startsWith('mock_')) { await db.collection("eventos").doc(id).update(data); } else { await db.collection("eventos").add(data); } document.getElementById('modal-overlay').classList.remove('open'); await loadDataFromFirebase(); } catch (e) { alert("Erro ao salvar."); } finally { btn.textContent = "Salvar Alterações"; btn.disabled = false; }
   };
-  document.getElementById('btn-delete').onclick = async () => { if(userRole !== 'admin') return; const id = document.getElementById('edit-id').value; if(!confirm("Excluir permanentemente o evento?")) return; try { await deleteDoc(doc(db, "eventos", id)); document.getElementById('modal-overlay').classList.remove('open'); await loadDataFromFirebase(); } catch (e) { console.error(e); } };
+  document.getElementById('btn-delete').onclick = async () => { if(userRole !== 'admin') return; const id = document.getElementById('edit-id').value; if(!confirm("Excluir permanentemente o evento?")) return; try { if(id && !id.startsWith('mock_')) await db.collection("eventos").doc(id).delete(); document.getElementById('modal-overlay').classList.remove('open'); await loadDataFromFirebase(); } catch (e) { console.error(e); } };
 
   // ── EVENT LISTENERS & UI ──
   document.getElementById('btn-admin-toggle').onclick = () => { document.querySelector('.view-tab[data-view="admin"]').click(); };
