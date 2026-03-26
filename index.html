@@ -84,7 +84,6 @@
   .mini-cal-nav { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.2rem; width: 30px; height: 30px; border-radius: var(--radius-sm); transition: 0.2s; }
   .mini-cal-nav:hover { background: var(--surface2); color: var(--text); }
   .mini-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--muted); }
-  .mini-cal-dow { font-size: 0.65rem; font-weight: 700; color: var(--muted); padding: 2px 0 6px; text-transform: uppercase; letter-spacing: 0.04em; }
   .mini-day { padding: 6px 2px; border-radius: 6px; cursor: pointer; position: relative; transition: 0.2s; }
   .mini-day:hover { background: var(--surface2); color: var(--text); }
   .mini-day.has-event { color: var(--text); font-weight: 800; }
@@ -244,8 +243,17 @@
   [data-theme="dark"] .checkbox-item:hover { background: rgba(255,255,255,0.05); }
   .checkbox-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); }
 
+  /* show-on-admin: esconde por padrão, mostra só quando admin-mode ativo */
   .show-on-admin { display: none !important; }
   body.admin-mode .show-on-admin { display: flex !important; }
+  /* O btn-admin-toggle fica sempre visível para quem já é admin — sobrescreve acima */
+  body.admin-mode #btn-admin-toggle { display: flex !important; }
+
+  /* Mini cal cabeçalho dos dias */
+  .mini-cal-dow { font-size: 0.65rem; font-weight: 700; color: var(--muted); padding: 2px 0 6px; text-align: center; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Badge de hoje no header */
+  .today-badge { font-size: 0.78rem; font-weight: 600; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; }
 
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -291,7 +299,7 @@
       <div class="user-badge"><span id="user-email-display"></span> <button class="btn-icon" id="btn-logout" title="Sair">🚪</button></div>
       <button class="btn-icon" id="btn-export">📅 .ics</button>
       <button class="btn-icon" id="btn-theme" title="Alternar Tema Claro/Escuro">🌓 Tema</button>
-      <button class="btn-primary show-on-admin" id="btn-admin-toggle">⚙️ Painel Admin</button>
+      <button class="btn-primary" id="btn-admin-toggle" style="display:none">⚙️ Painel Admin</button>
     </div>
   </header>
 
@@ -342,14 +350,14 @@
       <div class="view-controls">
         <div class="view-title">Calendário Estratégico</div>
         <div class="controls-right">
-          <button class="btn-primary show-on-admin" id="btn-add-event">+ Novo Evento</button>
+          <button class="btn-primary" id="btn-add-event" style="display:none">+ Novo Evento</button>
           <div class="search-box"><span>🔍</span><input type="text" id="search-input" placeholder="Buscar evento..."></div>
           <div class="view-tabs">
             <button class="view-tab active" data-view="timeline">Timeline</button>
             <button class="view-tab" data-view="calendar">Mês</button>
             <button class="view-tab" data-view="week">Semana</button>
             <button class="view-tab" data-view="list">Lista</button>
-            <button class="view-tab show-on-admin" data-view="admin" style="color:var(--accent); font-weight:800">📊 Painel Admin</button>
+            <button class="view-tab" data-view="admin" id="tab-admin" style="display:none; color:var(--accent); font-weight:800">📊 Painel Admin</button>
           </div>
         </div>
       </div>
@@ -582,56 +590,60 @@
     return '';
   }
 
-  // ── AUTENTICAÇÃO FIREBASE (COM TIMEOUT E FALLBACK ROBUSTO) ──
-  
-  // Fallback de segurança: se o Firebase não responder em 6s, carrega modo local
-  const AUTH_TIMEOUT = setTimeout(() => {
-    if (!currentUser && document.getElementById('auth-screen') && !document.getElementById('auth-screen').classList.contains('hide')) {
-      console.warn("Firebase timeout. Iniciando modo de visualização local.");
-      bootAppLocal();
-    }
-  }, 6000);
-
-  function bootAppLocal() {
-    userRole = 'viewer';
-    isAdmin = false;
-    currentUser = null;
-    const authS = document.getElementById('auth-screen');
-    const appS  = document.getElementById('app-screen');
-    if (authS) authS.classList.add('hide');
-    if (appS)  appS.classList.remove('hide');
-    const emailDisplay = document.getElementById('user-email-display');
-    if (emailDisplay) emailDisplay.textContent = 'modo visualização';
-    EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
-    loadDataFromFirebase(); // tenta carregar do Firebase mesmo assim (silenciosamente)
+  // ── AUTENTICAÇÃO FIREBASE ──
+  // Helper central: aplica o estado de admin na UI
+  function applyAdminUI(enabled) {
+    isAdmin = enabled;
+    const btnToggle  = document.getElementById('btn-admin-toggle');
+    const btnAdd     = document.getElementById('btn-add-event');
+    const tabAdmin   = document.getElementById('tab-admin');
+    document.body.classList.toggle('admin-mode', enabled);
+    btnToggle.style.display  = enabled ? 'flex' : 'none';
+    btnToggle.classList.toggle('active', enabled);
+    btnAdd.style.display   = enabled ? 'flex' : 'none';
+    tabAdmin.style.display = enabled ? 'flex' : 'none';
   }
 
   auth.onAuthStateChanged(async (user) => {
-    clearTimeout(AUTH_TIMEOUT);
-    const authS = document.getElementById('auth-screen'), appS = document.getElementById('app-screen'), pendS = document.getElementById('pending-screen'), logB = document.getElementById('login-box'), regB = document.getElementById('register-box');
+    const authS = document.getElementById('auth-screen'), appS = document.getElementById('app-screen'),
+          pendS = document.getElementById('pending-screen'), logB = document.getElementById('login-box'),
+          regB  = document.getElementById('register-box');
     if (user) {
       try {
         const uDoc = await db.collection("users").doc(user.uid).get();
-        if (uDoc.exists) { userRole = uDoc.data().role; } else { userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'approved'; await db.collection("users").doc(user.uid).set({ email: user.email, role: userRole }); }
-        
-        currentUser = user; document.getElementById('user-email-display').textContent = user.email;
-        isAdmin = (userRole === 'admin');
+        if (uDoc.exists) {
+          userRole = uDoc.data().role;
+        } else {
+          // Primeiro acesso: admin para email canônico, approved para todos os outros
+          userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'approved';
+          await db.collection("users").doc(user.uid).set({ email: user.email, role: userRole });
+        }
+        currentUser = user;
+        document.getElementById('user-email-display').textContent = user.email;
 
-        if (userRole === 'pending') { logB.classList.add('hide'); regB.classList.add('hide'); pendS.style.display = 'block'; appS.classList.add('hide'); } 
-        else { authS.classList.add('hide'); appS.classList.remove('hide'); if(isAdmin) document.body.classList.add('admin-mode'); else document.body.classList.remove('admin-mode'); await loadDataFromFirebase(); }
-      } catch (e) { 
-          console.warn("Erro ao buscar permissão. Liberando como viewer.");
-          userRole = 'approved';
-          isAdmin = (user.email === 'admin@tripla.com.br');
-          if(isAdmin) { userRole = 'admin'; document.body.classList.add('admin-mode'); }
-          currentUser = user;
+        if (userRole === 'pending') {
+          logB.classList.add('hide'); regB.classList.add('hide');
+          pendS.style.display = 'block'; appS.classList.add('hide');
+        } else {
           authS.classList.add('hide'); appS.classList.remove('hide');
-          document.getElementById('user-email-display').textContent = user.email;
+          applyAdminUI(userRole === 'admin');
           await loadDataFromFirebase();
+        }
+      } catch (e) {
+        // Firestore inacessível: libera o acesso e tenta adivinhar o papel pelo email
+        console.warn("Firestore inacessível, usando fallback de papel.");
+        currentUser = user;
+        userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'approved';
+        document.getElementById('user-email-display').textContent = user.email;
+        authS.classList.add('hide'); appS.classList.remove('hide');
+        applyAdminUI(userRole === 'admin');
+        await loadDataFromFirebase();
       }
     } else {
-      currentUser = null; userRole = null; isAdmin = false;
-      authS.classList.remove('hide'); appS.classList.add('hide'); pendS.style.display = 'none'; logB.classList.remove('hide'); regB.classList.add('hide');
+      currentUser = null; userRole = null;
+      applyAdminUI(false);
+      authS.classList.remove('hide'); appS.classList.add('hide');
+      pendS.style.display = 'none'; logB.classList.remove('hide'); regB.classList.add('hide');
     }
   });
 
@@ -650,7 +662,7 @@
     if(pw.length < 6) { err.textContent = "A senha deve ter no mínimo 6 caracteres."; return; }
     try {
       document.getElementById('btn-reg-submit').textContent = "Criando..."; const userCred = await auth.createUserWithEmailAndPassword(em, pw);
-      const role = (em === 'admin@tripla.com.br') ? 'admin' : 'pending'; await db.collection("users").doc(userCred.user.uid).set({ email: em, role: role });
+      const role = (em === 'admin@tripla.com.br') ? 'admin' : 'approved'; await db.collection("users").doc(userCred.user.uid).set({ email: em, role: role });
     } catch(error) { err.textContent = "Erro ao registrar. Email já existe?"; document.getElementById('btn-reg-submit').textContent = "Solicitar Acesso"; }
   };
   document.getElementById('btn-logout').onclick = () => auth.signOut(); document.getElementById('btn-logout-pending').onclick = () => auth.signOut();
@@ -659,13 +671,11 @@
   async function loadDataFromFirebase() {
     try {
       const eSnap = await db.collection("eventos").get();
-      const loaded = []; eSnap.forEach(doc => { loaded.push({ id: doc.id, ...doc.data() }); });
+      EVENTS = []; eSnap.forEach(doc => { EVENTS.push({ id: doc.id, ...doc.data() }); });
       
-      // Só usa os do Firebase se vieram dados; senão mantém o que já tiver (mock ou vazio)
-      if (loaded.length > 0) {
-        EVENTS = loaded;
-      } else if (EVENTS.length === 0) {
-        EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
+      // Fallback: Se estiver vazio, carrega 48 eventos padrao
+      if (EVENTS.length === 0) {
+         EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
       }
       
       const rSnap = await db.collection("responsaveis").get(); 
@@ -675,12 +685,10 @@
       
     } catch (e) { 
       console.warn("Sem internet ou Firebase bloqueado. Carregando modo local.");
-      if (EVENTS.length === 0) {
-        EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
-      }
+      EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
     }
     
-    // Centraliza calendário no próximo evento futuro
+    // Centraliza calendário
     if(EVENTS.length > 0) {
       let evsSorted = EVENTS.map(e=>parseDate(e.data_ini)).filter(d=>d).sort((a,b)=>a-b);
       let firstFuture = evsSorted.find(d => d.getTime() >= currentMonthStart.getTime());
@@ -717,11 +725,13 @@
 
   function renderCurrentView() {
     document.querySelectorAll('.view-container').forEach(c => c.classList.remove('active'));
-    document.getElementById(`view-${currentView}`).classList.add('active');
+    const pane = document.getElementById(`view-${currentView}`);
+    if (pane) pane.classList.add('active');
     if (currentView === 'timeline') renderTimeline(); 
     else if (currentView === 'calendar') renderCalendar(); 
     else if (currentView === 'week') renderWeek(); 
     else if (currentView === 'list') renderList();
+    else if (currentView === 'admin') renderDashboardAdmin();
   }
 
   // ── TIMELINE ROBUSTA ──
@@ -759,7 +769,9 @@
     });
 
     let html = '';
-    Object.keys(byMonth).forEach(m => {
+    // Ordena meses cronologicamente usando a ordem de MONTHS_PT
+    const monthsOrdered = MONTHS_PT.filter(m => byMonth[m]);
+    monthsOrdered.forEach(m => {
         html += `<div class="month-block"><div class="month-header"><span class="month-name">${m}</span><span class="month-count">${byMonth[m].length}</span><div class="month-line"></div></div><div class="event-list">`;
         byMonth[m].forEach(e => {
             const d = parseDate(e.data_ini); 
@@ -823,7 +835,8 @@
   }
 
   function renderMiniCal() {
-    document.getElementById('mini-month-label').textContent = `${MONTHS_SHORT[miniMonth]} ${miniYear}`;    const fd = new Date(miniYear, miniMonth, 1).getDay(), dim = new Date(miniYear, miniMonth+1, 0).getDate(), cells = Math.ceil((fd + dim) / 7) * 7, evDays = new Set(); EVENTS.forEach(e => { const i=parseDate(e.data_ini), f=parseDate(e.data_fim)||i; if(!i)return; let d=new Date(i); while(d<=f){ if(d.getFullYear()===miniYear&&d.getMonth()===miniMonth)evDays.add(d.getDate()); d.setDate(d.getDate()+1); } });
+    document.getElementById('mini-month-label').textContent = `${MONTHS_SHORT[miniMonth]} ${miniYear}`;
+    const fd = new Date(miniYear, miniMonth, 1).getDay(), dim = new Date(miniYear, miniMonth+1, 0).getDate(), cells = Math.ceil((fd + dim) / 7) * 7, evDays = new Set(); EVENTS.forEach(e => { const i=parseDate(e.data_ini), f=parseDate(e.data_fim)||i; if(!i)return; let d=new Date(i); while(d<=f){ if(d.getFullYear()===miniYear&&d.getMonth()===miniMonth)evDays.add(d.getDate()); d.setDate(d.getDate()+1); } });
     let html = DAYS_PT.map(d => `<div class="mini-cal-dow">${d}</div>`).join('');
     for (let i=0; i<cells; i++) {
       const dNum=i-fd+1, isO=dNum<1||dNum>dim, isT=!isO&&dNum===today.getDate()&&miniMonth===today.getMonth()&&miniYear===today.getFullYear(), hasEv=!isO&&evDays.has(dNum);
@@ -832,8 +845,13 @@
   }
   
   function renderUpcoming() {
-    const up = EVENTS.filter(e => parseDate(e.data_ini)>=today && e.tipo!=='Feriado').sort((a,b)=>parseDate(a.data_ini)-parseDate(b.data_ini)).slice(0,5);
-    document.getElementById('upcoming-list').innerHTML = up.map(e => `<div class="upcoming-item" onclick="window.openEventView('${e.id}')"><div class="upcoming-dot" style="background:${TYPE_COLOR[e.tipo]||'var(--accent)'}"></div><div><div class="upcoming-name">${e.evento}</div><div class="upcoming-date">${dateFmt(e)}</div></div></div>`).join('');
+    const up = EVENTS
+      .filter(e => { const d = parseDate(e.data_ini); return d && d >= today && e.tipo !== 'Feriado'; })
+      .sort((a,b) => parseDate(a.data_ini) - parseDate(b.data_ini))
+      .slice(0, 5);
+    const container = document.getElementById('upcoming-list');
+    if (!up.length) { container.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;padding:8px">Nenhum evento próximo.</div>'; return; }
+    container.innerHTML = up.map(e => `<div class="upcoming-item" onclick="window.openEventView('${e.id}')"><div class="upcoming-dot" style="background:${TYPE_COLOR[e.tipo]||'var(--accent)'}"></div><div><div class="upcoming-name">${e.evento}</div><div class="upcoming-date" style="font-size:0.75rem;color:var(--muted);margin-top:2px">${dateFmt(e)}</div></div></div>`).join('');
   }
 
   // ── RESPONSÁVEIS CRUD ──
@@ -925,8 +943,9 @@
     document.getElementById('mode-view').classList.add('hide'); document.getElementById('mode-edit').classList.remove('hide'); document.getElementById('modal-overlay').classList.add('open');
   };
 
-  const btnSwitchEdit = document.getElementById('btn-switch-edit');
-  if (btnSwitchEdit) btnSwitchEdit.onclick = () => window.openAdminForm(currentEditId);
+  // btn-switch-edit só existe no modal; usar null guard
+  const _btnSwitchEdit = document.getElementById('btn-switch-edit');
+  if (_btnSwitchEdit) _btnSwitchEdit.onclick = () => window.openAdminForm(currentEditId);
   document.getElementById('btn-cancel-edit').onclick = () => window.openEventView(currentEditId);
   document.getElementById('modal-close-view').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
   document.getElementById('modal-close-edit').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
@@ -945,15 +964,27 @@
 
   // ── EVENT LISTENERS & UI ──
   document.getElementById('btn-admin-toggle').onclick = () => { 
-    isAdmin = !isAdmin; 
-    document.body.classList.toggle('admin-mode', isAdmin); 
-    document.getElementById('btn-admin-toggle').classList.toggle('active', isAdmin); 
-    if(isAdmin) { const adminTab = document.querySelector('.view-tab[data-view="admin"]'); if(adminTab) adminTab.click(); } else if (currentView === 'admin') { document.querySelector('.view-tab[data-view="timeline"]').click(); } 
+    // Alterna: se já está na view admin, volta para timeline; senão vai para admin
+    if (currentView === 'admin') {
+      document.querySelector('.view-tab[data-view="timeline"]').click();
+      document.getElementById('btn-admin-toggle').classList.remove('active');
+    } else {
+      document.getElementById('tab-admin').click();
+      document.getElementById('btn-admin-toggle').classList.add('active');
+    }
   };
   document.getElementById('btn-theme').onclick = () => { const html = document.documentElement; html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark'; };
   document.getElementById('btn-export').onclick = () => { let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Tripla//Eventos//PT\n"; getFilteredEvents().forEach(e => { if(!e.data_ini) return; const start = e.data_ini.replace(/-/g, '') + 'T000000Z', end = (e.data_fim || e.data_ini).replace(/-/g, '') + 'T235959Z'; ics += `BEGIN:VEVENT\nDTSTART:${start}\nDTEND:${end}\nSUMMARY:${e.evento}\nDESCRIPTION:Resp: ${e.responsavel} | Status: ${e.status}\nEND:VEVENT\n`; }); ics += "END:VCALENDAR"; const a = document.createElement('a'); a.href = window.URL.createObjectURL(new Blob([ics], {type:'text/calendar'})); a.download = "eventos.ics"; a.click(); };
 
-  document.querySelectorAll('.view-tab').forEach(t => t.onclick = () => { document.querySelectorAll('.view-tab').forEach(b=>b.classList.remove('active')); t.classList.add('active'); currentView = t.dataset.view; renderCurrentView(); });
+  document.querySelectorAll('.view-tab').forEach(t => t.onclick = () => { 
+    document.querySelectorAll('.view-tab').forEach(b=>b.classList.remove('active')); 
+    t.classList.add('active'); 
+    currentView = t.dataset.view; 
+    // Sincroniza o estado do botão ⚙️ Painel Admin no header
+    const btnToggle = document.getElementById('btn-admin-toggle');
+    if (btnToggle) btnToggle.classList.toggle('active', currentView === 'admin');
+    renderCurrentView(); 
+  });
   document.querySelectorAll('[data-filter-type]').forEach(b => b.onclick = (e) => { filterType = e.currentTarget.dataset.filterType; document.querySelectorAll('[data-filter-type]').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active'); initUI(); });
   document.querySelectorAll('[data-filter-status]').forEach(b => b.onclick = (e) => { filterStatus = e.currentTarget.dataset.filterStatus; document.querySelectorAll('[data-filter-status]').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active'); initUI(); });
   document.getElementById('filter-resp').onchange = (e) => { filterResp = e.target.value; initUI(); };
