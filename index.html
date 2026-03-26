@@ -81,7 +81,6 @@
     display: flex; align-items: center; justify-content: space-between; 
     height: 72px; box-shadow: var(--shadow-sm); 
   }
-  /* Fallback cor de fundo */
   header { background: var(--surface); } 
   
   .logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); }
@@ -169,7 +168,7 @@
 
   .month-block { margin-bottom: 48px; }
   .month-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
-  .month-name { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+  .month-name { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); text-transform: capitalize;}
   .month-count { font-size: 0.75rem; color: var(--text); font-weight: 700; background: var(--surface2); padding: 2px 10px; border-radius: 12px; border: 1px solid var(--border); }
   .month-line { flex: 1; height: 1px; background: var(--border); }
   
@@ -185,7 +184,7 @@
   .event-date-month { font-size: 0.75rem; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.05em; }
   
   .event-body { flex: 1; min-width: 0; }
-  .event-name { font-weight: 800; font-size: 1.1rem; margin-bottom: 8px; color: var(--text); letter-spacing: -0.01em; }
+  .event-name { font-weight: 800; font-size: 1.1rem; margin-bottom: 8px; color: var(--text); letter-spacing: -0.01em; line-height: 1.3;}
   .event-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   
   .resp-pill-group { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-left: 8px; padding-left: 8px; border-left: 1px solid var(--border); }
@@ -202,16 +201,15 @@
   .badge-status-concluido { background: rgba(139,92,246,0.15); color: var(--purple); border: 1px solid rgba(139,92,246,0.2); }
   .badge-status-cancelado { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
   .badge-formato { background: rgba(20,184,166,0.15); color: var(--teal); border: 1px solid rgba(20,184,166,0.2); }
-  .badge-cota { background: rgba(236,72,153,0.15); color: var(--pink); border: 1px solid rgba(236,72,153,0.3); } /* Novo Badge de Cota */
   
-  /* BADGES TEMPORAIS */
-  .badge-temporal-agora { background: rgba(239,68,68,0.2); color: var(--red); border: 1px solid rgba(239,68,68,0.5); animation: pulse-red 2s infinite; }
-  .badge-temporal-breve { background: rgba(245,158,11,0.2); color: var(--amber); border: 1px solid rgba(245,158,11,0.5); }
-  @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); } 70% { box-shadow: 0 0 0 6px rgba(239,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
+  /* BADGES TEMPORAIS & COTAS ESPECIAIS */
+  .badge-temporal-agora { background: rgba(16,185,129,0.2); color: var(--green); border: 1px solid rgba(16,185,129,0.5); animation: pulse-green 2s infinite; }
+  .badge-temporal-breve { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.4); text-transform: none; letter-spacing: 0;}
+  @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); } 70% { box-shadow: 0 0 0 8px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
 
   /* GRID CALENDAR & WEEK */
   .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-  .cal-month-label { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
+  .cal-month-label { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; text-transform: capitalize;}
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
   .cal-dow { padding: 12px 4px; text-align: center; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--muted); background: var(--surface); border-radius: var(--radius-sm); border: 1px solid var(--border); }
   .cal-day { background: var(--surface); min-height: 120px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: 0.2s; }
@@ -487,6 +485,7 @@
     <div id="mode-view">
       <div class="modal-header-view" id="view-header">
         <div class="modal-actions-top">
+          <div id="view-temporal-badge-header"></div>
           <button class="btn-icon show-on-admin" id="btn-switch-edit" title="Editar Evento">✏️ Editar</button>
           <button class="btn-icon" id="modal-close-view">✕</button>
         </div>
@@ -513,7 +512,7 @@
           <div class="bento-item" id="block-cota">
             <div class="bento-header">🎖️ Comercial</div>
             <div class="bento-value">
-              <span style="font-size: 0.8rem; color:var(--muted); font-weight:500;">Cota:</span> <span id="view-cota" style="color:var(--pink);">-</span><br>
+              <span style="font-size: 0.8rem; color:var(--muted); font-weight:500;">Cota:</span> <span id="view-cota" style="color:var(--amber);">-</span><br>
               <span style="font-size: 0.8rem; color:var(--muted); font-weight:500;">Vagas:</span> <span id="view-vagas">-</span>
             </div>
           </div>
@@ -655,8 +654,29 @@
   function typeBadge(t) { return t ? `<span class="badge badge-${t.toLowerCase()}">${t}</span>` : ''; }
   function statusBadge(s) { return s ? `<span class="badge badge-status-${STATUS_CLASS[s]||''}">${s}</span>` : ''; }
   function formatoBadge(f) { return f ? `<span class="badge badge-formato">${f}</span>` : ''; }
-  function cotaBadge(c) { return c ? `<span class="badge badge-cota">🎯 Cota: ${c}</span>` : ''; }
   
+  // INTELIGÊNCIA DA COTA COM CORES E MEDALHAS
+  function cotaBadge(c) { 
+    if(!c) return ''; 
+    let lowerC = c.toLowerCase();
+    let icon = '🏅';
+    let style = 'background: rgba(255,255,255,0.1); color: var(--text); border: 1px solid var(--border);';
+    
+    if (lowerC.includes('ouro') || lowerC.includes('gold')) {
+      icon = '🥇'; style = 'background: rgba(234, 179, 8, 0.15); color: #fbbf24; border: 1px solid rgba(234, 179, 8, 0.3);';
+    } else if (lowerC.includes('prata') || lowerC.includes('silver')) {
+      icon = '🥈'; style = 'background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3);';
+    } else if (lowerC.includes('bronze')) {
+      icon = '🥉'; style = 'background: rgba(180, 83, 9, 0.15); color: #d97706; border: 1px solid rgba(180, 83, 9, 0.3);';
+    } else if (lowerC.includes('diamond') || lowerC.includes('diamante')) {
+      icon = '💎'; style = 'background: rgba(56, 189, 248, 0.15); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.3);';
+    } else if (lowerC.includes('platina') || lowerC.includes('platinum')) {
+      icon = '💠'; style = 'background: rgba(167, 139, 250, 0.15); color: #c4b5fd; border: 1px solid rgba(167, 139, 250, 0.3);';
+    }
+    return `<span class="badge" style="${style}">${icon} Cota: ${c}</span>`; 
+  }
+  
+  // BADGES TEMPORAIS: ACONTECENDO AGORA E EM BREVE
   function temporalBadge(ev) {
     const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim) || ini;
     if(!ini) return '';
@@ -664,11 +684,12 @@
     const i = new Date(ini); i.setHours(0,0,0,0);
     const f = new Date(fim); f.setHours(0,0,0,0);
     
-    if (t >= i && t <= f) return `<span class="badge badge-temporal-agora">🔴 Acontecendo Agora</span>`;
+    if (t >= i && t <= f) return `<span class="badge badge-temporal-agora">🟢 Acontecendo</span>`;
     
     const diffTime = i - t;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    if (diffDays > 0 && diffDays <= 7) return `<span class="badge badge-temporal-breve">⏳ Em Breve (${diffDays}d)</span>`;
+    if (diffDays === 1) return `<span class="badge badge-temporal-breve">📅 Falta 1 dia</span>`;
+    if (diffDays > 1 && diffDays <= 7) return `<span class="badge badge-temporal-breve">📅 Faltam ${diffDays} dias</span>`;
     return '';
   }
   
@@ -906,12 +927,16 @@
         let rPills = getRespArray(e.responsavel).map(r => `<span class="resp-pill">${r}</span>`).join('');
         let respHTML = rPills ? `<div class="resp-pill-group">${rPills}</div>` : '';
 
-        // Badge de Cota incluída na Timeline
-        html += `<div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
+        // TIMELINE COM BADGE TEMPORAL NO CANTO SUPERIOR DIREITO E COTA SEMANTICA
+        html += `
+          <div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
             <div class="event-date-col"><div class="event-date-day">${d?d.getDate():'-'}</div><div class="event-date-month">${d?MONTHS_SHORT[d.getMonth()]:''}</div></div>
             <div class="event-body">
-              <div class="event-name">${e.evento}</div>
-              <div class="event-meta">${temporalBadge(e)}${typeBadge(e.tipo)}${statusBadge(e.status)}${formatoBadge(e.formato)}${cotaBadge(e.cota)}${respHTML}</div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                 <div class="event-name">${e.evento}</div>
+                 <div>${temporalBadge(e)}</div>
+              </div>
+              <div class="event-meta" style="margin-top: 4px;">${typeBadge(e.tipo)}${statusBadge(e.status)}${formatoBadge(e.formato)}${cotaBadge(e.cota)}${respHTML}</div>
             </div>
           </div>`;
       });
@@ -947,7 +972,7 @@
     body.innerHTML = evs.map(e => {
         let rPills = getRespArray(e.responsavel).map(r => `<span class="resp-pill">${r}</span>`).join(' ');
         return `<tr onclick="window.openEventView('${e.id}')" class="${getStatus(e)}">
-        <td style="font-weight:700;">${dateFmt(e)}</td><td><strong style="font-size:0.95rem;">${e.evento}</strong></td><td>${typeBadge(e.tipo)}</td><td>${rPills || '—'}</td><td>${temporalBadge(e)} ${statusBadge(e.status)}</td><td>${formatoBadge(e.formato)}</td><td>${e.cota||'—'}</td></tr>`
+        <td style="font-weight:700;">${dateFmt(e)}</td><td><div style="display:flex; align-items:center; gap:8px;"><strong style="font-size:0.95rem;">${e.evento}</strong> ${temporalBadge(e)}</div></td><td>${typeBadge(e.tipo)}</td><td>${rPills || '—'}</td><td>${statusBadge(e.status)}</td><td>${formatoBadge(e.formato)}</td><td>${cotaBadge(e.cota)||'—'}</td></tr>`
     }).join('');
   }
 
@@ -976,7 +1001,11 @@
     
     document.getElementById('view-header').style.setProperty('--card-color', TYPE_COLOR[ev.tipo] || 'var(--accent)'); 
     document.getElementById('view-title').textContent = ev.evento; 
-    document.getElementById('view-badges').innerHTML = temporalBadge(ev) + typeBadge(ev.tipo) + statusBadge(ev.status); 
+    
+    // Injeta temporal no canto superior direito do modal e o resto em baixo
+    document.getElementById('view-temporal-badge-header').innerHTML = temporalBadge(ev);
+    document.getElementById('view-badges').innerHTML = typeBadge(ev.tipo) + statusBadge(ev.status); 
+    
     document.getElementById('view-date').innerHTML = `📅 ${dateFmt(ev)}`; 
     
     let rPills = getRespArray(ev.responsavel).map(r => `<span class="resp-pill">${r}</span>`).join('');
@@ -989,7 +1018,7 @@
     const blockCota = document.getElementById('block-cota');
     if (ev.cota || ev.vagas) {
         blockCota.style.display = 'block';
-        document.getElementById('view-cota').textContent = ev.cota || '-'; 
+        document.getElementById('view-cota').innerHTML = cotaBadge(ev.cota) || '-'; 
         document.getElementById('view-vagas').textContent = ev.vagas || '-';
     } else { blockCota.style.display = 'none'; }
     
