@@ -6,9 +6,8 @@
 <title>Calendário de Eventos Tripla</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
-  /* ── VARIÁVEIS DE TEMA (MODO CLARO PADRÃO) ── */
+  /* ── VARIÁVEIS DE TEMA PREMIUM ── */
   :root {
     --bg: #f8fafc; 
     --surface: #ffffff; 
@@ -42,50 +41,25 @@
   }
 
   [data-theme="dark"] {
-    --bg: #090a0f; 
-    --surface: #11131a; 
-    --surface2: #1a1d27;
-    --border: rgba(255,255,255,0.08); 
-    --text: #f1f5f9; 
-    --muted: #94a3b8;
-    --accent: #3b82f6; 
-    --accent-hover: #60a5fa; 
-    --accent-glow: rgba(59,130,246,0.15);
-    
-    --green: #10b981; 
-    --amber: #f59e0b; 
-    --red: #ef4444; 
-    --purple: #8b5cf6; 
-    --pink: #ec4899; 
-    --teal: #14b8a6;
-    
-    --c-comercial: #3b82f6; 
-    --c-interno: #10b981; 
-    --c-feriado: #f59e0b;
-    
-    --shadow-sm: 0 4px 6px rgba(0,0,0,0.2); 
-    --shadow: 0 10px 25px rgba(0,0,0,0.4); 
-    --shadow-lg: 0 30px 60px rgba(0,0,0,0.6);
+    --bg: #090a0f; --surface: #11131a; --surface2: #1a1d27;
+    --border: rgba(255,255,255,0.08); --text: #f1f5f9; --muted: #94a3b8;
+    --accent: #3b82f6; --accent-hover: #60a5fa; --accent-glow: rgba(59,130,246,0.15);
+    --green: #10b981; --amber: #f59e0b; --red: #ef4444; --purple: #8b5cf6; --pink: #ec4899; --teal: #14b8a6;
+    --c-comercial: #3b82f6; --c-interno: #10b981; --c-feriado: #f59e0b;
+    --shadow-sm: 0 4px 6px rgba(0,0,0,0.2); --shadow: 0 10px 25px rgba(0,0,0,0.4); --shadow-lg: 0 30px 60px rgba(0,0,0,0.6);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  body { 
-    font-family: var(--font-body); 
-    background: var(--bg); 
-    color: var(--text); 
-    min-height: 100vh; 
-    line-height: 1.6; 
-    transition: background-color 0.3s, color 0.3s; 
-  }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; transition: background-color 0.3s, color 0.3s; }
   h1, h2, h3, h4, .view-title, .logo { font-family: var(--font-heading); }
   .hide { display: none !important; }
 
   /* ── AUTH SCREEN ── */
   #auth-screen { position: fixed; inset: 0; z-index: 1000; background: var(--bg); display: flex; align-items: center; justify-content: center; }
   .auth-card { background: var(--surface); padding: 40px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-lg); width: 100%; max-width: 420px; text-align: center; }
-  .auth-logo { font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 8px; font-family: var(--font-heading);}
-  .auth-logo span { color: var(--accent); }
+  .auth-logo { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 8px; font-family: var(--font-heading);}
+  .auth-logo img { height: 32px; object-fit: contain; }
   .auth-subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 24px; }
   .auth-input { width: 100%; padding: 12px 16px; margin-bottom: 16px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.9rem; transition: 0.2s; }
   .auth-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); outline: none; }
@@ -95,8 +69,8 @@
   
   /* ── HEADER ── */
   header { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 72px; box-shadow: var(--shadow-sm); }
-  .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
-  .logo span { color: var(--accent); }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+  .logo img { height: 28px; object-fit: contain; }
   .header-right { display: flex; align-items: center; gap: 12px; }
   .user-badge { font-size: 0.85rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 8px; padding-right: 16px; border-right: 1px solid var(--border); }
   .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
@@ -143,7 +117,7 @@
 
   /* ── VIEW CONTROLS & TABS ── */
   .view-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 20px; }
-  .view-title { font-size: 2rem; letter-spacing: -0.03em; line-height: 1.1; color: var(--text); }
+  .view-title { font-size: 2.2rem; letter-spacing: -0.03em; line-height: 1.1; color: var(--text); }
   .controls-right { display: flex; align-items: center; gap: 12px; }
   .search-box { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 16px; }
   .search-box input { background: none; border: none; outline: none; color: var(--text); font-size: 0.85rem; width: 140px; font-family: inherit; font-weight: 500;}
@@ -190,19 +164,7 @@
   .month-line { flex: 1; height: 2px; background: var(--border); border-radius: 2px; }
   
   .event-list { display: flex; flex-direction: column; gap: 16px; }
-  .event-card { 
-    background: var(--surface); 
-    border: 1px solid var(--border); 
-    border-radius: var(--radius); 
-    padding: 24px; 
-    display: flex; 
-    align-items: stretch; 
-    gap: 24px; 
-    cursor: pointer; 
-    position: relative; 
-    box-shadow: var(--shadow-sm); 
-    transition: all 0.2s ease; 
-  }
+  .event-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: flex; align-items: stretch; gap: 24px; cursor: pointer; position: relative; box-shadow: var(--shadow-sm); transition: all 0.2s ease; }
   .event-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--card-color, var(--accent)); border-radius: 6px 0 0 6px; }
   .event-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--muted); }
   .event-card.past { opacity: 0.6; filter: grayscale(30%); }
@@ -323,14 +285,18 @@
 
 <div id="auth-screen">
   <div class="auth-card" id="login-box">
-    <div class="auth-logo">Tripla <span>·</span> Eventos</div>
+    <div class="auth-logo">
+      <img src="https://blog.tripla.com.br/wp-content/uploads/2026/03/logo-color-horizontal-png-transparente-02.png" alt="Tripla Logo" style="height: 36px; margin-bottom: 4px;">
+      <br><span>Eventos</span>
+    </div>
     <div class="auth-subtitle">Acesso restrito para equipe interna</div>
-    <div id="auth-error"></div>
+    <div id="auth-error" style="color:var(--red); font-size:0.85rem; margin-bottom:16px; display:none;"></div>
     <input type="email" id="auth-email" class="auth-input" placeholder="seu.nome@tripla.com.br" required>
     <input type="password" id="auth-pass" class="auth-input" placeholder="Sua senha" required>
     <button class="auth-btn" id="btn-login-submit">Entrar</button>
     <button class="auth-switch" id="btn-show-register">Criar acesso corporativo</button>
   </div>
+  
   <div class="auth-card hide" id="register-box">
     <div class="auth-logo">Solicitar <span>Acesso</span></div>
     <div class="auth-subtitle">Utilize seu e-mail @tripla.com.br</div>
@@ -340,6 +306,7 @@
     <button class="auth-btn" id="btn-reg-submit">Enviar Solicitação</button>
     <button class="auth-switch" id="btn-show-login">Voltar para o Login</button>
   </div>
+  
   <div class="auth-card hide" id="pending-screen">
     <div style="font-size: 3rem; margin-bottom: 16px;">⏳</div>
     <h3 style="font-family: var(--font-heading); margin-bottom: 8px;">Aguardando Aprovação</h3>
@@ -350,12 +317,15 @@
 
 <div id="app-screen" class="hide">
   <header>
-    <div class="logo">Tripla <span>·</span> Eventos</div>
+    <div class="logo">
+      <img src="https://blog.tripla.com.br/wp-content/uploads/2026/03/logo-color-horizontal-png-transparente-02.png" alt="Tripla Logo"> 
+      <span>·</span> Eventos
+    </div>
     <div class="header-right">
       <div class="today-badge" id="today-badge"></div>
       <div class="user-badge"><span id="user-email-display"></span> <button class="btn-icon" id="btn-logout" title="Sair">🚪</button></div>
       <button class="btn-icon" id="btn-export">📅 .ics</button>
-      <button class="btn-icon" id="btn-theme" title="Tema">🌓</button>
+      <button class="btn-icon" id="btn-theme" title="Alternar Tema Claro/Escuro">🌓 Tema</button>
       <button class="btn-primary show-on-admin" id="btn-admin-toggle">⚙️ Painel Admin</button>
     </div>
   </header>
@@ -503,7 +473,6 @@
           
           <div class="admin-panel">
             <h3>👥 Gerenciar Organizadores</h3>
-            <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Nomes para as opções de responsáveis.</p>
             <div style="display:flex; gap:12px; margin-bottom:16px;"><input type="text" id="new-resp-input" class="admin-input" style="margin:0" placeholder="Nome..."><button class="btn-primary" id="btn-add-resp">Add</button></div>
             <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 200px; overflow-y:auto; padding:8px; background: var(--bg);" id="resp-list-admin"></div>
           </div>
@@ -532,24 +501,19 @@
       </div>
       <div class="modal-body">
         <div class="bento-grid">
-          <div class="bento-item"><div class="bento-header">📌 Status e Operação</div><div class="bento-value"><span id="view-status">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Formato:</span> <span id="view-formato">-</span></div></div>
+          <div class="bento-item"><div class="bento-header">📌 Operação</div><div class="bento-value"><span id="view-status">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Formato:</span> <span id="view-formato">-</span></div></div>
           <div class="bento-item" id="block-cota"><div class="bento-header">🎖️ Comercial</div><div class="bento-value"><span id="view-cota">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Vagas Livres:</span> <span id="view-vagas">-</span></div></div>
-          
-          <div class="bento-item full" id="block-participantes" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2);">
-            <div class="bento-header" style="color: var(--green);">🎟️ Participantes (Equipe Tripla)</div>
-            <div class="bento-value" id="view-participantes" style="font-size: 0.9rem;">-</div>
-          </div>
-
+          <div class="bento-item full" id="block-participantes" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2);"><div class="bento-header" style="color: var(--green);">🎟️ Participantes (Equipe Tripla)</div><div class="bento-value" id="view-participantes" style="font-size: 0.9rem;">-</div></div>
           <div class="bento-item full" id="block-publico"><div class="bento-header">👥 Público Alvo</div><div class="bento-value" id="view-publico">-</div></div>
-          <div class="bento-item full" id="block-beneficios"><div class="bento-header">✨ Benefícios e Entregas</div><div class="bento-value" id="view-beneficios" style="white-space: pre-wrap;">-</div></div>
-          <div class="bento-item full" id="block-obs" style="background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2);"><div class="bento-header" style="color: var(--amber);">⚠️ Observações Internas</div><div class="bento-value" id="view-obs" style="white-space: pre-wrap;">-</div></div>
+          <div class="bento-item full" id="block-beneficios"><div class="bento-header">✨ Benefícios / Entregas</div><div class="bento-value" id="view-beneficios" style="white-space: pre-wrap;">-</div></div>
+          <div class="bento-item full" id="block-obs" style="background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2);"><div class="bento-header" style="color: var(--amber);">⚠️ Observações</div><div class="bento-value" id="view-obs" style="white-space: pre-wrap;">-</div></div>
         </div>
       </div>
     </div>
     
     <div id="mode-edit" class="hide">
       <div class="modal-header-admin">
-        <h3 style="font-family:var(--font-heading); font-size:1.3rem; color:var(--text);" id="form-title">Editar Evento</h3>
+        <h3 id="form-title" style="font-family:var(--font-heading); font-size:1.3rem;">Editar Evento</h3>
         <div style="display:flex; gap:12px;"><button class="btn-icon" id="btn-cancel-edit">← Voltar</button><button class="btn-icon" id="modal-close-edit">✕</button></div>
       </div>
       <div class="modal-body">
@@ -560,32 +524,26 @@
           <div><label class="form-label">Data Início *</label><input type="date" class="admin-input" id="edit-ini"></div>
           <div><label class="form-label">Data Fim</label><input type="date" class="admin-input" id="edit-fim"></div>
           <div><label class="form-label">Tipo</label><select class="admin-input select-css" id="edit-tipo"><option>Comercial</option><option>Interno</option><option>Feriado</option></select></div>
-          <div><label class="form-label">Status do Board</label><select class="admin-input select-css" id="edit-status"><option>Planejado</option><option>Confirmado</option><option>Em negociação</option><option>Concluído</option><option>Cancelado</option></select></div>
+          <div><label class="form-label">Status no Board</label><select class="admin-input select-css" id="edit-status"><option>Planejado</option><option>Confirmado</option><option>Em negociação</option><option>Concluído</option><option>Cancelado</option></select></div>
         </div>
-        
         <div class="admin-section-title">Envolvidos e Presença</div>
         <div class="form-grid">
           <div class="form-full">
-            <label class="form-label">Organizadores Responsáveis (Pode marcar vários)</label>
+            <label class="form-label">Organizadores Responsáveis</label>
             <div class="checkbox-list-container" id="edit-resp-checkboxes"></div>
             <div style="margin-top: 8px; display:flex; gap:8px;">
                 <input type="text" id="new-resp-input-modal" class="admin-input" style="margin:0; padding:6px 10px; font-size:0.8rem;" placeholder="Add novo organizador...">
                 <button class="btn-primary" style="padding:6px 10px;" id="btn-add-resp-modal">+</button>
             </div>
           </div>
-          <div class="form-full">
-            <label class="form-label" style="color:var(--green)">Participantes da Tripla</label>
-            <input type="text" class="admin-input" id="edit-participantes" placeholder="Ex: Henrique Matos, Emilly, Carol...">
-          </div>
+          <div class="form-full"><label class="form-label" style="color:var(--green)">Participantes da Tripla</label><input type="text" class="admin-input" id="edit-participantes" placeholder="Ex: Henrique, Emilly..."></div>
         </div>
-
         <div class="admin-section-title">Operacional</div>
         <div class="form-grid">
-          <div><label class="form-label">Formato</label><input type="text" class="admin-input" id="edit-formato" placeholder="Presencial, Online..."></div>
-          <div><label class="form-label">Cota Comercial</label><input type="text" class="admin-input" id="edit-cota" placeholder="Ex: Ouro"></div>
-          <div><label class="form-label">Vagas</label><input type="text" class="admin-input" id="edit-vagas"></div>
+          <div><label class="form-label">Formato</label><input type="text" class="admin-input" id="edit-formato"></div>
+          <div><label class="form-label">Cota Comercial</label><input type="text" class="admin-input" id="edit-cota"></div>
+          <div><label class="form-label">Vagas Livres</label><input type="text" class="admin-input" id="edit-vagas"></div>
         </div>
-        
         <div class="admin-section-title">Informações Adicionais</div>
         <div class="form-grid">
           <div class="form-full"><label class="form-label">Público Alvo</label><input type="text" class="admin-input" id="edit-publico"></div>
@@ -602,7 +560,7 @@
 </div>
 
 <script type="module">
-  // FIREBASE IMPORTS
+  // FIREBASE IMPORTS E CONFIGURAÇÕES
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, updateDoc, addDoc, deleteDoc, getDoc, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -620,7 +578,17 @@
   const db = getFirestore(app);
   const auth = getAuth(app);
 
-  // STATE
+  // DADOS DE FALLBACK CASO O FIREBASE FALHE OU ESTEJA VAZIO
+  const ORIGINAL_EVENTS = [
+    {tipo:"Interno",responsavel:"Jéss e Jê",mes_ref:"Janeiro",data_ini:"2026-01-28",data_fim:"2026-01-30",evento:"Tripla Conecta",status:"Planejado",formato:"Presencial"},
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-09",data_fim:"2026-03-09",evento:"Cybersecurity Forum",cota:"Ouro",vagas:"13 convites",status:"Confirmado",formato:"Presencial"},
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Abril",data_ini:"2026-04-15",data_fim:"2026-04-16",evento:"Cloudflare Immerse SP 2026",cota:"Platinum",vagas:"5",status:"Confirmado",formato:"Presencial"},
+    {tipo:"Feriado",responsavel:"",mes_ref:"Abril",data_ini:"2026-04-21",data_fim:"2026-04-21",evento:"Tiradentes",status:"Planejado"},
+    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Maio",data_ini:"2026-05-12",data_fim:"2026-05-12",evento:"Security Leaders BH",cota:"Bronze",vagas:"6 executivos",status:"Planejado",formato:"Presencial"},
+    {tipo:"Interno",responsavel:"G&G",mes_ref:"Julho",data_ini:"2026-07-09",data_fim:"2026-07-09",evento:"Embarca Tripla",status:"Planejado",formato:"Online"},
+    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Setembro",data_ini:"2026-09-15",data_fim:"2026-09-17",evento:"Mind the Sec",cota:"Diamond",status:"Planejado",formato:"Presencial"}
+  ];
+
   let currentUser = null, userRole = null;
   let EVENTS = [], RESPONSAVEIS = [];
   let myChart = null; 
@@ -632,14 +600,13 @@
 
   const today = new Date(); today.setHours(0,0,0,0);
   const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-  
   let calMonth = today.getMonth(), calYear = today.getFullYear(); 
   let miniMonth = today.getMonth(), miniYear = today.getFullYear();
   let currentWeekStart = getStartOfWeek(today); 
   
   let filterType = 'all', filterStatus = 'all', filterResp = 'all', searchQ = '';
   let currentView = 'timeline', sortCol = 'data_ini', sortAsc = true;
-  let showPastEvents = true; // ⚠️ Padrão ajustado: Mostra TODOS os eventos de primeira
+  let showPastEvents = true; // MOSTRAR TUDO POR PADRÃO
   let currentEditId = null;
 
   // ── FUNÇÕES UTILITÁRIAS ──
@@ -647,10 +614,10 @@
   function getStartOfWeek(date) { const d = new Date(date); const day = d.getDay(); const diff = d.getDate() - day; return new Date(d.setDate(diff)); }
   function getStatus(ev) { const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim); if (!ini) return 'future'; if (fim && today >= ini && today <= fim) return 'ongoing'; if (today > (fim || ini)) return 'past'; return 'future'; }
   function dateFmt(ev) { const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim); if (!ini) return ev.mes_ref || ''; const opts = { day:'numeric', month:'short' }; if (!fim || ev.data_ini === ev.data_fim) return ini.toLocaleDateString('pt-BR', opts); return `${ini.toLocaleDateString('pt-BR',opts)} – ${fim.toLocaleDateString('pt-BR',opts)}`; }
-  
   function typeBadge(t) { return t ? `<span class="badge badge-${t.toLowerCase()}">${t}</span>` : ''; }
   function statusBadge(s) { return s ? `<span class="badge badge-status-${STATUS_CLASS[s]||''}">${s}</span>` : ''; }
   function formatoBadge(f) { return f ? `<span class="badge badge-formato">${f}</span>` : ''; }
+  function getRespArray(str) { return !str ? [] : str.split(',').map(s=>s.trim()).filter(s=>s); }
   
   function cotaBadge(c) { 
     if(!c) return ''; let lowerC = c.toLowerCase(); let icon = '🏅', style = 'background: rgba(128,128,128,0.1); color: var(--text); border: 1px solid var(--border);';
@@ -667,7 +634,6 @@
     if (diffDays > 1 && diffDays <= 7) return `<span class="badge badge-temporal-breve">📅 Faltam ${diffDays} dias</span>`;
     return '';
   }
-  function getRespArray(str) { return !str ? [] : str.split(',').map(s=>s.trim()).filter(s=>s); }
 
   // ── AUTENTICAÇÃO FIREBASE ──
   onAuthStateChanged(auth, async (user) => {
@@ -706,19 +672,33 @@
   };
   document.getElementById('btn-logout').onclick = () => signOut(auth); document.getElementById('btn-logout-pending').onclick = () => signOut(auth);
 
-  // ── DATA FETCHING ──
+  // ── DATA FETCHING COM FALLBACK ──
   async function loadDataFromFirebase() {
     try {
       const eSnap = await getDocs(collection(db, "eventos")); EVENTS = []; eSnap.forEach(d => EVENTS.push({ id: d.id, ...d.data() }));
+      
+      // Fallback Se o banco estiver literalmente vazio (Novo Setup)
+      if (EVENTS.length === 0) {
+         EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
+      }
+      
       const rSnap = await getDocs(collection(db, "responsaveis")); RESPONSAVEIS = []; rSnap.forEach(d => RESPONSAVEIS.push({ id: d.id, ...d.data() }));
+      
+      // Centraliza calendário em algum evento proximo
       if(EVENTS.length > 0) {
         let evsSorted = EVENTS.map(e=>parseDate(e.data_ini)).filter(d=>d).sort((a,b)=>a-b);
         let targetDate = evsSorted.find(d => d >= currentMonthStart) || evsSorted[evsSorted.length - 1]; 
         if(targetDate) { calMonth = targetDate.getMonth(); calYear = targetDate.getFullYear(); miniMonth = targetDate.getMonth(); miniYear = targetDate.getFullYear(); currentWeekStart = getStartOfWeek(targetDate); }
       }
+      
       if(userRole === 'admin') await loadPendingUsers();
       initUI();
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      console.error("Firebase Error:", e);
+      // Fallback em caso de erro de conexão/permissão
+      EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
+      initUI();
+    }
   }
 
   async function loadPendingUsers() {
@@ -733,7 +713,7 @@
 
   // ── CORE RENDER LOGIC ──
   function initUI() { document.getElementById('today-badge').textContent = today.toLocaleDateString('pt-BR', {weekday:'short', day:'numeric', month:'short'}); updateResponsiblesUI(); renderAll(); }
-  function renderAll() { renderMiniCal(); renderUpcoming(); renderCounts(); renderDashboardAdmin(); renderCurrentView(); }
+  function renderAll() { renderMiniCal(); renderUpcoming(); renderDashboardAdmin(); renderCurrentView(); }
 
   function getFilteredEvents() {
     return EVENTS.filter(e => {
@@ -755,7 +735,7 @@
     else if (currentView === 'list') renderList();
   }
 
-  // ── TIMELINE REESCRITA COM SEGURANÇA ──
+  // ── TIMELINE ROBUSTA ──
   document.getElementById('btn-toggle-past').onclick = () => { 
       showPastEvents = !showPastEvents; 
       document.getElementById('btn-toggle-past').textContent = showPastEvents ? "Ocultar meses anteriores" : "⏳ Ver meses anteriores"; 
@@ -790,41 +770,15 @@
 
     let html = '';
     Object.keys(byMonth).forEach(m => {
-        html += `
-        <div class="month-block">
-            <div class="month-header">
-                <span class="month-name">${m}</span>
-                <span class="month-count">${byMonth[m].length}</span>
-                <div class="month-line"></div>
-            </div>
-            <div class="event-list">
-        `;
-        
+        html += `<div class="month-block"><div class="month-header"><span class="month-name">${m}</span><span class="month-count">${byMonth[m].length}</span><div class="month-line"></div></div><div class="event-list">`;
         byMonth[m].forEach(e => {
             const d = parseDate(e.data_ini); 
             const color = TYPE_COLOR[e.tipo] || 'var(--accent)';
             let respPills = getRespArray(e.responsavel).map(r => `<span class="resp-pill">${r}</span>`).join('');
-            
-            html += `
-            <div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
-                <div class="event-date-col">
-                    <div class="event-date-day">${d ? d.getDate() : '-'}</div>
-                    <div class="event-date-month">${d ? MONTHS_SHORT[d.getMonth()] : ''}</div>
-                </div>
-                <div class="event-body">
-                    <div class="event-header-row">
-                        <div class="event-name">${e.evento}</div>
-                        <div>${temporalBadge(e)}</div>
-                    </div>
-                    <div class="event-meta">
-                        ${typeBadge(e.tipo)}
-                        ${statusBadge(e.status)}
-                        ${formatoBadge(e.formato)}
-                        ${cotaBadge(e.cota)} 
-                        ${respPills ? `<div class="event-resp-area">${respPills}</div>`:''}
-                    </div>
-                </div>
-            </div>`;
+            html += `<div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
+                <div class="event-date-col"><div class="event-date-day">${d ? d.getDate() : '-'}</div><div class="event-date-month">${d ? MONTHS_SHORT[d.getMonth()] : ''}</div></div>
+                <div class="event-body"><div class="event-header-row"><div class="event-name">${e.evento}</div><div>${temporalBadge(e)}</div></div>
+                <div class="event-meta">${typeBadge(e.tipo)}${statusBadge(e.status)}${formatoBadge(e.formato)}${cotaBadge(e.cota)}${respPills ? `<div class="event-resp-area">${respPills}</div>`:''}</div></div></div>`;
         });
         html += `</div></div>`;
     }); 
@@ -841,7 +795,7 @@
     ).join('');
   }
 
-  // ── KANBAN BOARD LÓGICA ──
+  // ── KANBAN BOARD ──
   function renderBoard() {
       const evs = getFilteredEvents();
       const cols = ['Planejado', 'Em negociação', 'Confirmado', 'Concluído'];
@@ -849,29 +803,15 @@
           const colEvs = evs.filter(e => e.status === status).sort((a,b)=>parseDate(a.data_ini)-parseDate(b.data_ini));
           const el = document.getElementById(`col-${status.toLowerCase().replace(' ','').replace('í','i')}`);
           document.getElementById(`count-${status.toLowerCase().replace(' ','').replace('í','i')}`).textContent = colEvs.length;
-          
-          if(el) {
-              el.innerHTML = colEvs.map(e => `
-                  <div class="kanban-card" draggable="${userRole === 'admin'}" ondragstart="window.drag(event, '${e.id}')" style="--card-color:${TYPE_COLOR[e.tipo]||'var(--accent)'}" onclick="window.openEventView('${e.id}')">
-                      <div class="kanban-card-title">${e.evento}</div>
-                      <div style="display:flex; justify-content:space-between; align-items:center;">
-                          <div class="kanban-card-date">📅 ${dateFmt(e)}</div>
-                          ${typeBadge(e.tipo)}
-                      </div>
-                  </div>
-              `).join('');
-          }
+          if(el) { el.innerHTML = colEvs.map(e => `<div class="kanban-card" draggable="${userRole === 'admin'}" ondragstart="window.drag(event, '${e.id}')" style="--card-color:${TYPE_COLOR[e.tipo]||'var(--accent)'}" onclick="window.openEventView('${e.id}')"><div class="kanban-card-title">${e.evento}</div><div style="display:flex; justify-content:space-between; align-items:center;"><div class="kanban-card-date">📅 ${dateFmt(e)}</div>${typeBadge(e.tipo)}</div></div>`).join(''); }
       });
   }
 
   window.allowDrop = (ev) => ev.preventDefault();
   window.drag = (ev, id) => ev.dataTransfer.setData("text", id);
   window.drop = async (ev, newStatus) => {
-      ev.preventDefault();
-      const id = ev.dataTransfer.getData("text");
-      if(!id || userRole !== 'admin') return;
-      try { await updateDoc(doc(db, "eventos", id), { status: newStatus }); await loadDataFromFirebase(); } 
-      catch(e) { console.error(e); alert("Erro ao mover card."); }
+      ev.preventDefault(); const id = ev.dataTransfer.getData("text"); if(!id || userRole !== 'admin') return;
+      try { await updateDoc(doc(db, "eventos", id), { status: newStatus }); await loadDataFromFirebase(); } catch(e) { console.error(e); }
   };
 
   function renderCalendar() {
@@ -908,10 +848,6 @@
     const up = EVENTS.filter(e => parseDate(e.data_ini)>=today && e.tipo!=='Feriado').sort((a,b)=>parseDate(a.data_ini)-parseDate(b.data_ini)).slice(0,5);
     document.getElementById('upcoming-list').innerHTML = up.map(e => `<div class="upcoming-item" onclick="window.openEventView('${e.id}')"><div class="upcoming-dot" style="background:${TYPE_COLOR[e.tipo]||'var(--accent)'}"></div><div><div class="upcoming-name">${e.evento}</div><div class="upcoming-date">${dateFmt(e)}</div></div></div>`).join('');
   }
-  
-  function renderCounts() {
-    document.getElementById('count-all').textContent = EVENTS.length; document.getElementById('count-comercial').textContent = EVENTS.filter(e=>e.tipo==='Comercial').length; document.getElementById('count-interno').textContent = EVENTS.filter(e=>e.tipo==='Interno').length; document.getElementById('count-feriado').textContent = EVENTS.filter(e=>e.tipo==='Feriado').length;
-  }
 
   // ── RESPONSÁVEIS CRUD ──
   function updateResponsiblesUI() {
@@ -931,7 +867,7 @@
     });
   }
 
-  document.getElementById('btn-add-resp').onclick = async () => { const inp = document.getElementById('new-resp-input'); const nome = inp.value.trim(); if(!nome) return; try { inp.value = "Salvando..."; inp.disabled = true; await addDoc(collection(db, "responsaveis"), { nome }); inp.value = ""; await loadDataFromFirebase(); } catch(e) { console.error(e); } finally { inp.disabled = false; } };
+  document.getElementById('btn-add-resp').onclick = async () => { const inp = document.getElementById('new-resp-input'); const nome = inp.value.trim(); if(!nome) return; try { inp.value = "Salvando..."; inp.disabled = true; await addDoc(collection(db, "responsaveis"), { nome }); inp.value = ""; await loadDataFromFirebase(); } catch(e) {} finally { inp.disabled = false; } };
   document.getElementById('btn-add-resp-modal').onclick = async (e) => { e.preventDefault(); const inp = document.getElementById('new-resp-input-modal'); const nome = inp.value.trim(); if(!nome) return; try { await addDoc(collection(db, "responsaveis"), { nome }); inp.value = ""; await loadDataFromFirebase(); const idEditing = document.getElementById('edit-id').value; if(idEditing) window.openAdminForm(idEditing); else window.openAdminForm(''); } catch(er) {} }
   window.editResp = async (id, oldName) => { const newName = prompt(`Editando: ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await updateDoc(doc(db, "responsaveis", id), { nome: newName.trim() }); const batch = writeBatch(db); let changed = false; EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(doc(db, "eventos", ev.id), { responsavel: newArr.join(', ') }); changed = true; } }); if(changed) await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
   window.editLegacyResp = async (oldName) => { const newName = prompt(`Editando (Legado): ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await addDoc(collection(db, "responsaveis"), { nome: newName.trim() }); const batch = writeBatch(db); EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(doc(db, "eventos", ev.id), { responsavel: newArr.join(', ') }); } }); await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
@@ -964,12 +900,6 @@
       if(count > 0) { document.getElementById('btn-upload-csv').textContent = "Enviando..."; try { await batch.commit(); alert(`✅ ${count} adicionados!`); fileToUpload = null; document.getElementById('file-dropzone').innerHTML = `<div style="font-size:2.5rem; margin-bottom:12px">📁</div><div style="font-weight:600">Arraste o <b>.csv</b> aqui</div>`; document.getElementById('file-dropzone').style.borderColor = "var(--border)"; document.getElementById('btn-upload-csv').textContent = "Iniciar Importação"; document.getElementById('btn-upload-csv').disabled = true; await loadDataFromFirebase(); } catch(err) { alert("Erro ao salvar."); } }
     }; reader.readAsText(fileToUpload);
   };
-
-  function checkNotifications() {
-    const banner = document.getElementById('notification-banner'), text = document.getElementById('notification-text');
-    const upcoming = EVENTS.filter(e => { if (e.status !== 'Confirmado') return false; const d = parseDate(e.data_ini); if(!d) return false; return Math.ceil((d - today) / (1000 * 60 * 60 * 24)) >= 0 && Math.ceil((d - today) / (1000 * 60 * 60 * 24)) <= 7; });
-    if (upcoming.length > 0) { text.innerHTML = `Confirmados próximos: <b>${upcoming.map(e=>e.evento).join(', ')}</b>`; banner.classList.add('active'); } else { banner.classList.remove('active'); }
-  }
 
   // ── LOGICA DO MODAL ──
   window.openEventView = function(id) {
