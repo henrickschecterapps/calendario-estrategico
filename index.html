@@ -84,6 +84,7 @@
   .mini-cal-nav { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.2rem; width: 30px; height: 30px; border-radius: var(--radius-sm); transition: 0.2s; }
   .mini-cal-nav:hover { background: var(--surface2); color: var(--text); }
   .mini-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+  .mini-cal-dow { font-size: 0.65rem; font-weight: 700; color: var(--muted); padding: 2px 0 6px; text-transform: uppercase; letter-spacing: 0.04em; }
   .mini-day { padding: 6px 2px; border-radius: 6px; cursor: pointer; position: relative; transition: 0.2s; }
   .mini-day:hover { background: var(--surface2); color: var(--text); }
   .mini-day.has-event { color: var(--text); font-weight: 800; }
@@ -539,8 +540,10 @@
   
   const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const DAYS_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   const STATUS_CLASS = {'Planejado':'planejado','Confirmado':'confirmado','Em negociação':'negociacao','Concluído':'concluido','Cancelado':'cancelado'};
   const TYPE_COLOR = { Comercial:'var(--c-comercial)', Interno:'var(--c-interno)', Feriado:'var(--c-feriado)' };
+  let isAdmin = false;
 
   const today = new Date(); today.setHours(0,0,0,0);
   const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -579,25 +582,56 @@
     return '';
   }
 
-  // ── AUTENTICAÇÃO FIREBASE ──
+  // ── AUTENTICAÇÃO FIREBASE (COM TIMEOUT E FALLBACK ROBUSTO) ──
+  
+  // Fallback de segurança: se o Firebase não responder em 6s, carrega modo local
+  const AUTH_TIMEOUT = setTimeout(() => {
+    if (!currentUser && document.getElementById('auth-screen') && !document.getElementById('auth-screen').classList.contains('hide')) {
+      console.warn("Firebase timeout. Iniciando modo de visualização local.");
+      bootAppLocal();
+    }
+  }, 6000);
+
+  function bootAppLocal() {
+    userRole = 'viewer';
+    isAdmin = false;
+    currentUser = null;
+    const authS = document.getElementById('auth-screen');
+    const appS  = document.getElementById('app-screen');
+    if (authS) authS.classList.add('hide');
+    if (appS)  appS.classList.remove('hide');
+    const emailDisplay = document.getElementById('user-email-display');
+    if (emailDisplay) emailDisplay.textContent = 'modo visualização';
+    EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
+    loadDataFromFirebase(); // tenta carregar do Firebase mesmo assim (silenciosamente)
+  }
+
   auth.onAuthStateChanged(async (user) => {
+    clearTimeout(AUTH_TIMEOUT);
     const authS = document.getElementById('auth-screen'), appS = document.getElementById('app-screen'), pendS = document.getElementById('pending-screen'), logB = document.getElementById('login-box'), regB = document.getElementById('register-box');
     if (user) {
       try {
         const uDoc = await db.collection("users").doc(user.uid).get();
-        if (uDoc.exists) { userRole = uDoc.data().role; } else { userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'pending'; await db.collection("users").doc(user.uid).set({ email: user.email, role: userRole }); }
+        if (uDoc.exists) { userRole = uDoc.data().role; } else { userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'approved'; await db.collection("users").doc(user.uid).set({ email: user.email, role: userRole }); }
         
         currentUser = user; document.getElementById('user-email-display').textContent = user.email;
+        isAdmin = (userRole === 'admin');
 
         if (userRole === 'pending') { logB.classList.add('hide'); regB.classList.add('hide'); pendS.style.display = 'block'; appS.classList.add('hide'); } 
-        else { authS.classList.add('hide'); appS.classList.remove('hide'); if(userRole === 'admin') document.body.classList.add('admin-mode'); else document.body.classList.remove('admin-mode'); await loadDataFromFirebase(); }
+        else { authS.classList.add('hide'); appS.classList.remove('hide'); if(isAdmin) document.body.classList.add('admin-mode'); else document.body.classList.remove('admin-mode'); await loadDataFromFirebase(); }
       } catch (e) { 
-          console.warn("Erro ao buscar permissão (possível bloqueio de regras). Liberando via fallback."); 
-          userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'pending';
-          if(userRole === 'admin') { authS.classList.add('hide'); appS.classList.remove('hide'); document.body.classList.add('admin-mode'); await loadDataFromFirebase(); }
+          console.warn("Erro ao buscar permissão. Liberando como viewer.");
+          userRole = 'approved';
+          isAdmin = (user.email === 'admin@tripla.com.br');
+          if(isAdmin) { userRole = 'admin'; document.body.classList.add('admin-mode'); }
+          currentUser = user;
+          authS.classList.add('hide'); appS.classList.remove('hide');
+          document.getElementById('user-email-display').textContent = user.email;
+          await loadDataFromFirebase();
       }
     } else {
-      currentUser = null; userRole = null; authS.classList.remove('hide'); appS.classList.add('hide'); pendS.style.display = 'none'; logB.classList.remove('hide'); regB.classList.add('hide');
+      currentUser = null; userRole = null; isAdmin = false;
+      authS.classList.remove('hide'); appS.classList.add('hide'); pendS.style.display = 'none'; logB.classList.remove('hide'); regB.classList.add('hide');
     }
   });
 
@@ -625,11 +659,13 @@
   async function loadDataFromFirebase() {
     try {
       const eSnap = await db.collection("eventos").get();
-      EVENTS = []; eSnap.forEach(doc => { EVENTS.push({ id: doc.id, ...doc.data() }); });
+      const loaded = []; eSnap.forEach(doc => { loaded.push({ id: doc.id, ...doc.data() }); });
       
-      // Fallback: Se estiver vazio, carrega 48 eventos padrao
-      if (EVENTS.length === 0) {
-         EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
+      // Só usa os do Firebase se vieram dados; senão mantém o que já tiver (mock ou vazio)
+      if (loaded.length > 0) {
+        EVENTS = loaded;
+      } else if (EVENTS.length === 0) {
+        EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
       }
       
       const rSnap = await db.collection("responsaveis").get(); 
@@ -639,10 +675,12 @@
       
     } catch (e) { 
       console.warn("Sem internet ou Firebase bloqueado. Carregando modo local.");
-      EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
+      if (EVENTS.length === 0) {
+        EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
+      }
     }
     
-    // Centraliza calendário
+    // Centraliza calendário no próximo evento futuro
     if(EVENTS.length > 0) {
       let evsSorted = EVENTS.map(e=>parseDate(e.data_ini)).filter(d=>d).sort((a,b)=>a-b);
       let firstFuture = evsSorted.find(d => d.getTime() >= currentMonthStart.getTime());
@@ -785,8 +823,7 @@
   }
 
   function renderMiniCal() {
-    document.getElementById('mini-month-label').textContent = `${MONTHS_SHORT[miniMonth]} ${miniYear}`;
-    const fd = new Date(miniYear, miniMonth, 1).getDay(), dim = new Date(miniYear, miniMonth+1, 0).getDate(), cells = Math.ceil((fd + dim) / 7) * 7, evDays = new Set(); EVENTS.forEach(e => { const i=parseDate(e.data_ini), f=parseDate(e.data_fim)||i; if(!i)return; let d=new Date(i); while(d<=f){ if(d.getFullYear()===miniYear&&d.getMonth()===miniMonth)evDays.add(d.getDate()); d.setDate(d.getDate()+1); } });
+    document.getElementById('mini-month-label').textContent = `${MONTHS_SHORT[miniMonth]} ${miniYear}`;    const fd = new Date(miniYear, miniMonth, 1).getDay(), dim = new Date(miniYear, miniMonth+1, 0).getDate(), cells = Math.ceil((fd + dim) / 7) * 7, evDays = new Set(); EVENTS.forEach(e => { const i=parseDate(e.data_ini), f=parseDate(e.data_fim)||i; if(!i)return; let d=new Date(i); while(d<=f){ if(d.getFullYear()===miniYear&&d.getMonth()===miniMonth)evDays.add(d.getDate()); d.setDate(d.getDate()+1); } });
     let html = DAYS_PT.map(d => `<div class="mini-cal-dow">${d}</div>`).join('');
     for (let i=0; i<cells; i++) {
       const dNum=i-fd+1, isO=dNum<1||dNum>dim, isT=!isO&&dNum===today.getDate()&&miniMonth===today.getMonth()&&miniYear===today.getFullYear(), hasEv=!isO&&evDays.has(dNum);
@@ -888,7 +925,8 @@
     document.getElementById('mode-view').classList.add('hide'); document.getElementById('mode-edit').classList.remove('hide'); document.getElementById('modal-overlay').classList.add('open');
   };
 
-  document.getElementById('btn-switch-edit').onclick = () => window.openAdminForm(currentEditId);
+  const btnSwitchEdit = document.getElementById('btn-switch-edit');
+  if (btnSwitchEdit) btnSwitchEdit.onclick = () => window.openAdminForm(currentEditId);
   document.getElementById('btn-cancel-edit').onclick = () => window.openEventView(currentEditId);
   document.getElementById('modal-close-view').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
   document.getElementById('modal-close-edit').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
@@ -910,7 +948,7 @@
     isAdmin = !isAdmin; 
     document.body.classList.toggle('admin-mode', isAdmin); 
     document.getElementById('btn-admin-toggle').classList.toggle('active', isAdmin); 
-    if(isAdmin) { document.querySelector('.view-tab[data-view="admin"]').click(); } else if (currentView === 'admin') { document.querySelector('.view-tab[data-view="timeline"]').click(); } 
+    if(isAdmin) { const adminTab = document.querySelector('.view-tab[data-view="admin"]'); if(adminTab) adminTab.click(); } else if (currentView === 'admin') { document.querySelector('.view-tab[data-view="timeline"]').click(); } 
   };
   document.getElementById('btn-theme').onclick = () => { const html = document.documentElement; html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark'; };
   document.getElementById('btn-export').onclick = () => { let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Tripla//Eventos//PT\n"; getFilteredEvents().forEach(e => { if(!e.data_ini) return; const start = e.data_ini.replace(/-/g, '') + 'T000000Z', end = (e.data_fim || e.data_ini).replace(/-/g, '') + 'T235959Z'; ics += `BEGIN:VEVENT\nDTSTART:${start}\nDTEND:${end}\nSUMMARY:${e.evento}\nDESCRIPTION:Resp: ${e.responsavel} | Status: ${e.status}\nEND:VEVENT\n`; }); ics += "END:VCALENDAR"; const a = document.createElement('a'); a.href = window.URL.createObjectURL(new Blob([ics], {type:'text/calendar'})); a.download = "eventos.ics"; a.click(); };
