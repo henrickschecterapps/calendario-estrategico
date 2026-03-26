@@ -256,6 +256,93 @@
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; border: 2px solid var(--bg); }
+
+  /* ── TOAST ── */
+  .toast { pointer-events: all; display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow-lg); font-size: 0.88rem; font-weight: 600; min-width: 280px; max-width: 380px; animation: toastIn 0.3s cubic-bezier(.34,1.56,.64,1); }
+  .toast.removing { animation: toastOut 0.25s ease forwards; }
+  .toast-success { border-left: 4px solid var(--green); }
+  .toast-error { border-left: 4px solid var(--red); }
+  .toast-info { border-left: 4px solid var(--accent); }
+  .toast-warning { border-left: 4px solid var(--amber); }
+  @keyframes toastIn { from { opacity:0; transform:translateX(60px) scale(0.9); } to { opacity:1; transform:translateX(0) scale(1); } }
+  @keyframes toastOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(60px); } }
+
+  /* ── SKELETON LOADING ── */
+  .skeleton { background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius-sm); }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .skeleton-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; display: flex; gap: 24px; }
+  .skeleton-date { width: 80px; height: 72px; }
+  .skeleton-body { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .skeleton-title { height: 22px; width: 55%; }
+  .skeleton-meta { height: 16px; width: 75%; }
+  .skeleton-tags { height: 16px; width: 40%; }
+
+  /* ── NOTIFICAÇÕES ── */
+  .notif-item { padding: 14px 20px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.2s; display: flex; gap: 12px; align-items: flex-start; }
+  .notif-item:hover { background: var(--surface2); }
+  .notif-item.unread { background: rgba(37,99,235,0.04); }
+  .notif-item.unread::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 5px; }
+  .notif-item:not(.unread)::before { content: ''; width: 8px; height: 8px; flex-shrink: 0; }
+  .notif-text { font-size: 0.82rem; font-weight: 600; color: var(--text); line-height: 1.4; }
+  .notif-time { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+  /* ── BADGE DE PAPEL ── */
+  .role-badge-admin { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .role-badge-editor { background: rgba(37,99,235,0.12); color: var(--accent); border: 1px solid rgba(37,99,235,0.25); }
+
+  /* ── COMENTÁRIOS ── */
+  .comment-bubble { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; }
+  .comment-bubble.mine { background: rgba(37,99,235,0.07); border-color: rgba(37,99,235,0.2); }
+  .comment-author { font-size: 0.75rem; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+  .comment-content { font-size: 0.85rem; color: var(--text); line-height: 1.5; }
+  .comment-time { font-size: 0.7rem; color: var(--muted); margin-top: 5px; }
+
+  /* ── MOBILE RESPONSIVO ── */
+  @media (max-width: 768px) {
+    header { padding: 0 16px; height: 60px; }
+    .logo { font-size: 1.1rem; }
+    .today-badge { display: none; }
+    .user-badge { border: none; padding: 0; }
+    .user-badge span { display: none; }
+    .sidebar { position: fixed; left: -320px; top: 60px; height: calc(100vh - 60px); z-index: 150; transition: left 0.3s cubic-bezier(.34,1.2,.64,1); box-shadow: var(--shadow-lg); }
+    .sidebar.open { left: 0; }
+    .main { padding: 20px 16px; }
+    .view-title { font-size: 1.5rem; }
+    .view-controls { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+    .controls-right { width: 100%; flex-wrap: wrap; gap: 8px; }
+    .search-box input { width: 100px; }
+    .view-tabs { flex-wrap: wrap; }
+    .event-card { flex-direction: column; gap: 12px; }
+    .event-date-col { flex-direction: row; gap: 8px; border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 12px; justify-content: flex-start; min-width: auto; }
+    .event-date-day { font-size: 1.4rem; }
+    .modal { max-height: 95vh; border-radius: 16px 16px 0 0; }
+    .modal-overlay { padding: 0; align-items: flex-end; }
+    .cal-grid { gap: 3px; }
+    .cal-day { min-height: 70px; padding: 6px; }
+    .week-grid { grid-template-columns: repeat(7, minmax(90px, 1fr)); overflow-x: auto; }
+    .admin-panels { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-full { grid-column: span 1; }
+    #btn-sidebar-toggle { display: flex !important; }
+  }
+  @media (min-width: 769px) {
+    #btn-sidebar-toggle { display: none !important; }
+    #sidebar-overlay { display: none !important; }
+  }
+
+  /* ── CONFIRMAÇÃO DE DELETE ── */
+  #confirm-modal { transition: opacity 0.2s; }
+  #confirm-modal.open { display: flex !important; }
+
+  /* ── TRANSIÇÃO DIRECIONAL ENTRE VIEWS ── */
+  @keyframes slideInRight { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+  @keyframes slideInLeft  { from { opacity:0; transform:translateX(-30px); } to { opacity:1; transform:translateX(0); } }
+  .view-container.slide-in-right { animation: slideInRight 0.25s ease; }
+  .view-container.slide-in-left  { animation: slideInLeft 0.25s ease; }
+
+  /* ── EDITOR FORM PROTECTION ── */
+  .editor-hidden { display: none !important; }
+
 </style>
 </head>
 <body>
@@ -291,9 +378,20 @@
 
 <div id="app-screen" class="hide">
   <header>
-    <div class="logo">Tripla <span>·</span> Eventos</div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="btn-icon" id="btn-sidebar-toggle" title="Menu">☰</button>
+      <div class="logo">Tripla <span>·</span> Eventos</div>
+    </div>
     <div class="header-right">
       <div class="today-badge" id="today-badge"></div>
+      <div id="notif-bell-wrapper" style="position:relative;display:none;">
+        <button class="btn-icon" id="btn-notif-bell" title="Notificações">🔔 <span id="notif-count" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:0.6rem;font-weight:800;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;"></span></button>
+        <div id="notif-dropdown" style="display:none;position:absolute;top:calc(100% + 10px);right:0;width:320px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);z-index:500;overflow:hidden;">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:800;font-size:0.9rem;">Notificações</span><button id="btn-mark-all-read" style="background:none;border:none;color:var(--accent);font-size:0.75rem;font-weight:700;cursor:pointer;">Marcar tudo como lido</button></div>
+          <div id="notif-list" style="max-height:300px;overflow-y:auto;"></div>
+        </div>
+      </div>
+      <span id="user-role-badge" style="display:none;font-size:0.7rem;font-weight:800;padding:3px 10px;border-radius:20px;"></span>
       <div class="user-badge"><span id="user-email-display"></span> <button class="btn-icon" id="btn-logout" title="Sair">🚪</button></div>
       <button class="btn-icon" id="btn-export">📅 .ics</button>
       <button class="btn-icon" id="btn-theme" title="Alternar Tema Claro/Escuro">🌓 Tema</button>
@@ -432,6 +530,25 @@
   </div>
 </div>
 
+<!-- Toast Container -->
+<div id="toast-container" style="position:fixed;bottom:32px;right:32px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;"></div>
+
+<!-- Confirm Modal -->
+<div id="confirm-modal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;max-width:440px;width:100%;box-shadow:var(--shadow-lg);text-align:center;">
+    <div id="confirm-icon" style="font-size:2.5rem;margin-bottom:16px;">🗑️</div>
+    <h3 id="confirm-title" style="font-family:var(--font-heading);font-size:1.3rem;margin-bottom:8px;">Excluir evento?</h3>
+    <p id="confirm-msg" style="color:var(--muted);font-size:0.9rem;margin-bottom:28px;line-height:1.6;"></p>
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <button id="confirm-cancel-btn" class="btn-icon" style="padding:10px 24px;">Cancelar</button>
+      <button id="confirm-ok-btn" class="btn-primary" style="padding:10px 24px;background:var(--red);box-shadow:none;">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar overlay for mobile -->
+<div id="sidebar-overlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;z-index:149;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);"></div>
+
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal" id="modal-container">
     
@@ -457,6 +574,15 @@
           <div class="bento-item full" id="block-publico"><div class="bento-header">👥 Público Alvo</div><div class="bento-value" id="view-publico">-</div></div>
           <div class="bento-item full" id="block-beneficios"><div class="bento-header">✨ Benefícios / Entregas</div><div class="bento-value" id="view-beneficios" style="white-space: pre-wrap;">-</div></div>
           <div class="bento-item full" id="block-obs" style="background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2);"><div class="bento-header" style="color: var(--amber);">⚠️ Observações</div><div class="bento-value" id="view-obs" style="white-space: pre-wrap;">-</div></div>
+        </div>
+        <!-- COMMENTS SECTION -->
+        <div id="comments-section" style="margin-top:8px;">
+          <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;">💬 Comentários <span id="comments-count" style="font-size:0.7rem;background:var(--surface2);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--text);">0</span></div>
+          <div id="comments-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;max-height:280px;overflow-y:auto;"></div>
+          <div id="comment-input-area" style="display:flex;gap:10px;align-items:flex-end;">
+            <textarea id="comment-text" placeholder="Escreva um comentário..." style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:inherit;font-size:0.85rem;font-weight:500;padding:10px 14px;resize:none;min-height:44px;max-height:120px;outline:none;transition:0.2s;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();window.submitComment();}"></textarea>
+            <button onclick="window.submitComment()" class="btn-primary" style="padding:10px 16px;flex-shrink:0;font-size:0.8rem;">Enviar</button>
+          </div>
         </div>
       </div>
     </div>
@@ -550,6 +676,190 @@
   const STATUS_CLASS = {'Planejado':'planejado','Confirmado':'confirmado','Em negociação':'negociacao','Concluído':'concluido','Cancelado':'cancelado'};
   const TYPE_COLOR = { Comercial:'var(--c-comercial)', Interno:'var(--c-interno)', Feriado:'var(--c-feriado)' };
   let isAdmin = false;
+  
+  // ── TOAST SYSTEM ──
+  function showToast(msg, type = 'info', duration = 3500) {
+    const icons = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' };
+    const ct = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = `toast toast-${type}`;
+    t.innerHTML = `<span style="font-size:1.1rem">${icons[type]}</span><span style="flex:1">${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:1rem;padding:0 0 0 8px;">✕</button>`;
+    ct.appendChild(t);
+    setTimeout(() => { t.classList.add('removing'); setTimeout(() => t.remove(), 260); }, duration);
+  }
+
+  // ── CONFIRM MODAL ──
+  let confirmResolve = null;
+  function showConfirm(title, msg) {
+    return new Promise(resolve => {
+      confirmResolve = resolve;
+      document.getElementById('confirm-title').textContent = title;
+      document.getElementById('confirm-msg').textContent = msg;
+      const modal = document.getElementById('confirm-modal');
+      modal.classList.add('open');
+      modal.style.display = 'flex';
+    });
+  }
+  document.getElementById('confirm-cancel-btn').onclick = () => { document.getElementById('confirm-modal').style.display='none'; if(confirmResolve) confirmResolve(false); confirmResolve=null; };
+  document.getElementById('confirm-ok-btn').onclick = () => { document.getElementById('confirm-modal').style.display='none'; if(confirmResolve) confirmResolve(true); confirmResolve=null; };
+
+  // ── SKELETON LOADING ──
+  function showSkeletonTimeline(n = 4) {
+    const container = document.getElementById('timeline-content');
+    let html = '';
+    for (let i = 0; i < n; i++) html += `<div class="skeleton-card"><div class="skeleton skeleton-date"></div><div class="skeleton-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-meta"></div><div class="skeleton skeleton-tags"></div></div></div>`;
+    container.innerHTML = `<div class="month-block"><div class="month-header"><div class="skeleton" style="width:120px;height:24px;"></div></div>${html}</div>`;
+  }
+
+  // ── SIDEBAR MOBILE ──
+  function openSidebar() { document.querySelector('.sidebar').classList.add('open'); document.getElementById('sidebar-overlay').style.display='block'; }
+  function closeSidebar() { document.querySelector('.sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').style.display='none'; }
+  window.closeSidebar = closeSidebar;
+  document.getElementById('btn-sidebar-toggle').onclick = () => { const s = document.querySelector('.sidebar'); s.classList.contains('open') ? closeSidebar() : openSidebar(); };
+
+  // ── NOTIFICATIONS IN-APP ──
+  let NOTIFICATIONS = [];
+  let notifOpen = false;
+
+  function addNotification(text, eventId = null) {
+    const n = { id: Date.now() + Math.random(), text, eventId, unread: true, time: new Date() };
+    NOTIFICATIONS.unshift(n);
+    if (NOTIFICATIONS.length > 30) NOTIFICATIONS.pop();
+    renderNotifBell();
+  }
+
+  function renderNotifBell() {
+    const unread = NOTIFICATIONS.filter(n => n.unread).length;
+    const countEl = document.getElementById('notif-count');
+    countEl.textContent = unread > 9 ? '9+' : unread;
+    countEl.style.display = unread > 0 ? 'flex' : 'none';
+    const list = document.getElementById('notif-list');
+    if (NOTIFICATIONS.length === 0) {
+      list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);font-size:0.85rem;">Sem notificações</div>';
+      return;
+    }
+    list.innerHTML = NOTIFICATIONS.map(n => {
+      const ago = timeAgo(n.time);
+      return `<div class="notif-item ${n.unread?'unread':''}" onclick="window.onNotifClick('${n.id}','${n.eventId||''}')">
+        <div><div class="notif-text">${n.text}</div><div class="notif-time">${ago}</div></div>
+      </div>`;
+    }).join('');
+  }
+
+  function timeAgo(date) {
+    const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (diff < 60) return 'agora mesmo';
+    if (diff < 3600) return `há ${Math.floor(diff/60)} min`;
+    if (diff < 86400) return `há ${Math.floor(diff/3600)}h`;
+    return `há ${Math.floor(diff/86400)}d`;
+  }
+
+  window.onNotifClick = (nid, eventId) => {
+    const n = NOTIFICATIONS.find(x => String(x.id) === String(nid));
+    if (n) n.unread = false;
+    renderNotifBell();
+    if (eventId && eventId !== 'null' && eventId !== '') window.openEventView(eventId);
+    document.getElementById('notif-dropdown').style.display = 'none';
+    notifOpen = false;
+  };
+
+  document.getElementById('btn-notif-bell').onclick = (e) => {
+    e.stopPropagation();
+    notifOpen = !notifOpen;
+    document.getElementById('notif-dropdown').style.display = notifOpen ? 'block' : 'none';
+  };
+  document.getElementById('btn-mark-all-read').onclick = (e) => {
+    e.stopPropagation();
+    NOTIFICATIONS.forEach(n => n.unread = false);
+    renderNotifBell();
+  };
+  document.addEventListener('click', (e) => {
+    if (notifOpen && !document.getElementById('notif-bell-wrapper').contains(e.target)) {
+      notifOpen = false;
+      document.getElementById('notif-dropdown').style.display = 'none';
+    }
+  });
+
+  function checkUpcomingNotifications() {
+    EVENTS.forEach(ev => {
+      const ini = parseDate(ev.data_ini);
+      if (!ini || ev.tipo === 'Feriado') return;
+      const diff = Math.ceil((ini - today) / (1000*60*60*24));
+      if (diff === 1) addNotification(`📅 <b>${ev.evento}</b> começa amanhã!`, ev.id);
+      else if (diff === 3) addNotification(`⏳ <b>${ev.evento}</b> em 3 dias.`, ev.id);
+      else if (diff === 7) addNotification(`🗓️ <b>${ev.evento}</b> em 1 semana.`, ev.id);
+    });
+  }
+
+  // ── ROLE BADGE ──
+  function renderRoleBadge(role) {
+    const el = document.getElementById('user-role-badge');
+    if (role === 'admin') { el.textContent = 'Admin'; el.className = 'role-badge-admin'; el.style.display='inline-block'; }
+    else if (role === 'editor') { el.textContent = 'Editor'; el.className = 'role-badge-editor'; el.style.display='inline-block'; }
+    else { el.style.display='none'; }
+    const notifWrapper = document.getElementById('notif-bell-wrapper');
+    notifWrapper.style.display = (role === 'admin' || role === 'editor') ? 'block' : 'none';
+  }
+
+  // ── COMMENTS SYSTEM ──
+  let currentCommentEventId = null;
+
+  async function loadComments(eventId) {
+    currentCommentEventId = eventId;
+    const list = document.getElementById('comments-list');
+    const countEl = document.getElementById('comments-count');
+    list.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;padding:8px 0;">Carregando...</div>';
+    try {
+      const snap = await db.collection("eventos").doc(eventId).collection("comments").orderBy("created_at","asc").get();
+      const comments = [];
+      snap.forEach(doc => comments.push({ id: doc.id, ...doc.data() }));
+      countEl.textContent = comments.length;
+      if (comments.length === 0) {
+        list.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;padding:8px 0;text-align:center;">Sem comentários ainda. Seja o primeiro!</div>';
+        return;
+      }
+      list.innerHTML = comments.map(c => {
+        const isMine = currentUser && c.author_email === currentUser.email;
+        const timeStr = c.created_at ? new Date(c.created_at.toDate ? c.created_at.toDate() : c.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+        return `<div class="comment-bubble ${isMine?'mine':''}">
+          <div class="comment-author">${c.author_name || c.author_email || 'Usuário'}</div>
+          <div class="comment-content">${escapeHtml(c.text)}</div>
+          <div class="comment-time">${timeStr}</div>
+        </div>`;
+      }).join('');
+      list.scrollTop = list.scrollHeight;
+    } catch(e) {
+      list.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;padding:8px 0;">Comentários indisponíveis no modo offline.</div>';
+    }
+  }
+
+  function escapeHtml(str) {
+    return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br>');
+  }
+
+  window.submitComment = async function() {
+    const textarea = document.getElementById('comment-text');
+    const text = textarea.value.trim();
+    if (!text || !currentCommentEventId || !currentUser) return;
+    if (currentCommentEventId.startsWith('mock_')) { showToast('Comentários não disponíveis no modo demo.','warning'); return; }
+    const btn = textarea.nextElementSibling;
+    btn.textContent = '...'; btn.disabled = true;
+    try {
+      const nameFromEmail = (currentUser.email||'').split('@')[0].replace('.', ' ').replace(/\b\w/g, l => l.toUpperCase());
+      await db.collection("eventos").doc(currentCommentEventId).collection("comments").add({
+        text, author_email: currentUser.email, author_name: nameFromEmail,
+        created_at: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      textarea.value = '';
+      await loadComments(currentCommentEventId);
+    } catch(e) { showToast('Erro ao enviar comentário.','error'); }
+    finally { btn.textContent = 'Enviar'; btn.disabled = false; }
+  };
+
+  // ── DIRECTIONAL VIEW TRANSITIONS ──
+  const VIEW_ORDER = ['timeline','calendar','week','list','admin'];
+  let prevViewIndex = 0;
+
 
   const today = new Date(); today.setHours(0,0,0,0);
   const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -592,11 +902,16 @@
   function applyAdminUI(enabled) {
     isAdmin = enabled;
     document.body.classList.toggle('admin-mode', enabled);
-    // Controle direto via style para não depender de show-on-admin (que causava o bug de sumir)
     document.getElementById('btn-admin-toggle').style.display = enabled ? 'flex' : 'none';
     document.getElementById('btn-admin-toggle').classList.toggle('active', enabled);
-    document.getElementById('btn-add-event').style.display   = enabled ? 'flex' : 'none';
+    document.getElementById('btn-add-event').style.display   = (enabled || userRole === 'editor') ? 'flex' : 'none';
     document.getElementById('tab-admin').style.display       = enabled ? 'flex' : 'none';
+    renderRoleBadge(userRole);
+    // Show edit button in modal for admin and editor
+    const _bse2 = document.getElementById('btn-switch-edit');
+    if (_bse2) _bse2.style.display = (enabled || userRole === 'editor') ? 'flex' : 'none';
+    // Hide delete for editors
+    if (userRole === 'editor') document.getElementById('btn-delete').style.display = 'none';
   }
 
   // ── AUTENTICAÇÃO FIREBASE ──
@@ -622,6 +937,10 @@
         } else {
           authS.classList.add('hide'); appS.classList.remove('hide');
           applyAdminUI(userRole === 'admin');
+          if (userRole === 'editor') {
+            document.getElementById('btn-add-event').style.display = 'flex';
+            renderRoleBadge('editor');
+          }
           await loadDataFromFirebase();
         }
       } catch (e) {
@@ -664,6 +983,7 @@
 
   // ── DATA FETCHING (COM FALLBACK 100% GARANTIDO) ──
   async function loadDataFromFirebase() {
+    showSkeletonTimeline(4);
     try {
       const eSnap = await db.collection("eventos").get();
       EVENTS = []; eSnap.forEach(doc => { EVENTS.push({ id: doc.id, ...doc.data() }); });
@@ -692,6 +1012,7 @@
     }
     
     initUI();
+    checkUpcomingNotifications();
   }
 
   async function loadPendingUsers() {
@@ -702,7 +1023,7 @@
       list.innerHTML = html || '<div style="text-align:center; padding: 20px; color: var(--muted); font-size: 0.85rem;">Nenhuma solicitação pendente.</div>';
     } catch(e) {}
   }
-  window.approveUser = async (uid) => { try { await db.collection("users").doc(uid).update({ role: 'approved' }); loadPendingUsers(); } catch(e) { alert("Erro ao aprovar."); } }
+  window.approveUser = async (uid) => { try { await db.collection("users").doc(uid).update({ role: 'approved' }); loadPendingUsers(); showToast('Usuário aprovado com sucesso!', 'success'); } catch(e) { showToast('Erro ao aprovar usuário.', 'error'); } }
 
   // ── CORE RENDER LOGIC ──
   function initUI() { document.getElementById('today-badge').textContent = today.toLocaleDateString('pt-BR', {weekday:'short', day:'numeric', month:'short'}); updateResponsiblesUI(); renderAll(); }
@@ -883,7 +1204,11 @@
   document.getElementById('btn-add-resp-modal').onclick = async (e) => { e.preventDefault(); const inp = document.getElementById('new-resp-input-modal'); const nome = inp.value.trim(); if(!nome) return; try { await db.collection("responsaveis").add({ nome }); inp.value = ""; await loadDataFromFirebase(); const idEditing = document.getElementById('edit-id').value; if(idEditing) window.openAdminForm(idEditing); else window.openAdminForm(''); } catch(er) {} }
   window.editResp = async (id, oldName) => { const newName = prompt(`Editando: ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await db.collection("responsaveis").doc(id).update({ nome: newName.trim() }); const batch = db.batch(); let changed = false; EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(db.collection("eventos").doc(ev.id), { responsavel: newArr.join(', ') }); changed = true; } }); if(changed) await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
   window.editLegacyResp = async (oldName) => { const newName = prompt(`Editando (Legado): ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await db.collection("responsaveis").add({ nome: newName.trim() }); const batch = db.batch(); EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(db.collection("eventos").doc(ev.id), { responsavel: newArr.join(', ') }); } }); await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
-  window.delResp = async (id) => { if(!confirm("Remover opção de responsável?")) return; try { await db.collection("responsaveis").doc(id).delete(); await loadDataFromFirebase(); } catch(e) { } }
+  window.delResp = async (id) => {
+    const ok = await showConfirm('Remover responsável?', 'Este responsável será removido da lista de opções.');
+    if (!ok) return;
+    try { await db.collection("responsaveis").doc(id).delete(); await loadDataFromFirebase(); showToast('Responsável removido.', 'warning'); } catch(e) { showToast('Erro ao remover.', 'error'); }
+  }
 
   // ── DASHBOARD ADMIN ──
   function renderDashboardAdmin() {
@@ -906,10 +1231,10 @@
   document.getElementById('btn-upload-csv').onclick = () => {
     if(!fileToUpload) return; const reader = new FileReader();
     reader.onload = async (e) => {
-      const text = e.target.result; const lines = text.split('\n').filter(l => l.trim() !== ''); if(lines.length < 2) return alert("Arquivo vazio ou inválido.");
+      const text = e.target.result; const lines = text.split('\n').filter(l => l.trim() !== ''); if(lines.length < 2) { showToast('Arquivo vazio ou inválido.', 'error'); return; }
       const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase()); const batch = db.batch(); let count = 0;
       for(let i = 1; i < lines.length; i++) { const row = parseCSVLine(lines[i]); let obj = {}; headers.forEach((h, idx) => { obj[h] = row[idx] ? row[idx] : ''; }); if(obj.evento && obj.data_ini) { obj.mes_ref = MONTHS_PT[parseDate(obj.data_ini).getMonth()] || ''; batch.set(db.collection("eventos").doc(), obj); count++; } }
-      if(count > 0) { document.getElementById('btn-upload-csv').textContent = "Enviando..."; try { await batch.commit(); alert(`✅ ${count} adicionados!`); fileToUpload = null; document.getElementById('file-dropzone').innerHTML = `<div style="font-size:2.5rem; margin-bottom:12px">📁</div><div style="font-weight:600">Arraste o <b>.csv</b> aqui</div>`; document.getElementById('file-dropzone').style.borderColor = "var(--border)"; document.getElementById('btn-upload-csv').textContent = "Iniciar Importação"; document.getElementById('btn-upload-csv').disabled = true; await loadDataFromFirebase(); } catch(err) { alert("Erro ao salvar."); } }
+      if(count > 0) { document.getElementById('btn-upload-csv').textContent = "Enviando..."; try { await batch.commit(); showToast(`✅ ${count} eventos importados com sucesso!`, 'success'); fileToUpload = null; document.getElementById('file-dropzone').innerHTML = `<div style="font-size:2.5rem; margin-bottom:12px">📁</div><div style="font-weight:600">Arraste o <b>.csv</b> aqui</div>`; document.getElementById('file-dropzone').style.borderColor = "var(--border)"; document.getElementById('btn-upload-csv').textContent = "Iniciar Importação"; document.getElementById('btn-upload-csv').disabled = true; await loadDataFromFirebase(); } catch(err) { showToast('Erro ao salvar no banco.', 'error'); } }
     }; reader.readAsText(fileToUpload);
   };
 
@@ -934,10 +1259,16 @@
     toggleBlock('block-participantes', ev.participantes);
     
     document.getElementById('mode-view').classList.remove('hide'); document.getElementById('mode-edit').classList.add('hide'); document.getElementById('modal-overlay').classList.add('open');
+    // Load comments
+    if (!id.startsWith('mock_')) loadComments(id);
+    else {
+      document.getElementById('comments-list').innerHTML = '<div style="color:var(--muted);font-size:0.8rem;padding:8px 0;text-align:center;">Comentários não disponíveis no modo demo.</div>';
+      document.getElementById('comments-count').textContent = '0';
+    }
   };
 
   window.openAdminForm = function(id) {
-    if(userRole !== 'admin') return alert("Acesso restrito para administradores.");
+    if(userRole !== 'admin' && userRole !== 'editor') return showToast("Acesso restrito. Apenas admins e editores podem editar.", 'error');
     let ev = EVENTS.find(e => e.id === id);
     if(!id || !ev) {
       ev = { id:"", evento:"", data_ini:"", data_fim:"", responsavel:"", tipo:"Comercial", status:"Planejado", cota:"", vagas:"", publico:"", beneficios:"", obs:"", formato:"", participantes:"" };
@@ -950,7 +1281,7 @@
     document.getElementById('mode-view').classList.add('hide'); document.getElementById('mode-edit').classList.remove('hide'); document.getElementById('modal-overlay').classList.add('open');
   };
 
-  // btn-switch-edit usa show-on-admin — proteger com null guard
+  // btn-switch-edit visibility is managed by applyAdminUI after auth resolves
   const _bse = document.getElementById('btn-switch-edit');
   if (_bse) _bse.onclick = () => window.openAdminForm(currentEditId);
   document.getElementById('btn-cancel-edit').onclick = () => window.openEventView(currentEditId);
@@ -959,15 +1290,36 @@
   document.getElementById('btn-add-event').onclick = () => window.openAdminForm('');
 
   document.getElementById('btn-save').onclick = async () => {
-    if(userRole !== 'admin') return;
+    if(userRole !== 'admin' && userRole !== 'editor') return;
     const id = document.getElementById('edit-id').value; const btn = document.getElementById('btn-save');
     const selectedChecks = Array.from(document.querySelectorAll('.resp-checkbox:checked')).map(cb => cb.value);
     const data = { evento:document.getElementById('edit-nome').value, data_ini:document.getElementById('edit-ini').value, data_fim:document.getElementById('edit-fim').value, responsavel: selectedChecks.join(', '), tipo:document.getElementById('edit-tipo').value, status:document.getElementById('edit-status').value, formato:document.getElementById('edit-formato').value, cota:document.getElementById('edit-cota').value, vagas:document.getElementById('edit-vagas').value, publico:document.getElementById('edit-publico').value, beneficios:document.getElementById('edit-beneficios').value, obs:document.getElementById('edit-obs').value, participantes: document.getElementById('edit-participantes').value };
-    if(!data.evento || !data.data_ini) return alert("Nome do evento e Data Início são obrigatórios."); data.mes_ref = MONTHS_PT[parseDate(data.data_ini).getMonth()];
+    if(!data.evento || !data.data_ini) { showToast("Nome do evento e Data Início são obrigatórios.", 'warning'); return; } data.mes_ref = MONTHS_PT[parseDate(data.data_ini).getMonth()];
     btn.textContent = "Salvando..."; btn.disabled = true;
-    try { if(id && !id.startsWith('mock_')) { await db.collection("eventos").doc(id).update(data); } else { await db.collection("eventos").add(data); } document.getElementById('modal-overlay').classList.remove('open'); await loadDataFromFirebase(); } catch (e) { alert("Erro ao salvar no banco."); } finally { btn.textContent = "Salvar Alterações"; btn.disabled = false; }
+    try {
+      const isNew = !id || id.startsWith('mock_');
+      if(!isNew) { await db.collection("eventos").doc(id).update(data); } else { await db.collection("eventos").add(data); }
+      document.getElementById('modal-overlay').classList.remove('open');
+      showToast(isNew ? 'Evento criado com sucesso! 🎉' : 'Evento atualizado com sucesso!', 'success');
+      // Notify team
+      addNotification(`${isNew ? '✨ Novo evento' : '✏️ Evento atualizado'}: <b>${data.evento}</b>`, null);
+      await loadDataFromFirebase();
+    } catch (e) { showToast("Erro ao salvar no banco. Tente novamente.", 'error'); }
+    finally { btn.textContent = "Salvar Alterações"; btn.disabled = false; }
   };
-  document.getElementById('btn-delete').onclick = async () => { if(userRole !== 'admin') return; const id = document.getElementById('edit-id').value; if(!confirm("Excluir permanentemente o evento?")) return; try { if(id && !id.startsWith('mock_')) await db.collection("eventos").doc(id).delete(); document.getElementById('modal-overlay').classList.remove('open'); await loadDataFromFirebase(); } catch (e) { console.error(e); } };
+  document.getElementById('btn-delete').onclick = async () => {
+    if(userRole !== 'admin') return;
+    const id = document.getElementById('edit-id').value;
+    const evName = document.getElementById('edit-nome').value || 'este evento';
+    const confirmed = await showConfirm('Excluir evento?', `Tem certeza que deseja excluir "${evName}"? Esta ação não pode ser desfeita.`);
+    if (!confirmed) return;
+    try {
+      if(id && !id.startsWith('mock_')) await db.collection("eventos").doc(id).delete();
+      document.getElementById('modal-overlay').classList.remove('open');
+      showToast('Evento excluído.', 'warning');
+      await loadDataFromFirebase();
+    } catch (e) { showToast('Erro ao excluir evento.', 'error'); console.error(e); }
+  };
 
   // ── EVENT LISTENERS & UI ──
 
@@ -998,17 +1350,61 @@
     const a = document.createElement('a');
     a.href = window.URL.createObjectURL(new Blob([ics], {type:'text/calendar'}));
     a.download = "eventos.ics"; a.click();
+    showToast('Calendário exportado como .ics!', 'success');
   };
 
+  // ── KEYBOARD SHORTCUTS ──
+  document.addEventListener('keydown', (e) => {
+    // Don't fire when typing in inputs
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+    const modal = document.getElementById('modal-overlay');
+    if (e.key === 'Escape') { modal.classList.remove('open'); return; }
+    if (modal.classList.contains('open')) return;
+    const tabs = { 't': 'timeline', 'm': 'calendar', 's': 'semana', 'l': 'list' };
+    if (e.key === 'n' && (userRole === 'admin' || userRole === 'editor')) { window.openAdminForm(''); return; }
+    if (e.key === 'ArrowRight' && !e.altKey) {
+      const idx = VIEW_ORDER.indexOf(currentView);
+      const next = VIEW_ORDER[Math.min(idx + 1, VIEW_ORDER.length - 2)];
+      document.querySelector(`.view-tab[data-view="${next}"]`)?.click();
+    }
+    if (e.key === 'ArrowLeft' && !e.altKey) {
+      const idx = VIEW_ORDER.indexOf(currentView);
+      const prev = VIEW_ORDER[Math.max(idx - 1, 0)];
+      document.querySelector(`.view-tab[data-view="${prev}"]`)?.click();
+    }
+  });
+
+  // Show tooltip on first load about shortcuts
+  setTimeout(() => { showToast('💡 Dica: use ← → para navegar entre views, N para novo evento.', 'info', 5000); }, 2500);
+
+
+
   document.querySelectorAll('.view-tab').forEach(t => t.onclick = () => {
+    const newView = t.dataset.view;
+    const oldIdx = VIEW_ORDER.indexOf(currentView);
+    const newIdx = VIEW_ORDER.indexOf(newView);
     document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('active'));
     t.classList.add('active');
-    currentView = t.dataset.view;
+    currentView = newView;
     // Sincroniza estado ativo do botão do header
     const btn = document.getElementById('btn-admin-toggle');
     btn.classList.toggle('active', currentView === 'admin');
     btn.textContent = currentView === 'admin' ? '✕ Fechar Admin' : '⚙️ Painel Admin';
-    renderCurrentView();
+    // Directional slide animation
+    document.querySelectorAll('.view-container').forEach(c => { c.classList.remove('active','slide-in-right','slide-in-left'); });
+    const pane = document.getElementById('view-' + currentView);
+    if (pane) {
+      pane.classList.add('active');
+      if (newIdx > oldIdx) pane.classList.add('slide-in-right');
+      else if (newIdx < oldIdx) pane.classList.add('slide-in-left');
+      setTimeout(() => pane.classList.remove('slide-in-right','slide-in-left'), 300);
+    }
+    prevViewIndex = newIdx;
+    if      (currentView === 'timeline') renderTimeline();
+    else if (currentView === 'calendar') renderCalendar();
+    else if (currentView === 'week')     renderWeek();
+    else if (currentView === 'list')     renderList();
+    else if (currentView === 'admin')    renderDashboardAdmin();
   });
   document.querySelectorAll('[data-filter-type]').forEach(b => b.onclick = (e) => { filterType = e.currentTarget.dataset.filterType; document.querySelectorAll('[data-filter-type]').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active'); initUI(); });
   document.querySelectorAll('[data-filter-status]').forEach(b => b.onclick = (e) => { filterStatus = e.currentTarget.dataset.filterStatus; document.querySelectorAll('[data-filter-status]').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active'); initUI(); });
