@@ -6,6 +6,8 @@
 <title>Calendário de Eventos Tripla</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
@@ -297,6 +299,30 @@
   .comment-content { font-size: 0.85rem; color: var(--text); line-height: 1.5; }
   .comment-time { font-size: 0.7rem; color: var(--muted); margin-top: 5px; }
 
+  /* ── ANALYTICS EXTRAS ── */
+  .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .admin-card-sub { font-size: 0.72rem; color: var(--muted); margin-top: 6px; font-weight: 600; }
+
+  /* Heatmap */
+  .heatmap-grid { display: flex; gap: 3px; align-items: flex-start; }
+  .heatmap-col { display: flex; flex-direction: column; gap: 3px; }
+  .heatmap-cell { width: 13px; height: 13px; border-radius: 2px; cursor: pointer; transition: transform 0.15s; position: relative; flex-shrink:0; }
+  .heatmap-cell:hover { transform: scale(1.5); z-index: 10; }
+  .heatmap-month-labels { display: flex; margin-bottom: 4px; font-size: 0.65rem; color: var(--muted); font-weight: 700; letter-spacing: 0.03em; }
+  .heatmap-leg { width: 12px; height: 12px; border-radius: 2px; background: var(--hc); }
+  .hm-tooltip { position: fixed; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.78rem; font-weight: 600; pointer-events: none; z-index: 9999; box-shadow: var(--shadow); display: none; white-space: nowrap; }
+
+  /* Vagas table */
+  .vagas-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .vagas-table th { text-align: left; padding: 10px 16px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--border); letter-spacing: 0.05em; }
+  .vagas-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 500; }
+  .vagas-table tr:last-child td { border-bottom: none; }
+  .vagas-table tr:hover td { background: var(--surface2); cursor: pointer; }
+  .urgency-high { color: var(--red); font-weight: 800; }
+  .urgency-mid  { color: var(--amber); font-weight: 700; }
+  .urgency-low  { color: var(--green); font-weight: 600; }
+  #btn-export-pdf:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
   /* ── MOBILE RESPONSIVO ── */
   @media (max-width: 768px) {
     header { padding: 0 16px; height: 60px; }
@@ -482,27 +508,76 @@
       </div>
 
       <div id="view-admin" class="view-container">
-        <div class="admin-grid">
-          <div class="admin-card"><div class="admin-card-title">Total de Eventos</div><div class="admin-card-value" id="dash-total">0</div></div>
-          <div class="admin-card"><div class="admin-card-title" style="color:var(--c-comercial)">Comerciais</div><div class="admin-card-value" id="dash-comercial">0</div></div>
-          <div class="admin-card"><div class="admin-card-title" style="color:var(--c-interno)">Internos</div><div class="admin-card-value" id="dash-interno">0</div></div>
-          <div class="admin-card"><div class="admin-card-title" style="color:var(--green)">Confirmados</div><div class="admin-card-value" id="dash-confirmados">0</div></div>
+
+        <!-- KPI ROW 1: original 4 -->
+        <div class="admin-grid" id="dash-kpi-grid">
+          <div class="admin-card"><div class="admin-card-title">Total de Eventos</div><div class="admin-card-value" id="dash-total">0</div><div class="admin-card-sub" id="dash-total-sub"></div></div>
+          <div class="admin-card"><div class="admin-card-title" style="color:var(--c-comercial)">Comerciais</div><div class="admin-card-value" id="dash-comercial">0</div><div class="admin-card-sub" id="dash-comercial-sub"></div></div>
+          <div class="admin-card"><div class="admin-card-title" style="color:var(--c-interno)">Internos</div><div class="admin-card-value" id="dash-interno">0</div><div class="admin-card-sub" id="dash-interno-sub"></div></div>
+          <div class="admin-card"><div class="admin-card-title" style="color:var(--green)">Confirmados</div><div class="admin-card-value" id="dash-confirmados">0</div><div class="admin-card-sub" id="dash-confirmados-sub"></div></div>
+          <div class="admin-card"><div class="admin-card-title" style="color:var(--accent)">Próximos 30 dias</div><div class="admin-card-value" id="dash-proximos">0</div><div class="admin-card-sub" id="dash-proximos-sub"></div></div>
+          <div class="admin-card"><div class="admin-card-title" style="color:var(--teal)">Taxa de Confirmação</div><div class="admin-card-value" id="dash-taxa">0%</div><div class="admin-card-sub" id="dash-taxa-sub"></div></div>
+          <div class="admin-card"><div class="admin-card-title" style="color:var(--amber)">Vagas Disponíveis</div><div class="admin-card-value" id="dash-vagas">0</div><div class="admin-card-sub" id="dash-vagas-sub"></div></div>
+          <div class="admin-card"><div class="admin-card-title" style="color:var(--purple)">Concluídos</div><div class="admin-card-value" id="dash-concluidos">0</div><div class="admin-card-sub" id="dash-concluidos-sub"></div></div>
+        </div>
+
+        <!-- EXPORT BUTTON -->
+        <div style="display:flex; justify-content:flex-end; margin-bottom:24px; gap:12px;">
+          <button class="btn-icon" id="btn-export-pdf" style="font-weight:700;">📄 Exportar PDF</button>
+        </div>
+
+        <!-- HEATMAP -->
+        <div class="admin-panel" style="margin-bottom:24px;" id="panel-heatmap">
+          <h3>🗓️ Densidade Anual de Eventos</h3>
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Concentração de eventos por semana ao longo do ano</p>
+          <div id="heatmap-container" style="overflow-x:auto;"></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:0.75rem;color:var(--muted);">
+            <span>Menos</span>
+            <div style="display:flex;gap:3px;">
+              <div style="width:12px;height:12px;border-radius:2px;background:var(--surface2);border:1px solid var(--border);"></div>
+              <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.2)"></div>
+              <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.45)"></div>
+              <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.7)"></div>
+              <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.95)"></div>
+            </div>
+            <span>Mais</span>
+          </div>
         </div>
 
         <div class="admin-panels">
+
+          <!-- CHART: Eventos por Mês -->
           <div class="admin-panel">
-            <h3>📊 Visão Estratégica</h3>
+            <h3>📅 Eventos por Mês</h3>
+            <div class="chart-container"><canvas id="chartMeses"></canvas></div>
+          </div>
+
+          <!-- CHART: Por Status -->
+          <div class="admin-panel">
+            <h3>📊 Distribuição por Status</h3>
+            <div class="chart-container"><canvas id="chartStatus"></canvas></div>
+          </div>
+
+          <!-- CHART: Tipo (original, mantido) -->
+          <div class="admin-panel">
+            <h3>🔵 Tipo de Evento</h3>
             <div class="chart-container"><canvas id="chartTipos"></canvas></div>
           </div>
 
+          <!-- CHART: Ranking por Responsável -->
           <div class="admin-panel">
-            <h3>🔐 Aprovação de Acessos</h3>
-            <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Contas @tripla aguardando liberação do sistema.</p>
-            <div id="users-pending-list" style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 250px; overflow-y:auto; padding:8px; background: var(--bg);">
-               <div style="text-align:center; padding: 20px; color: var(--muted); font-size: 0.85rem;">Nenhuma solicitação pendente.</div>
-            </div>
+            <h3>👤 Ranking por Organizador</h3>
+            <div class="chart-container"><canvas id="chartResp"></canvas></div>
           </div>
-          
+
+          <!-- TABELA: Vagas Abertas -->
+          <div class="admin-panel" style="grid-column: 1 / -1;" id="panel-vagas">
+            <h3>🎫 Eventos com Vagas Disponíveis</h3>
+            <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Eventos comerciais confirmados ou planejados com vagas em aberto, ordenados por urgência.</p>
+            <div id="vagas-table-container"></div>
+          </div>
+
+          <!-- LISTA RÁPIDA DE EDIÇÃO -->
           <div class="admin-panel" style="grid-column: 1 / -1;">
             <h3>📋 Lista Rápida de Edição</h3>
             <table class="list-table" style="border: none; box-shadow: none;">
@@ -510,7 +585,17 @@
               <tbody id="admin-event-list-body"></tbody>
             </table>
           </div>
-          
+
+          <!-- APROVAÇÃO DE ACESSOS -->
+          <div class="admin-panel">
+            <h3>🔐 Aprovação de Acessos</h3>
+            <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Contas @tripla aguardando liberação do sistema.</p>
+            <div id="users-pending-list" style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 250px; overflow-y:auto; padding:8px; background: var(--bg);">
+               <div style="text-align:center; padding: 20px; color: var(--muted); font-size: 0.85rem;">Nenhuma solicitação pendente.</div>
+            </div>
+          </div>
+
+          <!-- IMPORTAR CSV -->
           <div class="admin-panel">
             <h3>📥 Importar via Planilha</h3>
             <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Baixe o modelo (CSV), preencha e importe múltiplos eventos de uma vez.</p>
@@ -519,11 +604,13 @@
             <button class="btn-primary" id="btn-upload-csv" style="width:100%" disabled>Iniciar Importação</button>
           </div>
           
+          <!-- GERENCIAR ORGANIZADORES -->
           <div class="admin-panel">
             <h3>👥 Gerenciar Organizadores</h3>
             <div style="display:flex; gap:12px; margin-bottom:16px;"><input type="text" id="new-resp-input" class="admin-input" style="margin:0" placeholder="Nome..."><button class="btn-primary" id="btn-add-resp">Add</button></div>
             <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 200px; overflow-y:auto; padding:8px; background: var(--bg);" id="resp-list-admin"></div>
           </div>
+
         </div>
       </div>
     </main>
@@ -532,6 +619,8 @@
 
 <!-- Toast Container -->
 <div id="toast-container" style="position:fixed;bottom:32px;right:32px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;"></div>
+<!-- Heatmap Tooltip -->
+<div class="hm-tooltip" id="hm-tooltip"></div>
 
 <!-- Confirm Modal -->
 <div id="confirm-modal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;">
@@ -668,7 +757,6 @@
 
   let currentUser = null, userRole = null;
   let EVENTS = [], RESPONSAVEIS = [];
-  let myChart = null; 
   
   const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -1210,18 +1298,394 @@
     try { await db.collection("responsaveis").doc(id).delete(); await loadDataFromFirebase(); showToast('Responsável removido.', 'warning'); } catch(e) { showToast('Erro ao remover.', 'error'); }
   }
 
-  // ── DASHBOARD ADMIN ──
-  function renderDashboardAdmin() {
-    document.getElementById('dash-total').textContent = EVENTS.length; document.getElementById('dash-comercial').textContent = EVENTS.filter(e=>e.tipo==='Comercial').length; document.getElementById('dash-interno').textContent = EVENTS.filter(e=>e.tipo==='Interno').length; document.getElementById('dash-confirmados').textContent = EVENTS.filter(e=>e.status==='Confirmado').length;
-    const tbody = document.getElementById('admin-event-list-body'); const evs = getFilteredEvents().sort((a,b) => (parseDate(a.data_ini) || new Date(2030,0)) - (parseDate(b.data_ini) || new Date(2030,0)));
-    tbody.innerHTML = evs.length === 0 ? '<tr><td colspan="5" class="empty-state">Nenhum evento.</td></tr>' : evs.map(e => `<tr><td style="font-size: 0.85rem; font-weight:700;">${dateFmt(e)}</td><td style="font-weight: 800;">${e.evento}</td><td><div style="display:flex; gap:4px; flex-wrap:wrap;">${getRespArray(e.responsavel).map(r => `<span class="resp-pill">${r}</span>`).join('') || '—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align: right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')">✏️</button></td></tr>`).join('');
-    
-    if(userRole === 'admin') {
-        const ctx = document.getElementById('chartTipos'); if(myChart) myChart.destroy();
-        const dataCom = EVENTS.filter(e=>e.tipo==='Comercial').length, dataInt = EVENTS.filter(e=>e.tipo==='Interno').length;
-        myChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Comercial', 'Interno'], datasets: [{ data: [dataCom, dataInt], backgroundColor: ['#3b82f6', '#10b981'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels:{color: getComputedStyle(document.documentElement).getPropertyValue('--muted').trim()} } }, cutout: '70%' } });
-    }
+  // ── DASHBOARD ADMIN (ANALYTICS COMPLETO) ──
+  let myChart = null, chartMeses = null, chartStatus = null, chartResp = null;
+
+  function getChartTextColor() {
+    return getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() || '#64748b';
   }
+
+  function animateValue(el, end) {
+    if (!el) return;
+    const start = parseInt(el.textContent) || 0;
+    const duration = 600;
+    const startTime = performance.now();
+    const isPercent = el.id === 'dash-taxa';
+    const update = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const val = Math.round(start + (end - start) * ease);
+      el.textContent = isPercent ? val + '%' : val;
+      if (progress < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+
+  function renderDashboardAdmin() {
+    const now = new Date(); now.setHours(0,0,0,0);
+    const in30 = new Date(now); in30.setDate(in30.getDate() + 30);
+
+    const total      = EVENTS.length;
+    const comerciais = EVENTS.filter(e => e.tipo === 'Comercial').length;
+    const internos   = EVENTS.filter(e => e.tipo === 'Interno').length;
+    const confirmados= EVENTS.filter(e => e.status === 'Confirmado').length;
+    const concluidos = EVENTS.filter(e => e.status === 'Concluído').length;
+    const proximos   = EVENTS.filter(e => { const d = parseDate(e.data_ini); return d && d >= now && d <= in30; }).length;
+    const taxa       = total > 0 ? Math.round((confirmados / total) * 100) : 0;
+
+    // Vagas numéricas (tenta extrair número do campo vagas)
+    let vagasTotal = 0;
+    EVENTS.forEach(e => {
+      if (e.tipo === 'Comercial' && e.vagas) {
+        const n = parseInt((e.vagas+'').replace(/\D/g,''));
+        if (!isNaN(n)) vagasTotal += n;
+      }
+    });
+
+    // KPIs com animação
+    animateValue(document.getElementById('dash-total'), total);
+    animateValue(document.getElementById('dash-comercial'), comerciais);
+    animateValue(document.getElementById('dash-interno'), internos);
+    animateValue(document.getElementById('dash-confirmados'), confirmados);
+    animateValue(document.getElementById('dash-proximos'), proximos);
+    animateValue(document.getElementById('dash-concluidos'), concluidos);
+    animateValue(document.getElementById('dash-vagas'), vagasTotal);
+    // taxa
+    const taxaEl = document.getElementById('dash-taxa');
+    if (taxaEl) { const start = parseInt(taxaEl.textContent)||0; const dur=600; const t0=performance.now(); const upd=(now)=>{ const p=Math.min((now-t0)/dur,1); const e2=1-Math.pow(1-p,3); taxaEl.textContent=Math.round(start+(taxa-start)*e2)+'%'; if(p<1)requestAnimationFrame(upd); }; requestAnimationFrame(upd); }
+
+    // Sub-labels
+    const sub = (id, txt) => { const el = document.getElementById(id); if(el) el.textContent = txt; };
+    sub('dash-total-sub', `${concluidos} concluídos`);
+    sub('dash-comercial-sub', `${Math.round((comerciais/Math.max(total,1))*100)}% do total`);
+    sub('dash-interno-sub', `${Math.round((internos/Math.max(total,1))*100)}% do total`);
+    sub('dash-confirmados-sub', `${confirmados} de ${total} eventos`);
+    sub('dash-proximos-sub', 'nos próximos 30 dias');
+    sub('dash-taxa-sub', confirmados + ' confirmados');
+    sub('dash-vagas-sub', 'vagas em aberto');
+    sub('dash-concluidos-sub', `${Math.round((concluidos/Math.max(total,1))*100)}% do total`);
+
+    // Lista rápida de edição
+    const tbody = document.getElementById('admin-event-list-body');
+    const evs = getFilteredEvents().sort((a,b) => (parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0)));
+    tbody.innerHTML = evs.length === 0
+      ? '<tr><td colspan="5" class="empty-state">Nenhum evento.</td></tr>'
+      : evs.map(e => `<tr><td style="font-size:0.85rem;font-weight:700;">${dateFmt(e)}</td><td style="font-weight:800;">${e.evento}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">${getRespArray(e.responsavel).map(r=>`<span class="resp-pill">${r}</span>`).join('')||'—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align:right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')">✏️</button></td></tr>`).join('');
+
+    if (userRole !== 'admin') return;
+
+    const tc = getChartTextColor();
+    const chartDefaults = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { weight: '600' } } } } };
+
+    // ── CHART 1: Tipo (doughnut) ──
+    const ctxTipo = document.getElementById('chartTipos');
+    if (myChart) myChart.destroy();
+    myChart = new Chart(ctxTipo, {
+      type: 'doughnut',
+      data: { labels: ['Comercial','Interno','Feriado'], datasets: [{ data: [comerciais, internos, EVENTS.filter(e=>e.tipo==='Feriado').length], backgroundColor: ['#3b82f6','#10b981','#f59e0b'], borderWidth: 0 }] },
+      options: { ...chartDefaults, cutout: '65%' }
+    });
+
+    // ── CHART 2: Por Mês (bar empilhado) ──
+    const ctxMes = document.getElementById('chartMeses');
+    if (chartMeses) chartMeses.destroy();
+    const byMonthCom = Array(12).fill(0), byMonthInt = Array(12).fill(0);
+    EVENTS.forEach(e => {
+      const d = parseDate(e.data_ini); if (!d) return;
+      if (e.tipo === 'Comercial') byMonthCom[d.getMonth()]++;
+      else if (e.tipo === 'Interno') byMonthInt[d.getMonth()]++;
+    });
+    chartMeses = new Chart(ctxMes, {
+      type: 'bar',
+      data: {
+        labels: MONTHS_SHORT,
+        datasets: [
+          { label: 'Comercial', data: byMonthCom, backgroundColor: 'rgba(59,130,246,0.8)', borderRadius: 4, borderSkipped: false },
+          { label: 'Interno',   data: byMonthInt, backgroundColor: 'rgba(16,185,129,0.8)',  borderRadius: 4, borderSkipped: false }
+        ]
+      },
+      options: { ...chartDefaults, scales: { x: { stacked: true, ticks: { color: tc }, grid: { display: false } }, y: { stacked: true, ticks: { color: tc, stepSize: 1 }, grid: { color: 'rgba(128,128,128,0.1)' } } }, plugins: { ...chartDefaults.plugins, tooltip: { mode: 'index' } } }
+    });
+
+    // ── CHART 3: Por Status (doughnut) ──
+    const ctxSt = document.getElementById('chartStatus');
+    if (chartStatus) chartStatus.destroy();
+    const statusLabels = ['Planejado','Confirmado','Em negociação','Concluído','Cancelado'];
+    const statusColors = ['#94a3b8','#10b981','#f59e0b','#8b5cf6','#ef4444'];
+    const statusData = statusLabels.map(s => EVENTS.filter(e => e.status === s).length);
+    chartStatus = new Chart(ctxSt, {
+      type: 'doughnut',
+      data: { labels: statusLabels, datasets: [{ data: statusData, backgroundColor: statusColors, borderWidth: 0 }] },
+      options: { ...chartDefaults, cutout: '60%' }
+    });
+
+    // ── CHART 4: Ranking por Responsável (bar horizontal) ──
+    const ctxResp = document.getElementById('chartResp');
+    if (chartResp) chartResp.destroy();
+    const respCount = {};
+    EVENTS.forEach(e => { getRespArray(e.responsavel).forEach(r => { respCount[r] = (respCount[r]||0) + 1; }); });
+    const respSorted = Object.entries(respCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    chartResp = new Chart(ctxResp, {
+      type: 'bar',
+      data: {
+        labels: respSorted.map(r=>r[0]),
+        datasets: [{ label: 'Eventos', data: respSorted.map(r=>r[1]), backgroundColor: respSorted.map((_,i)=>`hsl(${210+i*25},70%,55%)`), borderRadius: 6 }]
+      },
+      options: { ...chartDefaults, indexAxis: 'y', scales: { x: { ticks: { color: tc, stepSize: 1 }, grid: { color: 'rgba(128,128,128,0.1)' } }, y: { ticks: { color: tc } } }, plugins: { ...chartDefaults.plugins, legend: { display: false } } }
+    });
+
+    // ── HEATMAP ANUAL ──
+    renderHeatmap();
+
+    // ── TABELA DE VAGAS ──
+    renderVagasTable();
+  }
+
+  function renderHeatmap() {
+    const container = document.getElementById('heatmap-container');
+    const tooltip   = document.getElementById('hm-tooltip');
+    const year = new Date().getFullYear();
+    const jan1 = new Date(year, 0, 1);
+    const dec31 = new Date(year, 11, 31);
+
+    // Count events per day
+    const dayMap = {};
+    EVENTS.forEach(e => {
+      const ini = parseDate(e.data_ini), fim = parseDate(e.data_fim) || ini;
+      if (!ini) return;
+      let d = new Date(ini);
+      while (d <= fim) {
+        if (d.getFullYear() === year) {
+          const key = d.toISOString().slice(0,10);
+          dayMap[key] = (dayMap[key]||[]);
+          dayMap[key].push(e.evento);
+        }
+        d.setDate(d.getDate()+1);
+      }
+    });
+
+    const maxCount = Math.max(...Object.values(dayMap).map(a=>a.length), 1);
+
+    // Build weeks
+    const startDay = new Date(jan1);
+    startDay.setDate(startDay.getDate() - startDay.getDay()); // align to Sunday
+
+    const weeks = [];
+    let cur = new Date(startDay);
+    while (cur <= dec31) {
+      const week = [];
+      for (let d = 0; d < 7; d++) {
+        week.push(new Date(cur));
+        cur.setDate(cur.getDate()+1);
+      }
+      weeks.push(week);
+    }
+
+    // Month labels
+    let labelHTML = '<div class="heatmap-month-labels" style="padding-left:20px;">';
+    const monthPos = {};
+    weeks.forEach((wk, wi) => {
+      const m = wk[0].getMonth();
+      if (monthPos[m] === undefined) monthPos[m] = wi;
+    });
+    let lastM = -1;
+    weeks.forEach((_, wi) => {
+      const label = Object.entries(monthPos).find(([,v])=>v===wi);
+      labelHTML += `<span style="width:16px;display:inline-block;flex-shrink:0;">${label ? MONTHS_SHORT[+label[0]] : ''}</span>`;
+    });
+    labelHTML += '</div>';
+
+    // Day labels
+    const dayLetters = ['D','S','T','Q','Q','S','S'];
+    let dayLabelsHTML = '<div style="display:flex;flex-direction:column;gap:3px;margin-right:4px;padding-top:0px;">';
+    dayLetters.forEach(l => { dayLabelsHTML += `<div style="width:13px;height:13px;font-size:0.55rem;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;">${l}</div>`; });
+    dayLabelsHTML += '</div>';
+
+    // Cells
+    let gridHTML = '<div class="heatmap-grid">';
+    weeks.forEach(wk => {
+      gridHTML += '<div class="heatmap-col">';
+      wk.forEach(day => {
+        const key = day.toISOString().slice(0,10);
+        const evList = dayMap[key] || [];
+        const count = evList.length;
+        const inYear = day.getFullYear() === year;
+        let bg;
+        if (!inYear || count === 0) {
+          bg = 'var(--surface2)';
+        } else {
+          const intensity = Math.min(count / maxCount, 1);
+          const alpha = 0.2 + intensity * 0.75;
+          bg = `rgba(37,99,235,${alpha.toFixed(2)})`;
+        }
+        const dayStr = day.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+        const evNames = evList.slice(0,3).join(', ') + (evList.length > 3 ? ` +${evList.length-3}` : '');
+        gridHTML += `<div class="heatmap-cell" style="background:${bg};border:1px solid ${count>0?'rgba(37,99,235,0.15)':'var(--border)'};" data-day="${dayStr}" data-count="${count}" data-evs="${evNames.replace(/"/g,'&quot;')}"></div>`;
+      });
+      gridHTML += '</div>';
+    });
+    gridHTML += '</div>';
+
+    container.innerHTML = labelHTML + `<div style="display:flex;align-items:flex-start;">${dayLabelsHTML}${gridHTML}</div>`;
+
+    // Tooltip
+    container.querySelectorAll('.heatmap-cell').forEach(cell => {
+      cell.addEventListener('mouseenter', (e) => {
+        const count = cell.dataset.count;
+        const day   = cell.dataset.day;
+        const evs   = cell.dataset.evs;
+        tooltip.innerHTML = `<strong>${day}</strong>: ${count} evento${count!=1?'s':''} ${evs ? '<br><span style="color:var(--muted)">'+evs+'</span>' : ''}`;
+        tooltip.style.display = 'block';
+      });
+      cell.addEventListener('mousemove', (e) => {
+        tooltip.style.left = (e.clientX + 12) + 'px';
+        tooltip.style.top  = (e.clientY - 36) + 'px';
+      });
+      cell.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+    });
+  }
+
+  function renderVagasTable() {
+    const container = document.getElementById('vagas-table-container');
+    const now = new Date(); now.setHours(0,0,0,0);
+    const eventsWithVagas = EVENTS
+      .filter(e => e.tipo === 'Comercial' && e.vagas && !['Concluído','Cancelado'].includes(e.status))
+      .map(e => {
+        const d = parseDate(e.data_ini);
+        const daysUntil = d ? Math.ceil((d - now)/(1000*60*60*24)) : 999;
+        const vagasNum = parseInt((e.vagas+'').replace(/\D/g,'')) || null;
+        return { ...e, daysUntil, vagasNum };
+      })
+      .filter(e => e.daysUntil >= 0)
+      .sort((a,b) => a.daysUntil - b.daysUntil);
+
+    if (!eventsWithVagas.length) {
+      container.innerHTML = '<div class="empty-state" style="padding:32px;"><div class="empty-icon">🎫</div><div>Nenhum evento comercial com vagas em aberto.</div></div>';
+      return;
+    }
+
+    container.innerHTML = `
+      <table class="vagas-table">
+        <thead><tr><th>Evento</th><th>Data</th><th>Vagas</th><th>Cota</th><th>Status</th><th>Urgência</th></tr></thead>
+        <tbody>
+          ${eventsWithVagas.map(e => {
+            let urgClass = 'urgency-low', urgLabel = `${e.daysUntil}d`;
+            if (e.daysUntil <= 7)  { urgClass = 'urgency-high'; urgLabel = `🔴 ${e.daysUntil}d`; }
+            else if (e.daysUntil <= 30) { urgClass = 'urgency-mid'; urgLabel = `🟡 ${e.daysUntil}d`; }
+            else { urgLabel = `🟢 ${e.daysUntil}d`; }
+            return `<tr onclick="window.openEventView('${e.id}')">
+              <td style="font-weight:800;">${e.evento}</td>
+              <td>${dateFmt(e)}</td>
+              <td>${e.vagas}</td>
+              <td>${e.cota ? cotaBadge(e.cota) : '<span style="color:var(--muted)">—</span>'}</td>
+              <td>${statusBadge(e.status)}</td>
+              <td class="${urgClass}">${urgLabel}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  // ── EXPORTAR PDF ──
+  document.getElementById('btn-export-pdf').onclick = async () => {
+    const btn = document.getElementById('btn-export-pdf');
+    btn.textContent = '⏳ Gerando PDF...'; btn.disabled = true;
+    try {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+      const W = pdf.internal.pageSize.getWidth();
+      const H = pdf.internal.pageSize.getHeight();
+
+      // Header
+      pdf.setFillColor(37, 99, 235);
+      pdf.rect(0, 0, W, 18, 'F');
+      pdf.setTextColor(255,255,255);
+      pdf.setFont('helvetica','bold');
+      pdf.setFontSize(14);
+      pdf.text('Tripla · Calendário Estratégico', 14, 12);
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica','normal');
+      pdf.text(`Gerado em ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}`, W-14, 12, {align:'right'});
+
+      // KPIs
+      pdf.setTextColor(15,23,42);
+      const kpis = [
+        ['Total de Eventos', document.getElementById('dash-total')?.textContent || '0'],
+        ['Comerciais',       document.getElementById('dash-comercial')?.textContent || '0'],
+        ['Internos',         document.getElementById('dash-interno')?.textContent || '0'],
+        ['Confirmados',      document.getElementById('dash-confirmados')?.textContent || '0'],
+        ['Próx. 30 dias',    document.getElementById('dash-proximos')?.textContent || '0'],
+        ['Taxa Confirmação', document.getElementById('dash-taxa')?.textContent || '0%'],
+        ['Vagas Abertas',    document.getElementById('dash-vagas')?.textContent || '0'],
+        ['Concluídos',       document.getElementById('dash-concluidos')?.textContent || '0'],
+      ];
+      const cardW = (W - 28) / 4, cardH = 22, cardMargin = 4;
+      kpis.forEach((kpi, i) => {
+        const col = i % 4, row = Math.floor(i / 4);
+        const x = 14 + col * (cardW + cardMargin), y = 24 + row * (cardH + cardMargin);
+        pdf.setFillColor(241,245,249); pdf.roundedRect(x, y, cardW, cardH, 3, 3, 'F');
+        pdf.setFont('helvetica','normal'); pdf.setFontSize(7); pdf.setTextColor(100,116,139);
+        pdf.text(kpi[0], x+4, y+7);
+        pdf.setFont('helvetica','bold'); pdf.setFontSize(16); pdf.setTextColor(15,23,42);
+        pdf.text(kpi[1], x+4, y+17);
+      });
+
+      // Charts via canvas (render each as image)
+      const chartIds = ['chartTipos','chartMeses','chartStatus','chartResp'];
+      const chartTitles = ['Tipo de Evento','Por Mês','Por Status','Por Organizador'];
+      const chartW = (W - 28) / 2 - 4, chartH = 60;
+      const chartStartY = 74;
+
+      for (let i = 0; i < chartIds.length; i++) {
+        const canvas = document.getElementById(chartIds[i]);
+        if (!canvas) continue;
+        const imgData = canvas.toDataURL('image/png');
+        const col = i % 2, row = Math.floor(i / 2);
+        const x = 14 + col * (chartW + 8), y = chartStartY + row * (chartH + 16);
+        pdf.setFillColor(255,255,255); pdf.roundedRect(x, y - 8, chartW, chartH + 12, 3, 3, 'F');
+        pdf.setFont('helvetica','bold'); pdf.setFontSize(8); pdf.setTextColor(100,116,139);
+        pdf.text(chartTitles[i], x + 4, y - 1);
+        pdf.addImage(imgData, 'PNG', x + 4, y + 2, chartW - 8, chartH - 8);
+      }
+
+      // Page 2: Upcoming events table
+      pdf.addPage();
+      pdf.setFillColor(37,99,235); pdf.rect(0,0,W,18,'F');
+      pdf.setTextColor(255,255,255); pdf.setFont('helvetica','bold'); pdf.setFontSize(12);
+      pdf.text('Eventos — Visão Completa', 14, 12);
+      pdf.setTextColor(15,23,42);
+
+      const evs = EVENTS.sort((a,b)=>(parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0)));
+      const cols = ['Data','Evento','Tipo','Status','Responsável'];
+      const colW = [32,80,28,32,50];
+      let yPos = 28;
+      pdf.setFillColor(241,245,249); pdf.rect(14, yPos-5, W-28, 10, 'F');
+      pdf.setFont('helvetica','bold'); pdf.setFontSize(7.5); pdf.setTextColor(100,116,139);
+      let xPos = 14;
+      cols.forEach((c,i)=>{ pdf.text(c, xPos+2, yPos+1); xPos+=colW[i]; });
+      yPos += 8;
+
+      pdf.setFont('helvetica','normal'); pdf.setFontSize(7.5);
+      evs.forEach(ev => {
+        if (yPos > H-14) { pdf.addPage(); yPos = 20; }
+        pdf.setTextColor(15,23,42);
+        if (evs.indexOf(ev) % 2 === 0) { pdf.setFillColor(248,250,252); pdf.rect(14,yPos-4,W-28,8,'F'); }
+        xPos = 14;
+        const row = [dateFmt(ev), ev.evento||'', ev.tipo||'', ev.status||'', ev.responsavel||''];
+        row.forEach((cell,i)=>{ pdf.text(String(cell).substring(0,colW[i]/2.2), xPos+2, yPos); xPos+=colW[i]; });
+        yPos += 8;
+      });
+
+      pdf.save(`Tripla_Dashboard_${new Date().toISOString().slice(0,10)}.pdf`);
+      showToast('PDF gerado e baixado com sucesso! 📄', 'success');
+    } catch(err) {
+      console.error(err);
+      showToast('Erro ao gerar PDF. Tente novamente.', 'error');
+    }
+    btn.textContent = '📄 Exportar PDF'; btn.disabled = false;
+  };
+
 
   // ── IMPORTAÇÃO CSV ──
   document.getElementById('btn-download-csv').onclick = () => { const csvContent = "evento,data_ini,data_fim,tipo,status,responsavel,formato,cota,vagas,publico,beneficios,obs,participantes\n\"Exemplo Palestra\",2026-05-10,2026-05-10,Comercial,Confirmado,\"Jéss, Jê\",Online,Ouro,10,Clientes,Logo no site,Nota extra,Emilly\n"; const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "template_eventos.csv"; a.click(); };
