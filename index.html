@@ -394,6 +394,67 @@
   .ev-popover-title { font-weight: 800; color: var(--text); margin-bottom: 6px; font-size: 0.9rem; }
   .ev-popover-row { display: flex; gap: 6px; align-items: center; color: var(--muted); margin-bottom: 3px; font-weight: 600; }
 
+  /* ── GESTÃO: BRINDES / FORNECEDORES / UNIFORMES ── */
+  .gestao-tabs { display: flex; gap: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; margin-bottom: 24px; flex-wrap: wrap; }
+  .gestao-tab { padding: 8px 18px; border-radius: 7px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.85rem; font-weight: 600; font-family: var(--font-body); transition: 0.2s; }
+  .gestao-tab:hover { color: var(--text); }
+  .gestao-tab.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
+  .gestao-pane { display: none; animation: fadeIn 0.25s ease; }
+  .gestao-pane.active { display: block; }
+
+  /* Cards de itens nas tabelas de gestão */
+  .gestao-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .gestao-table th { text-align: left; padding: 11px 14px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: var(--muted); background: var(--surface2); border-bottom: 2px solid var(--border); letter-spacing: 0.06em; white-space: nowrap; }
+  .gestao-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-weight: 500; vertical-align: middle; }
+  .gestao-table tr:last-child td { border-bottom: none; }
+  .gestao-table tr:hover td { background: var(--surface2); }
+  .gestao-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+
+  /* Nível badge para brindes */
+  .nivel-massa      { background: rgba(107,114,128,0.12); color: var(--muted);   border: 1px solid rgba(107,114,128,0.2); }
+  .nivel-qualif     { background: rgba(37,99,235,0.12);   color: var(--accent);  border: 1px solid rgba(37,99,235,0.2); }
+  .nivel-vip        { background: rgba(139,92,246,0.15);  color: var(--purple);  border: 1px solid rgba(139,92,246,0.3); }
+
+  /* Inline add-row form */
+  .gestao-add-bar { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; padding: 16px; background: var(--surface2); border-top: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius); }
+  .gestao-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .gestao-field label { font-size: 0.65rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+  .gestao-input { padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 0.82rem; font-weight: 500; transition: 0.2s; outline: none; }
+  .gestao-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .gestao-input.w-sm { width: 80px; }
+  .gestao-input.w-md { width: 130px; }
+  .gestao-input.w-lg { width: 200px; }
+  .gestao-input.w-full { width: 100%; }
+
+  /* Valor total pill */
+  .valor-total-pill { font-size: 0.78rem; font-weight: 800; color: var(--green); background: rgba(5,150,105,0.1); border: 1px solid rgba(5,150,105,0.2); padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .valor-total-pill.zero { color: var(--muted); background: var(--surface2); border-color: var(--border); }
+
+  /* Status de uniforme */
+  .unif-status-pedido    { background: rgba(37,99,235,0.12);  color: var(--accent); border: 1px solid rgba(37,99,235,0.2); }
+  .unif-status-producao  { background: rgba(245,158,11,0.12); color: var(--amber);  border: 1px solid rgba(245,158,11,0.2); }
+  .unif-status-entregue  { background: rgba(5,150,105,0.12);  color: var(--green);  border: 1px solid rgba(5,150,105,0.2); }
+  .unif-status-cancelado { background: rgba(239,68,68,0.12);  color: var(--red);    border: 1px solid rgba(239,68,68,0.2); }
+
+  /* Blocos admin de brindes no modal de evento */
+  .admin-brinde-block { background: rgba(139,92,246,0.04); border: 1px solid rgba(139,92,246,0.15); border-radius: var(--radius); padding: 18px 20px; margin-top: 8px; }
+  .admin-brinde-title { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--purple); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .brinde-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(139,92,246,0.1); font-size: 0.82rem; }
+  .brinde-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .brinde-name { font-weight: 700; color: var(--text); }
+  .brinde-detail { color: var(--muted); font-size: 0.75rem; margin-top: 1px; }
+
+  /* Resumo financeiro nos painéis de gestão */
+  .gestao-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .gestao-summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; box-shadow: var(--shadow-sm); }
+  .gestao-summary-label { font-size: 0.65rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+  .gestao-summary-value { font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: var(--text); }
+
+  /* Action icon buttons in tables */
+  .tbl-action { background: none; border: none; cursor: pointer; padding: 4px 6px; border-radius: 6px; color: var(--muted); font-size: 0.85rem; transition: 0.15s; }
+  .tbl-action:hover { background: var(--surface2); color: var(--text); }
+  .tbl-action.del:hover { color: var(--red); background: rgba(239,68,68,0.08); }
+
 </style>
 </head>
 <body>
@@ -674,7 +735,183 @@
             <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 200px; overflow-y:auto; padding:8px; background: var(--bg);" id="resp-list-admin"></div>
           </div>
 
-        </div>
+          <!-- ════════════════════════════════════════
+               GESTÃO DE BRINDES / FORNECEDORES / UNIFORMES
+               ════════════════════════════════════════ -->
+          <div class="admin-panel" style="grid-column: 1 / -1;">
+            <h3>🎁 Gestão Operacional</h3>
+            <p style="font-size:0.82rem;color:var(--muted);margin-bottom:20px;">Gerencie brindes, fornecedores e uniformes dos eventos. Os brindes são vinculados aos eventos e visíveis apenas para administradores.</p>
+
+            <!-- Sub-tabs -->
+            <div class="gestao-tabs">
+              <button class="gestao-tab active" data-gtab="brindes">🎁 Brindes</button>
+              <button class="gestao-tab" data-gtab="fornecedores">🏢 Fornecedores</button>
+              <button class="gestao-tab" data-gtab="uniformes">👕 Uniformes</button>
+            </div>
+
+            <!-- ── BRINDES ── -->
+            <div class="gestao-pane active" id="gpane-brindes">
+              <div class="gestao-summary" id="brindes-summary"></div>
+              <div class="gestao-table-wrap">
+                <table class="gestao-table" id="brindes-table">
+                  <thead><tr>
+                    <th>Brinde</th>
+                    <th>Descrição</th>
+                    <th>Nível</th>
+                    <th>Qtd</th>
+                    <th>Vlr Unit.</th>
+                    <th>Total</th>
+                    <th>Fornecedor</th>
+                    <th>Evento Vinculado</th>
+                    <th></th>
+                  </tr></thead>
+                  <tbody id="brindes-body"><tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde cadastrado.</td></tr></tbody>
+                </table>
+                <!-- FORM ADD BRINDE -->
+                <div class="gestao-add-bar" id="brinde-add-form">
+                  <div class="gestao-field" style="flex:2;min-width:140px;">
+                    <label>Brinde (título) *</label>
+                    <input type="text" class="gestao-input w-full" id="brinde-titulo" placeholder="Ex: Caneca personalizada">
+                  </div>
+                  <div class="gestao-field" style="flex:3;min-width:160px;">
+                    <label>Descrição</label>
+                    <input type="text" class="gestao-input w-full" id="brinde-desc" placeholder="Detalhes do item">
+                  </div>
+                  <div class="gestao-field">
+                    <label>Nível</label>
+                    <select class="gestao-input" id="brinde-nivel">
+                      <option value="Massa">Massa</option>
+                      <option value="Qualificação">Qualificação</option>
+                      <option value="VIP">VIP</option>
+                    </select>
+                  </div>
+                  <div class="gestao-field">
+                    <label>Qtd</label>
+                    <input type="number" class="gestao-input w-sm" id="brinde-qtd" min="1" placeholder="0">
+                  </div>
+                  <div class="gestao-field">
+                    <label>Vlr Unit. (R$)</label>
+                    <input type="number" class="gestao-input w-sm" id="brinde-vlr" min="0" step="0.01" placeholder="0,00">
+                  </div>
+                  <div class="gestao-field" style="min-width:140px;">
+                    <label>Fornecedor</label>
+                    <select class="gestao-input" id="brinde-fornecedor">
+                      <option value="">— Selecionar —</option>
+                    </select>
+                  </div>
+                  <div class="gestao-field" style="min-width:160px;">
+                    <label>Evento Vinculado</label>
+                    <select class="gestao-input" id="brinde-evento">
+                      <option value="">— Sem vínculo —</option>
+                    </select>
+                  </div>
+                  <button class="btn-primary" id="btn-save-brinde" style="align-self:flex-end;white-space:nowrap;">+ Adicionar</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── FORNECEDORES ── -->
+            <div class="gestao-pane" id="gpane-fornecedores">
+              <div class="gestao-table-wrap">
+                <table class="gestao-table" id="forn-table">
+                  <thead><tr>
+                    <th>Nome do Fornecedor</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th>Itens Vinculados</th>
+                    <th></th>
+                  </tr></thead>
+                  <tbody id="forn-body"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Nenhum fornecedor cadastrado.</td></tr></tbody>
+                </table>
+                <!-- FORM ADD FORNECEDOR -->
+                <div class="gestao-add-bar" id="forn-add-form">
+                  <div class="gestao-field" style="flex:2;min-width:160px;">
+                    <label>Nome do Fornecedor *</label>
+                    <input type="text" class="gestao-input w-full" id="forn-nome" placeholder="Ex: Gráfica XYZ">
+                  </div>
+                  <div class="gestao-field" style="flex:2;min-width:160px;">
+                    <label>E-mail</label>
+                    <input type="email" class="gestao-input w-full" id="forn-email" placeholder="contato@fornecedor.com">
+                  </div>
+                  <div class="gestao-field" style="flex:1;min-width:130px;">
+                    <label>Telefone / WhatsApp</label>
+                    <input type="text" class="gestao-input w-full" id="forn-tel" placeholder="(11) 99999-9999">
+                  </div>
+                  <button class="btn-primary" id="btn-save-forn" style="align-self:flex-end;white-space:nowrap;">+ Adicionar</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── UNIFORMES ── -->
+            <div class="gestao-pane" id="gpane-uniformes">
+              <div class="gestao-summary" id="uniformes-summary"></div>
+              <div class="gestao-table-wrap">
+                <table class="gestao-table" id="unif-table">
+                  <thead><tr>
+                    <th>Qtd</th>
+                    <th>Cor</th>
+                    <th>Vlr Unit.</th>
+                    <th>Custo Total</th>
+                    <th>Data Pedido</th>
+                    <th>Status</th>
+                    <th>Fornecedor</th>
+                    <th>Evento Vinculado</th>
+                    <th>Observações</th>
+                    <th></th>
+                  </tr></thead>
+                  <tbody id="unif-body"><tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme cadastrado.</td></tr></tbody>
+                </table>
+                <!-- FORM ADD UNIFORME -->
+                <div class="gestao-add-bar" id="unif-add-form">
+                  <div class="gestao-field">
+                    <label>Qtd *</label>
+                    <input type="number" class="gestao-input w-sm" id="unif-qtd" min="1" placeholder="0">
+                  </div>
+                  <div class="gestao-field">
+                    <label>Cor</label>
+                    <input type="text" class="gestao-input w-md" id="unif-cor" placeholder="Ex: Azul marinho">
+                  </div>
+                  <div class="gestao-field">
+                    <label>Vlr Unit. (R$)</label>
+                    <input type="number" class="gestao-input w-sm" id="unif-vlr" min="0" step="0.01" placeholder="0,00">
+                  </div>
+                  <div class="gestao-field">
+                    <label>Data do Pedido</label>
+                    <input type="date" class="gestao-input w-md" id="unif-data">
+                  </div>
+                  <div class="gestao-field">
+                    <label>Status</label>
+                    <select class="gestao-input" id="unif-status">
+                      <option value="Pedido">Pedido</option>
+                      <option value="Em Produção">Em Produção</option>
+                      <option value="Entregue">Entregue</option>
+                      <option value="Cancelado">Cancelado</option>
+                    </select>
+                  </div>
+                  <div class="gestao-field" style="min-width:140px;">
+                    <label>Fornecedor</label>
+                    <select class="gestao-input" id="unif-fornecedor">
+                      <option value="">— Selecionar —</option>
+                    </select>
+                  </div>
+                  <div class="gestao-field" style="min-width:160px;">
+                    <label>Evento Vinculado</label>
+                    <select class="gestao-input" id="unif-evento">
+                      <option value="">— Sem vínculo —</option>
+                    </select>
+                  </div>
+                  <div class="gestao-field" style="flex:2;min-width:160px;">
+                    <label>Observações</label>
+                    <input type="text" class="gestao-input w-full" id="unif-obs" placeholder="Tamanhos, detalhes...">
+                  </div>
+                  <button class="btn-primary" id="btn-save-unif" style="align-self:flex-end;white-space:nowrap;">+ Adicionar</button>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /admin-panel gestão -->
+
+        </div><!-- /admin-panels -->
       </div>
     </main>
   </div>
@@ -732,6 +969,14 @@
           <div class="bento-item full" id="block-localidade"><div class="bento-header">📍 Localização</div><div class="bento-value" id="view-localidade">-</div></div>
           <div class="bento-item full" id="block-links"><div class="bento-header">🔗 Links</div><div class="bento-value" id="view-links">-</div></div>
           <div class="bento-item" id="block-hora"><div class="bento-header">⏰ Horário</div><div class="bento-value" id="view-hora">-</div></div>
+        </div>
+
+        <!-- BRINDES DO EVENTO (somente admin) -->
+        <div id="block-brindes-evento" style="display:none; margin-top:4px;">
+          <div class="admin-brinde-block">
+            <div class="admin-brinde-title">🎁 Brindes deste Evento <span id="brindes-evento-count" style="font-size:0.7rem;font-weight:600;color:var(--muted);margin-left:4px;"></span></div>
+            <div id="brindes-evento-list"></div>
+          </div>
         </div>
         <!-- COMMENTS SECTION -->
         <div id="comments-section" style="margin-top:8px;">
@@ -1707,6 +1952,9 @@
 
     // ── TABELA DE VAGAS ──
     renderVagasTable();
+
+    // ── GESTÃO OPERACIONAL: carrega módulos na primeira visita ──
+    if (typeof loadGestaoModules === 'function') loadGestaoModules();
   }
 
   function renderHeatmap() {
@@ -2579,8 +2827,393 @@
         await loadDataFromFirebase();
       } catch(err) { showToast('Erro ao salvar no banco.','error'); btnUpload.textContent='Iniciar Importação'; btnUpload.disabled=false; }
     };
-    reader.readAsText(fileToUpload);
+  // ══════════════════════════════════════════════════════════
+  // ── GESTÃO OPERACIONAL: BRINDES / FORNECEDORES / UNIFORMES
+  // ══════════════════════════════════════════════════════════
+
+  let BRINDES     = [];
+  let FORNECEDORES_LIST = [];
+  let UNIFORMES   = [];
+
+  // ── Sub-tabs de gestão ──
+  document.querySelectorAll('.gestao-tab').forEach(tab => {
+    tab.onclick = () => {
+      document.querySelectorAll('.gestao-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.gestao-pane').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('gpane-' + tab.dataset.gtab).classList.add('active');
+    };
+  });
+
+  // ── Helpers de formatação ──
+  function fmtBRL(v) {
+    const n = parseFloat(v) || 0;
+    return n.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+  }
+  function nivelBadge(nivel) {
+    const map = { 'Massa':'nivel-massa', 'Qualificação':'nivel-qualif', 'VIP':'nivel-vip' };
+    return `<span class="badge ${map[nivel]||'nivel-massa'}">${nivel||'—'}</span>`;
+  }
+  function unifStatusBadge(s) {
+    const map = { 'Pedido':'unif-status-pedido','Em Produção':'unif-status-producao','Entregue':'unif-status-entregue','Cancelado':'unif-status-cancelado' };
+    return `<span class="badge ${map[s]||''}">${s||'—'}</span>`;
+  }
+  function fornNome(id) {
+    const f = FORNECEDORES_LIST.find(x => x.id === id);
+    return f ? f.nome : (id ? `<span style="color:var(--muted)">${id}</span>` : '—');
+  }
+  function eventoNome(id) {
+    const e = EVENTS.find(x => x.id === id);
+    return e ? e.evento : '—';
+  }
+
+  // ── Preencher selects de fornecedor/evento nos forms ──
+  function populateGestaoSelects() {
+    ['brinde-fornecedor','unif-fornecedor'].forEach(selId => {
+      const sel = document.getElementById(selId);
+      if (!sel) return;
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">— Selecionar —</option>';
+      FORNECEDORES_LIST.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.id; opt.textContent = f.nome;
+        sel.appendChild(opt);
+      });
+      if (cur) sel.value = cur;
+    });
+    ['brinde-evento','unif-evento'].forEach(selId => {
+      const sel = document.getElementById(selId);
+      if (!sel) return;
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">— Sem vínculo —</option>';
+      EVENTS.filter(e => e.tipo !== 'Feriado').sort((a,b) => (parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0))).forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e.id; opt.textContent = `${e.evento} (${e.mes_ref||''})`;
+        sel.appendChild(opt);
+      });
+      if (cur) sel.value = cur;
+    });
+  }
+
+  // ════════════ FORNECEDORES ════════════
+  async function loadFornecedores() {
+    try {
+      const snap = await db.collection("fornecedores").orderBy("nome").get();
+      FORNECEDORES_LIST = [];
+      snap.forEach(doc => FORNECEDORES_LIST.push({ id: doc.id, ...doc.data() }));
+    } catch(e) { FORNECEDORES_LIST = []; }
+    renderFornecedores();
+    populateGestaoSelects();
+  }
+
+  function renderFornecedores() {
+    const tbody = document.getElementById('forn-body');
+    if (!tbody) return;
+    if (!FORNECEDORES_LIST.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Nenhum fornecedor cadastrado.</td></tr>';
+      return;
+    }
+    // Count linked items for each supplier
+    tbody.innerHTML = FORNECEDORES_LIST.map(f => {
+      const bCount = BRINDES.filter(b => b.fornecedor_id === f.id).length;
+      const uCount = UNIFORMES.filter(u => u.fornecedor_id === f.id).length;
+      const total = bCount + uCount;
+      return `<tr>
+        <td><strong>${escapeHtml(f.nome)}</strong></td>
+        <td>${f.email ? `<a href="mailto:${escapeHtml(f.email)}" style="color:var(--accent);font-weight:600;">${escapeHtml(f.email)}</a>` : '<span style="color:var(--muted)">—</span>'}</td>
+        <td>${f.telefone ? `<a href="tel:${escapeHtml(f.telefone)}" style="color:var(--teal);font-weight:600;">${escapeHtml(f.telefone)}</a>` : '<span style="color:var(--muted)">—</span>'}</td>
+        <td>${total > 0 ? `<span style="font-weight:700">${total} item${total!==1?'s':''}</span> <span style="color:var(--muted);font-size:0.75rem;">(${bCount} brinde${bCount!==1?'s':''}, ${uCount} unif.)</span>` : '<span style="color:var(--muted)">0 itens</span>'}</td>
+        <td style="text-align:right;white-space:nowrap;">
+          <button class="tbl-action del" onclick="window.deleteForn('${f.id}')" title="Excluir">🗑️</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  document.getElementById('btn-save-forn').onclick = async () => {
+    const nome = document.getElementById('forn-nome').value.trim();
+    const email = document.getElementById('forn-email').value.trim();
+    const telefone = document.getElementById('forn-tel').value.trim();
+    if (!nome) { showToast('Nome do fornecedor é obrigatório.', 'warning'); return; }
+    const btn = document.getElementById('btn-save-forn');
+    btn.textContent = 'Salvando...'; btn.disabled = true;
+    try {
+      await db.collection("fornecedores").add({ nome, email, telefone, criado_em: firebase.firestore.FieldValue.serverTimestamp() });
+      document.getElementById('forn-nome').value = '';
+      document.getElementById('forn-email').value = '';
+      document.getElementById('forn-tel').value = '';
+      showToast('Fornecedor cadastrado! 🏢', 'success');
+      await loadFornecedores();
+    } catch(e) { showToast('Erro ao salvar fornecedor.', 'error'); }
+    btn.textContent = '+ Adicionar'; btn.disabled = false;
   };
+
+  window.deleteForn = async (id) => {
+    const linked = BRINDES.filter(b=>b.fornecedor_id===id).length + UNIFORMES.filter(u=>u.fornecedor_id===id).length;
+    const msg = linked > 0 ? `Este fornecedor tem ${linked} item(s) vinculado(s). Deseja mesmo excluir?` : 'Excluir este fornecedor permanentemente?';
+    const ok = await showConfirm('Excluir fornecedor?', msg);
+    if (!ok) return;
+    try { await db.collection("fornecedores").doc(id).delete(); showToast('Fornecedor excluído.', 'warning'); await loadFornecedores(); } catch(e) { showToast('Erro ao excluir.', 'error'); }
+  };
+
+  // ════════════ BRINDES ════════════
+  async function loadBrindes() {
+    try {
+      const snap = await db.collection("brindes").orderBy("titulo").get();
+      BRINDES = [];
+      snap.forEach(doc => BRINDES.push({ id: doc.id, ...doc.data() }));
+    } catch(e) { BRINDES = []; }
+    renderBrindes();
+    renderBrindesSummary();
+  }
+
+  function renderBrindes() {
+    const tbody = document.getElementById('brindes-body');
+    if (!tbody) return;
+    if (!BRINDES.length) {
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde cadastrado.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = BRINDES.map(b => {
+      const qtd  = parseInt(b.qtd) || 0;
+      const vlr  = parseFloat(b.vlr_unit) || 0;
+      const total = qtd * vlr;
+      const totalPill = total > 0
+        ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
+        : `<span class="valor-total-pill zero">—</span>`;
+      return `<tr>
+        <td><strong>${escapeHtml(b.titulo||'')}</strong></td>
+        <td style="color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(b.descricao||'')}">${escapeHtml(b.descricao||'—')}</td>
+        <td>${nivelBadge(b.nivel)}</td>
+        <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
+        <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
+        <td>${totalPill}</td>
+        <td style="font-size:0.78rem">${fornNome(b.fornecedor_id)}</td>
+        <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${b.evento_id ? escapeHtml(eventoNome(b.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
+        <td style="text-align:right;white-space:nowrap;">
+          <button class="tbl-action del" onclick="window.deleteBrinde('${b.id}')" title="Excluir">🗑️</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderBrindesSummary() {
+    const el = document.getElementById('brindes-summary');
+    if (!el) return;
+    const total  = BRINDES.reduce((s,b) => s + (parseFloat(b.vlr_unit)||0) * (parseInt(b.qtd)||0), 0);
+    const qtdTot = BRINDES.reduce((s,b) => s + (parseInt(b.qtd)||0), 0);
+    const vip    = BRINDES.filter(b=>b.nivel==='VIP').length;
+    el.innerHTML = `
+      <div class="gestao-summary-card"><div class="gestao-summary-label">Total de Itens</div><div class="gestao-summary-value">${BRINDES.length}</div></div>
+      <div class="gestao-summary-card"><div class="gestao-summary-label">Quantidade Total</div><div class="gestao-summary-value">${qtdTot.toLocaleString('pt-BR')}</div></div>
+      <div class="gestao-summary-card"><div class="gestao-summary-label">Custo Total</div><div class="gestao-summary-value" style="color:var(--green)">${fmtBRL(total)}</div></div>
+      <div class="gestao-summary-card"><div class="gestao-summary-label">Itens VIP</div><div class="gestao-summary-value" style="color:var(--purple)">${vip}</div></div>`;
+  }
+
+  document.getElementById('btn-save-brinde').onclick = async () => {
+    const titulo = document.getElementById('brinde-titulo').value.trim();
+    if (!titulo) { showToast('Título do brinde é obrigatório.', 'warning'); return; }
+    const btn = document.getElementById('btn-save-brinde');
+    btn.textContent = 'Salvando...'; btn.disabled = true;
+    const qtd    = parseInt(document.getElementById('brinde-qtd').value) || 0;
+    const vlr    = parseFloat(document.getElementById('brinde-vlr').value) || 0;
+    try {
+      await db.collection("brindes").add({
+        titulo,
+        descricao:     document.getElementById('brinde-desc').value.trim(),
+        nivel:         document.getElementById('brinde-nivel').value,
+        qtd,
+        vlr_unit:      vlr,
+        fornecedor_id: document.getElementById('brinde-fornecedor').value || '',
+        evento_id:     document.getElementById('brinde-evento').value || '',
+        criado_em:     firebase.firestore.FieldValue.serverTimestamp()
+      });
+      ['brinde-titulo','brinde-desc','brinde-qtd','brinde-vlr'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+      showToast('Brinde cadastrado! 🎁', 'success');
+      await loadBrindes();
+    } catch(e) { showToast('Erro ao salvar brinde.', 'error'); }
+    btn.textContent = '+ Adicionar'; btn.disabled = false;
+  };
+
+  window.deleteBrinde = async (id) => {
+    const ok = await showConfirm('Excluir brinde?', 'Remover este brinde permanentemente?');
+    if (!ok) return;
+    try { await db.collection("brindes").doc(id).delete(); showToast('Brinde excluído.', 'warning'); await loadBrindes(); } catch(e) { showToast('Erro ao excluir.', 'error'); }
+  };
+
+  // ════════════ UNIFORMES ════════════
+  async function loadUniformes() {
+    try {
+      const snap = await db.collection("uniformes").orderBy("data_pedido","desc").get();
+      UNIFORMES = [];
+      snap.forEach(doc => UNIFORMES.push({ id: doc.id, ...doc.data() }));
+    } catch(e) {
+      // fallback se não tiver índice: busca sem ordenação
+      try {
+        const snap2 = await db.collection("uniformes").get();
+        UNIFORMES = [];
+        snap2.forEach(doc => UNIFORMES.push({ id: doc.id, ...doc.data() }));
+      } catch(e2) { UNIFORMES = []; }
+    }
+    renderUniformes();
+    renderUniformesSummary();
+  }
+
+  function renderUniformes() {
+    const tbody = document.getElementById('unif-body');
+    if (!tbody) return;
+    if (!UNIFORMES.length) {
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme cadastrado.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = UNIFORMES.map(u => {
+      const qtd   = parseInt(u.qtd) || 0;
+      const vlr   = parseFloat(u.vlr_unit) || 0;
+      const total = qtd * vlr;
+      const totalPill = total > 0
+        ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
+        : `<span class="valor-total-pill zero">—</span>`;
+      const dataFmt = u.data_pedido ? new Date(u.data_pedido+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+      return `<tr>
+        <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
+        <td>${u.cor ? `<span style="display:inline-flex;align-items:center;gap:6px;font-weight:600">${escapeHtml(u.cor)}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
+        <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
+        <td>${totalPill}</td>
+        <td style="font-size:0.78rem;color:var(--muted)">${dataFmt}</td>
+        <td>${unifStatusBadge(u.status)}</td>
+        <td style="font-size:0.78rem">${fornNome(u.fornecedor_id)}</td>
+        <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${u.evento_id ? escapeHtml(eventoNome(u.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:0.78rem;" title="${escapeHtml(u.obs||'')}">${escapeHtml(u.obs||'—')}</td>
+        <td style="text-align:right;white-space:nowrap;">
+          <button class="tbl-action del" onclick="window.deleteUnif('${u.id}')" title="Excluir">🗑️</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderUniformesSummary() {
+    const el = document.getElementById('uniformes-summary');
+    if (!el) return;
+    const total    = UNIFORMES.reduce((s,u) => s + (parseFloat(u.vlr_unit)||0) * (parseInt(u.qtd)||0), 0);
+    const qtdTot   = UNIFORMES.reduce((s,u) => s + (parseInt(u.qtd)||0), 0);
+    const entregue = UNIFORMES.filter(u=>u.status==='Entregue').length;
+    el.innerHTML = `
+      <div class="gestao-summary-card"><div class="gestao-summary-label">Pedidos</div><div class="gestao-summary-value">${UNIFORMES.length}</div></div>
+      <div class="gestao-summary-card"><div class="gestao-summary-label">Quantidade Total</div><div class="gestao-summary-value">${qtdTot.toLocaleString('pt-BR')}</div></div>
+      <div class="gestao-summary-card"><div class="gestao-summary-label">Custo Total</div><div class="gestao-summary-value" style="color:var(--green)">${fmtBRL(total)}</div></div>
+      <div class="gestao-summary-card"><div class="gestao-summary-label">Entregues</div><div class="gestao-summary-value" style="color:var(--teal)">${entregue}</div></div>`;
+  }
+
+  document.getElementById('btn-save-unif').onclick = async () => {
+    const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
+    if (!qtd) { showToast('Informe a quantidade de uniformes.', 'warning'); return; }
+    const btn = document.getElementById('btn-save-unif');
+    btn.textContent = 'Salvando...'; btn.disabled = true;
+    const vlr = parseFloat(document.getElementById('unif-vlr').value) || 0;
+    try {
+      await db.collection("uniformes").add({
+        qtd,
+        cor:           document.getElementById('unif-cor').value.trim(),
+        vlr_unit:      vlr,
+        data_pedido:   document.getElementById('unif-data').value || '',
+        status:        document.getElementById('unif-status').value,
+        fornecedor_id: document.getElementById('unif-fornecedor').value || '',
+        evento_id:     document.getElementById('unif-evento').value || '',
+        obs:           document.getElementById('unif-obs').value.trim(),
+        criado_em:     firebase.firestore.FieldValue.serverTimestamp()
+      });
+      ['unif-qtd','unif-cor','unif-vlr','unif-data','unif-obs'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+      showToast('Uniforme cadastrado! 👕', 'success');
+      await loadUniformes();
+    } catch(e) { showToast('Erro ao salvar uniforme.', 'error'); }
+    btn.textContent = '+ Adicionar'; btn.disabled = false;
+  };
+
+  window.deleteUnif = async (id) => {
+    const ok = await showConfirm('Excluir uniforme?', 'Remover este registro de uniforme permanentemente?');
+    if (!ok) return;
+    try { await db.collection("uniformes").doc(id).delete(); showToast('Uniforme excluído.', 'warning'); await loadUniformes(); } catch(e) { showToast('Erro ao excluir.', 'error'); }
+  };
+
+  // ── Cálculo automático de valor total ao digitar ──
+  function bindValorTotal(qtdId, vlrId, displayId) {
+    const calcAndShow = () => {
+      const qtd = parseInt(document.getElementById(qtdId)?.value) || 0;
+      const vlr = parseFloat(document.getElementById(vlrId)?.value) || 0;
+      const el  = document.getElementById(displayId);
+      if (el) el.textContent = qtd > 0 && vlr > 0 ? `Total: ${fmtBRL(qtd*vlr)}` : '';
+    };
+    document.getElementById(qtdId)?.addEventListener('input', calcAndShow);
+    document.getElementById(vlrId)?.addEventListener('input', calcAndShow);
+  }
+  // Criar containers de preview abaixo dos campos
+  function injectTotalPreview(afterElId, previewId) {
+    const el = document.getElementById(afterElId);
+    if (!el) return;
+    let prev = document.getElementById(previewId);
+    if (!prev) {
+      prev = document.createElement('div');
+      prev.id = previewId;
+      prev.style.cssText = 'font-size:0.75rem;font-weight:700;color:var(--green);margin-top:4px;height:14px;';
+      el.closest('.gestao-add-bar')?.appendChild(prev);
+    }
+  }
+  injectTotalPreview('brinde-vlr', 'brinde-total-preview');
+  injectTotalPreview('unif-vlr',   'unif-total-preview');
+  bindValorTotal('brinde-qtd','brinde-vlr','brinde-total-preview');
+  bindValorTotal('unif-qtd','unif-vlr','unif-total-preview');
+
+  // ── Brindes no modal de evento (somente admin) ──
+  function renderBrindesNoEvento(eventoId) {
+    const block = document.getElementById('block-brindes-evento');
+    const list  = document.getElementById('brindes-evento-list');
+    const count = document.getElementById('brindes-evento-count');
+    if (!block || !isAdmin) { if(block) block.style.display='none'; return; }
+
+    const itens = BRINDES.filter(b => b.evento_id === eventoId);
+    if (!itens.length) {
+      block.style.display = 'none';
+      return;
+    }
+    block.style.display = 'block';
+    count.textContent = `${itens.length} item${itens.length!==1?'s':''}`;
+    list.innerHTML = itens.map(b => {
+      const qtd   = parseInt(b.qtd) || 0;
+      const vlr   = parseFloat(b.vlr_unit) || 0;
+      const total = qtd * vlr;
+      return `<div class="brinde-row">
+        <div>
+          <div class="brinde-name">${escapeHtml(b.titulo||'')} ${nivelBadge(b.nivel)}</div>
+          <div class="brinde-detail">${escapeHtml(b.descricao||'')}${b.fornecedor_id ? ' · ' + fornNome(b.fornecedor_id) : ''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-weight:700;font-size:0.8rem">${qtd > 0 ? qtd + ' un.' : '—'}</div>
+          ${total > 0 ? `<div class="valor-total-pill" style="margin-top:4px;">${fmtBRL(total)}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Patch openEventView para incluir brindes ──
+  const _openEventViewOrig = window.openEventView;
+  window.openEventView = function(id) {
+    _openEventViewOrig(id);
+    // Renderiza brindes vinculados (apenas se admin e dados já carregados)
+    if (isAdmin && BRINDES.length >= 0) renderBrindesNoEvento(id);
+    else { const b=document.getElementById('block-brindes-evento'); if(b) b.style.display='none'; }
+  };
+
+  // ── Carrega tudo ao entrar no painel admin ──
+  // Ao invés de capturar a função anterior (que pode não estar definida ainda),
+  // usamos um flag para carregar os módulos da primeira vez que o painel for renderizado.
+  let _fornLoaded=false, _brindesLoaded=false, _unifLoaded=false;
+
+  function loadGestaoModules() {
+    if (userRole !== 'admin') return;
+    if (!_fornLoaded)     { _fornLoaded=true;     loadFornecedores(); }
+    if (!_brindesLoaded)  { _brindesLoaded=true;  loadBrindes(); }
+    if (!_unifLoaded)     { _unifLoaded=true;      loadUniformes(); }
+  }
 
 </script>
 </body>
