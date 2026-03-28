@@ -13,6 +13,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
   /* ── TEMA CLARO PADRÃO ── */
@@ -23,7 +24,7 @@
     --green: #059669; --amber: #d97706; --red: #dc2626; --purple: #7c3aed; --pink: #db2777; --teal: #0d9488;
     --c-comercial: #2563eb; --c-interno: #059669; --c-feriado: #d97706;
     --radius: 16px; --radius-sm: 10px; 
-    --shadow-sm: 0 2px 4px rgba(0,0,0,0.04); --shadow: 0 8px 16px rgba(0,0,0,0.06); --shadow-lg: 0 20px 40px rgba(0,0,0,0.08);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
     --font-heading: 'Plus Jakarta Sans', sans-serif; --font-body: 'Inter', sans-serif;
   }
   
@@ -33,7 +34,7 @@
     --accent: #3b82f6; --accent-hover: #60a5fa; --accent-glow: rgba(59,130,246,0.15);
     --green: #10b981; --amber: #f59e0b; --red: #ef4444; --purple: #8b5cf6; --pink: #ec4899; --teal: #14b8a6;
     --c-comercial: #3b82f6; --c-interno: #10b981; --c-feriado: #f59e0b;
-    --shadow-sm: 0 4px 6px rgba(0,0,0,0.2); --shadow: 0 10px 25px rgba(0,0,0,0.4); --shadow-lg: 0 30px 60px rgba(0,0,0,0.6);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.2); --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.6), 0 4px 6px -4px rgba(0,0,0,0.4);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,16 +56,23 @@
   .auth-switch { background: none; border: none; color: var(--muted); font-size: 0.85rem; cursor: pointer; text-decoration: underline; font-weight: 500; }
   
   /* ── HEADER ── */
-  header { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 72px; box-shadow: var(--shadow-sm); }
+  header { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 72px; box-shadow: var(--shadow-sm); transition: background-color 0.3s; }
+  [data-theme="dark"] header { background: rgba(17, 19, 26, 0.85); }
   .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
   .logo span { color: var(--accent); }
   .header-right { display: flex; align-items: center; gap: 12px; }
   .user-badge { font-size: 0.85rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 8px; padding-right: 16px; border-right: 1px solid var(--border); }
-  .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+  .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
   .btn-icon:hover { background: var(--border); transform: translateY(-1px); }
+  .btn-icon:active { transform: scale(0.96); }
   .btn-icon.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 10px 20px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s; box-shadow: 0 4px 12px var(--accent-glow); }
+  .btn-primary { background: var(--accent); color: #fff; border: none; padding: 10px 20px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 4px 12px var(--accent-glow); display: flex; align-items: center; gap: 8px; justify-content: center; }
   .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 6px 16px var(--accent-glow); }
+  .btn-primary:active { transform: scale(0.96) translateY(0); box-shadow: 0 2px 8px var(--accent-glow); }
+  
+  /* Icon Utilities */
+  .lucide { width: 1.1em; height: 1.1em; stroke-width: 2.2; flex-shrink: 0; }
+
 
   /* ── LAYOUT & SIDEBAR ── */
   .app { display: flex; min-height: calc(100vh - 72px); }
@@ -180,7 +188,7 @@
   .kanban-column-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 100px; }
   .kanban-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--shadow-sm); cursor: grab; transition: 0.2s; position: relative; }
   .kanban-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent); }
-  .kanban-card:active { cursor: grabbing; }
+  .kanban-card:active { cursor: grabbing; transform: scale(0.98); }
   .kanban-card-title { font-weight: 800; font-size: 0.95rem; margin-bottom: 4px; display: flex; align-items:flex-start; justify-content:space-between; }
   .kanban-card-desc { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; line-height:1.4; }
   .kanban-card-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
@@ -188,8 +196,15 @@
   .kanban-anexo-link { color: var(--accent); font-size: 0.75rem; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 4px; }
   .kanban-anexo-link:hover { text-decoration: underline; }
 
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-weight: 500; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border); }
-  .empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
+  /* ── SKELETON LOADERS & EMPTY STATES ── */
+  @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+  .skeleton { background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%); background-size: 1000px 100%; animation: shimmer 2s infinite linear; border-radius: var(--radius-sm); }
+  .skeleton-text { height: 1em; width: 60%; margin-bottom: 4px; }
+  .skeleton-card { height: 120px; width: 100%; border-radius: var(--radius); }
+  .skeleton-chart { height: 250px; width: 100%; border-radius: var(--radius); }
+  
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-weight: 500; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  .empty-icon { color: var(--muted); opacity: 0.5; width: 48px; height: 48px; }
 
   /* ── VIEWS: MÊS, SEMANA E LISTA ── */
   .cal-nav { display: flex; justify-content: space-between; margin-bottom: 24px; align-items: center; }
@@ -345,7 +360,7 @@
   .urgency-high { color: var(--red); font-weight: 800; }
   .urgency-mid  { color: var(--amber); font-weight: 700; }
   .urgency-low  { color: var(--green); font-weight: 600; }
-  #btn-export-pdf:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  #btn-export-pdf-dash:hover, #btn-export-pdf-modal:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
   /* ── ADMIN LAYOUT COM ABAS LATERAIS ── */
   .admin-layout { display: grid; grid-template-columns: 220px 1fr; gap: 0; min-height: 700px; height: calc(100vh - 200px); max-height: 900px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
@@ -549,7 +564,7 @@
   </div>
   
   <div class="auth-card hide" id="pending-screen">
-    <div style="font-size: 3rem; margin-bottom: 16px;">⏳</div>
+    <div style="display:flex; justify-content:center; margin-bottom:24px; color:var(--accent)"><i data-lucide="hourglass" style="width:48px; height:48px; stroke-width:1.5;"></i></div>
     <h3 style="font-family: var(--font-heading); margin-bottom: 8px;">Aguardando Aprovação</h3>
     <div class="auth-subtitle">Sua conta foi criada. Solicite a um administrador que libere seu acesso ao sistema.</div>
     <button class="auth-switch" id="btn-logout-pending" style="margin-top: 16px;">Sair / Tentar outro e-mail</button>
@@ -559,23 +574,23 @@
 <div id="app-screen" class="hide">
   <header>
     <div style="display:flex;align-items:center;gap:12px;">
-      <button class="btn-icon" id="btn-sidebar-toggle" title="Menu">☰</button>
+      <button class="btn-icon" id="btn-sidebar-toggle" title="Menu"><i data-lucide="menu"></i></button>
       <div class="logo">Tripla <span>·</span> Eventos</div>
     </div>
     <div class="header-right">
       <div class="today-badge" id="today-badge"></div>
       <div id="notif-bell-wrapper" style="position:relative;display:none;">
-        <button class="btn-icon" id="btn-notif-bell" title="Notificações">🔔 <span id="notif-count" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:0.6rem;font-weight:800;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;"></span></button>
+        <button class="btn-icon" id="btn-notif-bell" title="Notificações"><i data-lucide="bell"></i> <span id="notif-count" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:0.6rem;font-weight:800;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;"></span></button>
         <div id="notif-dropdown" style="display:none;position:absolute;top:calc(100% + 10px);right:0;width:320px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);z-index:500;overflow:hidden;">
           <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:800;font-size:0.9rem;">Notificações</span><button id="btn-mark-all-read" style="background:none;border:none;color:var(--accent);font-size:0.75rem;font-weight:700;cursor:pointer;">Marcar tudo como lido</button></div>
           <div id="notif-list" style="max-height:300px;overflow-y:auto;"></div>
         </div>
       </div>
       <span id="user-role-badge" style="display:none;font-size:0.7rem;font-weight:800;padding:3px 10px;border-radius:20px;"></span>
-      <div class="user-badge"><span id="user-email-display"></span> <button class="btn-icon" id="btn-logout" title="Sair">🚪</button></div>
-      <button class="btn-icon" id="btn-export">📅 .ics</button>
-      <button class="btn-icon" id="btn-theme" title="Alternar Tema Claro/Escuro">🌓 Tema</button>
-      <button class="btn-primary" id="btn-admin-toggle" style="display:none">⚙️ Painel Admin</button>
+      <div class="user-badge"><span id="user-email-display"></span> <button class="btn-icon" id="btn-logout" title="Sair"><i data-lucide="log-out"></i></button></div>
+      <button class="btn-icon" id="btn-export"><i data-lucide="calendar-plus"></i> .ics</button>
+      <button class="btn-icon" id="btn-theme" title="Alternar Tema Claro/Escuro"><i data-lucide="moon"></i> Tema</button>
+      <button class="btn-primary" id="btn-admin-toggle" style="display:none"><i data-lucide="settings"></i> Painel Admin</button>
     </div>
   </header>
 
@@ -637,11 +652,11 @@
         <h3>Status</h3>
         <div class="filter-group">
           <button class="filter-btn active" data-filter-status="all">Todos os status</button>
-          <button class="filter-btn" data-filter-status="Confirmado">✅ Confirmado</button>
-          <button class="filter-btn" data-filter-status="Planejado">📋 Planejado</button>
-          <button class="filter-btn" data-filter-status="Em negociação">🤝 Em negociação</button>
-          <button class="filter-btn" data-filter-status="Concluído">🏁 Concluído</button>
-          <button class="filter-btn" data-filter-status="Cancelado">❌ Cancelado</button>
+          <button class="filter-btn" data-filter-status="Confirmado"><i data-lucide="check-circle" style="width:14px;height:14px;margin-right:2px;color:var(--green)"></i> Confirmado</button>
+          <button class="filter-btn" data-filter-status="Planejado"><i data-lucide="clipboard-list" style="width:14px;height:14px;margin-right:2px;color:var(--muted)"></i> Planejado</button>
+          <button class="filter-btn" data-filter-status="Em negociação"><i data-lucide="handshake" style="width:14px;height:14px;margin-right:2px;color:var(--amber)"></i> Em negociação</button>
+          <button class="filter-btn" data-filter-status="Concluído"><i data-lucide="flag" style="width:14px;height:14px;margin-right:2px;color:var(--purple)"></i> Concluído</button>
+          <button class="filter-btn" data-filter-status="Cancelado"><i data-lucide="x-circle" style="width:14px;height:14px;margin-right:2px;color:var(--red)"></i> Cancelado</button>
         </div>
       </div>
 
@@ -659,35 +674,35 @@
       <div class="view-controls">
         <div class="view-title">Calendário Estratégico</div>
         <div class="controls-right">
-          <button class="btn-primary" id="btn-add-event" style="display:none">+ Novo Evento</button>
+          <button class="btn-primary" id="btn-add-event" style="display:none"><i data-lucide="plus"></i> Novo Evento</button>
           <div class="search-box" style="position:relative;">
-            <span>🔍</span>
+            <i data-lucide="search" style="color:var(--muted);width:16px;height:16px;"></i>
             <input type="text" id="search-input" placeholder="Buscar evento..." autocomplete="off">
             <span id="search-count" style="font-size:0.72rem;font-weight:700;color:var(--muted);white-space:nowrap;display:none;"></span>
-            <button id="btn-clear-search" onclick="clearSearch()" style="display:none;background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.9rem;padding:0;line-height:1;">✕</button>
+            <button id="btn-clear-search" onclick="clearSearch()" style="display:none;background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.9rem;padding:0;line-height:1;"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
           </div>
           <div class="view-tabs">
-            <button class="view-tab active" data-view="timeline">Timeline</button>
-            <button class="view-tab" data-view="calendar">Mês</button>
-            <button class="view-tab" data-view="week">Semana</button>
-            <button class="view-tab" data-view="list">Lista</button>
-            <button class="view-tab" id="tab-admin" data-view="admin" style="display:none; color:var(--accent); font-weight:800">📊 Admin</button>
+            <button class="view-tab active" data-view="timeline"><i data-lucide="align-left" style="margin-right:4px;"></i>Timeline</button>
+            <button class="view-tab" data-view="calendar"><i data-lucide="calendar-days" style="margin-right:4px;"></i>Mês</button>
+            <button class="view-tab" data-view="week"><i data-lucide="kanban" style="margin-right:4px;"></i>Semana</button>
+            <button class="view-tab" data-view="list"><i data-lucide="list" style="margin-right:4px;"></i>Lista</button>
+            <button class="view-tab" id="tab-admin" data-view="admin" style="display:none; color:var(--accent); font-weight:800"><i data-lucide="pie-chart" style="margin-right:4px;"></i> Admin</button>
           </div>
         </div>
       </div>
 
       <div id="view-timeline" class="view-container active">
-        <div class="timeline-toggle-container"><button id="btn-toggle-past" class="btn-toggle-past">⏳ Ver meses anteriores</button></div>
+        <div class="timeline-toggle-container"><button id="btn-toggle-past" class="btn-toggle-past"><i data-lucide="history" style="margin-right:6px"></i> Ver meses anteriores</button></div>
         <div id="timeline-content"></div>
       </div>
       
       <div id="view-calendar" class="view-container">
-        <div class="cal-nav"><button class="btn-icon" id="cal-prev">← Anterior</button><span class="cal-month-label" id="cal-month-label"></span><button class="btn-icon" id="cal-next">Próximo →</button></div>
+        <div class="cal-nav"><button class="btn-icon" id="cal-prev"><i data-lucide="chevron-left"></i></button><span class="cal-month-label" id="cal-month-label"></span><button class="btn-icon" id="cal-next"><i data-lucide="chevron-right"></i></button></div>
         <div class="cal-grid" id="cal-grid"></div>
       </div>
 
       <div id="view-week" class="view-container">
-        <div class="cal-nav"><button class="btn-icon" id="week-prev">← Anterior</button><span class="cal-month-label" id="week-label"></span><button class="btn-icon" id="week-next">Próxima →</button></div>
+        <div class="cal-nav"><button class="btn-icon" id="week-prev"><i data-lucide="chevron-left"></i></button><span class="cal-month-label" id="week-label"></span><button class="btn-icon" id="week-next"><i data-lucide="chevron-right"></i></button></div>
         <div class="week-grid" id="week-grid"></div>
       </div>
 
@@ -696,7 +711,7 @@
           <thead><tr><th data-sort="data_ini">Data ↕</th><th data-sort="evento">Evento ↕</th><th data-sort="tipo">Tipo ↕</th><th data-sort="status">Status ↕</th><th>Participantes (Tripla)</th></tr></thead>
           <tbody id="list-body"></tbody>
         </table>
-        <div id="list-no-results" class="empty-state hide"><div class="empty-icon">📭</div><div>Nenhum evento encontrado.</div></div>
+        <div id="list-no-results" class="empty-state hide"><i data-lucide="inbox" class="empty-icon"></i><div>Nenhum evento encontrado.</div></div>
       </div>
 
       <div id="view-admin" class="view-container">
@@ -710,18 +725,18 @@
               <div class="admin-sidenav-title">Painel Admin</div>
             </div>
             <button class="admin-nav-item active" data-section="dashboard" onclick="switchAdminSection('dashboard', this)">
-              <span class="nav-icon">📊</span> Dashboard
+              <i data-lucide="layout-dashboard" class="nav-icon"></i> Dashboard
             </button>
             <button class="admin-nav-item" data-section="eventos" onclick="switchAdminSection('eventos', this)">
-              <span class="nav-icon">📅</span> Eventos
+              <i data-lucide="calendar" class="nav-icon"></i> Eventos
             </button>
             <div class="admin-nav-divider"></div>
             <button class="admin-nav-item" data-section="operacional" onclick="switchAdminSection('operacional', this)">
-              <span class="nav-icon">📦</span> Operacional
+              <i data-lucide="package" class="nav-icon"></i> Operacional
             </button>
             <div class="admin-nav-divider"></div>
             <button class="admin-nav-item" data-section="configuracoes" onclick="switchAdminSection('configuracoes', this)">
-              <span class="nav-icon">⚙️</span> Configurações
+              <i data-lucide="settings" class="nav-icon"></i> Configurações
             </button>
           </nav>
 
@@ -735,7 +750,7 @@
                   <div class="admin-section-heading">Dashboard</div>
                   <div class="admin-section-sub">Visão geral e métricas estratégicas dos eventos</div>
                 </div>
-                <button class="btn-icon" id="btn-export-pdf" style="font-weight:700;">📄 Exportar PDF</button>
+                <button class="btn-icon" id="btn-export-pdf-dash" style="font-weight:700;"><i data-lucide="file-output"></i> Exportar PDF</button>
               </div>
 
               <!-- KPIs -->
@@ -752,7 +767,7 @@
 
               <!-- Heatmap -->
               <div class="admin-panel" id="panel-heatmap" style="margin:0;">
-                <h3>🗓️ Densidade Anual de Eventos</h3>
+                <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="calendar-heart" style="color:var(--accent)"></i> Densidade Anual de Eventos</h3>
                 <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Concentração de eventos por semana ao longo do ano</p>
                 <div id="heatmap-container" style="overflow-x:auto;"></div>
                 <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:0.75rem;color:var(--muted);">
@@ -771,26 +786,26 @@
               <!-- Gráficos -->
               <div class="admin-panels" style="margin:0;">
                 <div class="admin-panel">
-                  <h3>📅 Eventos por Mês</h3>
+                  <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="bar-chart-horizontal" style="color:var(--muted)"></i> Eventos por Mês</h3>
                   <div class="chart-container"><canvas id="chartMeses"></canvas></div>
                 </div>
                 <div class="admin-panel">
-                  <h3>📊 Distribuição por Status</h3>
+                  <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="pie-chart" style="color:var(--muted)"></i> Distribuição por Status</h3>
                   <div class="chart-container"><canvas id="chartStatus"></canvas></div>
                 </div>
                 <div class="admin-panel">
-                  <h3>🔵 Tipo de Evento</h3>
+                  <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="layers" style="color:var(--muted)"></i> Tipo de Evento</h3>
                   <div class="chart-container"><canvas id="chartTipos"></canvas></div>
                 </div>
                 <div class="admin-panel">
-                  <h3>👤 Ranking por Organizador</h3>
+                  <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="users" style="color:var(--muted)"></i> Ranking por Organizador</h3>
                   <div class="chart-container"><canvas id="chartResp"></canvas></div>
                 </div>
               </div>
 
               <!-- Vagas -->
               <div class="admin-panel" style="grid-column: 1 / -1; margin:0;" id="panel-vagas">
-                <h3>🎫 Eventos com Vagas Disponíveis</h3>
+                <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="ticket" style="color:var(--amber)"></i> Eventos com Vagas Disponíveis</h3>
                 <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Eventos comerciais confirmados ou planejados com vagas em aberto, ordenados por urgência.</p>
                 <div id="vagas-table-container"></div>
               </div>
@@ -803,7 +818,7 @@
                   <div class="admin-section-heading">Gerenciar Eventos</div>
                   <div class="admin-section-sub">Edite, crie e gerencie todos os eventos do calendário</div>
                 </div>
-                <button class="btn-primary" onclick="window.openAdminForm('')" style="gap:8px;">＋ Novo Evento</button>
+                <button class="btn-primary" onclick="window.openAdminForm('')" style="gap:8px;"><i data-lucide="plus"></i> Novo Evento</button>
               </div>
 
               <div class="admin-panel" style="margin:0;">
@@ -823,10 +838,10 @@
                   <div class="admin-section-sub">Almoxarifado, brindes, uniformes e fornecedores dos eventos</div>
                 </div>
                 <div class="gestao-tabs" style="border-bottom:none; margin-bottom:0;">
-                  <button class="gestao-tab active" data-gtab="estoque">📦 Almoxarifado</button>
-                  <button class="gestao-tab" data-gtab="brindes">🎁 Brindes</button>
-                  <button class="gestao-tab" data-gtab="uniformes">👕 Uniformes</button>
-                  <button class="gestao-tab" data-gtab="fornecedores">🏢 Fornecedores</button>
+                  <button class="gestao-tab active" data-gtab="estoque"><i data-lucide="boxes" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Almoxarifado</button>
+                  <button class="gestao-tab" data-gtab="brindes"><i data-lucide="gift" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Brindes</button>
+                  <button class="gestao-tab" data-gtab="uniformes"><i data-lucide="shirt" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Uniformes</button>
+                  <button class="gestao-tab" data-gtab="fornecedores"><i data-lucide="truck" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Fornecedores</button>
                 </div>
               </div>
 
@@ -913,7 +928,7 @@
                           </select>
                         </div>
                         <div style="flex:1;"></div>
-                        <button class="btn-icon" id="btn-cancel-estoque" style="display:none; white-space:nowrap;">✕ Cancelar</button>
+                        <button class="btn-icon" id="btn-cancel-estoque" style="display:none; white-space:nowrap;"><i data-lucide="x" style="width:14px;height:14px;"></i> Cancelar</button>
                         <button class="btn-primary" id="btn-save-estoque" style="white-space:nowrap;">+ Registrar no Almoxarifado</button>
                       </div>
                     </div>
@@ -926,7 +941,7 @@
 
                   <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                      <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
+                      <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="filter" style="width:14px;height:14px;"></i> Filtros:</span>
                       <input type="text" id="filtro-brinde-busca" placeholder="Buscar brinde..." oninput="renderBrindes()">
                       <select id="filtro-brinde-nivel" onchange="renderBrindes()">
                         <option value="">Todos os Níveis</option>
@@ -939,8 +954,8 @@
                       </select>
                     </div>
                     <div class="gestao-view-toggles">
-                      <button id="btn-brinde-view-table" class="view-toggle active" onclick="window.setBrindeView('table')">📄 Lista</button>
-                      <button id="btn-brinde-view-kanban" class="view-toggle" onclick="window.setBrindeView('kanban')">⊞ Kanban</button>
+                      <button id="btn-brinde-view-table" class="view-toggle active" onclick="window.setBrindeView('table')"><i data-lucide="list" style="margin-right:4px;"></i> Lista</button>
+                      <button id="btn-brinde-view-kanban" class="view-toggle" onclick="window.setBrindeView('kanban')"><i data-lucide="kanban" style="margin-right:4px;"></i> Kanban</button>
                     </div>
                   </div>
 
@@ -1008,7 +1023,7 @@
                       <div class="gestao-add-bar-actions">
                         <button class="btn-icon gestao-total-preview" id="brinde-total-preview" style="pointer-events:none;font-size:0.75rem;"></button>
                       </div>
-                      <button class="btn-icon" id="btn-cancel-brinde" style="display:none; white-space:nowrap;">✕ Cancelar</button>
+                      <button class="btn-icon" id="btn-cancel-brinde" style="display:none; white-space:nowrap;"><i data-lucide="x" style="width:14px;height:14px;"></i> Cancelar</button>
                       <button class="btn-primary" id="btn-save-brinde" style="white-space:nowrap;">+ Adicionar</button>
                     </div>
                   </div>
@@ -1020,7 +1035,7 @@
 
                   <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                      <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
+                      <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="filter" style="width:14px;height:14px;"></i> Filtros:</span>
                       <input type="text" id="filtro-unif-busca" placeholder="Cor ou observação..." oninput="renderUniformes()">
                       <select id="filtro-unif-status" onchange="renderUniformes()">
                         <option value="">Todos os Status</option>
@@ -1034,8 +1049,8 @@
                       </select>
                     </div>
                     <div class="gestao-view-toggles">
-                      <button id="btn-unif-view-table" class="view-toggle active" onclick="window.setUnifView('table')">📄 Lista</button>
-                      <button id="btn-unif-view-kanban" class="view-toggle" onclick="window.setUnifView('kanban')">⊞ Kanban</button>
+                      <button id="btn-unif-view-table" class="view-toggle active" onclick="window.setUnifView('table')"><i data-lucide="list" style="margin-right:4px;"></i> Lista</button>
+                      <button id="btn-unif-view-kanban" class="view-toggle" onclick="window.setUnifView('kanban')"><i data-lucide="kanban" style="margin-right:4px;"></i> Kanban</button>
                     </div>
                   </div>
 
@@ -1112,7 +1127,7 @@
                           <div id="unif-anexo-name" style="font-size:0.7rem; color:var(--accent); margin-top:2px;"></div>
                         </div>
                         <div style="flex:1;"></div>
-                        <button class="btn-icon" id="btn-cancel-unif" style="display:none; white-space:nowrap;">✕ Cancelar</button>
+                        <button class="btn-icon" id="btn-cancel-unif" style="display:none; white-space:nowrap;"><i data-lucide="x" style="width:14px;height:14px;"></i> Cancelar</button>
                         <button class="btn-primary" id="btn-save-unif" style="white-space:nowrap;">+ Adicionar</button>
                       </div>
                     </div>
@@ -1122,7 +1137,7 @@
                 <!-- ── FORNECEDORES ── -->
                 <div class="gestao-pane" id="gpane-fornecedores">
                   <div class="filter-bar-gestao">
-                    <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Buscar:</span>
+                    <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
                     <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()">
                   </div>
 
@@ -1169,7 +1184,7 @@
               <div class="admin-panels" style="margin:0;">
                 <!-- Aprovação de Acessos -->
                 <div class="admin-panel">
-                  <h3>🔐 Aprovação de Acessos</h3>
+                  <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="lock" style="color:var(--muted)"></i> Aprovação de Acessos</h3>
                   <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Contas @tripla aguardando liberação do sistema.</p>
                   <div id="users-pending-list" style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 250px; overflow-y:auto; padding:8px; background: var(--bg);">
                      <div style="text-align:center; padding: 20px; color: var(--muted); font-size: 0.85rem;">Nenhuma solicitação pendente.</div>
@@ -1178,7 +1193,7 @@
 
                 <!-- Gerenciar Organizadores -->
                 <div class="admin-panel">
-                  <h3>👥 Gerenciar Organizadores</h3>
+                  <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="users" style="color:var(--muted)"></i> Gerenciar Organizadores</h3>
                   <div style="display:flex; gap:12px; margin-bottom:16px;">
                     <input type="text" id="new-resp-input" class="admin-input" style="margin:0" placeholder="Nome...">
                     <button class="btn-primary" id="btn-add-resp">Add</button>
@@ -1188,10 +1203,14 @@
 
                 <!-- Importar CSV -->
                 <div class="admin-panel">
-                  <h3>📥 Importar via Planilha</h3>
+                  <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="folder-up" style="color:var(--muted)"></i> Importar via Planilha</h3>
                   <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Baixe o modelo (CSV), preencha e importe múltiplos eventos de uma vez.</p>
-                  <button class="btn-icon" id="btn-download-csv" style="margin-bottom:16px; font-weight:700">📄 Baixar Modelo CSV</button>
-                  <div class="file-drop" id="file-dropzone" onclick="document.getElementById('csv-file').click()"><div style="font-size:2rem; margin-bottom:12px">📁</div><div style="font-weight:600">Arraste o <b>.csv</b> aqui</div><input type="file" id="csv-file" accept=".csv"></div>
+                  <button class="btn-icon" id="btn-download-csv" style="margin-bottom:16px; font-weight:700"><i data-lucide="file-down"></i> Baixar Modelo CSV</button>
+                  <div class="file-drop" id="file-dropzone" onclick="document.getElementById('csv-file').click()">
+                    <div style="display:flex;justify-content:center;margin-bottom:12px;color:var(--muted)"><i data-lucide="upload-cloud" style="width:48px;height:48px;stroke-width:1.5;"></i></div>
+                    <div style="font-weight:600">Arraste o <b>.csv</b> aqui</div>
+                    <input type="file" id="csv-file" accept=".csv">
+                  </div>
                   <button class="btn-primary" id="btn-upload-csv" style="width:100%" disabled>Iniciar Importação</button>
                 </div>
               </div>
@@ -1218,7 +1237,7 @@
 <!-- Confirm Modal -->
 <div id="confirm-modal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;">
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;max-width:440px;width:100%;box-shadow:var(--shadow-lg);text-align:center;">
-    <div id="confirm-icon" style="font-size:2.5rem;margin-bottom:16px;">🗑️</div>
+    <div id="confirm-icon" style="color:var(--red);display:flex;justify-content:center;margin-bottom:16px;"><i data-lucide="trash-2" style="width:48px;height:48px;stroke-width:1.5;"></i></div>
     <h3 id="confirm-title" style="font-family:var(--font-heading);font-size:1.3rem;margin-bottom:8px;">Excluir evento?</h3>
     <p id="confirm-msg" style="color:var(--muted);font-size:0.9rem;margin-bottom:28px;line-height:1.6;"></p>
     <div style="display:flex;gap:12px;justify-content:center;">
@@ -1238,30 +1257,30 @@
       <div class="modal-header-view" id="view-header">
         <div class="modal-actions-top">
           <div id="view-temporal-badge-header"></div>
-          <button class="btn-icon" id="btn-export-pdf" title="Exportar para PDF">📄 PDF</button>
-          <button class="btn-icon show-on-admin" id="btn-switch-edit">✏️ Editar</button>
-          <button class="btn-icon" id="modal-close-view">✕</button>
+          <button class="btn-icon" id="btn-export-pdf-modal" title="Exportar para PDF"><i data-lucide="file-output"></i> PDF</button>
+          <button class="btn-icon show-on-admin" id="btn-switch-edit"><i data-lucide="edit"></i> Editar</button>
+          <button class="btn-icon" id="modal-close-view"><i data-lucide="x"></i></button>
         </div>
         <div id="view-badges" style="margin-bottom: 16px; display:flex; gap:8px; flex-wrap:wrap;"></div>
         <h2 class="modal-title" id="view-title">Nome do Evento</h2>
         <div style="display:flex; flex-direction:column; gap:8px;">
-           <div style="font-size:0.95rem; font-weight:600;" id="view-date">📅 Data</div>
-           <div style="font-size:0.9rem; display:flex; align-items:center; gap:8px;">👤 <span style="font-weight:600; color:var(--muted);">Organizadores:</span> <span id="view-resp-list"></span></div>
+           <div style="font-size:0.95rem; font-weight:600; display:flex; align-items:center; gap:8px;" id="view-date"><i data-lucide="calendar" style="width:16px;height:16px;color:var(--muted)"></i> Data</div>
+           <div style="font-size:0.9rem; display:flex; align-items:center; gap:8px;"><i data-lucide="user" style="width:16px;height:16px;color:var(--muted)"></i> <span style="font-weight:600; color:var(--muted);">Organizadores:</span> <span id="view-resp-list"></span></div>
         </div>
       </div>
       <div class="modal-body">
         <div class="bento-grid">
-          <div class="bento-item"><div class="bento-header">📌 Operação</div><div class="bento-value"><span id="view-status">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Formato:</span> <span id="view-formato">-</span></div></div>
-          <div class="bento-item" id="block-cota"><div class="bento-header">🎖️ Comercial</div><div class="bento-value"><span id="view-cota">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Vagas Livres:</span> <span id="view-vagas">-</span></div></div>
-          <div class="bento-item full" id="block-participantes" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2);"><div class="bento-header" style="color: var(--green);">🎟️ Participantes (Equipe Tripla)</div><div class="bento-value" id="view-participantes" style="font-size: 0.9rem;">-</div></div>
-          <div class="bento-item full" id="block-publico"><div class="bento-header">👥 Público Alvo</div><div class="bento-value" id="view-publico">-</div></div>
-          <div class="bento-item full" id="block-beneficios"><div class="bento-header">✨ Benefícios / Entregas</div><div class="bento-value" id="view-beneficios" style="white-space: pre-wrap;">-</div></div>
-          <div class="bento-item full" id="block-obs" style="background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2);"><div class="bento-header" style="color: var(--amber);">⚠️ Observações</div><div class="bento-value" id="view-obs" style="white-space: pre-wrap;">-</div></div>
-          <div class="bento-item full" id="block-localidade"><div class="bento-header">📍 Localização</div><div class="bento-value" id="view-localidade">-</div></div>
-          <div class="bento-item full" id="block-links"><div class="bento-header">🔗 Links</div><div class="bento-value" id="view-links">-</div></div>
-          <div class="bento-item" id="block-hora"><div class="bento-header">⏰ Horário</div><div class="bento-value" id="view-hora">-</div></div>
+          <div class="bento-item"><div class="bento-header"><i data-lucide="briefcase"></i> Operação</div><div class="bento-value"><span id="view-status">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Formato:</span> <span id="view-formato">-</span></div></div>
+          <div class="bento-item" id="block-cota"><div class="bento-header"><i data-lucide="award"></i> Comercial</div><div class="bento-value"><span id="view-cota">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Vagas Livres:</span> <span id="view-vagas">-</span></div></div>
+          <div class="bento-item full" id="block-participantes" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2);"><div class="bento-header" style="color: var(--green);"><i data-lucide="ticket"></i> Participantes (Equipe Tripla)</div><div class="bento-value" id="view-participantes" style="font-size: 0.9rem;">-</div></div>
+          <div class="bento-item full" id="block-publico"><div class="bento-header"><i data-lucide="users"></i> Público Alvo</div><div class="bento-value" id="view-publico">-</div></div>
+          <div class="bento-item full" id="block-beneficios"><div class="bento-header"><i data-lucide="sparkles"></i> Benefícios / Entregas</div><div class="bento-value" id="view-beneficios" style="white-space: pre-wrap;">-</div></div>
+          <div class="bento-item full" id="block-obs" style="background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2);"><div class="bento-header" style="color: var(--amber);"><i data-lucide="alert-triangle"></i> Observações</div><div class="bento-value" id="view-obs" style="white-space: pre-wrap;">-</div></div>
+          <div class="bento-item full" id="block-localidade"><div class="bento-header"><i data-lucide="map-pin"></i> Localização</div><div class="bento-value" id="view-localidade">-</div></div>
+          <div class="bento-item full" id="block-links"><div class="bento-header"><i data-lucide="link"></i> Links</div><div class="bento-value" id="view-links">-</div></div>
+          <div class="bento-item" id="block-hora"><div class="bento-header"><i data-lucide="clock"></i> Horário</div><div class="bento-value" id="view-hora">-</div></div>
           <div class="bento-item full" id="block-financeiro" style="display:none; background: rgba(0,0,0,0.02); border-color: var(--border);">
-            <div class="bento-header" style="color:var(--text);">💰 Financeiro Consolidado</div>
+            <div class="bento-header" style="color:var(--text);"><i data-lucide="coins"></i> Financeiro Consolidado</div>
             <div class="bento-value" style="display:flex; flex-direction:column; gap:4px; font-size:0.95rem;">
                <div style="display:flex; justify-content:space-between; color:var(--text);"><span>Brindes (Total):</span><span id="view-fin-brindes" style="font-weight:600">—</span></div>
                <div style="display:flex; justify-content:space-between; color:var(--text);"><span>Uniformes (Total):</span><span id="view-fin-unif" style="font-weight:600">—</span></div>
@@ -1273,13 +1292,13 @@
         <!-- BRINDES DO EVENTO (somente admin) -->
         <div id="block-brindes-evento" style="display:none; margin-top:4px;">
           <div class="admin-brinde-block">
-            <div class="admin-brinde-title">🎁 Brindes deste Evento <span id="brindes-evento-count" style="font-size:0.7rem;font-weight:600;color:var(--muted);margin-left:4px;"></span></div>
+            <div class="admin-brinde-title" style="display:flex;align-items:center;gap:6px;"><i data-lucide="gift" style="color:var(--muted)"></i> Brindes deste Evento <span id="brindes-evento-count" style="font-size:0.7rem;font-weight:600;color:var(--muted);margin-left:4px;"></span></div>
             <div id="brindes-evento-list"></div>
           </div>
         </div>
         <!-- COMMENTS SECTION -->
         <div id="comments-section" style="margin-top:8px;">
-          <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;">💬 Comentários <span id="comments-count" style="font-size:0.7rem;background:var(--surface2);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--text);">0</span></div>
+          <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;"><i data-lucide="message-square" style="width:16px;height:16px;"></i> Comentários <span id="comments-count" style="font-size:0.7rem;background:var(--surface2);border:1px solid var(--border);padding:2px 8px;border-radius:12px;color:var(--text);">0</span></div>
           <div id="comments-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;max-height:280px;overflow-y:auto;"></div>
           <div id="comment-input-area" style="display:flex;gap:10px;align-items:flex-end;">
             <textarea id="comment-text" placeholder="Escreva um comentário..." style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:inherit;font-size:0.85rem;font-weight:500;padding:10px 14px;resize:none;min-height:44px;max-height:120px;outline:none;transition:0.2s;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();window.submitComment();}"></textarea>
@@ -1892,6 +1911,54 @@
   }
   window.approveUser = async (uid) => { try { await db.collection("users").doc(uid).update({ role: 'approved' }); loadPendingUsers(); showToast('Usuário aprovado com sucesso!', 'success'); } catch(e) { showToast('Erro ao aprovar usuário.', 'error'); } }
 
+  // ── ORGANIZADORES ADMIN CRUD ──
+  async function loadAdminResponsaveis() {
+    const list = document.getElementById('resp-list-admin');
+    if(!list) return;
+    try {
+      let html = '';
+      RESPONSAVEIS.forEach(r => {
+        html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-bottom:1px solid var(--border);">
+                   <span style="font-weight:600; font-size:0.9rem;">${r.nome}</span>
+                   <button class="btn-icon" style="color:var(--red); border-color:var(--surface2); padding:6px 10px;" onclick="window.deleteResp('${r.id}')"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>
+                 </div>`;
+      });
+      list.innerHTML = html || '<div style="text-align:center; padding: 20px; color: var(--muted); font-size: 0.85rem;">Nenhum organizador cadastrado.</div>';
+      refreshIcons();
+    } catch(e) {}
+  }
+  
+  window.deleteResp = async (id) => {
+    if(confirm('Tem certeza que deseja remover este organizador?')) {
+      try {
+        await db.collection("responsaveis").doc(id).delete();
+        showToast('Organizador removido.', 'success');
+        RESPONSAVEIS = RESPONSAVEIS.filter(r => r.id !== id);
+        updateResponsiblesUI();
+        loadAdminResponsaveis();
+      } catch(e) { showToast('Erro ao remover.', 'error'); }
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const btnAddResp = document.getElementById('btn-add-resp');
+    if(btnAddResp) {
+      btnAddResp.addEventListener('click', async () => {
+        const input = document.getElementById('new-resp-input');
+        const nome = input.value.trim();
+        if(!nome) return;
+        try {
+          const docRef = await db.collection("responsaveis").add({ nome });
+          RESPONSAVEIS.push({ id: docRef.id, nome });
+          input.value = '';
+          showToast('Organizador adicionado!', 'success');
+          updateResponsiblesUI();
+          loadAdminResponsaveis();
+        } catch(e) { showToast('Erro ao adicionar.', 'error'); }
+      });
+    }
+  });
+
   // ── CORE RENDER LOGIC ──
   function initUI() {
     document.getElementById('today-badge').textContent = today.toLocaleDateString('pt-BR', {weekday:'short', day:'numeric', month:'short'});
@@ -1901,7 +1968,8 @@
     syncURLState();
     renderAll();
   }
-  function renderAll() { renderMiniCal(); renderUpcoming(); renderDashboardAdmin(); renderCurrentView(); }
+  function refreshIcons() { if(window.lucide) { setTimeout(() => window.lucide.createIcons(), 50); } }
+  function renderAll() { renderMiniCal(); renderUpcoming(); renderDashboardAdmin(); renderCurrentView(); refreshIcons(); }
 
   // ── HIGHLIGHT helper ──
   function highlight(text, q) {
@@ -2541,10 +2609,10 @@
       </table>`;
   }
 
-  // ── EXPORTAR PDF ──
-  document.getElementById('btn-export-pdf').onclick = async () => {
-    const btn = document.getElementById('btn-export-pdf');
-    btn.textContent = '⏳ Gerando PDF...'; btn.disabled = true;
+  // ── EXPORTAR PDF (DASHBOARD) ──
+  document.getElementById('btn-export-pdf-dash').onclick = async () => {
+    const btn = document.getElementById('btn-export-pdf-dash');
+    btn.innerHTML = '<i data-lucide="loader-2"></i> Gerando PDF...'; btn.disabled = true; refreshIcons();
     try {
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
@@ -2637,7 +2705,7 @@
       console.error(err);
       showToast('Erro ao gerar PDF. Tente novamente.', 'error');
     }
-    btn.textContent = '📄 Exportar PDF'; btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="file-output"></i> Exportar PDF'; btn.disabled = false; refreshIcons();
   };
 
 
@@ -2765,14 +2833,14 @@
     listEl.innerHTML = window.currentEquipe.map((m, i) => {
       const unif = UNIFORMES.find(u => u.id === m.camisa_id);
       const funcBadge = m.funcao ? `<span style="font-size:0.7rem;background:var(--border);padding:2px 6px;border-radius:4px;font-weight:700;">${escapeHtml(m.funcao)}</span>` : '';
-      const unifBadge = unif ? `<span style="font-size:0.7rem;color:var(--accent);font-weight:700;">👕 ${unif.cor} ${unif.tamanho !== 'Único' ? unif.tamanho : ''}</span>` : '';
+      const unifBadge = unif ? `<span style="font-size:0.7rem;color:var(--accent);font-weight:700;"><i data-lucide="shirt" style="width:12px;height:12px;"></i> ${unif.cor} ${unif.tamanho !== 'Único' ? unif.tamanho : ''}</span>` : '';
       return `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);padding:8px 12px;border-radius:var(--radius-sm);">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-weight:700;font-size:0.9rem;">${escapeHtml(m.nome)}</span>
           ${funcBadge}
           ${unifBadge}
         </div>
-        <button class="btn-icon" onclick="window.delEquipeMember(${i})" style="color:var(--red);">🗑️</button>
+        <button class="btn-icon" onclick="window.delEquipeMember(${i})" style="color:var(--red);"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>
       </div>`;
     }).join('');
   };
@@ -2789,13 +2857,7 @@
     const camInp = document.getElementById('equipe-camisa');
     const nome = nomeInp.value.trim();
     if(!nome) return showToast('Informe o nome do participante.', 'warning');
-    
-    window.currentEquipe.push({
-      nome,
-      funcao: funcInp.value.trim(),
-      camisa_id: camInp.value || ''
-    });
-    
+    window.currentEquipe.push({ nome, funcao: funcInp.value.trim(), camisa_id: camInp.value || '' });
     nomeInp.value = '';
     funcInp.value = '';
     window.renderEquipeBuilder();
@@ -2818,20 +2880,24 @@
       loadEventHistory(id);
     }
     const selectedArr = getRespArray(ev.responsavel);
-    document.querySelectorAll('.resp-checkbox').forEach(cb => { cb.checked = selectedArr.includes(cb.value); });
-    const fields = { 'id':'id','nome':'evento','ini':'data_ini','fim':'data_fim','hora-ini':'hora_ini','hora-fim':'hora_fim','tipo':'tipo','status':'status','formato':'formato','cota':'cota','vagas':'vagas','publico':'publico','beneficios':'beneficios','obs':'obs','participantes':'participantes','localidade':'localidade','links':'links' };
-    Object.entries(fields).forEach(([k, evKey]) => { const input = document.getElementById(`edit-${k}`); if(input) input.value = ev[evKey] || ""; });
-    
-    // Hydrate Equipe Builder
-    window.currentEquipe = ev.equipe ? JSON.parse(JSON.stringify(ev.equipe)) : [];
-    if (window.currentEquipe.length === 0 && ev.participantes) window.currentEquipe = [{nome: ev.participantes, funcao: '', camisa_id: ''}];
-    window.renderEquipeBuilder();
+    document.querySelectorAll('.resp-checkbox').forEach(cb => { cb.che  // \u2500\u2500 BINDINGS DO MODAL DE EVENTO \u2500\u2500
+  const _bse = document.getElementById('btn-switch-edit');
+  if (_bse) _bse.onclick = () => window.openAdminForm(currentEditId);
 
-    // Clear validation states
-    document.querySelectorAll('.admin-input').forEach(i => i.classList.remove('valid','invalid'));
-    document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
-    document.getElementById('mode-view').classList.add('hide');
-    document.getElementById('mode-edit').classList.remove('hide');
+  const _btnPdfModal = document.getElementById('btn-export-pdf-modal');
+  if (_btnPdfModal) {
+    _btnPdfModal.onclick = () => {
+      const el = document.getElementById('mode-view');
+      const evName = EVENTS.find(e => e.id === currentEditId)?.evento.replace(/\s+/g,'_') || 'Evento';
+      const opt = { margin:0.5, filename:`Evento_${evName}.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2,useCORS:true}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} };
+      const toHide = document.querySelectorAll('#mode-view .modal-actions-top button');
+      toHide.forEach(b => b.style.visibility = 'hidden');
+      html2pdf().set(opt).from(el).save().then(() => {
+        toHide.forEach(b => b.style.visibility = '');
+        showToast('PDF do evento gerado!', 'success');
+      });
+    };
+  }('mode-edit').classList.remove('hide');
     document.getElementById('modal-overlay').classList.add('open');
   };
 
@@ -4602,6 +4668,7 @@
      document.getElementById('btn-deploy-kit').disabled = false;
   };
 
+  document.addEventListener('DOMContentLoaded', refreshIcons);
 </script>
 </body>
 </html>
