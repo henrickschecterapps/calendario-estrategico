@@ -12,6 +12,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
 
 <style>
   /* ── TEMA CLARO PADRÃO ── */
@@ -163,6 +164,27 @@
   .event-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
   .event-name { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--text); line-height: 1.3;}
   .event-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+
+  /* ── KANBAN & VIEWS TOGGLE ── */
+  .gestao-view-toggles { display: flex; gap: 4px; background: var(--surface2); border: 1px solid var(--border); padding: 4px; border-radius: 8px; }
+  .view-toggle { background: transparent; border: none; padding: 6px 12px; font-size: 0.8rem; font-weight: 600; color: var(--muted); border-radius: 6px; cursor: pointer; transition: 0.2s; }
+  .view-toggle:hover { color: var(--text); }
+  .view-toggle.active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-sm); }
+  
+  .kanban-board { display: flex; gap: 16px; min-height: 400px; padding: 24px; overflow-x: auto; background: var(--bg); border: 1px solid var(--border); border-top: none; border-bottom-left-radius: var(--radius); border-bottom-right-radius: var(--radius); }
+  .kanban-column { flex: 1; min-width: 250px; background: var(--surface2); border: 1px dashed var(--border); border-radius: var(--radius-sm); display: flex; flex-direction: column; }
+  .kanban-column-header { padding: 12px 16px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text); border-bottom: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .kanban-column-count { background: var(--border); color: var(--muted); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; }
+  .kanban-column-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 100px; }
+  .kanban-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--shadow-sm); cursor: grab; transition: 0.2s; position: relative; }
+  .kanban-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent); }
+  .kanban-card:active { cursor: grabbing; }
+  .kanban-card-title { font-weight: 800; font-size: 0.95rem; margin-bottom: 4px; display: flex; align-items:flex-start; justify-content:space-between; }
+  .kanban-card-desc { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; line-height:1.4; }
+  .kanban-card-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+  .kanban-card-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; padding: 3px 6px; border-radius: 4px; background: var(--surface2); color: var(--muted); }
+  .kanban-anexo-link { color: var(--accent); font-size: 0.75rem; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .kanban-anexo-link:hover { text-decoration: underline; }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-weight: 500; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border); }
   .empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
@@ -858,21 +880,31 @@
             <div class="gestao-pane" id="gpane-brindes">
               <div class="gestao-summary" id="brindes-summary"></div>
               
-              <div class="filter-bar-gestao">
-                <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
-                <input type="text" id="filtro-brinde-busca" placeholder="Buscar brinde..." oninput="renderBrindes()">
-                <select id="filtro-brinde-nivel" onchange="renderBrindes()">
-                  <option value="">Todos os Níveis</option>
-                  <option value="Massa">Massa</option>
-                  <option value="Qualificação">Qualificação</option>
-                  <option value="VIP">VIP</option>
-                </select>
-                <select id="filtro-brinde-evento" onchange="renderBrindes()">
-                  <option value="">Todos os Eventos</option>
-                </select>
+              <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                  <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
+                  <input type="text" id="filtro-brinde-busca" placeholder="Buscar brinde..." oninput="renderBrindes()">
+                  <select id="filtro-brinde-nivel" onchange="renderBrindes()">
+                    <option value="">Todos os Níveis</option>
+                    <option value="Massa">Massa</option>
+                    <option value="Qualificação">Qualificação</option>
+                    <option value="VIP">VIP</option>
+                  </select>
+                  <select id="filtro-brinde-evento" onchange="renderBrindes()">
+                    <option value="">Todos os Eventos</option>
+                  </select>
+                </div>
+                <!-- KANBAN TOGGLE -->
+                <div class="gestao-view-toggles">
+                  <button id="btn-brinde-view-table" class="view-toggle active" onclick="window.setBrindeView('table')">📄 Lista</button>
+                  <button id="btn-brinde-view-kanban" class="view-toggle" onclick="window.setBrindeView('kanban')">⊞ Kanban</button>
+                </div>
               </div>
 
-              <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+              <!-- KANBAN CONTAINER -->
+              <div id="brindes-kanban" class="hide kanban-board"></div>
+
+              <div class="gestao-table-wrap" id="brindes-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                 <table class="gestao-table" id="brindes-table">
                   <thead><tr>
                     <th>Brinde</th>
@@ -888,28 +920,25 @@
                   </tr></thead>
                   <tbody id="brindes-body"><tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde cadastrado.</td></tr></tbody>
                 </table>
-                <!-- FORM ADD BRINDE -->
+                <!-- FORM ADD BRINDE (ALOCAÇÃO) -->
                 <div class="gestao-add-bar" id="brinde-add-form">
                   <input type="hidden" id="brinde-id">
-                  <div class="gestao-field" style="flex:2;min-width:140px;">
-                    <label>Brinde (título) *</label>
-                    <input type="text" class="gestao-input w-full" id="brinde-titulo" placeholder="Ex: Caneca personalizada">
+                  <div class="gestao-field" style="flex:2;min-width:180px;">
+                    <label>Item do Almoxarifado *</label>
+                    <select class="gestao-input w-full" id="brinde-estoque-id" onchange="window.autofillBrinde()">
+                      <option value="">— Selecione um Brinde Mestre —</option>
+                    </select>
+                    <input type="hidden" id="brinde-titulo">
+                    <input type="hidden" id="brinde-nivel" value="Massa">
                   </div>
                   <div class="gestao-field" style="flex:3;min-width:160px;">
-                    <label>Descrição</label>
-                    <input type="text" class="gestao-input w-full" id="brinde-desc" placeholder="Detalhes do item">
+                    <label>Observação / Uso</label>
+                    <input type="text" class="gestao-input w-full" id="brinde-desc" placeholder="Detalhes da alocação">
                   </div>
                   <div class="gestao-field">
-                    <label>Nível</label>
-                    <select class="gestao-input" id="brinde-nivel">
-                      <option value="Massa">Massa</option>
-                      <option value="Qualificação">Qualificação</option>
-                      <option value="VIP">VIP</option>
-                    </select>
-                  </div>
-                  <div class="gestao-field">
-                    <label>Qtd</label>
+                    <label>Qtd (Saída)</label>
                     <input type="number" class="gestao-input w-sm" id="brinde-qtd" min="1" placeholder="0">
+                    <div id="lbl-saldo-brinde" style="font-size:0.7rem; color:var(--muted); margin-top:2px;">Saldo: —</div>
                   </div>
                   <div class="gestao-field">
                     <label>Vlr Unit. (R$)</label>
@@ -926,6 +955,12 @@
                     <select class="gestao-input" id="brinde-evento">
                       <option value="">— Sem vínculo —</option>
                     </select>
+                  </div>
+                  <div class="gestao-field" style="min-width:140px;">
+                    <label>Anexo (Moc/NF)</label>
+                    <input type="file" class="gestao-input" id="brinde-anexo" accept="image/*,application/pdf" style="font-size:0.75rem;">
+                    <input type="hidden" id="brinde-anexo-url">
+                    <div id="brinde-anexo-name" style="font-size:0.7rem; color:var(--accent); margin-top:2px;"></div>
                   </div>
                   <button class="btn-icon" id="btn-cancel-brinde" style="display:none; align-self:flex-end;">✕ Cancelar</button>
                   <button class="btn-primary" id="btn-save-brinde" style="align-self:flex-end;white-space:nowrap;">+ Adicionar</button>
@@ -977,22 +1012,32 @@
             <div class="gestao-pane" id="gpane-uniformes">
               <div class="gestao-summary" id="uniformes-summary"></div>
               
-              <div class="filter-bar-gestao">
-                <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
-                <input type="text" id="filtro-unif-busca" placeholder="Cor ou observação..." oninput="renderUniformes()">
-                <select id="filtro-unif-status" onchange="renderUniformes()">
-                  <option value="">Todos os Status</option>
-                  <option value="Pedido">Pedido</option>
-                  <option value="Em Produção">Em Produção</option>
-                  <option value="Entregue">Entregue</option>
-                  <option value="Cancelado">Cancelado</option>
-                </select>
-                <select id="filtro-unif-evento" onchange="renderUniformes()">
-                  <option value="">Todos os Eventos</option>
-                </select>
+              <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                  <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
+                  <input type="text" id="filtro-unif-busca" placeholder="Cor ou observação..." oninput="renderUniformes()">
+                  <select id="filtro-unif-status" onchange="renderUniformes()">
+                    <option value="">Todos os Status</option>
+                    <option value="Pedido">Pedido</option>
+                    <option value="Em Produção">Em Produção</option>
+                    <option value="Entregue">Entregue</option>
+                    <option value="Cancelado">Cancelado</option>
+                  </select>
+                  <select id="filtro-unif-evento" onchange="renderUniformes()">
+                    <option value="">Todos os Eventos</option>
+                  </select>
+                </div>
+                <!-- KANBAN TOGGLE -->
+                <div class="gestao-view-toggles">
+                  <button id="btn-unif-view-table" class="view-toggle active" onclick="window.setUnifView('table')">📄 Lista</button>
+                  <button id="btn-unif-view-kanban" class="view-toggle" onclick="window.setUnifView('kanban')">⊞ Kanban</button>
+                </div>
               </div>
 
-              <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+              <!-- KANBAN CONTAINER -->
+              <div id="unif-kanban" class="hide kanban-board"></div>
+
+              <div class="gestao-table-wrap" id="unif-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                 <table class="gestao-table" id="unif-table">
                   <thead><tr>
                     <th>Qtd</th>
@@ -1008,32 +1053,24 @@
                   </tr></thead>
                   <tbody id="unif-body"><tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme cadastrado.</td></tr></tbody>
                 </table>
-                <!-- FORM ADD UNIFORME -->
+                <!-- FORM ADD UNIFORME (ALOCAÇÃO) -->
                 <div class="gestao-add-bar" id="unif-add-form" style="display:flex; flex-direction:column; gap:16px;">
                   <input type="hidden" id="unif-id">
                   
                   <!-- Linha 1 -->
                   <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
-                    <div class="gestao-field">
-                      <label>Qtd *</label>
-                      <input type="number" class="gestao-input w-sm" id="unif-qtd" min="1" placeholder="0">
-                    </div>
-                    <div class="gestao-field">
-                      <label>Tamanho</label>
-                      <select class="gestao-input w-sm" id="unif-tamanho">
-                        <option value="Único">Único</option>
-                        <option value="PP">PP</option>
-                        <option value="P">P</option>
-                        <option value="M">M</option>
-                        <option value="G">G</option>
-                        <option value="GG">GG</option>
-                        <option value="XG">XG</option>
-                        <option value="XGG">XGG</option>
+                    <div class="gestao-field" style="flex:2;min-width:180px;">
+                      <label>Item do Almoxarifado *</label>
+                      <select class="gestao-input w-full" id="unif-estoque-id" onchange="window.autofillUnif()">
+                        <option value="">— Selecione um Uniforme Mestre —</option>
                       </select>
+                      <input type="hidden" id="unif-cor">
+                      <input type="hidden" id="unif-tamanho" value="Único">
                     </div>
                     <div class="gestao-field">
-                      <label>Cor / Modelo</label>
-                      <input type="text" class="gestao-input w-md" id="unif-cor" placeholder="Ex: Polo Azul">
+                      <label>Qtd (Saída) *</label>
+                      <input type="number" class="gestao-input w-sm" id="unif-qtd" min="1" placeholder="0">
+                      <div id="lbl-saldo-unif" style="font-size:0.7rem; color:var(--muted); margin-top:2px;">Saldo: —</div>
                     </div>
                     <div class="gestao-field">
                       <label>Vlr Unit. (R$)</label>
@@ -1075,6 +1112,12 @@
                     <div class="gestao-field" style="flex:2;min-width:160px;">
                       <label>Observações</label>
                       <input type="text" class="gestao-input w-full" id="unif-obs" placeholder="Tamanhos, detalhes...">
+                    </div>
+                    <div class="gestao-field" style="min-width:140px;">
+                      <label>Anexo (Moc/NF)</label>
+                      <input type="file" class="gestao-input" id="unif-anexo" accept="image/*,application/pdf" style="font-size:0.75rem;">
+                      <input type="hidden" id="unif-anexo-url">
+                      <div id="unif-anexo-name" style="font-size:0.7rem; color:var(--accent); margin-top:2px;"></div>
                     </div>
                     <div style="flex:1;"></div>
                     <button class="btn-icon" id="btn-cancel-unif" style="display:none; white-space:nowrap;">✕ Cancelar</button>
@@ -1303,6 +1346,7 @@
   if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   const db = firebase.firestore();
   const auth = firebase.auth();
+  const storage = firebase.storage();
 
   // DADOS DE FALLBACK (Garante que a tela nunca fique em branco)
   const ORIGINAL_EVENTS = [
@@ -3228,6 +3272,25 @@
       });
       if (cur) sel.value = cur;
     });
+    
+    // Populate Brindes/Uniformes base items from Estoque Global
+    ['brinde-estoque-id','unif-estoque-id'].forEach(selId => {
+      const sel = document.getElementById(selId);
+      if (!sel) return;
+      const cur = sel.value;
+      const isBrinde = selId === 'brinde-estoque-id';
+      sel.innerHTML = `<option value="">— Selecione ${isBrinde ? 'um Brinde' : 'um Uniforme'} Mestre —</option>`;
+      ESTOQUE.filter(x => x.tipo === (isBrinde ? 'brinde' : 'uniforme')).sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e.id;
+        const saldo = (parseInt(e.qtd_inicial)||0) - getEstoqueAlocado(e.id);
+        const sub = isBrinde ? e.nivel : `Tamanho ${e.tamanho||'U'}${e.cor ? ' - '+e.cor : ''}`;
+        opt.textContent = `${e.nome} (${sub}) — Saldo: ${saldo}`;
+        if (saldo <= 0) opt.textContent = `⚠️ ` + opt.textContent;
+        sel.appendChild(opt);
+      });
+      if (cur) sel.value = cur;
+    });
   }
 
   // ════════════ ALMOXARIFADO (ESTOQUE GLOBAL) ════════════
@@ -3515,6 +3578,63 @@
     renderBrindesSummary();
   }
 
+  window.setBrindeView = function(view) {
+    window.currentBrindeView = view;
+    document.getElementById('btn-brinde-view-table').classList.toggle('active', view==='table');
+    document.getElementById('btn-brinde-view-kanban').classList.toggle('active', view==='kanban');
+    
+    if (view === 'table') {
+      document.getElementById('brindes-table-wrap').classList.remove('hide');
+      document.getElementById('brindes-kanban').classList.add('hide');
+    } else {
+      document.getElementById('brindes-table-wrap').classList.add('hide');
+      document.getElementById('brindes-kanban').classList.remove('hide');
+    }
+    renderBrindes();
+  };
+
+  function renderBrindesKanban(list, statusCores) {
+    const kBoard = document.getElementById('brindes-kanban');
+    if (!kBoard) return;
+    const colunas = ['Cotação', 'Aprovado', 'Pedido', 'Recebido'];
+    
+    kBoard.innerHTML = colunas.map(col => {
+      const items = list.filter(b => (b.status || 'Cotação') === col);
+      const sc = statusCores[col] || 'var(--muted)';
+      const cardsHtml = items.map(b => {
+        const anexoHtml = b.anexo_url ? `<a href="${b.anexo_url}" target="_blank" class="kanban-anexo-link" onclick="event.stopPropagation()">📎</a>` : '';
+        return `
+          <div class="kanban-card" onclick="window.editBrinde('${b.id}')">
+            <div class="kanban-card-title">
+              <span>${escapeHtml(b.titulo||'')}</span>
+              ${anexoHtml}
+            </div>
+            <div class="kanban-card-desc">${escapeHtml(b.descricao||'—')}</div>
+            <div class="kanban-card-meta">
+               <span class="kanban-card-badge">${b.qtd||0} un.</span>
+               ${b.evento_id ? `<span class="kanban-card-badge" style="color:var(--accent);">${escapeHtml(eventoNome(b.evento_id))}</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      return `
+        <div class="kanban-column">
+          <div class="kanban-column-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+               <span style="width:8px;height:8px;border-radius:50%;background:${sc};"></span>
+               ${col}
+            </div>
+            <span class="kanban-column-count">${items.length}</span>
+          </div>
+          <div class="kanban-column-body">
+            ${cardsHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
   function renderBrindes() {
     const tbody = document.getElementById('brindes-body');
     if (!tbody) return;
@@ -3528,13 +3648,18 @@
     if (nivel) list = list.filter(b => b.nivel === nivel);
     if (evento) list = list.filter(b => b.evento_id === evento);
 
+    const statusCores = { 'Cotação':'var(--muted)', 'Aprovado':'var(--teal)', 'Pedido':'var(--amber)', 'Recebido':'var(--green)' };
+
+    if (window.currentBrindeView === 'kanban') {
+      renderBrindesKanban(list, statusCores);
+      return;
+    }
+
     if (!list.length) {
       tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde encontrado.</td></tr>';
       return;
     }
     
-    const statusCores = { 'Cotação':'var(--muted)', 'Aprovado':'var(--teal)', 'Pedido':'var(--amber)', 'Recebido':'var(--green)' };
-
     tbody.innerHTML = list.map(b => {
       const qtd  = parseInt(b.qtd) || 0;
       const vlr  = parseFloat(b.vlr_unit) || 0;
@@ -3545,9 +3670,10 @@
       const isNew = window.lastSavedId === b.id ? 'flash-green' : '';
       const sc = statusCores[b.status] || 'var(--muted)';
       const statusHtml = `<span style="font-size:0.7rem;font-weight:700;border:1px solid ${sc};color:${sc};padding:2px 6px;border-radius:12px;white-space:nowrap;">${b.status||'Cotação'}</span>`;
+      const anexoIco = b.anexo_url ? `<a href="${b.anexo_url}" target="_blank" title="Ver Anexo" style="margin-left:8px; text-decoration:none;" onclick="event.stopPropagation()">📎</a>` : '';
 
       return `<tr class="${isNew}">
-        <td><strong>${highlight(b.titulo||'', busca)}</strong></td>
+        <td><strong>${highlight(b.titulo||'', busca)}</strong>${anexoIco}</td>
         <td style="color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(b.descricao||'')}">${highlight(b.descricao||'—', busca)}</td>
         <td>${nivelBadge(b.nivel)}</td>
         <td>${statusHtml}</td>
@@ -3577,9 +3703,30 @@
       <div class="gestao-summary-card"><div class="gestao-summary-label">Itens VIP</div><div class="gestao-summary-value" style="color:var(--purple)">${vip}</div></div>`;
   }
 
+  window.autofillBrinde = function() {
+    const eid = document.getElementById('brinde-estoque-id').value;
+    const e = ESTOQUE.find(x => x.id === eid);
+    const lbl = document.getElementById('lbl-saldo-brinde');
+    if (!e) {
+      document.getElementById('brinde-titulo').value = '';
+      document.getElementById('brinde-nivel').value = 'Massa';
+      document.getElementById('brinde-vlr').value = '';
+      if(lbl) lbl.innerHTML = 'Saldo: —';
+      return;
+    }
+    document.getElementById('brinde-titulo').value = e.nome;
+    document.getElementById('brinde-nivel').value = e.nivel || 'Massa';
+    document.getElementById('brinde-vlr').value = e.vlr_unit || 0;
+    if (e.fornecedor_id) document.getElementById('brinde-fornecedor').value = e.fornecedor_id;
+    
+    const saldo = (parseInt(e.qtd_inicial)||0) - getEstoqueAlocado(e.id);
+    if(lbl) lbl.innerHTML = `Saldo em Estoque: <b style="color:${saldo <= 0 ? 'var(--red)' : 'var(--green)'}">${saldo}</b>`;
+  };
+
   window.editBrinde = (id) => {
     const b = BRINDES.find(x => x.id === id); if(!b) return;
     document.getElementById('brinde-id').value = id;
+    document.getElementById('brinde-estoque-id').value = b.estoque_id || '';
     document.getElementById('brinde-titulo').value = b.titulo || '';
     document.getElementById('brinde-desc').value = b.descricao || '';
     document.getElementById('brinde-nivel').value = b.nivel || 'Massa';
@@ -3587,42 +3734,65 @@
     document.getElementById('brinde-vlr').value = b.vlr_unit || '';
     document.getElementById('brinde-fornecedor').value = b.fornecedor_id || '';
     document.getElementById('brinde-evento').value = b.evento_id || '';
+    if (document.getElementById('brinde-anexo-url')) document.getElementById('brinde-anexo-url').value = b.anexo_url || '';
+    if (document.getElementById('brinde-anexo-name')) document.getElementById('brinde-anexo-name').innerHTML = b.anexo_url ? `<a href="${b.anexo_url}" target="_blank">Ver anexo atual</a>` : '';
     document.getElementById('btn-save-brinde').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-brinde').style.display = 'inline-block';
     
-    // Alimenta o preview visual de valor
+    window.autofillBrinde(); // Atualiza saldo visualmente
     document.getElementById('brinde-qtd').dispatchEvent(new Event('input'));
-    document.getElementById('brinde-add-form').scrollIntoView({behavior:'smooth', block:'nearest'});
+    const form = document.getElementById('brinde-add-form');
+    if(form) form.scrollIntoView({behavior:'smooth', block:'nearest'});
   };
 
   document.getElementById('btn-cancel-brinde').onclick = () => {
     document.getElementById('brinde-id').value = '';
-    ['brinde-titulo','brinde-desc','brinde-qtd','brinde-vlr','brinde-fornecedor','brinde-evento'].forEach(id => document.getElementById(id).value = '');
+    ['brinde-estoque-id','brinde-titulo','brinde-desc','brinde-qtd','brinde-vlr','brinde-fornecedor','brinde-evento'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
     document.getElementById('brinde-nivel').value = 'Massa';
+    if (document.getElementById('brinde-anexo')) document.getElementById('brinde-anexo').value = '';
+    if (document.getElementById('brinde-anexo-url')) document.getElementById('brinde-anexo-url').value = '';
+    if (document.getElementById('brinde-anexo-name')) document.getElementById('brinde-anexo-name').innerHTML = '';
     document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-brinde').style.display = 'none';
+    const lbl = document.getElementById('lbl-saldo-brinde');
+    if(lbl) lbl.innerHTML = 'Saldo: —';
     document.getElementById('brinde-qtd').dispatchEvent(new Event('input'));
   };
 
   document.getElementById('btn-save-brinde').onclick = async () => {
     const id = document.getElementById('brinde-id').value;
+    const estId = document.getElementById('brinde-estoque-id').value;
+    if (!estId) { showToast('Selecione um Brinde mestre do Almoxarifado.', 'warning'); return; }
+    
     const titulo = document.getElementById('brinde-titulo').value.trim();
-    if (!titulo) { showToast('Título do brinde é obrigatório.', 'warning'); return; }
     const btn = document.getElementById('btn-save-brinde');
     btn.textContent = 'Salvando...'; btn.disabled = true;
     const qtd    = parseInt(document.getElementById('brinde-qtd').value) || 0;
     const vlr    = parseFloat(document.getElementById('brinde-vlr').value) || 0;
     
+    let statusEl = document.getElementById('brinde-status');
+    const statusVal = statusEl ? statusEl.value : 'Cotação';
+
     const payload = {
+        estoque_id:    estId,
         titulo,
         descricao:     document.getElementById('brinde-desc').value.trim(),
         nivel:         document.getElementById('brinde-nivel').value,
-        status:        document.getElementById('brinde-status').value,
+        status:        statusVal,
         qtd,
         vlr_unit:      vlr,
         fornecedor_id: document.getElementById('brinde-fornecedor').value || '',
         evento_id:     document.getElementById('brinde-evento').value || ''
     };
+
+    const fileInput = document.getElementById('brinde-anexo');
+    if (fileInput && fileInput.files[0]) {
+      const url = await window.uploadAnexoHelper(fileInput.files[0], 'brindes');
+      if (url) payload.anexo_url = url;
+    } else {
+      const existingUrl = document.getElementById('brinde-anexo-url')?.value;
+      if (existingUrl) payload.anexo_url = existingUrl;
+    }
     
     try {
       if (id) {
@@ -3632,11 +3802,12 @@
       } else {
         payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
         const docRef = await db.collection("brindes").add(payload);
-        showToast('Brinde cadastrado! 🎁', 'success');
+        showToast('Brinde alocado com sucesso! 🎁', 'success');
         window.lastSavedId = docRef.id;
       }
       document.getElementById('btn-cancel-brinde').click();
       await loadBrindes();
+      await loadEstoque(); // refresh saldos globais
       setTimeout(() => window.lastSavedId = null, 3000);
     } catch(e) { showToast('Erro ao salvar brinde.', 'error'); }
     btn.disabled = false;
@@ -3666,6 +3837,65 @@
     renderUniformesSummary();
   }
 
+  window.setUnifView = function(view) {
+    window.currentUnifView = view;
+    document.getElementById('btn-unif-view-table').classList.toggle('active', view==='table');
+    document.getElementById('btn-unif-view-kanban').classList.toggle('active', view==='kanban');
+    
+    if (view === 'table') {
+      document.getElementById('unif-table-wrap').classList.remove('hide');
+      document.getElementById('unif-kanban').classList.add('hide');
+    } else {
+      document.getElementById('unif-table-wrap').classList.add('hide');
+      document.getElementById('unif-kanban').classList.remove('hide');
+    }
+    renderUniformes();
+  };
+
+  function renderUniformesKanban(list) {
+    const kBoard = document.getElementById('unif-kanban');
+    if (!kBoard) return;
+    const colunas = ['Pedido', 'Em Produção', 'Entregue', 'Cancelado'];
+    const scMapping = { 'Pedido': 'var(--amber)', 'Em Produção': 'var(--purple)', 'Entregue': 'var(--green)', 'Cancelado': 'var(--red)' };
+    
+    kBoard.innerHTML = colunas.map(col => {
+      const items = list.filter(u => (u.status || 'Pedido') === col);
+      const sc = scMapping[col] || 'var(--muted)';
+      const cardsHtml = items.map(u => {
+        const anexoHtml = u.anexo_url ? `<a href="${u.anexo_url}" target="_blank" class="kanban-anexo-link" onclick="event.stopPropagation()">📎 Anexo</a>` : '';
+        const tamPill = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;margin-right:4px;">${u.tamanho}</span>` : '';
+        return `
+          <div class="kanban-card" onclick="window.editUnif('${u.id}')">
+            <div class="kanban-card-title">
+              <span>${tamPill}${escapeHtml(u.cor||'')}</span>
+              ${anexoHtml}
+            </div>
+            <div class="kanban-card-desc">${escapeHtml(u.obs||'—')}</div>
+            <div class="kanban-card-meta">
+               <span class="kanban-card-badge">${u.qtd||0} un.</span>
+               ${u.evento_id ? `<span class="kanban-card-badge" style="color:var(--accent);">${escapeHtml(eventoNome(u.evento_id))}</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      return `
+        <div class="kanban-column">
+          <div class="kanban-column-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+               <span style="width:8px;height:8px;border-radius:50%;background:${sc};"></span>
+               ${col}
+            </div>
+            <span class="kanban-column-count">${items.length}</span>
+          </div>
+          <div class="kanban-column-body">
+            ${cardsHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
   function renderUniformes() {
     const tbody = document.getElementById('unif-body');
     if (!tbody) return;
@@ -3678,6 +3908,11 @@
     if (busca) list = list.filter(u => (u.cor||'').toLowerCase().includes(busca) || (u.obs||'').toLowerCase().includes(busca));
     if (status) list = list.filter(u => u.status === status);
     if (evento) list = list.filter(u => u.evento_id === evento);
+
+    if (window.currentUnifView === 'kanban') {
+      renderUniformesKanban(list);
+      return;
+    }
 
     if (!list.length) {
       tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme encontrado.</td></tr>';
@@ -3694,9 +3929,11 @@
       const dataFmt = u.data_pedido ? new Date(u.data_pedido+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}) : '—';
       const prevFmt = u.data_prevista ? new Date(u.data_prevista+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}) : '—';
       const isNew = window.lastSavedId === u.id ? 'flash-green' : '';
+      const anexoIco = u.anexo_url ? `<a href="${u.anexo_url}" target="_blank" title="Ver Anexo" style="margin-left:8px; text-decoration:none;" onclick="event.stopPropagation()">📎</a>` : '';
+
       return `<tr class="${isNew}">
         <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
-        <td>${u.cor ? `<span style="display:inline-flex;align-items:center;gap:6px;font-weight:600">${u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;">${u.tamanho}</span>` : ''} ${highlight(u.cor, busca)}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
+        <td>${u.cor ? `<span style="display:inline-flex;align-items:center;gap:6px;font-weight:600">${u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;">${u.tamanho}</span>` : ''} ${highlight(u.cor, busca)}</span>` : '<span style="color:var(--muted)">—</span>'}${anexoIco}</td>
         <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
         <td>${totalPill}</td>
         <td style="font-size:0.75rem;color:var(--muted)">${dataFmt}</td>
@@ -3726,9 +3963,30 @@
       <div class="gestao-summary-card"><div class="gestao-summary-label">Entregues</div><div class="gestao-summary-value" style="color:var(--teal)">${entregue}</div></div>`;
   }
 
+  window.autofillUnif = function() {
+    const eid = document.getElementById('unif-estoque-id').value;
+    const e = ESTOQUE.find(x => x.id === eid);
+    const lbl = document.getElementById('lbl-saldo-unif');
+    if (!e) {
+      document.getElementById('unif-cor').value = '';
+      document.getElementById('unif-tamanho').value = 'Único';
+      document.getElementById('unif-vlr').value = '';
+      if(lbl) lbl.innerHTML = 'Saldo: —';
+      return;
+    }
+    document.getElementById('unif-cor').value = e.cor || e.nome;
+    document.getElementById('unif-tamanho').value = e.tamanho || 'Único';
+    document.getElementById('unif-vlr').value = e.vlr_unit || 0;
+    if (e.fornecedor_id) document.getElementById('unif-fornecedor').value = e.fornecedor_id;
+    
+    const saldo = (parseInt(e.qtd_inicial)||0) - getEstoqueAlocado(e.id);
+    if(lbl) lbl.innerHTML = `Saldo em Estoque: <b style="color:${saldo <= 0 ? 'var(--red)' : 'var(--green)'}">${saldo}</b>`;
+  };
+
   window.editUnif = (id) => {
     const u = UNIFORMES.find(x => x.id === id); if(!u) return;
     document.getElementById('unif-id').value = id;
+    document.getElementById('unif-estoque-id').value = u.estoque_id || '';
     document.getElementById('unif-qtd').value = u.qtd || '';
     document.getElementById('unif-tamanho').value = u.tamanho || 'Único';
     document.getElementById('unif-cor').value = u.cor || '';
@@ -3742,30 +4000,37 @@
     document.getElementById('btn-save-unif').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-unif').style.display = 'inline-block';
     
+    window.autofillUnif(); // update saldo visualmente
     document.getElementById('unif-qtd').dispatchEvent(new Event('input'));
-    document.getElementById('unif-add-form').scrollIntoView({behavior:'smooth', block:'nearest'});
+    const form = document.getElementById('unif-add-form');
+    if(form) form.scrollIntoView({behavior:'smooth', block:'nearest'});
   };
 
   document.getElementById('btn-cancel-unif').onclick = () => {
     document.getElementById('unif-id').value = '';
-    ['unif-qtd','unif-cor','unif-vlr','unif-data','unif-data-prevista','unif-obs','unif-fornecedor','unif-evento'].forEach(id => document.getElementById(id).value = '');
+    ['unif-estoque-id','unif-qtd','unif-cor','unif-vlr','unif-data','unif-data-prevista','unif-obs','unif-fornecedor','unif-evento'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
     document.getElementById('unif-tamanho').value = 'Único';
     document.getElementById('unif-status').value = 'Pedido';
     document.getElementById('btn-save-unif').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-unif').style.display = 'none';
-    
+    const lbl = document.getElementById('lbl-saldo-unif');
+    if(lbl) lbl.innerHTML = 'Saldo: —';
     document.getElementById('unif-qtd').dispatchEvent(new Event('input'));
   };
 
   document.getElementById('btn-save-unif').onclick = async () => {
     const id = document.getElementById('unif-id').value;
+    const estId = document.getElementById('unif-estoque-id').value;
+    if (!estId) { showToast('Selecione um Uniforme mestre do Almoxarifado.', 'warning'); return; }
+    
     const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
-    if (!qtd) { showToast('Informe a quantidade de uniformes.', 'warning'); return; }
+    if (!qtd) { showToast('Informe a quantidade de saídas (alocações).', 'warning'); return; }
     const btn = document.getElementById('btn-save-unif');
     btn.textContent = 'Salvando...'; btn.disabled = true;
     const vlr = parseFloat(document.getElementById('unif-vlr').value) || 0;
     
     const payload = {
+        estoque_id:    estId,
         qtd,
         tamanho:       document.getElementById('unif-tamanho').value,
         cor:           document.getElementById('unif-cor').value.trim(),
@@ -3882,6 +4147,24 @@
     if (!_brindesLoaded)  { _brindesLoaded=true;  loadBrindes(); }
     if (!_unifLoaded)     { _unifLoaded=true;      loadUniformes(); }
   }
+
+  // Helper de Upload de Arquivos
+  window.uploadAnexoHelper = async function(file, folder) {
+    if (!file) return null;
+    try {
+      showToast('Fazendo upload do anexo...', 'info');
+      const storageRef = firebase.storage().ref();
+      const ext = file.name.split('.').pop();
+      const fileName = `${new Date().getTime()}_${Math.random().toString(36).substring(2,8)}.${ext}`;
+      const fileRef = storageRef.child(`anexos/${folder}/${fileName}`);
+      await fileRef.put(file);
+      return await fileRef.getDownloadURL();
+    } catch(err) {
+      console.error('Erro no upload', err);
+      showToast('Erro ao fazer upload do anexo.', 'error');
+      return null;
+    }
+  };
 
 </script>
 </body>
