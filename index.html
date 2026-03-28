@@ -171,6 +171,8 @@
   .view-toggle:hover { color: var(--text); }
   .view-toggle.active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-sm); }
   
+  .kit-item-row { display:flex; gap:8px; align-items:center; background:var(--surface2); padding:8px; border-radius:6px; border:1px solid var(--border); }
+  
   .kanban-board { display: flex; gap: 16px; min-height: 400px; padding: 24px; overflow-x: auto; background: var(--bg); border: 1px solid var(--border); border-top: none; border-bottom-left-radius: var(--radius); border-bottom-right-radius: var(--radius); }
   .kanban-column { flex: 1; min-width: 250px; background: var(--surface2); border: 1px dashed var(--border); border-radius: var(--radius-sm); display: flex; flex-direction: column; }
   .kanban-column-header { padding: 12px 16px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text); border-bottom: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; }
@@ -794,7 +796,9 @@
                   <option value="uniforme">Uniforme</option>
                 </select>
                 <div style="flex:1;"></div>
-                <button class="btn-primary" onclick="window.migrarLegadoEstoque()" style="font-size:0.75rem;" title="Migrar itens antigos para o Almoxarifado Central">⚙️ Migrar Legado</button>
+                <button class="btn-secondary" onclick="window.openModalKits()" style="font-size:0.75rem;margin-right:8px;" title="Configurar Kits de Itens">📦 Kits Automáticos</button>
+                <button class="btn-primary" onclick="window.openDeployKitModal()" style="font-size:0.75rem;margin-right:8px;" title="Alocar Kit para Evento">🚀 Alocar Kit</button>
+                <button class="btn-primary" onclick="window.migrarLegadoEstoque()" style="font-size:0.75rem;display:none;" title="Migrar itens">⚙️</button>
               </div>
 
               <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
@@ -1332,6 +1336,88 @@
   </div>
 </div>
 
+<!-- MODAL DE CONFIGURAÇÃO DE KITS -->
+<div class="modal-overlay" id="modal-kits-overlay" onclick="if(event.target===this) document.getElementById('modal-kits-overlay').classList.remove('open')">
+  <div class="modal" style="max-width:800px;">
+    <div class="modal-header-admin">
+      <h2 style="font-family:var(--font-heading); font-size:1.5rem;">📦 Gerenciamento de Kits</h2>
+      <button class="btn-icon" onclick="document.getElementById('modal-kits-overlay').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" style="padding: 24px; background:var(--bg);">
+      <div style="display:flex; gap:24px; flex-wrap:wrap;">
+        
+        <!-- Lista de Kits -->
+        <div style="flex:1; min-width:250px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column;">
+          <div style="padding:16px; border-bottom:1px solid var(--border); font-weight:800; display:flex; justify-content:space-between; align-items:center;">
+            Kits Configurados
+            <button class="btn-primary" style="font-size:0.75rem; padding:4px 12px;" onclick="window.newKit()">+ Novo Kit</button>
+          </div>
+          <div id="kits-list" style="overflow-y:auto; flex:1; max-height:400px; padding:12px; display:flex; flex-direction:column; gap:8px;">
+            <!-- Renderizado via JS -->
+          </div>
+        </div>
+        
+        <!-- Formulário de Edição -->
+        <div style="flex:2; min-width:300px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; display:none;" id="kit-form-panel">
+          <input type="hidden" id="kit-id">
+          <div class="gestao-field">
+            <label>Nome do Kit Automático *</label>
+            <input type="text" class="gestao-input w-full" id="kit-nome" placeholder="Ex: Kit Staff VIP">
+          </div>
+          <div style="margin-top:20px;">
+            <label style="font-weight:700;font-size:0.85rem;color:var(--muted);margin-bottom:8px;display:block;">Itens do Almoxarifado contidos no Kit</label>
+            <div id="kit-items-container" style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+              <!-- Linhas de itens inseridas aqui -->
+            </div>
+            <button class="btn-secondary" style="font-size:0.75rem;" onclick="window.addKitItemField()">+ Adicionar Item</button>
+          </div>
+          <div style="margin-top:24px; display:flex; justify-content:flex-end; gap:12px; border-top:1px solid var(--border); padding-top:16px;">
+            <button class="btn-icon" onclick="document.getElementById('kit-form-panel').style.display='none'">Cancelar</button>
+            <button class="btn-primary" id="btn-save-kit" onclick="window.saveKit()">Salvar Kit</button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ALOCAR KIT ESTOQUE -> EVENTO -->
+<div class="modal-overlay" id="modal-deploy-kit-overlay" onclick="if(event.target===this) document.getElementById('modal-deploy-kit-overlay').classList.remove('open')">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header-admin">
+      <h2 style="font-family:var(--font-heading); font-size:1.3rem;">🚀 Alocar Kit para Evento</h2>
+      <button class="btn-icon" onclick="document.getElementById('modal-deploy-kit-overlay').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:20px;">Escolha um evento, um kit previamente configurado e a quantidade. Os itens serão deduzidos do almoxarifado global e alocados imediatamente ao evento selecionado.</p>
+      
+      <div class="form-grid">
+        <div class="form-full">
+          <label class="form-label">Evento Destino *</label>
+          <select class="admin-input" id="deploy-kit-evento">
+            <option value="">— Selecione o Evento —</option>
+          </select>
+        </div>
+        <div class="form-full">
+          <label class="form-label">Kit Logístico *</label>
+          <select class="admin-input" id="deploy-kit-id">
+            <option value="">— Selecione um Kit —</option>
+          </select>
+        </div>
+        <div class="form-full">
+          <label class="form-label">Quantidade de Kits *</label>
+          <input type="number" class="admin-input" id="deploy-kit-qtd" min="1" value="1" placeholder="Quantos kits?">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-icon" onclick="document.getElementById('modal-deploy-kit-overlay').classList.remove('open')">Cancelar</button>
+      <button class="btn-primary" id="btn-deploy-kit" onclick="window.deployKit()">Alocar no Evento</button>
+    </div>
+  </div>
+</div>
+
 <script>
   // ── FIREBASE CONFIGURAÇÕES (VERSÃO COMPAT PARA RODAR LOCALMENTE) ──
   const firebaseConfig = {
@@ -1366,6 +1452,7 @@
 
   let currentUser = null, userRole = null;
   let EVENTS = [], RESPONSAVEIS = [];
+  let KITS = [];
   
   const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -4164,6 +4251,197 @@
       showToast('Erro ao fazer upload do anexo.', 'error');
       return null;
     }
+  };
+
+  // ── GESTÃO DE KITS DE EQUIPE ──
+  async function loadKits() {
+    try {
+      const snap = await db.collection("kits").get();
+      KITS = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderKitsList();
+    } catch(e) { console.error('Erro carregando kits', e); }
+  }
+  
+  function renderKitsList() {
+    const list = document.getElementById('kits-list');
+    if (!list) return;
+    if (!KITS.length) {
+      list.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px;">Nenhum kit configurado.</div>';
+      return;
+    }
+    list.innerHTML = KITS.map(k => {
+      const q = (k.itens || []).length;
+      return `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-weight:700;font-size:0.9rem;">${escapeHtml(k.nome)}</div>
+          <div style="font-size:0.75rem;color:var(--muted);">${q} item(ns)</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-icon" onclick="window.editKit('${k.id}')" title="Editar">✏️</button>
+          <button class="btn-icon" onclick="window.deleteKit('${k.id}')" title="Excluir" style="color:var(--red);">🗑️</button>
+        </div>
+      </div>`;
+    }).join('');
+    
+    // Atualiza selects de kits
+    const kitSel = document.getElementById('deploy-kit-id');
+    if(kitSel) {
+      kitSel.innerHTML = '<option value="">— Selecione um Kit —</option>' + KITS.map(k => `<option value="${k.id}">${escapeHtml(k.nome)}</option>`).join('');
+    }
+  }
+
+  window.openModalKits = async function() {
+    document.getElementById('modal-kits-overlay').classList.add('open');
+    if(KITS.length === 0) await loadKits(); // Garante q estao carregados
+    else renderKitsList();
+  };
+  
+  window.newKit = function() {
+    document.getElementById('kit-id').value = '';
+    document.getElementById('kit-nome').value = '';
+    document.getElementById('kit-items-container').innerHTML = '';
+    document.getElementById('kit-form-panel').style.display = 'block';
+    window.addKitItemField(); 
+  };
+  
+  window.editKit = function(id) {
+    const k = KITS.find(x => x.id === id); if(!k) return;
+    document.getElementById('kit-id').value = id;
+    document.getElementById('kit-nome').value = k.nome || '';
+    document.getElementById('kit-items-container').innerHTML = '';
+    (k.itens || []).forEach(it => {
+       window.addKitItemField(it.estoque_id, it.qtd);
+    });
+    document.getElementById('kit-form-panel').style.display = 'block';
+  };
+  
+  window.addKitItemField = function(estId='', q=1) {
+    const cont = document.getElementById('kit-items-container');
+    const div = document.createElement('div');
+    div.className = 'kit-item-row';
+    
+    let optHtml = '<option value="">— Selecionar Item do Almoxarifado —</option>';
+    ESTOQUE.forEach(e => {
+       const tipo = e.tipo==='brinde'?'🎁 Brinde':'👕 Uniforme';
+       optHtml += `<option value="${e.id}" ${e.id===estId?'selected':''}>${tipo} - ${escapeHtml(e.nome)}</option>`;
+    });
+    
+    div.innerHTML = `
+      <select class="gestao-input kit-item-select" style="flex:1;min-width:120px;">
+        ${optHtml}
+      </select>
+      <input type="number" class="gestao-input kit-item-qtd" value="${q}" min="1" style="width:70px;" placeholder="Qtd">
+      <button class="btn-icon" onclick="this.parentElement.remove()" style="color:var(--red);">✕</button>
+    `;
+    cont.appendChild(div);
+  };
+  
+  window.saveKit = async function() {
+    const id = document.getElementById('kit-id').value;
+    const nome = document.getElementById('kit-nome').value.trim();
+    if(!nome) { showToast('Escreva o nome do Kit!', 'warning'); return; }
+    
+    const rows = document.querySelectorAll('.kit-item-row');
+    const itens = [];
+    rows.forEach(r => {
+       const estId = r.querySelector('.kit-item-select').value;
+       const qtd = parseInt(r.querySelector('.kit-item-qtd').value) || 0;
+       if(estId && qtd > 0) itens.push({ estoque_id: estId, qtd });
+    });
+    if(!itens.length) { showToast('Inclua ao menos um item válido.', 'warning'); return; }
+    
+    document.getElementById('btn-save-kit').textContent = 'Salvando...';
+    try {
+      if(id) {
+         await db.collection("kits").doc(id).update({ nome, itens });
+         showToast('Kit atualizado.', 'success');
+      } else {
+         await db.collection("kits").add({ nome, itens, criado_em: firebase.firestore.FieldValue.serverTimestamp() });
+         showToast('Kit criado!', 'success');
+      }
+      document.getElementById('kit-form-panel').style.display = 'none';
+      await loadKits();
+    } catch(e) {
+      showToast('Erro ao salvar o Kit.', 'error');
+    }
+    document.getElementById('btn-save-kit').textContent = 'Salvar Kit';
+  };
+  
+  window.deleteKit = async function(id) {
+    if(!await showConfirm('Excluir Kit?', 'Certeza que deseja deletar permanentemente este modelo de Kit?')) return;
+    try {
+       await db.collection("kits").doc(id).delete();
+       showToast('Kit deletado.', 'success');
+       await loadKits();
+    } catch(e) {}
+  };
+
+  // ── ALOCAÇÃO DE KITS ──
+  window.openDeployKitModal = async function() {
+     document.getElementById('modal-deploy-kit-overlay').classList.add('open');
+     if(KITS.length === 0) await loadKits();
+     
+     const evSel = document.getElementById('deploy-kit-evento');
+     evSel.innerHTML = '<option value="">— Selecione o Evento —</option>' + EVENTS.map(e => `<option value="${e.id}">${escapeHtml(e.evento)}</option>`).join('');
+     document.getElementById('deploy-kit-qtd').value = 1;
+  };
+
+  window.deployKit = async function() {
+     const eventoId = document.getElementById('deploy-kit-evento').value;
+     const kitId = document.getElementById('deploy-kit-id').value;
+     const mult = parseInt(document.getElementById('deploy-kit-qtd').value) || 0;
+     
+     if(!eventoId || !kitId || mult < 1) { showToast('Preencha Evento, Kit e Qtd!', 'warning'); return; }
+     
+     const k = KITS.find(x => x.id === kitId);
+     if(!k || !k.itens || !k.itens.length) return;
+     
+     document.getElementById('btn-deploy-kit').textContent = 'Alocando...';
+     document.getElementById('btn-deploy-kit').disabled = true;
+     
+     try {
+       for(const it of k.itens) {
+         const e = ESTOQUE.find(x => x.id === it.estoque_id);
+         if(!e) continue;
+         
+         const payload = {
+           estoque_id: e.id,
+           evento_id: eventoId,
+           fornecedor_id: e.fornecedor_id || '',
+           qtd: it.qtd * mult,
+           vlr_unit: e.vlr_unit || 0,
+           criado_em: firebase.firestore.FieldValue.serverTimestamp(),
+           status: 'Pedido' // Status inicial padrão na alocação
+         };
+         
+         if(e.tipo === 'brinde') {
+            payload.titulo = e.nome;
+            payload.descricao = 'Alocado via Kit: ' + k.nome;
+            payload.nivel = e.nivel || 'Massa';
+            payload.status = 'Cotação'; 
+            await db.collection("brindes").add(payload);
+         } else if(e.tipo === 'uniforme') {
+            payload.cor = e.cor || e.nome;
+            payload.tamanho = e.tamanho || 'Único';
+            payload.obs = 'Alocado via Kit: ' + k.nome;
+            payload.data_pedido = new Date().toISOString().split('T')[0];
+            await db.collection("uniformes").add(payload);
+         }
+       }
+       showToast(`Kit '${k.nome}' alocado com sucesso!`, 'success');
+       document.getElementById('modal-deploy-kit-overlay').classList.remove('open');
+       
+       // Atualizar as visões globais
+       await loadBrindes();
+       await loadUniformes();
+       await loadEstoque();
+     } catch(err) {
+       console.error(err);
+       showToast('Ocorreu um erro na alocação.', 'error');
+     }
+     
+     document.getElementById('btn-deploy-kit').textContent = 'Alocar no Evento';
+     document.getElementById('btn-deploy-kit').disabled = false;
   };
 
 </script>
