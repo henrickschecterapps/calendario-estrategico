@@ -1787,6 +1787,13 @@
   function formatoBadge(f) { return f ? `<span class="badge badge-formato">${f}</span>` : ''; }
   function getRespArray(str) { return !str ? [] : str.split(',').map(s=>s.trim()).filter(s=>s); }
   
+  // -- Helper Functions for Gestão Operacional --
+  function fmtBRL(v) { return (parseFloat(v)||0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+  function eventoNome(id) { if(!id) return ''; const e = EVENTS.find(x => String(x.id) === String(id)); return e ? e.evento : 'Desconhecido'; }
+  function fornNome(id) { if(!id) return '—'; const list = window.FORNECEDORES_LIST || []; const f = list.find(x => String(x.id) === String(id)); return f ? f.nome : '—'; }
+  function nivelBadge(n) { if(!n) return ''; const m = { 'Massa': 'var(--muted)', 'Qualificação': 'var(--amber)', 'VIP': 'var(--accent)' }; return `<span style="font-size:0.7rem;padding:2px 4px;background:${m[n]||'var(--muted)'};color:#fff;border-radius:4px;margin-left:4px;white-space:nowrap;">${n}</span>`; }
+  function unifStatusBadge(s) { if(!s) return ''; const m = { 'Pedido': 'var(--amber)', 'Em Produção': 'var(--purple)', 'Entregue': 'var(--green)', 'Cancelado': 'var(--red)' }; return `<span style="font-size:0.7rem;padding:3px 6px;background:${m[s]||'var(--muted)'};color:#fff;border-radius:4px;white-space:nowrap;">${s}</span>`; }
+  
   function cotaBadge(c) { 
     if(!c) return ''; let lowerC = c.toLowerCase(); let icon = '🏅', style = 'background: rgba(128,128,128,0.1); color: var(--text); border: 1px solid var(--border);';
     if (lowerC.includes('ouro') || lowerC.includes('gold')) { icon = '🥇'; style = 'background: rgba(234, 179, 8, 0.15); color: #d97706; border: 1px solid rgba(234, 179, 8, 0.3);'; } else if (lowerC.includes('prata') || lowerC.includes('silver')) { icon = '🥈'; style = 'background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);'; } else if (lowerC.includes('bronze')) { icon = '🥉'; style = 'background: rgba(180, 83, 9, 0.15); color: #b45309; border: 1px solid rgba(180, 83, 9, 0.3);'; } else if (lowerC.includes('diamond') || lowerC.includes('diamante')) { icon = '💎'; style = 'background: rgba(56, 189, 248, 0.15); color: #0284c7; border: 1px solid rgba(56, 189, 248, 0.3);'; } else if (lowerC.includes('platina') || lowerC.includes('platinum')) { icon = '💠'; style = 'background: rgba(167, 139, 250, 0.15); color: #7c3aed; border: 1px solid rgba(167, 139, 250, 0.3);'; }
