@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
@@ -1024,6 +1024,7 @@
       <div class="modal-header-view" id="view-header">
         <div class="modal-actions-top">
           <div id="view-temporal-badge-header"></div>
+          <button class="btn-icon" id="btn-export-pdf" title="Exportar para PDF">📄 PDF</button>
           <button class="btn-icon show-on-admin" id="btn-switch-edit">✏️ Editar</button>
           <button class="btn-icon" id="modal-close-view">✕</button>
         </div>
@@ -1038,6 +1039,14 @@
         <div class="bento-grid">
           <div class="bento-item"><div class="bento-header">📌 Operação</div><div class="bento-value"><span id="view-status">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Formato:</span> <span id="view-formato">-</span></div></div>
           <div class="bento-item" id="block-cota"><div class="bento-header">🎖️ Comercial</div><div class="bento-value"><span id="view-cota">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Vagas Livres:</span> <span id="view-vagas">-</span></div></div>
+          <div class="bento-item full" id="block-financeiro" style="display:none; background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.15);">
+            <div class="bento-header" style="color:var(--red);">💰 Financeiro Consolidado</div>
+            <div class="bento-value" style="display:flex; flex-direction:column; gap:4px; font-size:0.95rem;">
+               <div style="display:flex; justify-content:space-between;"><span>Brindes (Total):</span><span id="view-fin-brindes" style="font-weight:600">—</span></div>
+               <div style="display:flex; justify-content:space-between;"><span>Uniformes (Total):</span><span id="view-fin-unif" style="font-weight:600">—</span></div>
+               <div style="display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px dashed var(--red); color:var(--red);"><strong>Custo Operacional Estimado:</strong><strong id="view-fin-total" style="font-size:1.1rem;">—</strong></div>
+            </div>
+          </div>
           <div class="bento-item full" id="block-participantes" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2);"><div class="bento-header" style="color: var(--green);">🎟️ Participantes (Equipe Tripla)</div><div class="bento-value" id="view-participantes" style="font-size: 0.9rem;">-</div></div>
           <div class="bento-item full" id="block-publico"><div class="bento-header">👥 Público Alvo</div><div class="bento-value" id="view-publico">-</div></div>
           <div class="bento-item full" id="block-beneficios"><div class="bento-header">✨ Benefícios / Entregas</div><div class="bento-value" id="view-beneficios" style="white-space: pre-wrap;">-</div></div>
@@ -2352,6 +2361,20 @@
     const blockCota = document.getElementById('block-cota');
     if (ev.cota || ev.vagas) { blockCota.style.display = 'block'; document.getElementById('view-cota').innerHTML = cotaBadge(ev.cota) || '-'; document.getElementById('view-vagas').textContent = ev.vagas || '-'; } else { blockCota.style.display = 'none'; }
 
+    // Financeiro Consolidado
+    const costBrindes = BRINDES.filter(b => b.evento_id === ev.id).reduce((s, b) => s + (parseFloat(b.vlr_unit)||0) * (parseInt(b.qtd)||0), 0);
+    const costUniformes = UNIFORMES.filter(u => u.evento_id === ev.id).reduce((s, u) => s + (parseFloat(u.vlr_unit)||0) * (parseInt(u.qtd)||0), 0);
+    const costTotal = costBrindes + costUniformes;
+    if (costTotal > 0 && (userRole === 'admin' || userRole === 'editor')) {
+      document.getElementById('block-financeiro').style.display = 'block';
+      let fv = function(v){ return parseFloat(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); };
+      document.getElementById('view-fin-brindes').textContent = fv(costBrindes);
+      document.getElementById('view-fin-unif').textContent = fv(costUniformes);
+      document.getElementById('view-fin-total').textContent = fv(costTotal);
+    } else {
+      document.getElementById('block-financeiro').style.display = 'none';
+    }
+
     const toggleBlock = (blockId, val, render) => {
       const el = document.getElementById(blockId);
       if (!el) return;
@@ -2499,6 +2522,17 @@
   // btn-switch-edit visibility is managed by applyAdminUI after auth resolves
   const _bse = document.getElementById('btn-switch-edit');
   if (_bse) _bse.onclick = () => window.openAdminForm(currentEditId);
+  document.getElementById('btn-export-pdf').onclick = () => {
+    const el = document.getElementById('mode-view');
+    const opt = { margin:0.5, filename:`Evento_${EVENTS.find(e=>e.id===currentEditId)?.evento.replace(/\s+/g,'_')}.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'}};
+    document.getElementById('btn-export-pdf').style.display='none';
+    if(_bse) _bse.style.display='none'; document.getElementById('modal-close-view').style.display='none';
+    html2pdf().set(opt).from(el).save().then(()=> {
+      document.getElementById('btn-export-pdf').style.display='inline-block';
+      if(_bse && (userRole === 'admin' || userRole === 'editor')) _bse.style.display='inline-block';
+      document.getElementById('modal-close-view').style.display='inline-block';
+    });
+  };
   document.getElementById('btn-cancel-edit').onclick = () => window.openEventView(currentEditId);
   document.getElementById('modal-close-view').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
   document.getElementById('modal-close-edit').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
