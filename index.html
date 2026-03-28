@@ -2864,6 +2864,28 @@
     nomeInp.focus();
   };
 
+  async function loadEventHistory(id) {
+    const historyList = document.getElementById('history-list');
+    if (!historyList) return;
+    historyList.innerHTML = '<div style="text-align:center;padding:20px;"><i data-lucide="loader-2" class="spin"></i> Carregando histórico...</div>';
+    refreshIcons();
+    try {
+      const snap = await db.collection("events").doc(id).collection("history").orderBy("timestamp", "desc").limit(10).get();
+      let html = '';
+      snap.forEach(doc => {
+        const h = doc.data();
+        const dateStr = h.timestamp?.toDate().toLocaleString('pt-BR') || '';
+        html += `<div style="padding:8px; border-bottom:1px solid var(--border); font-size:0.8rem;">
+                   <div style="font-weight:700; color:var(--accent);">${escapeHtml(h.action)} por ${escapeHtml(h.user)}</div>
+                   <div style="color:var(--muted);">${dateStr}</div>
+                 </div>`;
+      });
+      historyList.innerHTML = html || '<div style="text-align:center;padding:20px;color:var(--muted);">Nenhum histórico disponível.</div>';
+    } catch(e) {
+      historyList.innerHTML = '<div style="color:var(--red); font-size:0.8rem;">Erro ao carregar histórico.</div>';
+    }
+  }
+
   window.openAdminForm = function(id) {
     if(userRole !== 'admin' && userRole !== 'editor') return showToast("Acesso restrito. Apenas admins e editores podem editar.", 'error');
     let ev = EVENTS.find(e => e.id === id);
@@ -2880,41 +2902,89 @@
       loadEventHistory(id);
     }
     const selectedArr = getRespArray(ev.responsavel);
-    document.querySelectorAll('.resp-checkbox').forEach(cb => { cb.che  // \u2500\u2500 BINDINGS DO MODAL DE EVENTO \u2500\u2500
+        document.querySelectorAll('.resp-checkbox').forEach(cb => { cb.checked = selectedArr.includes(cb.value); });
+    const fields = { 
+      'id':'id', 'nome':'evento', 'ini':'data_ini', 'fim':'data_fim', 
+      'hora-ini':'hora_ini', 'hora-fim':'hora_fim', 'tipo':'tipo', 
+      'status':'status', 'formato':'formato', 'cota':'cota', 
+      'vagas':'vagas', 'publico':'publico', 'beneficios':'beneficios', 
+      'obs':'obs', 'participantes':'participantes', 
+      'localidade':'localidade', 'links':'links' 
+    };
+    Object.entries(fields).forEach(([k, evKey]) => { 
+      const input = document.getElementById(`edit-${k}`); 
+      if(input) input.value = ev[evKey] || ""; 
+    });
+    
+    // Hydrate Equipe Builder
+    window.currentEquipe = ev.equipe ? JSON.parse(JSON.stringify(ev.equipe)) : [];
+    if (window.currentEquipe.length === 0 && ev.participantes) window.currentEquipe = [{nome: ev.participantes, funcao: '', camisa_id: ''}];
+    window.renderEquipeBuilder();
+
+    // Reset UI state
+    document.querySelectorAll('.admin-input').forEach(i => i.classList.remove('valid','invalid'));
+    document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
+    
+    document.getElementById('mode-view').classList.add('hide');
+    document.getElementById('mode-edit').classList.remove('hide');
+    document.getElementById('modal-overlay').classList.add('open');
+  };
+
+  // ── BINDINGS DE MODAIS E BOTÕES ──
   const _bse = document.getElementById('btn-switch-edit');
   if (_bse) _bse.onclick = () => window.openAdminForm(currentEditId);
 
+  // PDF do Modal de Evento
   const _btnPdfModal = document.getElementById('btn-export-pdf-modal');
   if (_btnPdfModal) {
     _btnPdfModal.onclick = () => {
       const el = document.getElementById('mode-view');
       const evName = EVENTS.find(e => e.id === currentEditId)?.evento.replace(/\s+/g,'_') || 'Evento';
-      const opt = { margin:0.5, filename:`Evento_${evName}.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2,useCORS:true}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} };
-      const toHide = document.querySelectorAll('#mode-view .modal-actions-top button');
+      const opt = { 
+        margin: 0.5, 
+        filename: `Evento_${evName}.pdf`, 
+        image: { type: 'jpeg', quality: 0.98 }, 
+        html2canvas: { scale: 2, useCORS: true }, 
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } 
+      };
+      
+      const toHide = document.querySelectorAll('#mode-view button.btn-icon, #mode-view .modal-actions-top');
       toHide.forEach(b => b.style.visibility = 'hidden');
+      
       html2pdf().set(opt).from(el).save().then(() => {
         toHide.forEach(b => b.style.visibility = '');
         showToast('PDF do evento gerado!', 'success');
       });
     };
-  }('mode-edit').classList.remove('hide');
-    document.getElementById('modal-overlay').classList.add('open');
-  };
+  }
 
-  // btn-switch-edit visibility is managed by applyAdminUI after auth resolves
-  const _bse = document.getElementById('btn-switch-edit');
-  if (_bse) _bse.onclick = () => window.openAdminForm(currentEditId);
-  document.getElementById('btn-export-pdf').onclick = () => {
-    const el = document.getElementById('mode-view');
-    const opt = { margin:0.5, filename:`Evento_${EVENTS.find(e=>e.id===currentEditId)?.evento.replace(/\s+/g,'_')}.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'}};
-    document.getElementById('btn-export-pdf').style.display='none';
-    if(_bse) _bse.style.display='none'; document.getElementById('modal-close-view').style.display='none';
-    html2pdf().set(opt).from(el).save().then(()=> {
-      document.getElementById('btn-export-pdf').style.display='inline-block';
-      if(_bse && (userRole === 'admin' || userRole === 'editor')) _bse.style.display='inline-block';
-      document.getElementById('modal-close-view').style.display='inline-block';
-    });
-  };
+  // PDF do Dashboard Admin
+  const _btnPdfDash = document.getElementById('btn-export-pdf-dash');
+  if (_btnPdfDash) {
+    _btnPdfDash.onclick = async () => {
+       const originalText = _btnPdfDash.innerHTML;
+       _btnPdfDash.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Gerando...';
+       _btnPdfDash.disabled = true;
+       refreshIcons();
+       try {
+         const dashArea = document.getElementById('asec-dashboard');
+         const opt = { 
+           margin: 0.3, 
+           filename: `Dashboard_ERP_${new Date().toISOString().slice(0,10)}.pdf`, 
+           html2canvas: { scale: 1.5, useCORS: true }, 
+           jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' } 
+         };
+         await html2pdf().set(opt).from(dashArea).save();
+         showToast('Painel exportado com sucesso!', 'success');
+       } catch(err) {
+         showToast('Erro ao exportar PDF.', 'error');
+       }
+       _btnPdfDash.innerHTML = originalText;
+       _btnPdfDash.disabled = false;
+       refreshIcons();
+    };
+  }
+
   document.getElementById('btn-cancel-edit').onclick = () => window.openEventView(currentEditId);
   document.getElementById('modal-close-view').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
   document.getElementById('modal-close-edit').onclick = () => document.getElementById('modal-overlay').classList.remove('open');
@@ -4440,6 +4510,10 @@
       setTimeout(() => {
         if (typeof renderDashboardAdmin === 'function') renderDashboardAdmin();
       }, 50);
+    }
+    if (section === 'configuracoes') {
+      if (typeof loadAdminResponsaveis === 'function') loadAdminResponsaveis();
+      if (typeof loadPendingUsers === 'function') loadPendingUsers();
     }
   };
 
