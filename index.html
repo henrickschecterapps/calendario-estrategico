@@ -949,6 +949,10 @@
                       <input type="date" class="gestao-input w-md" id="unif-data">
                     </div>
                     <div class="gestao-field">
+                      <label>Previsão</label>
+                      <input type="date" class="gestao-input w-md" id="unif-data-prevista">
+                    </div>
+                    <div class="gestao-field">
                       <label>Status</label>
                       <select class="gestao-input" id="unif-status">
                         <option value="Pedido">Pedido</option>
@@ -1039,14 +1043,6 @@
         <div class="bento-grid">
           <div class="bento-item"><div class="bento-header">📌 Operação</div><div class="bento-value"><span id="view-status">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Formato:</span> <span id="view-formato">-</span></div></div>
           <div class="bento-item" id="block-cota"><div class="bento-header">🎖️ Comercial</div><div class="bento-value"><span id="view-cota">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Vagas Livres:</span> <span id="view-vagas">-</span></div></div>
-          <div class="bento-item full" id="block-financeiro" style="display:none; background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.15);">
-            <div class="bento-header" style="color:var(--red);">💰 Financeiro Consolidado</div>
-            <div class="bento-value" style="display:flex; flex-direction:column; gap:4px; font-size:0.95rem;">
-               <div style="display:flex; justify-content:space-between;"><span>Brindes (Total):</span><span id="view-fin-brindes" style="font-weight:600">—</span></div>
-               <div style="display:flex; justify-content:space-between;"><span>Uniformes (Total):</span><span id="view-fin-unif" style="font-weight:600">—</span></div>
-               <div style="display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px dashed var(--red); color:var(--red);"><strong>Custo Operacional Estimado:</strong><strong id="view-fin-total" style="font-size:1.1rem;">—</strong></div>
-            </div>
-          </div>
           <div class="bento-item full" id="block-participantes" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2);"><div class="bento-header" style="color: var(--green);">🎟️ Participantes (Equipe Tripla)</div><div class="bento-value" id="view-participantes" style="font-size: 0.9rem;">-</div></div>
           <div class="bento-item full" id="block-publico"><div class="bento-header">👥 Público Alvo</div><div class="bento-value" id="view-publico">-</div></div>
           <div class="bento-item full" id="block-beneficios"><div class="bento-header">✨ Benefícios / Entregas</div><div class="bento-value" id="view-beneficios" style="white-space: pre-wrap;">-</div></div>
@@ -1054,6 +1050,14 @@
           <div class="bento-item full" id="block-localidade"><div class="bento-header">📍 Localização</div><div class="bento-value" id="view-localidade">-</div></div>
           <div class="bento-item full" id="block-links"><div class="bento-header">🔗 Links</div><div class="bento-value" id="view-links">-</div></div>
           <div class="bento-item" id="block-hora"><div class="bento-header">⏰ Horário</div><div class="bento-value" id="view-hora">-</div></div>
+          <div class="bento-item full" id="block-financeiro" style="display:none; background: rgba(0,0,0,0.02); border-color: var(--border);">
+            <div class="bento-header" style="color:var(--text);">💰 Financeiro Consolidado</div>
+            <div class="bento-value" style="display:flex; flex-direction:column; gap:4px; font-size:0.95rem;">
+               <div style="display:flex; justify-content:space-between; color:var(--text);"><span>Brindes (Total):</span><span id="view-fin-brindes" style="font-weight:600">—</span></div>
+               <div style="display:flex; justify-content:space-between; color:var(--text);"><span>Uniformes (Total):</span><span id="view-fin-unif" style="font-weight:600">—</span></div>
+               <div style="display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px solid var(--border); color:var(--text);"><strong>Custo Operacional Estimado:</strong><strong id="view-fin-total" style="font-size:1.1rem;">—</strong></div>
+            </div>
+          </div>
         </div>
 
         <!-- BRINDES DO EVENTO (somente admin) -->
@@ -3336,6 +3340,7 @@
         titulo,
         descricao:     document.getElementById('brinde-desc').value.trim(),
         nivel:         document.getElementById('brinde-nivel').value,
+        status:        document.getElementById('brinde-status').value,
         qtd,
         vlr_unit:      vlr,
         fornecedor_id: document.getElementById('brinde-fornecedor').value || '',
