@@ -454,6 +454,16 @@
   .tbl-action { background: none; border: none; cursor: pointer; padding: 4px 6px; border-radius: 6px; color: var(--muted); font-size: 0.85rem; transition: 0.15s; }
   .tbl-action:hover { background: var(--surface2); color: var(--text); }
   .tbl-action.del:hover { color: var(--red); background: rgba(239,68,68,0.08); }
+  .tbl-action.edit:hover { color: var(--accent); background: rgba(37,99,235,0.08); }
+
+  /* Filtro de Tabelas */
+  .filter-bar-gestao { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-bottom: none; border-radius: var(--radius) var(--radius) 0 0; }
+  .filter-bar-gestao input, .filter-bar-gestao select { padding: 6px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; font-size: 0.82rem; font-family: inherit; color: var(--text); outline: none; transition: 0.2s; }
+  .filter-bar-gestao input:focus, .filter-bar-gestao select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+  /* Animation New Row */
+  @keyframes flashGreen { 0% { background: rgba(16,185,129,0.3); } 100% { background: transparent; } }
+  .flash-green { animation: flashGreen 2.5s ease-out forwards; }
 
 </style>
 </head>
@@ -752,7 +762,22 @@
             <!-- ── BRINDES ── -->
             <div class="gestao-pane active" id="gpane-brindes">
               <div class="gestao-summary" id="brindes-summary"></div>
-              <div class="gestao-table-wrap">
+              
+              <div class="filter-bar-gestao">
+                <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
+                <input type="text" id="filtro-brinde-busca" placeholder="Buscar brinde..." oninput="renderBrindes()">
+                <select id="filtro-brinde-nivel" onchange="renderBrindes()">
+                  <option value="">Todos os Níveis</option>
+                  <option value="Massa">Massa</option>
+                  <option value="Qualificação">Qualificação</option>
+                  <option value="VIP">VIP</option>
+                </select>
+                <select id="filtro-brinde-evento" onchange="renderBrindes()">
+                  <option value="">Todos os Eventos</option>
+                </select>
+              </div>
+
+              <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                 <table class="gestao-table" id="brindes-table">
                   <thead><tr>
                     <th>Brinde</th>
@@ -769,6 +794,7 @@
                 </table>
                 <!-- FORM ADD BRINDE -->
                 <div class="gestao-add-bar" id="brinde-add-form">
+                  <input type="hidden" id="brinde-id">
                   <div class="gestao-field" style="flex:2;min-width:140px;">
                     <label>Brinde (título) *</label>
                     <input type="text" class="gestao-input w-full" id="brinde-titulo" placeholder="Ex: Caneca personalizada">
@@ -805,6 +831,7 @@
                       <option value="">— Sem vínculo —</option>
                     </select>
                   </div>
+                  <button class="btn-icon" id="btn-cancel-brinde" style="display:none; align-self:flex-end;">✕ Cancelar</button>
                   <button class="btn-primary" id="btn-save-brinde" style="align-self:flex-end;white-space:nowrap;">+ Adicionar</button>
                 </div>
               </div>
@@ -812,7 +839,13 @@
 
             <!-- ── FORNECEDORES ── -->
             <div class="gestao-pane" id="gpane-fornecedores">
-              <div class="gestao-table-wrap">
+              
+              <div class="filter-bar-gestao">
+                <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Buscar:</span>
+                <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()">
+              </div>
+
+              <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                 <table class="gestao-table" id="forn-table">
                   <thead><tr>
                     <th>Nome do Fornecedor</th>
@@ -825,6 +858,7 @@
                 </table>
                 <!-- FORM ADD FORNECEDOR -->
                 <div class="gestao-add-bar" id="forn-add-form">
+                  <input type="hidden" id="forn-id">
                   <div class="gestao-field" style="flex:2;min-width:160px;">
                     <label>Nome do Fornecedor *</label>
                     <input type="text" class="gestao-input w-full" id="forn-nome" placeholder="Ex: Gráfica XYZ">
@@ -837,6 +871,7 @@
                     <label>Telefone / WhatsApp</label>
                     <input type="text" class="gestao-input w-full" id="forn-tel" placeholder="(11) 99999-9999">
                   </div>
+                  <button class="btn-icon" id="btn-cancel-forn" style="display:none; align-self:flex-end;">✕ Cancelar</button>
                   <button class="btn-primary" id="btn-save-forn" style="align-self:flex-end;white-space:nowrap;">+ Adicionar</button>
                 </div>
               </div>
@@ -845,7 +880,23 @@
             <!-- ── UNIFORMES ── -->
             <div class="gestao-pane" id="gpane-uniformes">
               <div class="gestao-summary" id="uniformes-summary"></div>
-              <div class="gestao-table-wrap">
+              
+              <div class="filter-bar-gestao">
+                <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
+                <input type="text" id="filtro-unif-busca" placeholder="Cor ou observação..." oninput="renderUniformes()">
+                <select id="filtro-unif-status" onchange="renderUniformes()">
+                  <option value="">Todos os Status</option>
+                  <option value="Pedido">Pedido</option>
+                  <option value="Em Produção">Em Produção</option>
+                  <option value="Entregue">Entregue</option>
+                  <option value="Cancelado">Cancelado</option>
+                </select>
+                <select id="filtro-unif-evento" onchange="renderUniformes()">
+                  <option value="">Todos os Eventos</option>
+                </select>
+              </div>
+
+              <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                 <table class="gestao-table" id="unif-table">
                   <thead><tr>
                     <th>Qtd</th>
@@ -862,49 +913,60 @@
                   <tbody id="unif-body"><tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme cadastrado.</td></tr></tbody>
                 </table>
                 <!-- FORM ADD UNIFORME -->
-                <div class="gestao-add-bar" id="unif-add-form">
-                  <div class="gestao-field">
-                    <label>Qtd *</label>
-                    <input type="number" class="gestao-input w-sm" id="unif-qtd" min="1" placeholder="0">
+                <div class="gestao-add-bar" id="unif-add-form" style="display:flex; flex-direction:column; gap:16px;">
+                  <input type="hidden" id="unif-id">
+                  
+                  <!-- Linha 1 -->
+                  <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                    <div class="gestao-field">
+                      <label>Qtd *</label>
+                      <input type="number" class="gestao-input w-sm" id="unif-qtd" min="1" placeholder="0">
+                    </div>
+                    <div class="gestao-field">
+                      <label>Cor</label>
+                      <input type="text" class="gestao-input w-md" id="unif-cor" placeholder="Ex: Azul marinho">
+                    </div>
+                    <div class="gestao-field">
+                      <label>Vlr Unit. (R$)</label>
+                      <input type="number" class="gestao-input w-sm" id="unif-vlr" min="0" step="0.01" placeholder="0,00">
+                    </div>
+                    <div class="gestao-field">
+                      <label>Data do Pedido</label>
+                      <input type="date" class="gestao-input w-md" id="unif-data">
+                    </div>
+                    <div class="gestao-field">
+                      <label>Status</label>
+                      <select class="gestao-input" id="unif-status">
+                        <option value="Pedido">Pedido</option>
+                        <option value="Em Produção">Em Produção</option>
+                        <option value="Entregue">Entregue</option>
+                        <option value="Cancelado">Cancelado</option>
+                      </select>
+                    </div>
                   </div>
-                  <div class="gestao-field">
-                    <label>Cor</label>
-                    <input type="text" class="gestao-input w-md" id="unif-cor" placeholder="Ex: Azul marinho">
+                  
+                  <!-- Linha 2 -->
+                  <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                    <div class="gestao-field" style="min-width:140px;">
+                      <label>Fornecedor</label>
+                      <select class="gestao-input" id="unif-fornecedor">
+                        <option value="">— Selecionar —</option>
+                      </select>
+                    </div>
+                    <div class="gestao-field" style="min-width:160px;">
+                      <label>Evento Vinculado</label>
+                      <select class="gestao-input" id="unif-evento">
+                        <option value="">— Sem vínculo —</option>
+                      </select>
+                    </div>
+                    <div class="gestao-field" style="flex:2;min-width:160px;">
+                      <label>Observações</label>
+                      <input type="text" class="gestao-input w-full" id="unif-obs" placeholder="Tamanhos, detalhes...">
+                    </div>
+                    <div style="flex:1;"></div>
+                    <button class="btn-icon" id="btn-cancel-unif" style="display:none; white-space:nowrap;">✕ Cancelar</button>
+                    <button class="btn-primary" id="btn-save-unif" style="white-space:nowrap;">+ Adicionar</button>
                   </div>
-                  <div class="gestao-field">
-                    <label>Vlr Unit. (R$)</label>
-                    <input type="number" class="gestao-input w-sm" id="unif-vlr" min="0" step="0.01" placeholder="0,00">
-                  </div>
-                  <div class="gestao-field">
-                    <label>Data do Pedido</label>
-                    <input type="date" class="gestao-input w-md" id="unif-data">
-                  </div>
-                  <div class="gestao-field">
-                    <label>Status</label>
-                    <select class="gestao-input" id="unif-status">
-                      <option value="Pedido">Pedido</option>
-                      <option value="Em Produção">Em Produção</option>
-                      <option value="Entregue">Entregue</option>
-                      <option value="Cancelado">Cancelado</option>
-                    </select>
-                  </div>
-                  <div class="gestao-field" style="min-width:140px;">
-                    <label>Fornecedor</label>
-                    <select class="gestao-input" id="unif-fornecedor">
-                      <option value="">— Selecionar —</option>
-                    </select>
-                  </div>
-                  <div class="gestao-field" style="min-width:160px;">
-                    <label>Evento Vinculado</label>
-                    <select class="gestao-input" id="unif-evento">
-                      <option value="">— Sem vínculo —</option>
-                    </select>
-                  </div>
-                  <div class="gestao-field" style="flex:2;min-width:160px;">
-                    <label>Observações</label>
-                    <input type="text" class="gestao-input w-full" id="unif-obs" placeholder="Tamanhos, detalhes...">
-                  </div>
-                  <button class="btn-primary" id="btn-save-unif" style="align-self:flex-end;white-space:nowrap;">+ Adicionar</button>
                 </div>
               </div>
             </div>
@@ -2837,6 +2899,7 @@
   let BRINDES     = [];
   let FORNECEDORES_LIST = [];
   let UNIFORMES   = [];
+  window.lastSavedId = null; // Usado para destacar (flash-green) itens editados ou criados
 
   // ── Sub-tabs de gestão ──
   document.querySelectorAll('.gestao-tab').forEach(tab => {
@@ -2912,28 +2975,54 @@
   function renderFornecedores() {
     const tbody = document.getElementById('forn-body');
     if (!tbody) return;
-    if (!FORNECEDORES_LIST.length) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Nenhum fornecedor cadastrado.</td></tr>';
+    
+    const busca = (document.getElementById('filtro-forn-busca')?.value || '').toLowerCase();
+    let list = FORNECEDORES_LIST;
+    if (busca) list = list.filter(f => (f.nome||'').toLowerCase().includes(busca) || (f.email||'').toLowerCase().includes(busca) || (f.telefone||'').toLowerCase().includes(busca));
+
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Nenhum fornecedor encontrado.</td></tr>';
       return;
     }
-    // Count linked items for each supplier
-    tbody.innerHTML = FORNECEDORES_LIST.map(f => {
+    
+    tbody.innerHTML = list.map(f => {
       const bCount = BRINDES.filter(b => b.fornecedor_id === f.id).length;
       const uCount = UNIFORMES.filter(u => u.fornecedor_id === f.id).length;
       const total = bCount + uCount;
-      return `<tr>
-        <td><strong>${escapeHtml(f.nome)}</strong></td>
+      const isNew = window.lastSavedId === f.id ? 'flash-green' : '';
+      return `<tr class="${isNew}">
+        <td><strong>${highlight(f.nome, document.getElementById('filtro-forn-busca')?.value)}</strong></td>
         <td>${f.email ? `<a href="mailto:${escapeHtml(f.email)}" style="color:var(--accent);font-weight:600;">${escapeHtml(f.email)}</a>` : '<span style="color:var(--muted)">—</span>'}</td>
         <td>${f.telefone ? `<a href="tel:${escapeHtml(f.telefone)}" style="color:var(--teal);font-weight:600;">${escapeHtml(f.telefone)}</a>` : '<span style="color:var(--muted)">—</span>'}</td>
         <td>${total > 0 ? `<span style="font-weight:700">${total} item${total!==1?'s':''}</span> <span style="color:var(--muted);font-size:0.75rem;">(${bCount} brinde${bCount!==1?'s':''}, ${uCount} unif.)</span>` : '<span style="color:var(--muted)">0 itens</span>'}</td>
         <td style="text-align:right;white-space:nowrap;">
+          <button class="tbl-action edit" onclick="window.editForn('${f.id}')" title="Editar">✏️</button>
           <button class="tbl-action del" onclick="window.deleteForn('${f.id}')" title="Excluir">🗑️</button>
         </td>
       </tr>`;
     }).join('');
   }
 
+  window.editForn = (id) => {
+    const f = FORNECEDORES_LIST.find(x => x.id === id); if(!f) return;
+    document.getElementById('forn-id').value = id;
+    document.getElementById('forn-nome').value = f.nome || '';
+    document.getElementById('forn-email').value = f.email || '';
+    document.getElementById('forn-tel').value = f.telefone || '';
+    document.getElementById('btn-save-forn').textContent = 'Salvar Alterações';
+    document.getElementById('btn-cancel-forn').style.display = 'inline-block';
+    document.getElementById('forn-add-form').scrollIntoView({behavior:'smooth', block:'nearest'});
+  };
+
+  document.getElementById('btn-cancel-forn').onclick = () => {
+    document.getElementById('forn-id').value = '';
+    ['forn-nome','forn-email','forn-tel'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('btn-save-forn').textContent = '+ Adicionar';
+    document.getElementById('btn-cancel-forn').style.display = 'none';
+  };
+
   document.getElementById('btn-save-forn').onclick = async () => {
+    const id = document.getElementById('forn-id').value;
     const nome = document.getElementById('forn-nome').value.trim();
     const email = document.getElementById('forn-email').value.trim();
     const telefone = document.getElementById('forn-tel').value.trim();
@@ -2941,14 +3030,20 @@
     const btn = document.getElementById('btn-save-forn');
     btn.textContent = 'Salvando...'; btn.disabled = true;
     try {
-      await db.collection("fornecedores").add({ nome, email, telefone, criado_em: firebase.firestore.FieldValue.serverTimestamp() });
-      document.getElementById('forn-nome').value = '';
-      document.getElementById('forn-email').value = '';
-      document.getElementById('forn-tel').value = '';
-      showToast('Fornecedor cadastrado! 🏢', 'success');
+      if (id) {
+        await db.collection("fornecedores").doc(id).update({ nome, email, telefone });
+        showToast('Fornecedor atualizado!', 'success');
+        window.lastSavedId = id;
+      } else {
+        const docRef = await db.collection("fornecedores").add({ nome, email, telefone, criado_em: firebase.firestore.FieldValue.serverTimestamp() });
+        showToast('Fornecedor cadastrado! 🏢', 'success');
+        window.lastSavedId = docRef.id;
+      }
+      document.getElementById('btn-cancel-forn').click();
       await loadFornecedores();
+      setTimeout(() => window.lastSavedId = null, 3000);
     } catch(e) { showToast('Erro ao salvar fornecedor.', 'error'); }
-    btn.textContent = '+ Adicionar'; btn.disabled = false;
+    btn.disabled = false;
   };
 
   window.deleteForn = async (id) => {
@@ -2973,20 +3068,32 @@
   function renderBrindes() {
     const tbody = document.getElementById('brindes-body');
     if (!tbody) return;
-    if (!BRINDES.length) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde cadastrado.</td></tr>';
+    
+    const busca = (document.getElementById('filtro-brinde-busca')?.value || '').toLowerCase();
+    const nivel = document.getElementById('filtro-brinde-nivel')?.value || '';
+    const evento= document.getElementById('filtro-brinde-evento')?.value || '';
+    
+    let list = BRINDES;
+    if (busca) list = list.filter(b => (b.titulo||'').toLowerCase().includes(busca) || (b.descricao||'').toLowerCase().includes(busca));
+    if (nivel) list = list.filter(b => b.nivel === nivel);
+    if (evento) list = list.filter(b => b.evento_id === evento);
+
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde encontrado.</td></tr>';
       return;
     }
-    tbody.innerHTML = BRINDES.map(b => {
+    
+    tbody.innerHTML = list.map(b => {
       const qtd  = parseInt(b.qtd) || 0;
       const vlr  = parseFloat(b.vlr_unit) || 0;
       const total = qtd * vlr;
       const totalPill = total > 0
         ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
         : `<span class="valor-total-pill zero">—</span>`;
-      return `<tr>
-        <td><strong>${escapeHtml(b.titulo||'')}</strong></td>
-        <td style="color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(b.descricao||'')}">${escapeHtml(b.descricao||'—')}</td>
+      const isNew = window.lastSavedId === b.id ? 'flash-green' : '';
+      return `<tr class="${isNew}">
+        <td><strong>${highlight(b.titulo||'', busca)}</strong></td>
+        <td style="color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(b.descricao||'')}">${highlight(b.descricao||'—', busca)}</td>
         <td>${nivelBadge(b.nivel)}</td>
         <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
         <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
@@ -2994,6 +3101,7 @@
         <td style="font-size:0.78rem">${fornNome(b.fornecedor_id)}</td>
         <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${b.evento_id ? escapeHtml(eventoNome(b.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
         <td style="text-align:right;white-space:nowrap;">
+          <button class="tbl-action edit" onclick="window.editBrinde('${b.id}')" title="Editar">✏️</button>
           <button class="tbl-action del" onclick="window.deleteBrinde('${b.id}')" title="Excluir">🗑️</button>
         </td>
       </tr>`;
@@ -3013,29 +3121,68 @@
       <div class="gestao-summary-card"><div class="gestao-summary-label">Itens VIP</div><div class="gestao-summary-value" style="color:var(--purple)">${vip}</div></div>`;
   }
 
+  window.editBrinde = (id) => {
+    const b = BRINDES.find(x => x.id === id); if(!b) return;
+    document.getElementById('brinde-id').value = id;
+    document.getElementById('brinde-titulo').value = b.titulo || '';
+    document.getElementById('brinde-desc').value = b.descricao || '';
+    document.getElementById('brinde-nivel').value = b.nivel || 'Massa';
+    document.getElementById('brinde-qtd').value = b.qtd || '';
+    document.getElementById('brinde-vlr').value = b.vlr_unit || '';
+    document.getElementById('brinde-fornecedor').value = b.fornecedor_id || '';
+    document.getElementById('brinde-evento').value = b.evento_id || '';
+    document.getElementById('btn-save-brinde').textContent = 'Salvar Alterações';
+    document.getElementById('btn-cancel-brinde').style.display = 'inline-block';
+    
+    // Alimenta o preview visual de valor
+    document.getElementById('brinde-qtd').dispatchEvent(new Event('input'));
+    document.getElementById('brinde-add-form').scrollIntoView({behavior:'smooth', block:'nearest'});
+  };
+
+  document.getElementById('btn-cancel-brinde').onclick = () => {
+    document.getElementById('brinde-id').value = '';
+    ['brinde-titulo','brinde-desc','brinde-qtd','brinde-vlr','brinde-fornecedor','brinde-evento'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('brinde-nivel').value = 'Massa';
+    document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
+    document.getElementById('btn-cancel-brinde').style.display = 'none';
+    document.getElementById('brinde-qtd').dispatchEvent(new Event('input'));
+  };
+
   document.getElementById('btn-save-brinde').onclick = async () => {
+    const id = document.getElementById('brinde-id').value;
     const titulo = document.getElementById('brinde-titulo').value.trim();
     if (!titulo) { showToast('Título do brinde é obrigatório.', 'warning'); return; }
     const btn = document.getElementById('btn-save-brinde');
     btn.textContent = 'Salvando...'; btn.disabled = true;
     const qtd    = parseInt(document.getElementById('brinde-qtd').value) || 0;
     const vlr    = parseFloat(document.getElementById('brinde-vlr').value) || 0;
-    try {
-      await db.collection("brindes").add({
+    
+    const payload = {
         titulo,
         descricao:     document.getElementById('brinde-desc').value.trim(),
         nivel:         document.getElementById('brinde-nivel').value,
         qtd,
         vlr_unit:      vlr,
         fornecedor_id: document.getElementById('brinde-fornecedor').value || '',
-        evento_id:     document.getElementById('brinde-evento').value || '',
-        criado_em:     firebase.firestore.FieldValue.serverTimestamp()
-      });
-      ['brinde-titulo','brinde-desc','brinde-qtd','brinde-vlr'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-      showToast('Brinde cadastrado! 🎁', 'success');
+        evento_id:     document.getElementById('brinde-evento').value || ''
+    };
+    
+    try {
+      if (id) {
+        await db.collection("brindes").doc(id).update(payload);
+        showToast('Brinde atualizado!', 'success');
+        window.lastSavedId = id;
+      } else {
+        payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
+        const docRef = await db.collection("brindes").add(payload);
+        showToast('Brinde cadastrado! 🎁', 'success');
+        window.lastSavedId = docRef.id;
+      }
+      document.getElementById('btn-cancel-brinde').click();
       await loadBrindes();
+      setTimeout(() => window.lastSavedId = null, 3000);
     } catch(e) { showToast('Erro ao salvar brinde.', 'error'); }
-    btn.textContent = '+ Adicionar'; btn.disabled = false;
+    btn.disabled = false;
   };
 
   window.deleteBrinde = async (id) => {
@@ -3065,11 +3212,22 @@
   function renderUniformes() {
     const tbody = document.getElementById('unif-body');
     if (!tbody) return;
-    if (!UNIFORMES.length) {
-      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme cadastrado.</td></tr>';
+    
+    const busca = (document.getElementById('filtro-unif-busca')?.value || '').toLowerCase();
+    const status = document.getElementById('filtro-unif-status')?.value || '';
+    const evento= document.getElementById('filtro-unif-evento')?.value || '';
+    
+    let list = UNIFORMES;
+    if (busca) list = list.filter(u => (u.cor||'').toLowerCase().includes(busca) || (u.obs||'').toLowerCase().includes(busca));
+    if (status) list = list.filter(u => u.status === status);
+    if (evento) list = list.filter(u => u.evento_id === evento);
+
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme encontrado.</td></tr>';
       return;
     }
-    tbody.innerHTML = UNIFORMES.map(u => {
+    
+    tbody.innerHTML = list.map(u => {
       const qtd   = parseInt(u.qtd) || 0;
       const vlr   = parseFloat(u.vlr_unit) || 0;
       const total = qtd * vlr;
@@ -3077,17 +3235,19 @@
         ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
         : `<span class="valor-total-pill zero">—</span>`;
       const dataFmt = u.data_pedido ? new Date(u.data_pedido+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
-      return `<tr>
+      const isNew = window.lastSavedId === u.id ? 'flash-green' : '';
+      return `<tr class="${isNew}">
         <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
-        <td>${u.cor ? `<span style="display:inline-flex;align-items:center;gap:6px;font-weight:600">${escapeHtml(u.cor)}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
+        <td>${u.cor ? `<span style="display:inline-flex;align-items:center;gap:6px;font-weight:600">${highlight(u.cor, busca)}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
         <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
         <td>${totalPill}</td>
         <td style="font-size:0.78rem;color:var(--muted)">${dataFmt}</td>
         <td>${unifStatusBadge(u.status)}</td>
         <td style="font-size:0.78rem">${fornNome(u.fornecedor_id)}</td>
         <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${u.evento_id ? escapeHtml(eventoNome(u.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
-        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:0.78rem;" title="${escapeHtml(u.obs||'')}">${escapeHtml(u.obs||'—')}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:0.78rem;" title="${escapeHtml(u.obs||'')}">${highlight(u.obs||'—', busca)}</td>
         <td style="text-align:right;white-space:nowrap;">
+          <button class="tbl-action edit" onclick="window.editUnif('${u.id}')" title="Editar">✏️</button>
           <button class="tbl-action del" onclick="window.deleteUnif('${u.id}')" title="Excluir">🗑️</button>
         </td>
       </tr>`;
@@ -3107,14 +3267,43 @@
       <div class="gestao-summary-card"><div class="gestao-summary-label">Entregues</div><div class="gestao-summary-value" style="color:var(--teal)">${entregue}</div></div>`;
   }
 
+  window.editUnif = (id) => {
+    const u = UNIFORMES.find(x => x.id === id); if(!u) return;
+    document.getElementById('unif-id').value = id;
+    document.getElementById('unif-qtd').value = u.qtd || '';
+    document.getElementById('unif-cor').value = u.cor || '';
+    document.getElementById('unif-vlr').value = u.vlr_unit || '';
+    document.getElementById('unif-data').value = u.data_pedido || '';
+    document.getElementById('unif-status').value = u.status || 'Pedido';
+    document.getElementById('unif-fornecedor').value = u.fornecedor_id || '';
+    document.getElementById('unif-evento').value = u.evento_id || '';
+    document.getElementById('unif-obs').value = u.obs || '';
+    document.getElementById('btn-save-unif').textContent = 'Salvar Alterações';
+    document.getElementById('btn-cancel-unif').style.display = 'inline-block';
+    
+    document.getElementById('unif-qtd').dispatchEvent(new Event('input'));
+    document.getElementById('unif-add-form').scrollIntoView({behavior:'smooth', block:'nearest'});
+  };
+
+  document.getElementById('btn-cancel-unif').onclick = () => {
+    document.getElementById('unif-id').value = '';
+    ['unif-qtd','unif-cor','unif-vlr','unif-data','unif-obs','unif-fornecedor','unif-evento'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('unif-status').value = 'Pedido';
+    document.getElementById('btn-save-unif').textContent = '+ Adicionar';
+    document.getElementById('btn-cancel-unif').style.display = 'none';
+    
+    document.getElementById('unif-qtd').dispatchEvent(new Event('input'));
+  };
+
   document.getElementById('btn-save-unif').onclick = async () => {
+    const id = document.getElementById('unif-id').value;
     const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
     if (!qtd) { showToast('Informe a quantidade de uniformes.', 'warning'); return; }
     const btn = document.getElementById('btn-save-unif');
     btn.textContent = 'Salvando...'; btn.disabled = true;
     const vlr = parseFloat(document.getElementById('unif-vlr').value) || 0;
-    try {
-      await db.collection("uniformes").add({
+    
+    const payload = {
         qtd,
         cor:           document.getElementById('unif-cor').value.trim(),
         vlr_unit:      vlr,
@@ -3122,14 +3311,25 @@
         status:        document.getElementById('unif-status').value,
         fornecedor_id: document.getElementById('unif-fornecedor').value || '',
         evento_id:     document.getElementById('unif-evento').value || '',
-        obs:           document.getElementById('unif-obs').value.trim(),
-        criado_em:     firebase.firestore.FieldValue.serverTimestamp()
-      });
-      ['unif-qtd','unif-cor','unif-vlr','unif-data','unif-obs'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-      showToast('Uniforme cadastrado! 👕', 'success');
+        obs:           document.getElementById('unif-obs').value.trim()
+    };
+    
+    try {
+      if (id) {
+        await db.collection("uniformes").doc(id).update(payload);
+        showToast('Uniforme atualizado!', 'success');
+        window.lastSavedId = id;
+      } else {
+        payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
+        const docRef = await db.collection("uniformes").add(payload);
+        showToast('Uniforme cadastrado! 👕', 'success');
+        window.lastSavedId = docRef.id;
+      }
+      document.getElementById('btn-cancel-unif').click();
       await loadUniformes();
+      setTimeout(() => window.lastSavedId = null, 3000);
     } catch(e) { showToast('Erro ao salvar uniforme.', 'error'); }
-    btn.textContent = '+ Adicionar'; btn.disabled = false;
+    btn.disabled = false;
   };
 
   window.deleteUnif = async (id) => {
