@@ -1255,7 +1255,7 @@
 <div class="hm-tooltip" id="hm-tooltip"></div>
 
 <!-- Confirm Modal -->
-<div id="confirm-modal" class="modal-overlay" style="z-index:9000;">
+<div id="confirm-modal" class="modal-overlay" style="display:none; z-index:9000;">
   <div class="modal" style="padding:40px;max-width:440px;width:100%;text-align:center;">
     <div id="confirm-icon" style="color:var(--red);display:flex;justify-content:center;margin-bottom:16px;"><i data-lucide="trash-2" style="width:48px;height:48px;stroke-width:1.5;"></i></div>
     <h3 id="confirm-title" style="font-family:var(--font-heading);font-size:1.3rem;margin-bottom:8px;">Excluir evento?</h3>
@@ -1587,6 +1587,7 @@
       document.getElementById('confirm-title').textContent = title;
       document.getElementById('confirm-msg').textContent = msg;
       const modal = document.getElementById('confirm-modal');
+      modal.style.display = 'flex';
       modal.classList.add('open');
     });
   };
@@ -1594,6 +1595,7 @@
   window.closeConfirm = function(val) {
     const modal = document.getElementById('confirm-modal');
     modal.classList.remove('open');
+    modal.style.display = 'none';
     if (confirmResolve) {
       confirmResolve(val);
       confirmResolve = null;
@@ -1810,8 +1812,16 @@
       btnAdmin.style.display = enabled ? 'flex' : 'none';
       btnAdmin.classList.toggle('active', enabled);
     }
-    document.getElementById('btn-add-event').style.display   = (enabled || userRole === 'editor') ? 'flex' : 'none';
+    const canEdit = enabled || userRole === 'editor';
+    document.getElementById('btn-add-event').style.display   = canEdit ? 'flex' : 'none';
     document.getElementById('tab-admin').style.display       = enabled ? 'flex' : 'none';
+    
+    // Garantir que os botões do modal de detalhes sigam o papel correto
+    const btnSave = document.getElementById('btn-save');
+    const btnDel = document.getElementById('btn-delete');
+    if (btnSave) btnSave.style.display = canEdit ? 'flex' : 'none';
+    if (btnDel) btnDel.style.display = enabled ? 'flex' : 'none';
+    
     renderRoleBadge(userRole);
     // Show edit button in modal for admin and editor
     const _bse2 = document.getElementById('btn-switch-edit');
@@ -1837,7 +1847,7 @@
           userRole = uDoc.data().role;
         } else {
           // Primeiro acesso: admin para e-mail canônico, approved para demais
-          userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'approved';
+          userRole = (user.email.endsWith('@tripla.com.br')) ? 'admin' : 'approved';
           await db.collection("users").doc(user.uid).set({ email: user.email, role: userRole });
         }
         currentUser = user;
@@ -1858,7 +1868,7 @@
         // Firestore inacessível: libera acesso com base no e-mail
         console.warn("Firestore inacessível, usando fallback de papel.");
         currentUser = user;
-        userRole = (user.email === 'admin@tripla.com.br') ? 'admin' : 'approved';
+        userRole = (user.email.endsWith('@tripla.com.br')) ? 'admin' : 'approved';
         document.getElementById('user-email-display').textContent = user.email;
         authS.classList.add('hide'); appS.classList.remove('hide');
         applyAdminUI(userRole === 'admin');
@@ -2320,10 +2330,11 @@
       const lbl = document.createElement('label'); lbl.className = 'checkbox-item'; lbl.innerHTML = `<input type="checkbox" class="resp-checkbox" value="${r}"> <span>${r}</span>`; checkContainer.appendChild(lbl);
       const div = document.createElement('div'); div.style = "padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.9rem; display:flex; justify-content:space-between; align-items:center;";
       const bdResp = RESPONSAVEIS.find(x => x.nome === r);
-      if(bdResp) { div.innerHTML = `<span style="font-weight:700; color:var(--text)">👤 ${r}</span> <div style="display:flex; gap:16px;"><span style="color:var(--accent); cursor:pointer; font-weight:700;" onclick="window.editResp('${bdResp.id}', '${r}')">✏️</span><span style="color:var(--red); cursor:pointer; font-weight:700;" onclick="window.delResp('${bdResp.id}')">🗑️</span></div>`; } 
-      else { div.innerHTML = `<span><span style="font-weight:700; color:var(--text)">👤 ${r}</span> <small style="color:var(--muted); margin-left:8px;">(via evento)</small></span><div style="display:flex; gap:16px;"><span style="color:var(--accent); cursor:pointer; font-weight:700;" onclick="window.editLegacyResp('${r}')">✏️ Salvar</span></div>`; }
+      if(bdResp) { div.innerHTML = `<span style="font-weight:700; color:var(--text)">👤 ${r}</span> <div style="display:flex; gap:16px;"><span style="color:var(--accent); cursor:pointer; font-weight:700;" onclick="window.editResp('${bdResp.id}', '${r}')"><i data-lucide="edit-2" style="width:16px;height:16px;"></i></span><span style="color:var(--red); cursor:pointer; font-weight:700;" onclick="window.delResp('${bdResp.id}')"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></span></div>`; } 
+      else { div.innerHTML = `<span><span style="font-weight:700; color:var(--text)">👤 ${r}</span> <small style="color:var(--muted); margin-left:8px;">(via evento)</small></span><div style="display:flex; gap:16px;"><span style="color:var(--accent); cursor:pointer; font-weight:700;" onclick="window.editLegacyResp('${r}')"><i data-lucide="save" style="width:16px;height:16px;"></i> Salvar</span></div>`; }
       adminList.appendChild(div);
     });
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     // Populate multi-resp filter in sidebar
     renderMultiRespFilter();
   }
@@ -2353,10 +2364,9 @@
     const count = evs.length;
     const sliced = evs.slice(0, window.adminEventLimit);
     
-    tbody.innerHTML = sliced.length === 0
-      ? '<tr><td colspan="5" class="empty-state">Nenhum evento encontrado.</td></tr>'
-      : sliced.map(e => `<tr><td style="font-size:0.85rem;font-weight:700;">${dateFmt(e)}</td><td style="font-weight:800;">${highlight(e.evento, q)}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">${getRespArray(e.responsavel).map(r=>`<span class="resp-pill">${highlight(r, q)}</span>`).join('')||'—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align:right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')">✏️</button></td></tr>`).join('');
+      : sliced.map(e => `<tr><td style="font-size:0.85rem;font-weight:700;">${dateFmt(e)}</td><td style="font-weight:800;">${highlight(e.evento, q)}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">${getRespArray(e.responsavel).map(r=>`<span class="resp-pill">${highlight(r, q)}</span>`).join('')||'—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align:right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')"><i data-lucide="edit-2"></i></button></td></tr>`).join('');
       
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     const cont = document.getElementById('admin-event-ver-mais-container');
     if (cont) cont.style.display = window.adminEventLimit < count ? 'block' : 'none';
   };
@@ -3771,11 +3781,12 @@
         <td style="font-weight:700;color:var(--amber)">${qtdAlocada}</td>
         <td style="font-weight:800;color:${saldo<0?'var(--red)':saldo===0?'var(--muted)':'var(--green)'}">${saldo}</td>
         <td style="text-align:right;white-space:nowrap;">
-          <button class="tbl-action edit" onclick="window.editEstoque('${e.id}')" title="Editar">✏️</button>
-          <button class="tbl-action del" onclick="window.deleteEstoque('${e.id}')" title="Excluir">🗑️</button>
+          <button class="tbl-action edit" onclick="window.editEstoque('${e.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
+          <button class="tbl-action del" onclick="window.deleteEstoque('${e.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
         </td>
       </tr>`;
     }).join('');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
   }
 
   window.editEstoque = (id) => {
@@ -4102,11 +4113,12 @@
         <td style="font-size:0.78rem">${fornNome(b.fornecedor_id)}</td>
         <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${b.evento_id ? escapeHtml(eventoNome(b.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
         <td style="text-align:right;white-space:nowrap;">
-          <button class="tbl-action edit" onclick="window.editBrinde('${b.id}')" title="Editar">✏️</button>
-          <button class="tbl-action del" onclick="window.deleteBrinde('${b.id}')" title="Excluir">🗑️</button>
+          <button class="tbl-action edit" onclick="window.editBrinde('${b.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
+          <button class="tbl-action del" onclick="window.deleteBrinde('${b.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
         </td>
       </tr>`;
     }).join('');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
   }
 
   function renderBrindesSummary() {
@@ -4338,7 +4350,7 @@
     }
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme encontrado.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme encontrado.</td></tr>';
       return;
     }
     
@@ -4366,11 +4378,12 @@
         <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${u.evento_id ? escapeHtml(eventoNome(u.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
         <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:0.78rem;" title="${escapeHtml(u.obs||'')}">${highlight(u.obs||'—', busca)}</td>
         <td style="text-align:right;white-space:nowrap;">
-          <button class="tbl-action edit" onclick="window.editUnif('${u.id}')" title="Editar">✏️</button>
-          <button class="tbl-action del" onclick="window.deleteUnif('${u.id}')" title="Excluir">🗑️</button>
+          <button class="tbl-action edit" onclick="window.editUnif('${u.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
+          <button class="tbl-action del" onclick="window.deleteUnif('${u.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
         </td>
       </tr>`;
     }).join('');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
   }
 
   function renderUniformesSummary() {
