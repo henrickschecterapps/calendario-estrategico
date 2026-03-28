@@ -2410,8 +2410,9 @@
       const qtdTotal = parseInt(u.qtd) || 0;
       const qtdUsada = window.currentEquipe.filter(m => m.camisa_id === u.id).length;
       const restante = qtdTotal - qtdUsada;
-      const t = u.tamanho && u.tamanho !== 'Único' ? ` Tam ${u.tamanho}` : '';
-      const label = `${u.cor}${t} (${restante} restantes)`;
+      const t = u.tamanho ? u.tamanho : 'Único';
+      const c = u.cor || 'Sem Cor';
+      const label = `👕 ${c} — Tam: ${t} (${restante} disponíveis)`;
       optionsHtml += `<option value="${u.id}" ${restante <= 0 ? 'disabled' : ''}>${label}</option>`;
     });
     selectEl.innerHTML = optionsHtml;
