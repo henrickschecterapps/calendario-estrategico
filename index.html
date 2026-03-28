@@ -1813,8 +1813,11 @@
       btnAdmin.classList.toggle('active', enabled);
     }
     const canEdit = enabled || userRole === 'editor';
-    document.getElementById('btn-add-event').style.display   = canEdit ? 'flex' : 'none';
-    document.getElementById('tab-admin').style.display       = enabled ? 'flex' : 'none';
+    const btnAdd = document.getElementById('btn-add-event');
+    if (btnAdd) btnAdd.style.display = canEdit ? 'flex' : 'none';
+    
+    const tabAdm = document.getElementById('tab-admin');
+    if (tabAdm) tabAdm.style.display = enabled ? 'flex' : 'none';
     
     // Garantir que os botões do modal de detalhes sigam o papel correto
     const btnSave = document.getElementById('btn-save');
@@ -1826,8 +1829,9 @@
     // Show edit button in modal for admin and editor
     const _bse2 = document.getElementById('btn-switch-edit');
     if (_bse2) _bse2.style.display = (enabled || userRole === 'editor') ? 'flex' : 'none';
-    // Hide delete for editors
-    if (userRole === 'editor') document.getElementById('btn-delete').style.display = 'none';
+    
+    // Hide delete for editors specifically
+    if (userRole === 'editor' && btnDel) btnDel.style.display = 'none';
 
     // Se for admin, atualizar contador de usuários pendentes imediatamente
     if (enabled && userRole === 'admin' && typeof loadPendingUsers === 'function') {
@@ -1886,9 +1890,19 @@
   document.getElementById('btn-show-login').onclick = () => { document.getElementById('register-box').classList.add('hide'); document.getElementById('login-box').classList.remove('hide'); };
 
   document.getElementById('btn-login-submit').onclick = async () => {
+    const btn = document.getElementById('btn-login-submit');
     const em = document.getElementById('auth-email').value, pw = document.getElementById('auth-pass').value, err = document.getElementById('auth-error');
     if(!em || !pw) return;
-    try { document.getElementById('btn-login-submit').textContent = "Aguarde..."; await auth.signInWithEmailAndPassword(em, pw); } catch(error) { err.textContent = "Email ou senha incorretos."; err.style.display = 'block'; document.getElementById('btn-login-submit').textContent = "Entrar"; }
+    try { 
+      btn.textContent = "Aguarde..."; 
+      btn.disabled = true;
+      await auth.signInWithEmailAndPassword(em, pw); 
+    } catch(error) { 
+      err.textContent = "Email ou senha incorretos."; 
+      err.style.display = 'block'; 
+      btn.textContent = "Entrar"; 
+      btn.disabled = false;
+    }
   };
 
   document.getElementById('btn-reg-submit').onclick = async () => {
@@ -4850,7 +4864,7 @@
   };
 
   document.addEventListener('DOMContentLoaded', () => {
-    refreshIcons();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     // ── KEYBOARD SHORTCUTS (UX PRO) ──
     document.addEventListener('keydown', (e) => {
       // ESC - Fechar modais
