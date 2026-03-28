@@ -918,6 +918,7 @@
                     <button class="btn-secondary" onclick="window.openModalKits()" style="font-size:0.75rem;margin-right:8px;" title="Configurar Kits de Itens">📦 Kits Automáticos</button>
                     <button class="btn-primary" onclick="window.openDeployKitModal()" style="font-size:0.75rem;margin-right:8px;" title="Alocar Kit para Evento">🚀 Alocar Kit</button>
                     <button class="btn-primary" onclick="window.migrarLegadoEstoque()" style="font-size:0.75rem;display:none;" title="Migrar itens">⚙️</button>
+                     <button class="btn-primary" id="btn-novo-estoque" onclick="window.novoEstoque()" style="font-size:0.82rem;"><i data-lucide="plus" style="width:14px;height:14px;"></i> Novo Item</button>
                   </div>
 
                   <div class="gestao-table-wrap" id="estoque-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
@@ -1014,6 +1015,7 @@
                       <button id="btn-brinde-view-table" class="view-toggle active" onclick="window.setBrindeView('table')"><i data-lucide="list" style="margin-right:4px;"></i> Lista</button>
                       <button id="btn-brinde-view-kanban" class="view-toggle" onclick="window.setBrindeView('kanban')"><i data-lucide="kanban" style="margin-right:4px;"></i> Kanban</button>
                     </div>
+                     <button class="btn-primary" onclick="window.novoRegistro('brinde')" style="font-size:0.82rem;"><i data-lucide="plus" style="width:14px;height:14px;"></i> Novo Brinde</button>
                   </div>
 
                   <div id="brindes-kanban" class="hide kanban-board"></div>
@@ -1109,6 +1111,7 @@
                       <button id="btn-unif-view-table" class="view-toggle active" onclick="window.setUnifView('table')"><i data-lucide="list" style="margin-right:4px;"></i> Lista</button>
                       <button id="btn-unif-view-kanban" class="view-toggle" onclick="window.setUnifView('kanban')"><i data-lucide="kanban" style="margin-right:4px;"></i> Kanban</button>
                     </div>
+                     <button class="btn-primary" onclick="window.novoRegistro('uniforme')" style="font-size:0.82rem;"><i data-lucide="plus" style="width:14px;height:14px;"></i> Novo Uniforme</button>
                   </div>
 
                   <div id="unif-kanban" class="hide kanban-board"></div>
@@ -2820,18 +2823,37 @@
     const selectEl = document.getElementById('equipe-camisa');
     if(!listEl || !selectEl) return;
     
-    // 1. Calculate Unif Stock
+    // 1. Calculate Options from Almoxarifado (Direct) + Legacy Uniformes
+    let optionsHtml = '<option value="">Sem item / uniforme</option>';
+    
+    // Direct from Almoxarifado (Central)
+    if (typeof ESTOQUE !== 'undefined' && ESTOQUE.length > 0) {
+        optionsHtml += '<optgroup label="Almoxarifado Central">';
+        ESTOQUE.filter(e => e.tipo === 'uniforme' || e.tipo === 'brinde').forEach(e => {
+            const qtdTotal = parseInt(e.qtd_inicial) || 0;
+            const alocado = getEstoqueAlocado(e.id);
+            const restante = qtdTotal - alocado;
+            const label = `${e.tipo === 'uniforme' ? '👕' : '🎁'} ${e.nome} (${restante} disp.)`;
+            // Usamos prefixo 'est_' para identificar que é do almoxarifado no salvamento
+            optionsHtml += `<option value="est_${e.id}" ${restante <= 0 ? 'disabled' : ''}>${label}</option>`;
+        });
+        optionsHtml += '</optgroup>';
+    }
+
+    // From Specific Event Uniforms (Lotes alocados)
     const unifsForEvent = UNIFORMES.filter(u => u.evento_id === currentEditId);
-    let optionsHtml = '<option value="">Sem uniforme</option>';
-    unifsForEvent.forEach(u => {
-      const qtdTotal = parseInt(u.qtd) || 0;
-      const qtdUsada = window.currentEquipe.filter(m => m.camisa_id === u.id).length;
-      const restante = qtdTotal - qtdUsada;
-      const t = u.tamanho ? u.tamanho : 'Único';
-      const c = u.cor || 'Sem Cor';
-      const label = `👕 ${c} — Tam: ${t} (${restante} disponíveis)`;
-      optionsHtml += `<option value="${u.id}" ${restante <= 0 ? 'disabled' : ''}>${label}</option>`;
-    });
+    if (unifsForEvent.length > 0) {
+        optionsHtml += '<optgroup label="Lotes deste Evento">';
+        unifsForEvent.forEach(u => {
+            const qtdTotal = parseInt(u.qtd) || 0;
+            const qtdUsada = window.currentEquipe.filter(m => m.camisa_id === u.id).length;
+            const restante = qtdTotal - qtdUsada;
+            const label = `📦 ${u.cor||'Item'} - ${u.tamanho||'Padrão'} (${restante} disp.)`;
+            optionsHtml += `<option value="unif_${u.id}" ${restante <= 0 ? 'disabled' : ''}>${label}</option>`;
+        });
+        optionsHtml += '</optgroup>';
+    }
+    
     selectEl.innerHTML = optionsHtml;
     
     // 2. Render List
@@ -2840,9 +2862,17 @@
       return;
     }
     listEl.innerHTML = window.currentEquipe.map((m, i) => {
-      const unif = UNIFORMES.find(u => u.id === m.camisa_id);
+      let unifBadge = '';
+      if (m.camisa_id) {
+         const u = UNIFORMES.find(x => x.id === m.camisa_id);
+         if (u) unifBadge = `<span style="font-size:0.7rem;color:var(--accent);font-weight:700;"><i data-lucide="package" style="width:12px;height:12px;"></i> Lote: ${u.cor}</span>`;
+      } else if (m.estoque_id) {
+         const e = ESTOQUE.find(x => x.id === m.estoque_id);
+         if (e) unifBadge = `<span style="font-size:0.7rem;color:var(--teal);font-weight:700;"><i data-lucide="box" style="width:12px;height:12px;"></i> Master: ${e.nome}</span>`;
+      }
+      
       const funcBadge = m.funcao ? `<span style="font-size:0.7rem;background:var(--border);padding:2px 6px;border-radius:4px;font-weight:700;">${escapeHtml(m.funcao)}</span>` : '';
-      const unifBadge = unif ? `<span style="font-size:0.7rem;color:var(--accent);font-weight:700;"><i data-lucide="shirt" style="width:12px;height:12px;"></i> ${unif.cor} ${unif.tamanho !== 'Único' ? unif.tamanho : ''}</span>` : '';
+      
       return `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);padding:8px 12px;border-radius:var(--radius-sm);">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-weight:700;font-size:0.9rem;">${escapeHtml(m.nome)}</span>
@@ -2866,7 +2896,17 @@
     const camInp = document.getElementById('equipe-camisa');
     const nome = nomeInp.value.trim();
     if(!nome) return showToast('Informe o nome do participante.', 'warning');
-    window.currentEquipe.push({ nome, funcao: funcInp.value.trim(), camisa_id: camInp.value || '' });
+    
+    let mid = camInp.value || '';
+    let mobj = { nome, funcao: funcInp.value.trim(), camisa_id: '', estoque_id: '' };
+    
+    if (mid.startsWith('est_')) {
+        mobj.estoque_id = mid.replace('est_', '');
+    } else if (mid.startsWith('unif_')) {
+        mobj.camisa_id = mid.replace('unif_', '');
+    }
+    
+    window.currentEquipe.push(mobj);
     nomeInp.value = '';
     funcInp.value = '';
     window.renderEquipeBuilder();
@@ -3704,8 +3744,21 @@
 
   function getEstoqueAlocado(estId) {
     let sum = 0;
+    // 1. Alocações em Brindes
     BRINDES.filter(b => b.estoque_id === estId).forEach(b => sum += parseInt(b.qtd||0));
+    // 2. Alocações em Uniformes
     UNIFORMES.filter(u => u.estoque_id === estId).forEach(u => sum += parseInt(u.qtd||0));
+    // 3. Alocações individuais em Participantes (Equipe)
+    EVENTS.forEach(ev => {
+        if (ev.equipe && Array.isArray(ev.equipe)) {
+            ev.equipe.forEach(m => {
+                // Checa se o participante tem esse item do estoque vinculado
+                if (m.estoque_id === estId) sum += 1;
+                // Legado: se m.camisa_id aponta para um UNIFORME que por sua vez aponta para este estoque,
+                // já está contado no item 2 (UNIFORMES sum += qtd), então não somamos aqui para não duplicar.
+            });
+        }
+    });
     return sum;
   }
 
@@ -4855,16 +4908,80 @@
      if(btnSave && (type === 'uniforme' || type === 'brinde')) {
         btnSave.onclick = () => window[`save${type.charAt(0).toUpperCase() + type.slice(1)}`]();
      }
+     
+     // Stock badge logic
+     if (type === 'brinde' || type === 'uniforme') {
+         const selectId = type === 'brinde' ? 'brinde-estoque-id' : 'unif-estoque-id';
+         const selectEl = document.getElementById(selectId);
+         if (selectEl) {
+             selectEl.onchange = () => window.updateDrawerStockBadge(type);
+             window.updateDrawerStockBadge(type);
+         }
+     }
+  };
+
+  window.updateDrawerStockBadge = function(type) {
+     const selectId = type === 'brinde' ? 'brinde-estoque-id' : 'unif-estoque-id';
+     const selectEl = document.getElementById(selectId);
+     if (!selectEl) return;
+     const container = selectEl.parentElement;
+     const oldBadge = container.querySelector('.estoque-saldo-badge');
+     if (oldBadge) oldBadge.remove();
+     if (!selectEl.value) return;
+     
+     const item = ESTOQUE.find(e => e.id === selectEl.value);
+     if (item) {
+         const alocado = getEstoqueAlocado(item.id);
+         let disp = (parseInt(item.qtd_inicial) || 0) - alocado;
+         // Se editando, soma de volta o que já está reservado neste registro
+         const rid = document.getElementById(type === 'brinde' ? 'brinde-id' : 'unif-id').value;
+         if (rid) {
+             const r = (type === 'brinde' ? BRINDES : UNIFORMES).find(x => x.id === rid);
+             if (r && r.estoque_id === item.id) disp += parseInt(r.qtd || 0);
+         }
+         const badge = document.createElement('div');
+         badge.className = 'estoque-saldo-badge';
+         badge.style = `font-size:0.72rem;font-weight:700;color:${disp>0?'var(--green)':'var(--red)'};margin-top:4px;display:flex;align-items:center;gap:4px;`;
+         badge.innerHTML = `<i data-lucide="package" style="width:12px;height:12px;"></i> Saldo Almoxarifado: ${disp} un.`;
+         container.appendChild(badge);
+         if(typeof lucide !== 'undefined') lucide.createIcons();
+     }
   };
 
   window.closeGestaoDrawer = function(e) {
      if(e && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
      document.getElementById('gestao-drawer-overlay').classList.remove('open');
      ['estoque-id', 'brinde-id', 'unif-id', 'forn-id'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-     if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Adicionar';
+     // Reset button text
+     if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
      if(document.getElementById('btn-save-brinde')) document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
      if(document.getElementById('btn-save-unif')) document.getElementById('btn-save-unif').textContent = '+ Adicionar';
      if(document.getElementById('btn-save-forn')) document.getElementById('btn-save-forn').textContent = '+ Adicionar';
+     // Clear badges
+     document.querySelectorAll('.estoque-saldo-badge').forEach(b => b.remove());
+  };
+
+  // Funções para os Novos Botões
+  window.novoEstoque = function() {
+     // Limpa campos do estoque
+     ['estoque-id','estoque-nome','estoque-cor','estoque-tamanho','estoque-qtd','estoque-vlr','estoque-fornecedor'].forEach(id => {
+         const el = document.getElementById(id); if(el) el.value = '';
+     });
+     document.getElementById('estoque-tipo').value = 'brinde';
+     document.getElementById('estoque-nivel').value = 'Massa';
+     document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
+     window.openGestaoDrawer('estoque');
+  };
+
+  window.novoRegistro = function(type) {
+     // Usa o clique no "cancelar" do form correspondente para limpar dados
+     const cancelBtns = { 'brinde':'btn-cancel-brinde', 'uniforme':'btn-cancel-unif', 'fornecedor':'btn-cancel-forn' };
+     const cId = cancelBtns[type];
+     if (cId) {
+         const btn = document.getElementById(cId);
+         if (btn) btn.click();
+     }
+     window.openGestaoDrawer(type);
   };
 
   // KANBAN DRAG E DROP API
@@ -4938,6 +5055,23 @@
     const axFile = document.getElementById('unif-anexo').files[0];
     
     const btn = document.getElementById('btn-save-unif');
+    
+    // VALIDACAO DE ESTOQUE
+    const estItem = ESTOQUE.find(e => e.id === estoque_id);
+    if (estItem) {
+        const alocado = getEstoqueAlocado(estItem.id);
+        let disponivel = (parseInt(estItem.qtd_inicial) || 0) - alocado;
+        // Se for edição, "devolve" a qtd atual ao saldo para validar o novo valor
+        if (id) {
+            const currentRec = UNIFORMES.find(u => u.id === id);
+            if (currentRec && currentRec.estoque_id === estItem.id) disponivel += parseInt(currentRec.qtd || 0);
+        }
+        if (qtd > disponivel) {
+            showToast(`Saldo insuficiente no Almoxarifado! Disponível: ${disponivel}`, 'warning');
+            return;
+        }
+    }
+
     if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
     
     try {
@@ -4973,6 +5107,7 @@
       }
       window.closeGestaoDrawer();
       await loadUniformes();
+      if (typeof loadEstoque === 'function') await loadEstoque(); 
     } catch(err) { showToast('Erro ao salvar.', 'error'); }
     finally { if(btn) { btn.textContent = 'Adicionar'; btn.disabled = false; } }
   };
@@ -5017,6 +5152,22 @@
     const axFile = document.getElementById('brinde-anexo').files[0];
     
     const btn = document.getElementById('btn-save-brinde');
+
+    // VALIDACAO DE ESTOQUE
+    const estItem = ESTOQUE.find(e => e.id === estoque_id);
+    if (estItem) {
+        const alocado = getEstoqueAlocado(estItem.id);
+        let disponivel = (parseInt(estItem.qtd_inicial) || 0) - alocado;
+        if (id) {
+            const currentRec = BRINDES.find(b => b.id === id);
+            if (currentRec && currentRec.estoque_id === estItem.id) disponivel += parseInt(currentRec.qtd || 0);
+        }
+        if (qtd > disponivel) {
+            showToast(`Saldo insuficiente no Almoxarifado! Disponível: ${disponivel}`, 'warning');
+            return;
+        }
+    }
+
     if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
     
     try {
@@ -5048,6 +5199,7 @@
       }
       window.closeGestaoDrawer();
       await loadBrindes();
+      if (typeof loadEstoque === 'function') await loadEstoque();
     } catch(err) { showToast('Erro.', 'error'); }
     finally { if(btn) { btn.textContent = 'Adicionar'; btn.disabled = false; } }
   };
