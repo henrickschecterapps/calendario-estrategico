@@ -754,13 +754,108 @@
 
             <!-- Sub-tabs -->
             <div class="gestao-tabs">
-              <button class="gestao-tab active" data-gtab="brindes">🎁 Brindes</button>
+              <button class="gestao-tab active" data-gtab="estoque">📦 Almoxarifado</button>
+              <button class="gestao-tab" data-gtab="brindes">🎁 Pedidos/Eventos (Brindes)</button>
+              <button class="gestao-tab" data-gtab="uniformes">👕 Pedidos/Eventos (Uniformes)</button>
               <button class="gestao-tab" data-gtab="fornecedores">🏢 Fornecedores</button>
-              <button class="gestao-tab" data-gtab="uniformes">👕 Uniformes</button>
             </div>
 
-            <!-- ── BRINDES ── -->
-            <div class="gestao-pane active" id="gpane-brindes">
+            <!-- ── ESTOQUE GLOBAL (MATRIZ) ── -->
+            <div class="gestao-pane active" id="gpane-estoque">
+              
+              <div class="filter-bar-gestao">
+                <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
+                <input type="text" id="filtro-estoque-busca" placeholder="Buscar no estoque..." oninput="renderEstoque()">
+                <select id="filtro-estoque-tipo" onchange="renderEstoque()">
+                  <option value="">Qualquer Tipo</option>
+                  <option value="brinde">Brinde</option>
+                  <option value="uniforme">Uniforme</option>
+                </select>
+                <div style="flex:1;"></div>
+                <button class="btn-primary" onclick="window.migrarLegadoEstoque()" style="font-size:0.75rem;" title="Migrar itens antigos para o Almoxarifado Central">⚙️ Migrar Legado</button>
+              </div>
+
+              <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                <table class="gestao-table" id="estoque-table">
+                  <thead><tr>
+                    <th>Tipo</th>
+                    <th>Item de Estoque</th>
+                    <th>Subtipo / Nível</th>
+                    <th>Custo Unit.</th>
+                    <th>Fornecedor Padrão</th>
+                    <th>Estoque Original</th>
+                    <th>Alocado (Saídas)</th>
+                    <th>Saldo Atual</th>
+                    <th></th>
+                  </tr></thead>
+                  <tbody id="estoque-body"><tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item cadastrado no Almoxarifado.</td></tr></tbody>
+                </table>
+                <!-- FORM ADD ESTOQUE -->
+                <div class="gestao-add-bar" id="estoque-add-form" style="display:flex; flex-direction:column; gap:16px;">
+                  <input type="hidden" id="estoque-id">
+                  
+                  <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                    <div class="gestao-field">
+                      <label>Tipo *</label>
+                      <select class="gestao-input" id="estoque-tipo" onchange="window.toggleEstoqueFields()">
+                        <option value="brinde">Brinde</option>
+                        <option value="uniforme">Uniforme</option>
+                      </select>
+                    </div>
+                    <div class="gestao-field" style="flex:2;min-width:180px;">
+                      <label id="lbl-estoque-nome">Nome do Item *</label>
+                      <input type="text" class="gestao-input w-full" id="estoque-nome" placeholder="Ex: Copo Térmico">
+                    </div>
+                    <div class="gestao-field" id="wrap-est-nivel">
+                      <label>Nível</label>
+                      <select class="gestao-input" id="estoque-nivel">
+                        <option value="Massa">Massa</option>
+                        <option value="Qualificação">Qualificação</option>
+                        <option value="VIP">VIP</option>
+                      </select>
+                    </div>
+                    <div class="gestao-field" id="wrap-est-tamanho" style="display:none;">
+                      <label>Tamanho</label>
+                      <select class="gestao-input" id="estoque-tamanho">
+                        <option value="Único">Único</option>
+                        <option value="PP">PP</option>
+                        <option value="P">P</option>
+                        <option value="M">M</option>
+                        <option value="G">G</option>
+                        <option value="GG">GG</option>
+                      </select>
+                    </div>
+                    <div class="gestao-field" id="wrap-est-cor" style="display:none;">
+                      <label>Cor / Modelo</label>
+                      <input type="text" class="gestao-input w-sm" id="estoque-cor">
+                    </div>
+                    <div class="gestao-field">
+                      <label>Fornecedor Habitual</label>
+                      <select class="gestao-input" id="estoque-fornecedor">
+                        <option value="">— Selecionar —</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                    <div class="gestao-field">
+                      <label>Qtd Comprada (Acervo)</label>
+                      <input type="number" class="gestao-input w-sm" id="estoque-qtd" min="0" placeholder="0">
+                    </div>
+                    <div class="gestao-field">
+                      <label>Custo Padrão (R$)</label>
+                      <input type="number" class="gestao-input w-sm" id="estoque-vlr" min="0" step="0.01" placeholder="0,00">
+                    </div>
+                    <div style="flex:1;"></div>
+                    <button class="btn-icon" id="btn-cancel-estoque" style="display:none; white-space:nowrap;">✕ Cancelar</button>
+                    <button class="btn-primary" id="btn-save-estoque" style="white-space:nowrap;">+ Registrar no Almoxarifado</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── BRINDES (ALOCAÇÃO) ── -->
+            <div class="gestao-pane" id="gpane-brindes">
               <div class="gestao-summary" id="brindes-summary"></div>
               
               <div class="filter-bar-gestao">
@@ -3069,6 +3164,7 @@
   // ── GESTÃO OPERACIONAL: BRINDES / FORNECEDORES / UNIFORMES
   // ══════════════════════════════════════════════════════════
 
+  let ESTOQUE     = [];
   let BRINDES     = [];
   let FORNECEDORES_LIST = [];
   let UNIFORMES   = [];
@@ -3108,7 +3204,7 @@
 
   // ── Preencher selects de fornecedor/evento nos forms ──
   function populateGestaoSelects() {
-    ['brinde-fornecedor','unif-fornecedor'].forEach(selId => {
+    ['brinde-fornecedor','unif-fornecedor','estoque-fornecedor'].forEach(selId => {
       const sel = document.getElementById(selId);
       if (!sel) return;
       const cur = sel.value;
@@ -3133,6 +3229,187 @@
       if (cur) sel.value = cur;
     });
   }
+
+  // ════════════ ALMOXARIFADO (ESTOQUE GLOBAL) ════════════
+  window.toggleEstoqueFields = function() {
+    const t = document.getElementById('estoque-tipo').value;
+    document.getElementById('wrap-est-nivel').style.display = t === 'brinde' ? 'block' : 'none';
+    document.getElementById('wrap-est-tamanho').style.display = t === 'uniforme' ? 'block' : 'none';
+    document.getElementById('wrap-est-cor').style.display = t === 'uniforme' ? 'block' : 'none';
+    document.getElementById('lbl-estoque-nome').textContent = t === 'brinde' ? 'Nome do Brinde *' : 'Modelo Uniforme *';
+  };
+
+  async function loadEstoque() {
+    try {
+      const snap = await db.collection("estoque").orderBy("nome").get();
+      ESTOQUE = [];
+      snap.forEach(doc => ESTOQUE.push({ id: doc.id, ...doc.data() }));
+    } catch(e) { ESTOQUE = []; }
+    renderEstoque();
+  }
+
+  function getEstoqueAlocado(estId) {
+    let sum = 0;
+    BRINDES.filter(b => b.estoque_id === estId).forEach(b => sum += parseInt(b.qtd||0));
+    UNIFORMES.filter(u => u.estoque_id === estId).forEach(u => sum += parseInt(u.qtd||0));
+    return sum;
+  }
+
+  function renderEstoque() {
+    const tbody = document.getElementById('estoque-body');
+    if (!tbody) return;
+    const busca = (document.getElementById('filtro-estoque-busca')?.value || '').toLowerCase();
+    const tipo = document.getElementById('filtro-estoque-tipo')?.value || '';
+    let list = ESTOQUE;
+    if (busca) list = list.filter(e => (e.nome||'').toLowerCase().includes(busca) || (e.cor||'').toLowerCase().includes(busca));
+    if (tipo) list = list.filter(e => e.tipo === tipo);
+
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item cadastrado no Almoxarifado.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(e => {
+      const qtdTotal = parseInt(e.qtd_inicial)||0;
+      const qtdAlocada = getEstoqueAlocado(e.id);
+      const saldo = qtdTotal - qtdAlocada;
+      const vlr = parseFloat(e.vlr_unit)||0;
+      const isBrinde = e.tipo === 'brinde';
+      let subtipoHtml = isBrinde ? nivelBadge(e.nivel) : `<span style="font-size:0.75rem;font-weight:700;">Tam: ${e.tamanho||'Único'}</span>`;
+      const isNew = window.lastSavedId === e.id ? 'flash-green' : '';
+      let corFormat = !isBrinde && e.cor ? `<br><span style="font-size:0.75rem;color:var(--muted)">Cor: ${escapeHtml(e.cor)}</span>` : '';
+      
+      return `<tr class="${isNew}">
+        <td><span class="badge ${isBrinde ? 'nivel-massa' : 'nivel-vip'}" style="font-size:0.7rem;">${isBrinde ? '🎁 Brinde' : '👕 Uniforme'}</span></td>
+        <td><strong>${highlight(e.nome, busca)}</strong>${corFormat}</td>
+        <td>${subtipoHtml}</td>
+        <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
+        <td style="font-size:0.75rem">${fornNome(e.fornecedor_id)}</td>
+        <td style="font-weight:700;color:var(--text)">${qtdTotal}</td>
+        <td style="font-weight:700;color:var(--amber)">${qtdAlocada}</td>
+        <td style="font-weight:800;color:${saldo<0?'var(--red)':saldo===0?'var(--muted)':'var(--green)'}">${saldo}</td>
+        <td style="text-align:right;white-space:nowrap;">
+          <button class="tbl-action edit" onclick="window.editEstoque('${e.id}')" title="Editar">✏️</button>
+          <button class="tbl-action del" onclick="window.deleteEstoque('${e.id}')" title="Excluir">🗑️</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  window.editEstoque = (id) => {
+    const e = ESTOQUE.find(x => x.id === id); if(!e) return;
+    document.getElementById('estoque-id').value = id;
+    document.getElementById('estoque-tipo').value = e.tipo || 'brinde';
+    window.toggleEstoqueFields();
+    document.getElementById('estoque-nome').value = e.nome || '';
+    document.getElementById('estoque-nivel').value = e.nivel || 'Massa';
+    document.getElementById('estoque-tamanho').value = e.tamanho || 'Único';
+    document.getElementById('estoque-cor').value = e.cor || '';
+    document.getElementById('estoque-qtd').value = e.qtd_inicial || '';
+    document.getElementById('estoque-vlr').value = e.vlr_unit || '';
+    document.getElementById('estoque-fornecedor').value = e.fornecedor_id || '';
+    document.getElementById('btn-save-estoque').textContent = 'Salvar Alterações';
+    document.getElementById('btn-cancel-estoque').style.display = 'inline-block';
+    const form = document.getElementById('estoque-add-form');
+    if(form) form.scrollIntoView({behavior:'smooth', block:'nearest'});
+  };
+
+  document.getElementById('btn-cancel-estoque').onclick = () => {
+    document.getElementById('estoque-id').value = '';
+    ['estoque-nome','estoque-cor','estoque-qtd','estoque-vlr','estoque-fornecedor'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
+    document.getElementById('estoque-tipo').value = 'brinde';
+    document.getElementById('estoque-nivel').value = 'Massa';
+    document.getElementById('estoque-tamanho').value = 'Único';
+    window.toggleEstoqueFields();
+    document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
+    document.getElementById('btn-cancel-estoque').style.display = 'none';
+  };
+
+  document.getElementById('btn-save-estoque').onclick = async () => {
+    const id = document.getElementById('estoque-id').value;
+    const nome = document.getElementById('estoque-nome').value.trim();
+    if (!nome) { showToast('Nome do item é obrigatório.', 'warning'); return; }
+    
+    const btn = document.getElementById('btn-save-estoque');
+    btn.textContent = 'Salvando...'; btn.disabled = true;
+    
+    const payload = {
+      tipo: document.getElementById('estoque-tipo').value,
+      nome,
+      nivel: document.getElementById('estoque-nivel').value,
+      tamanho: document.getElementById('estoque-tamanho').value,
+      cor: document.getElementById('estoque-cor').value.trim(),
+      qtd_inicial: parseInt(document.getElementById('estoque-qtd').value) || 0,
+      vlr_unit: parseFloat(document.getElementById('estoque-vlr').value) || 0,
+      fornecedor_id: document.getElementById('estoque-fornecedor').value || ''
+    };
+    
+    try {
+      if (id) {
+        await db.collection("estoque").doc(id).update(payload);
+        showToast('Item atualizado no almoxarifado!', 'success');
+        window.lastSavedId = id;
+      } else {
+        payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
+        const docRef = await db.collection("estoque").add(payload);
+        showToast('Item registrado no almoxarifado! 📦', 'success');
+        window.lastSavedId = docRef.id;
+      }
+      document.getElementById('btn-cancel-estoque').click();
+      await loadEstoque();
+      setTimeout(() => window.lastSavedId = null, 3000);
+    } catch(e) { showToast('Erro ao salvar no almoxarifado.', 'error'); }
+    btn.disabled = false;
+  };
+
+  window.deleteEstoque = async (id) => {
+    const ok = await showConfirm('Excluir do almoxarifado?', 'Tem certeza? Eventos alocados com este item perderão o vínculo de matriz.');
+    if (!ok) return;
+    try { await db.collection("estoque").doc(id).delete(); showToast('Item excluído.', 'warning'); await loadEstoque(); } catch(e) { showToast('Erro ao excluir.', 'error'); }
+  };
+
+  window.migrarLegadoEstoque = async () => {
+    const ok = await showConfirm('Integração de Estoque Global', 'Isso transformará todos os Brindes e Uniformes existentes em registros matrizes do Almoxarifado Central, calculando o que já foi usado como saída. É recomendado rodar apenas 1 vez. Continuar?');
+    if (!ok) return;
+    try {
+      const batch = db.batch();
+      const stIds = {}; 
+
+      // 1. Unifica Brindes
+      for(let b of BRINDES) {
+        if(b.estoque_id) continue;
+        let pKey = `brinde_${(b.titulo||'').toLowerCase()}_${b.nivel||''}`;
+        if(!stIds[pKey]) {
+          const newDoc = db.collection("estoque").doc();
+          stIds[pKey] = newDoc.id;
+          batch.set(newDoc, { tipo: 'brinde', nome: b.titulo||'Brinde Sem Nome', nivel: b.nivel, qtd_inicial: parseInt(b.qtd||0), vlr_unit: parseFloat(b.vlr_unit||0), fornecedor_id: b.fornecedor_id||'', criado_em: firebase.firestore.FieldValue.serverTimestamp() });
+        } else {
+          const matrixRef = db.collection("estoque").doc(stIds[pKey]);
+          batch.update(matrixRef, { qtd_inicial: firebase.firestore.FieldValue.increment(parseInt(b.qtd||0)) });
+        }
+        batch.update(db.collection("brindes").doc(b.id), { estoque_id: stIds[pKey] });
+      }
+
+      // 2. Unifica Uniformes
+      for(let u of UNIFORMES) {
+        if(u.estoque_id) continue;
+        let pKey = `unif_${(u.cor||'').toLowerCase()}_${u.tamanho||''}`;
+        if(!stIds[pKey]) {
+          const newDoc = db.collection("estoque").doc();
+          stIds[pKey] = newDoc.id;
+          batch.set(newDoc, { tipo: 'uniforme', nome: u.cor ? `Camisa ${u.cor}` : 'Uniforme', cor: u.cor||'', tamanho: u.tamanho||'Único', qtd_inicial: parseInt(u.qtd||0), vlr_unit: parseFloat(u.vlr_unit||0), fornecedor_id: u.fornecedor_id||'', criado_em: firebase.firestore.FieldValue.serverTimestamp() });
+        } else {
+          const matrixRef = db.collection("estoque").doc(stIds[pKey]);
+          batch.update(matrixRef, { qtd_inicial: firebase.firestore.FieldValue.increment(parseInt(u.qtd||0)) });
+        }
+        batch.update(db.collection("uniformes").doc(u.id), { estoque_id: stIds[pKey] });
+      }
+
+      await batch.commit();
+      showToast('Migração Realizada! Base populada.', 'success', 5000);
+      await loadGestaoModules();
+    } catch(e) { console.error(e); showToast('Falha ao migrar.', 'error'); }
+  };
 
   // ════════════ FORNECEDORES ════════════
   async function loadFornecedores() {
@@ -3596,11 +3873,12 @@
   // ── Carrega tudo ao entrar no painel admin ──
   // Ao invés de capturar a função anterior (que pode não estar definida ainda),
   // usamos um flag para carregar os módulos da primeira vez que o painel for renderizado.
-  let _fornLoaded=false, _brindesLoaded=false, _unifLoaded=false;
+  let _fornLoaded=false, _estoqueLoaded=false, _brindesLoaded=false, _unifLoaded=false;
 
   function loadGestaoModules() {
     if (userRole !== 'admin') return;
     if (!_fornLoaded)     { _fornLoaded=true;     loadFornecedores(); }
+    if (!_estoqueLoaded)  { _estoqueLoaded=true;  loadEstoque(); }
     if (!_brindesLoaded)  { _brindesLoaded=true;  loadBrindes(); }
     if (!_unifLoaded)     { _unifLoaded=true;      loadUniformes(); }
   }
