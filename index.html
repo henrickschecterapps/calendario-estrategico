@@ -373,9 +373,11 @@
   .admin-nav-item.active { color: var(--accent); background: rgba(37,99,235,0.07); font-weight: 700; }
   .admin-nav-item.active::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--accent); border-radius: 0 3px 3px 0; }
   .admin-nav-item .nav-icon { font-size: 1.1rem; flex-shrink: 0; width: 22px; text-align: center; }
-  .admin-nav-badge { margin-left: auto; font-size: 0.68rem; font-weight: 800; padding: 2px 7px; border-radius: 10px; background: var(--red); color: #fff; animation: pulse-green 2s infinite; }
+  .admin-nav-badge { margin-left: auto; font-size: 0.68rem; font-weight: 800; padding: 2px 7px; border-radius: 10px; background: var(--red); color: #fff; animation: pulse-red 2s infinite; }
+  @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); } 70% { box-shadow: 0 0 0 8px rgba(220,38,38,0); } 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); } }
   .admin-nav-divider { height: 1px; background: var(--border); margin: 8px 20px; }
-  .admin-section { display: none; padding: 32px; flex-direction: column; gap: 24px; animation: fadeIn 0.25s ease; overflow-y: auto; flex: 1; }
+  .admin-section { display: none; padding: 32px; flex-direction: column; gap: 24px; animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; flex: 1; }
+  @keyframes slideInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
   .admin-section.active { display: flex; }
   #asec-operacional.active { display: flex; flex-direction: column; padding: 0; gap: 0; overflow: hidden; }
   #asec-operacional > div:last-child { overflow-y: auto; flex: 1; }
@@ -537,6 +539,24 @@
   /* Animation New Row */
   @keyframes flashGreen { 0% { background: rgba(16,185,129,0.3); } 100% { background: transparent; } }
   .flash-green { animation: flashGreen 2.5s ease-out forwards; }
+
+  /* ── PDF EXPORT OPTIMIZATION ── */
+  .pdf-capture { background: #fff !important; color: #000 !important; width: 1080px !important; padding: 40px !important; border-radius: 0 !important; }
+  .pdf-capture * { transition: none !important; animation: none !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .pdf-capture .admin-card, .pdf-capture .admin-panel, .pdf-capture .bento-item { background: #fff !important; border: 1px solid #eee !important; color: #000 !important; }
+  .pdf-capture .admin-card-value { color: #000 !important; }
+  .pdf-capture .badge { border: 1px solid #ddd !important; background: #f9f9f9 !important; color: #333 !important; }
+  .pdf-capture .chart-container { height: 350px !important; }
+  .pdf-capture button, .pdf-capture .modal-actions-top, .pdf-capture .admin-sidenav { display: none !important; }
+  .pdf-capture .history-item { border-bottom: 1px solid #eee !important; }
+  .pdf-capture h1, .pdf-capture h2, .pdf-capture h3 { color: #000 !important; }
+  .pdf-capture .resp-pill { background: #eee !important; border: 1px solid #ccc !important; }
+  .pdf-capture .comment-bubble { background: #fdfdfd !important; border: 1px solid #eee !important; }
+  .pdf-capture .modal, .pdf-capture .admin-section, .pdf-capture #notif-list, .pdf-capture .checkbox-list-container { 
+    max-height: none !important; height: auto !important; overflow: visible !important; display: block !important; 
+  }
+  .pdf-capture .admin-layout { display: block !important; height: auto !important; border: none !important; }
+  .pdf-capture .admin-panels { grid-template-columns: 1fr !important; }
 
 </style>
 </head>
@@ -1776,8 +1796,11 @@
   function applyAdminUI(enabled) {
     isAdmin = enabled;
     document.body.classList.toggle('admin-mode', enabled);
-    document.getElementById('btn-admin-toggle').style.display = enabled ? 'flex' : 'none';
-    document.getElementById('btn-admin-toggle').classList.toggle('active', enabled);
+    const btnAdmin = document.getElementById('btn-admin-toggle');
+    if (btnAdmin) {
+      btnAdmin.style.display = enabled ? 'flex' : 'none';
+      btnAdmin.classList.toggle('active', enabled);
+    }
     document.getElementById('btn-add-event').style.display   = (enabled || userRole === 'editor') ? 'flex' : 'none';
     document.getElementById('tab-admin').style.display       = enabled ? 'flex' : 'none';
     renderRoleBadge(userRole);
@@ -1786,6 +1809,11 @@
     if (_bse2) _bse2.style.display = (enabled || userRole === 'editor') ? 'flex' : 'none';
     // Hide delete for editors
     if (userRole === 'editor') document.getElementById('btn-delete').style.display = 'none';
+
+    // Se for admin, atualizar contador de usuários pendentes imediatamente
+    if (enabled && userRole === 'admin' && typeof loadPendingUsers === 'function') {
+      loadPendingUsers();
+    }
   }
 
   // ── AUTENTICAÇÃO FIREBASE ──
@@ -2934,27 +2962,91 @@
   const _bse = document.getElementById('btn-switch-edit');
   if (_bse) _bse.onclick = () => window.openAdminForm(currentEditId);
 
+  // ── FUNÇÕES AUXILIARES PARA PDF ──
+  function generateProfessionalPDF(elementId, filename, isLandscape = false) {
+    const original = document.getElementById(elementId);
+    if (!original) return;
+
+    // Criar clone para manipulação sem afetar a UI
+    const clone = original.cloneNode(true);
+    clone.classList.add('pdf-capture');
+    
+    // Configurar container invisível mas renderizável
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.top = '0';
+    container.appendChild(clone);
+    document.body.appendChild(container);
+
+    // Adicionar cabeçalho oficial no PDF
+    const header = document.createElement('div');
+    header.style.display = 'flex';
+    header.style.justifyContent = 'space-between';
+    header.style.alignItems = 'center';
+    header.style.marginBottom = '30px';
+    header.style.paddingBottom = '15px';
+    header.style.borderBottom = '2px solid #333';
+    header.innerHTML = `
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:#000;">Tripla <span style="color:#2563eb">·</span> Eventos</div>
+      <div style="text-align:right;">
+        <div style="font-size:12px;font-weight:700;color:#666;">RELATÓRIO GERENCIAL SISTEMA ERP</div>
+        <div style="font-size:10px;color:#999;">Gerado em: ${new Date().toLocaleString('pt-BR')}</div>
+      </div>
+    `;
+    clone.prepend(header);
+
+    // Ajustes específicos no clone (remover botões, expandir scrolls)
+    clone.querySelectorAll('button, .modal-actions-top, .admin-sidenav').forEach(el => el.remove());
+    
+    // CORREÇÃO CRÍTICA: Copiar conteúdo de Canvas (Chart.js) para o clone
+    const originalCanvases = original.querySelectorAll('canvas');
+    const clonedCanvases = clone.querySelectorAll('canvas');
+    originalCanvases.forEach((orig, idx) => {
+      if (clonedCanvases[idx]) {
+        const destCtx = clonedCanvases[idx].getContext('2d');
+        clonedCanvases[idx].width = orig.width;
+        clonedCanvases[idx].height = orig.height;
+        destCtx.drawImage(orig, 0, 0);
+      }
+    });
+
+    const opt = { 
+      margin: 0.4, 
+      filename: filename, 
+      image: { type: 'jpeg', quality: 1.0 }, 
+      html2canvas: { 
+        scale: 3, 
+        useCORS: true, 
+        letterRendering: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      }, 
+      jsPDF: { unit: 'in', format: 'a4', orientation: isLandscape ? 'landscape' : 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    return html2pdf().set(opt).from(clone).save().then(() => {
+      document.body.removeChild(container);
+    });
+  }
+
   // PDF do Modal de Evento
   const _btnPdfModal = document.getElementById('btn-export-pdf-modal');
   if (_btnPdfModal) {
-    _btnPdfModal.onclick = () => {
-      const el = document.getElementById('mode-view');
+    _btnPdfModal.onclick = async () => {
+      const originalText = _btnPdfModal.innerHTML;
+      _btnPdfModal.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Gerando Ficha...';
+      _btnPdfModal.disabled = true;
+      refreshIcons();
+      
       const evName = EVENTS.find(e => e.id === currentEditId)?.evento.replace(/\s+/g,'_') || 'Evento';
-      const opt = { 
-        margin: 0.5, 
-        filename: `Evento_${evName}.pdf`, 
-        image: { type: 'jpeg', quality: 0.98 }, 
-        html2canvas: { scale: 2, useCORS: true }, 
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } 
-      };
+      await generateProfessionalPDF('mode-view', `Ficha_Evento_${evName}.pdf`, false);
       
-      const toHide = document.querySelectorAll('#mode-view button.btn-icon, #mode-view .modal-actions-top');
-      toHide.forEach(b => b.style.visibility = 'hidden');
-      
-      html2pdf().set(opt).from(el).save().then(() => {
-        toHide.forEach(b => b.style.visibility = '');
-        showToast('PDF do evento gerado!', 'success');
-      });
+      _btnPdfModal.innerHTML = originalText;
+      _btnPdfModal.disabled = false;
+      refreshIcons();
+      showToast('Ficha técnica gerada com sucesso!', 'success');
     };
   }
 
@@ -2963,18 +3055,11 @@
   if (_btnPdfDash) {
     _btnPdfDash.onclick = async () => {
        const originalText = _btnPdfDash.innerHTML;
-       _btnPdfDash.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Gerando...';
+       _btnPdfDash.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Gerando Painel...';
        _btnPdfDash.disabled = true;
        refreshIcons();
        try {
-         const dashArea = document.getElementById('asec-dashboard');
-         const opt = { 
-           margin: 0.3, 
-           filename: `Dashboard_ERP_${new Date().toISOString().slice(0,10)}.pdf`, 
-           html2canvas: { scale: 1.5, useCORS: true }, 
-           jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' } 
-         };
-         await html2pdf().set(opt).from(dashArea).save();
+         await generateProfessionalPDF('asec-dashboard', `Relatorio_Dashboard_${new Date().toISOString().slice(0,10)}.pdf`, true);
          showToast('Painel exportado com sucesso!', 'success');
        } catch(err) {
          showToast('Erro ao exportar PDF.', 'error');
@@ -4742,7 +4827,25 @@
      document.getElementById('btn-deploy-kit').disabled = false;
   };
 
-  document.addEventListener('DOMContentLoaded', refreshIcons);
+  document.addEventListener('DOMContentLoaded', () => {
+    refreshIcons();
+    // ── KEYBOARD SHORTCUTS (UX PRO) ──
+    document.addEventListener('keydown', (e) => {
+      // ESC - Fechar modais
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+      }
+      // CTRL+S - Salvar Formulário Admin (se estiver aberto e visível)
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        const modalOpen = document.getElementById('modal-overlay').classList.contains('open');
+        const isEditMode = !document.getElementById('mode-edit').classList.contains('hide');
+        if (modalOpen && isEditMode) {
+          e.preventDefault();
+          window.saveAdminForm(); 
+        }
+      }
+    });
+  });
 </script>
 </body>
 </html>
