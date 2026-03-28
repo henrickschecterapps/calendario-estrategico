@@ -923,8 +923,21 @@
                       <input type="number" class="gestao-input w-sm" id="unif-qtd" min="1" placeholder="0">
                     </div>
                     <div class="gestao-field">
-                      <label>Cor</label>
-                      <input type="text" class="gestao-input w-md" id="unif-cor" placeholder="Ex: Azul marinho">
+                      <label>Tamanho</label>
+                      <select class="gestao-input w-sm" id="unif-tamanho">
+                        <option value="Único">Único</option>
+                        <option value="PP">PP</option>
+                        <option value="P">P</option>
+                        <option value="M">M</option>
+                        <option value="G">G</option>
+                        <option value="GG">GG</option>
+                        <option value="XG">XG</option>
+                        <option value="XGG">XGG</option>
+                      </select>
+                    </div>
+                    <div class="gestao-field">
+                      <label>Cor / Modelo</label>
+                      <input type="text" class="gestao-input w-md" id="unif-cor" placeholder="Ex: Polo Azul">
                     </div>
                     <div class="gestao-field">
                       <label>Vlr Unit. (R$)</label>
@@ -1110,7 +1123,29 @@
                 <button class="btn-primary" style="padding:6px 10px;" id="btn-add-resp-modal">+</button>
             </div>
           </div>
-          <div class="form-full"><label class="form-label" style="color:var(--green)">Participantes da Tripla</label><input type="text" class="admin-input" id="edit-participantes" placeholder="Ex: Henrique, Emilly..."></div>
+          <div class="form-full">
+            <label class="form-label" style="color:var(--green)">Participantes da Tripla (Equipe)</label>
+            <div id="equipe-builder-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;"></div>
+            <div style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; background:var(--surface2); padding:12px; border-radius:var(--radius); border:1px solid var(--border);">
+              <div style="flex:1;min-width:140px;">
+                <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Membro</label>
+                <input type="text" id="equipe-nome" class="admin-input" style="margin:0;" placeholder="Ex: Henrique">
+              </div>
+              <div style="flex:1;min-width:140px;">
+                <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Função</label>
+                <input type="text" id="equipe-funcao" class="admin-input" style="margin:0;" placeholder="Ex: Fotógrafo">
+              </div>
+              <div style="flex:1.5;min-width:160px;">
+                <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Uniforme</label>
+                <select id="equipe-camisa" class="admin-input" style="margin:0;">
+                  <option value="">Sem uniforme</option>
+                </select>
+              </div>
+              <button class="btn-primary" id="btn-add-equipe" style="margin:0; height:42px;">+ Adicionar</button>
+            </div>
+            <!-- Backup for legacy -->
+            <input type="hidden" id="edit-participantes">
+          </div>
         </div>
 
         <div class="admin-section-title">Operacional</div>
@@ -1874,6 +1909,26 @@
 
   // ── DASHBOARD ADMIN (ANALYTICS COMPLETO) ──
   let myChart = null, chartMeses = null, chartStatus = null, chartResp = null;
+  window.adminEventLimit = 10;
+
+  window.renderAdminEventList = function() {
+    const tbody = document.getElementById('admin-event-list-body');
+    if (!tbody) return;
+    const q = (document.getElementById('admin-event-search')?.value || '').toLowerCase();
+    
+    let evs = getFilteredEvents().sort((a,b) => (parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0)));
+    if (q) evs = evs.filter(e => (e.evento||'').toLowerCase().includes(q) || (e.responsavel||'').toLowerCase().includes(q));
+    
+    const count = evs.length;
+    const sliced = evs.slice(0, window.adminEventLimit);
+    
+    tbody.innerHTML = sliced.length === 0
+      ? '<tr><td colspan="5" class="empty-state">Nenhum evento encontrado.</td></tr>'
+      : sliced.map(e => `<tr><td style="font-size:0.85rem;font-weight:700;">${dateFmt(e)}</td><td style="font-weight:800;">${highlight(e.evento, q)}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">${getRespArray(e.responsavel).map(r=>`<span class="resp-pill">${highlight(r, q)}</span>`).join('')||'—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align:right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')">✏️</button></td></tr>`).join('');
+      
+    const cont = document.getElementById('admin-event-ver-mais-container');
+    if (cont) cont.style.display = window.adminEventLimit < count ? 'block' : 'none';
+  };
 
   function getChartTextColor() {
     return getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() || '#64748b';
@@ -1941,11 +1996,7 @@
     sub('dash-concluidos-sub', `${Math.round((concluidos/Math.max(total,1))*100)}% do total`);
 
     // Lista rápida de edição
-    const tbody = document.getElementById('admin-event-list-body');
-    const evs = getFilteredEvents().sort((a,b) => (parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0)));
-    tbody.innerHTML = evs.length === 0
-      ? '<tr><td colspan="5" class="empty-state">Nenhum evento.</td></tr>'
-      : evs.map(e => `<tr><td style="font-size:0.85rem;font-weight:700;">${dateFmt(e)}</td><td style="font-weight:800;">${e.evento}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">${getRespArray(e.responsavel).map(r=>`<span class="resp-pill">${r}</span>`).join('')||'—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align:right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')">✏️</button></td></tr>`).join('');
+    window.renderAdminEventList();
 
     if (userRole !== 'admin') return;
 
@@ -2309,7 +2360,17 @@
     toggleBlock('block-publico', ev.publico);
     toggleBlock('block-beneficios', ev.beneficios);
     toggleBlock('block-obs', ev.obs);
-    toggleBlock('block-participantes', ev.participantes);
+    if (ev.equipe && ev.equipe.length > 0) {
+      document.getElementById('block-participantes').style.display = 'block';
+      const mapEquipe = ev.equipe.map(m => {
+        const bdg = m.funcao ? `<span style="font-size:0.7rem;background:var(--border);padding:2px 5px;border-radius:4px;font-weight:700;color:var(--text);margin-left:4px;">${escapeHtml(m.funcao)}</span>` : '';
+        const unifBdg = m.camisa_id ? (() => { const u=UNIFORMES.find(x=>x.id===m.camisa_id); return u ? `<span style="font-size:0.7rem;color:var(--accent);font-weight:700;margin-left:6px;">👕 ${u.cor} ${u.tamanho!=='Único'?u.tamanho:''}</span>`:'' })() : '';
+        return `<div style="padding:4px 0; border-bottom:1px solid rgba(0,0,0,0.05);">${escapeHtml(m.nome)}${bdg}${unifBdg}</div>`;
+      }).join('');
+      document.getElementById('view-participantes').innerHTML = mapEquipe;
+    } else {
+      toggleBlock('block-participantes', ev.participantes);
+    }
     toggleBlock('block-localidade', ev.localidade, v => `<a href="https://maps.google.com/?q=${encodeURIComponent(v)}" target="_blank" style="color:var(--accent);font-weight:700;">${escapeHtml(v)} 🗺️</a>`);
     toggleBlock('block-hora', (ev.hora_ini ? ev.hora_ini + (ev.hora_fim ? ' – ' + ev.hora_fim : '') : null));
 
@@ -2335,6 +2396,71 @@
     }
   };
 
+  window.currentEquipe = [];
+  
+  window.renderEquipeBuilder = function() {
+    const listEl = document.getElementById('equipe-builder-list');
+    const selectEl = document.getElementById('equipe-camisa');
+    if(!listEl || !selectEl) return;
+    
+    // 1. Calculate Unif Stock
+    const unifsForEvent = UNIFORMES.filter(u => u.evento_id === currentEditId);
+    let optionsHtml = '<option value="">Sem uniforme</option>';
+    unifsForEvent.forEach(u => {
+      const qtdTotal = parseInt(u.qtd) || 0;
+      const qtdUsada = window.currentEquipe.filter(m => m.camisa_id === u.id).length;
+      const restante = qtdTotal - qtdUsada;
+      const t = u.tamanho && u.tamanho !== 'Único' ? ` Tam ${u.tamanho}` : '';
+      const label = `${u.cor}${t} (${restante} restantes)`;
+      optionsHtml += `<option value="${u.id}" ${restante <= 0 ? 'disabled' : ''}>${label}</option>`;
+    });
+    selectEl.innerHTML = optionsHtml;
+    
+    // 2. Render List
+    if(window.currentEquipe.length === 0) {
+      listEl.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:8px 0;background:var(--surface2);border-radius:var(--radius-sm);">Nenhum participante adicionado.</div>';
+      return;
+    }
+    listEl.innerHTML = window.currentEquipe.map((m, i) => {
+      const unif = UNIFORMES.find(u => u.id === m.camisa_id);
+      const funcBadge = m.funcao ? `<span style="font-size:0.7rem;background:var(--border);padding:2px 6px;border-radius:4px;font-weight:700;">${escapeHtml(m.funcao)}</span>` : '';
+      const unifBadge = unif ? `<span style="font-size:0.7rem;color:var(--accent);font-weight:700;">👕 ${unif.cor} ${unif.tamanho !== 'Único' ? unif.tamanho : ''}</span>` : '';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);padding:8px 12px;border-radius:var(--radius-sm);">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-weight:700;font-size:0.9rem;">${escapeHtml(m.nome)}</span>
+          ${funcBadge}
+          ${unifBadge}
+        </div>
+        <button class="btn-icon" onclick="window.delEquipeMember(${i})" style="color:var(--red);">🗑️</button>
+      </div>`;
+    }).join('');
+  };
+
+  window.delEquipeMember = function(idx) {
+    window.currentEquipe.splice(idx, 1);
+    window.renderEquipeBuilder();
+  };
+
+  document.getElementById('btn-add-equipe').onclick = (e) => {
+    e.preventDefault();
+    const nomeInp = document.getElementById('equipe-nome');
+    const funcInp = document.getElementById('equipe-funcao');
+    const camInp = document.getElementById('equipe-camisa');
+    const nome = nomeInp.value.trim();
+    if(!nome) return showToast('Informe o nome do participante.', 'warning');
+    
+    window.currentEquipe.push({
+      nome,
+      funcao: funcInp.value.trim(),
+      camisa_id: camInp.value || ''
+    });
+    
+    nomeInp.value = '';
+    funcInp.value = '';
+    window.renderEquipeBuilder();
+    nomeInp.focus();
+  };
+
   window.openAdminForm = function(id) {
     if(userRole !== 'admin' && userRole !== 'editor') return showToast("Acesso restrito. Apenas admins e editores podem editar.", 'error');
     let ev = EVENTS.find(e => e.id === id);
@@ -2354,6 +2480,12 @@
     document.querySelectorAll('.resp-checkbox').forEach(cb => { cb.checked = selectedArr.includes(cb.value); });
     const fields = { 'id':'id','nome':'evento','ini':'data_ini','fim':'data_fim','hora-ini':'hora_ini','hora-fim':'hora_fim','tipo':'tipo','status':'status','formato':'formato','cota':'cota','vagas':'vagas','publico':'publico','beneficios':'beneficios','obs':'obs','participantes':'participantes','localidade':'localidade','links':'links' };
     Object.entries(fields).forEach(([k, evKey]) => { const input = document.getElementById(`edit-${k}`); if(input) input.value = ev[evKey] || ""; });
+    
+    // Hydrate Equipe Builder
+    window.currentEquipe = ev.equipe ? JSON.parse(JSON.stringify(ev.equipe)) : [];
+    if (window.currentEquipe.length === 0 && ev.participantes) window.currentEquipe = [{nome: ev.participantes, funcao: '', camisa_id: ''}];
+    window.renderEquipeBuilder();
+
     // Clear validation states
     document.querySelectorAll('.admin-input').forEach(i => i.classList.remove('valid','invalid'));
     document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
@@ -2425,7 +2557,8 @@
       publico:      document.getElementById('edit-publico').value,
       beneficios:   document.getElementById('edit-beneficios').value,
       obs:          document.getElementById('edit-obs').value,
-      participantes:document.getElementById('edit-participantes').value,
+      participantes: window.currentEquipe.map(x => x.nome + (x.funcao ? ` (${x.funcao})` : '')).join(', '),
+      equipe:       window.currentEquipe,
       localidade:   document.getElementById('edit-localidade')?.value || '',
       links:        document.getElementById('edit-links')?.value || '',
     };
@@ -3238,7 +3371,7 @@
       const isNew = window.lastSavedId === u.id ? 'flash-green' : '';
       return `<tr class="${isNew}">
         <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
-        <td>${u.cor ? `<span style="display:inline-flex;align-items:center;gap:6px;font-weight:600">${highlight(u.cor, busca)}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
+        <td>${u.cor ? `<span style="display:inline-flex;align-items:center;gap:6px;font-weight:600">${u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;">${u.tamanho}</span>` : ''} ${highlight(u.cor, busca)}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
         <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
         <td>${totalPill}</td>
         <td style="font-size:0.78rem;color:var(--muted)">${dataFmt}</td>
@@ -3271,6 +3404,7 @@
     const u = UNIFORMES.find(x => x.id === id); if(!u) return;
     document.getElementById('unif-id').value = id;
     document.getElementById('unif-qtd').value = u.qtd || '';
+    document.getElementById('unif-tamanho').value = u.tamanho || 'Único';
     document.getElementById('unif-cor').value = u.cor || '';
     document.getElementById('unif-vlr').value = u.vlr_unit || '';
     document.getElementById('unif-data').value = u.data_pedido || '';
@@ -3288,6 +3422,7 @@
   document.getElementById('btn-cancel-unif').onclick = () => {
     document.getElementById('unif-id').value = '';
     ['unif-qtd','unif-cor','unif-vlr','unif-data','unif-obs','unif-fornecedor','unif-evento'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('unif-tamanho').value = 'Único';
     document.getElementById('unif-status').value = 'Pedido';
     document.getElementById('btn-save-unif').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-unif').style.display = 'none';
@@ -3305,6 +3440,7 @@
     
     const payload = {
         qtd,
+        tamanho:       document.getElementById('unif-tamanho').value,
         cor:           document.getElementById('unif-cor').value.trim(),
         vlr_unit:      vlr,
         data_pedido:   document.getElementById('unif-data').value || '',
