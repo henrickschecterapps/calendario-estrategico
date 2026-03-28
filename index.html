@@ -2378,6 +2378,8 @@
     const count = evs.length;
     const sliced = evs.slice(0, window.adminEventLimit);
     
+    tbody.innerHTML = sliced.length === 0
+      ? '<tr><td colspan="5" class="empty-state">Nenhum evento encontrado.</td></tr>'
       : sliced.map(e => `<tr><td style="font-size:0.85rem;font-weight:700;">${dateFmt(e)}</td><td style="font-weight:800;">${highlight(e.evento, q)}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">${getRespArray(e.responsavel).map(r=>`<span class="resp-pill">${highlight(r, q)}</span>`).join('')||'—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align:right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')"><i data-lucide="edit-2"></i></button></td></tr>`).join('');
       
     if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -2669,121 +2671,10 @@
         </tbody>
       </table>`;
   }
-
-  // ── EXPORTAR PDF (DASHBOARD) ──
-  document.getElementById('btn-export-pdf-dash').onclick = async () => {
-    const btn = document.getElementById('btn-export-pdf-dash');
-    btn.innerHTML = '<i data-lucide="loader-2"></i> Gerando PDF...'; btn.disabled = true; refreshIcons();
-    try {
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-      const W = pdf.internal.pageSize.getWidth();
-      const H = pdf.internal.pageSize.getHeight();
-
-      // Header
-      pdf.setFillColor(37, 99, 235);
-      pdf.rect(0, 0, W, 18, 'F');
-      pdf.setTextColor(255,255,255);
-      pdf.setFont('helvetica','bold');
-      pdf.setFontSize(14);
-      pdf.text('Tripla · Calendário Estratégico', 14, 12);
-      pdf.setFontSize(9);
-      pdf.setFont('helvetica','normal');
-      pdf.text(`Gerado em ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}`, W-14, 12, {align:'right'});
-
-      // KPIs
-      pdf.setTextColor(15,23,42);
-      const kpis = [
-        ['Total de Eventos', document.getElementById('dash-total')?.textContent || '0'],
-        ['Comerciais',       document.getElementById('dash-comercial')?.textContent || '0'],
-        ['Internos',         document.getElementById('dash-interno')?.textContent || '0'],
-        ['Confirmados',      document.getElementById('dash-confirmados')?.textContent || '0'],
-        ['Próx. 30 dias',    document.getElementById('dash-proximos')?.textContent || '0'],
-        ['Taxa Confirmação', document.getElementById('dash-taxa')?.textContent || '0%'],
-        ['Vagas Abertas',    document.getElementById('dash-vagas')?.textContent || '0'],
-        ['Concluídos',       document.getElementById('dash-concluidos')?.textContent || '0'],
-      ];
-      const cardW = (W - 28) / 4, cardH = 22, cardMargin = 4;
-      kpis.forEach((kpi, i) => {
-        const col = i % 4, row = Math.floor(i / 4);
-        const x = 14 + col * (cardW + cardMargin), y = 24 + row * (cardH + cardMargin);
-        pdf.setFillColor(241,245,249); pdf.roundedRect(x, y, cardW, cardH, 3, 3, 'F');
-        pdf.setFont('helvetica','normal'); pdf.setFontSize(7); pdf.setTextColor(100,116,139);
-        pdf.text(kpi[0], x+4, y+7);
-        pdf.setFont('helvetica','bold'); pdf.setFontSize(16); pdf.setTextColor(15,23,42);
-        pdf.text(kpi[1], x+4, y+17);
-      });
-
-      // Charts via canvas (render each as image)
-      const chartIds = ['chartTipos','chartMeses','chartStatus','chartResp'];
-      const chartTitles = ['Tipo de Evento','Por Mês','Por Status','Por Organizador'];
-      const chartW = (W - 28) / 2 - 4, chartH = 60;
-      const chartStartY = 74;
-
-      for (let i = 0; i < chartIds.length; i++) {
-        const canvas = document.getElementById(chartIds[i]);
-        if (!canvas) continue;
-        const imgData = canvas.toDataURL('image/png');
-        const col = i % 2, row = Math.floor(i / 2);
-        const x = 14 + col * (chartW + 8), y = chartStartY + row * (chartH + 16);
-        pdf.setFillColor(255,255,255); pdf.roundedRect(x, y - 8, chartW, chartH + 12, 3, 3, 'F');
-        pdf.setFont('helvetica','bold'); pdf.setFontSize(8); pdf.setTextColor(100,116,139);
-        pdf.text(chartTitles[i], x + 4, y - 1);
-        pdf.addImage(imgData, 'PNG', x + 4, y + 2, chartW - 8, chartH - 8);
-      }
-
-      // Page 2: Upcoming events table
-      pdf.addPage();
-      pdf.setFillColor(37,99,235); pdf.rect(0,0,W,18,'F');
-      pdf.setTextColor(255,255,255); pdf.setFont('helvetica','bold'); pdf.setFontSize(12);
-      pdf.text('Eventos — Visão Completa', 14, 12);
-      pdf.setTextColor(15,23,42);
-
-      const evs = EVENTS.sort((a,b)=>(parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0)));
-      const cols = ['Data','Evento','Tipo','Status','Responsável'];
-      const colW = [32,80,28,32,50];
-      let yPos = 28;
-      pdf.setFillColor(241,245,249); pdf.rect(14, yPos-5, W-28, 10, 'F');
-      pdf.setFont('helvetica','bold'); pdf.setFontSize(7.5); pdf.setTextColor(100,116,139);
-      let xPos = 14;
-      cols.forEach((c,i)=>{ pdf.text(c, xPos+2, yPos+1); xPos+=colW[i]; });
-      yPos += 8;
-
-      pdf.setFont('helvetica','normal'); pdf.setFontSize(7.5);
-      evs.forEach(ev => {
-        if (yPos > H-14) { pdf.addPage(); yPos = 20; }
-        pdf.setTextColor(15,23,42);
-        if (evs.indexOf(ev) % 2 === 0) { pdf.setFillColor(248,250,252); pdf.rect(14,yPos-4,W-28,8,'F'); }
-        xPos = 14;
-        const row = [dateFmt(ev), ev.evento||'', ev.tipo||'', ev.status||'', ev.responsavel||''];
-        row.forEach((cell,i)=>{ pdf.text(String(cell).substring(0,colW[i]/2.2), xPos+2, yPos); xPos+=colW[i]; });
-        yPos += 8;
-      });
-
-      pdf.save(`Tripla_Dashboard_${new Date().toISOString().slice(0,10)}.pdf`);
-      showToast('PDF gerado e baixado com sucesso! 📄', 'success');
-    } catch(err) {
-      console.error(err);
-      showToast('Erro ao gerar PDF. Tente novamente.', 'error');
-    }
-    btn.innerHTML = '<i data-lucide="file-output"></i> Exportar PDF'; btn.disabled = false; refreshIcons();
-  };
-
-
-  // ── IMPORTAÇÃO CSV ──
-  document.getElementById('btn-download-csv').onclick = () => { const csvContent = "evento,data_ini,data_fim,tipo,status,responsavel,formato,cota,vagas,publico,beneficios,obs,participantes\n\"Exemplo Palestra\",2026-05-10,2026-05-10,Comercial,Confirmado,\"Jéss, Jê\",Online,Ouro,10,Clientes,Logo no site,Nota extra,Emilly\n"; const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "template_eventos.csv"; a.click(); };
-  let fileToUpload = null;
-  document.getElementById('csv-file').onchange = (e) => { fileToUpload = e.target.files[0]; const dropzone = document.getElementById('file-dropzone'), btn = document.getElementById('btn-upload-csv'); if(fileToUpload) { dropzone.innerHTML = `<div style="font-size:2.5rem; margin-bottom:12px">✅</div><div style="font-weight:600">Arquivo <b>${fileToUpload.name}</b> pronto!</div>`; dropzone.style.borderColor = "var(--green)"; btn.disabled = false; } };
-  function parseCSVLine(text) { let ret = [], val = "", inQ = false; for(let ch of text){ if(inQ){ if(ch === '"') inQ = false; else val += ch; } else { if(ch === '"') inQ = true; else if(ch === ',') { ret.push(val.trim()); val = ""; } else val += ch; } } ret.push(val.trim()); return ret; }
-  document.getElementById('btn-upload-csv').onclick = () => {
-    if(!fileToUpload) return; const reader = new FileReader();
-    reader.onload = async (e) => {
-      const text = e.target.result; const lines = text.split('\n').filter(l => l.trim() !== ''); if(lines.length < 2) { showToast('Arquivo vazio ou inválido.', 'error'); return; }
-      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase()); const batch = db.batch(); let count = 0;
-      for(let i = 1; i < lines.length; i++) { const row = parseCSVLine(lines[i]); let obj = {}; headers.forEach((h, idx) => { obj[h] = row[idx] ? row[idx] : ''; }); if(obj.evento && obj.data_ini) { obj.mes_ref = MONTHS_PT[parseDate(obj.data_ini).getMonth()] || ''; batch.set(db.collection("eventos").doc(), obj); count++; } }
-      if(count > 0) { document.getElementById('btn-upload-csv').textContent = "Enviando..."; try { await batch.commit(); showToast(`✅ ${count} eventos importados com sucesso!`, 'success'); fileToUpload = null; document.getElementById('file-dropzone').innerHTML = `<div style="font-size:2.5rem; margin-bottom:12px">📁</div><div style="font-weight:600">Arraste o <b>.csv</b> aqui</div>`; document.getElementById('file-dropzone').style.borderColor = "var(--border)"; document.getElementById('btn-upload-csv').textContent = "Iniciar Importação"; document.getElementById('btn-upload-csv').disabled = true; await loadDataFromFirebase(); } catch(err) { showToast('Erro ao salvar no banco.', 'error'); } }
-    }; reader.readAsText(fileToUpload);
-  };
+  
+  // ── ATENÇÃO COMENTÁRIO DE ENGENHARIA ──
+  // Blocos legados de PDF / CSV removidos daqui porque tentavam atrelar .onclick a botões que não existem mais (TypeError letal).
+  // O sistema correto de Relatórios PDF está implementado nas linhas abaixo usando `generateProfessionalPDF`.
 
   // ── LOGICA DO MODAL ──
   window.openEventView = function(id) {
