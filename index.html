@@ -540,6 +540,30 @@
   @keyframes flashGreen { 0% { background: rgba(16,185,129,0.3); } 100% { background: transparent; } }
   .flash-green { animation: flashGreen 2.5s ease-out forwards; }
 
+  /* ── SIDE DRAWER (GESTÃO OPERACIONAL) ── */
+  .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 9999; display: flex; justify-content: flex-end; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+  .drawer-overlay.open { opacity: 1; visibility: visible; }
+  .drawer { width: 100%; max-width: 500px; background: var(--surface); height: 100vh; box-shadow: -4px 0 32px rgba(0,0,0,0.25); transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
+  .drawer-overlay.open .drawer { transform: translateX(0); }
+  .drawer-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); }
+  .drawer-title { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 10px; color: var(--text); }
+  .drawer-body { padding: 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: var(--bg); }
+  .drawer-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); }
+  
+  .drawer .gestao-add-bar { display: flex; flex-direction: column; padding: 0; background: transparent; border: none; border-radius: 0; gap: 16px; }
+  .drawer .gestao-field { min-width: 100% !important; flex: none !important; }
+  .drawer .form-row { display: flex; gap: 12px; width: 100%; }
+  .drawer .form-row .gestao-field { min-width: 0 !important; flex: 1 !important; }
+
+  /* Kanban Drag and Drop */
+  .kanban-card { cursor: grab; transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s; }
+  .kanban-card:active { cursor: grabbing; transform: scale(1.02); box-shadow: var(--shadow-md); z-index: 10; }
+  .kanban-card.dragging { opacity: 0.5; }
+  .kanban-column-body.drag-over { background: rgba(37,99,235,0.05); border-radius: var(--radius); border: 2px dashed rgba(37,99,235,0.4); }
+
+  /* Fix Tabela Responsiva */
+  .gestao-table-wrap { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+  
   /* ── PDF EXPORT OPTIMIZATION ── */
   .pdf-capture { background: #fff !important; color: #000 !important; width: 1080px !important; padding: 40px !important; border-radius: 0 !important; }
   .pdf-capture * { transition: none !important; animation: none !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
@@ -1253,6 +1277,19 @@
 <div id="toast-container" style="position:fixed;bottom:32px;right:32px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;"></div>
 <!-- Heatmap Tooltip -->
 <div class="hm-tooltip" id="hm-tooltip"></div>
+
+<!-- Gestão Operacional Side Drawer -->
+<div id="gestao-drawer-overlay" class="drawer-overlay" onclick="window.closeGestaoDrawer(event)">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <div class="drawer-title" id="drawer-title"><i data-lucide="edit-3"></i> <span>Gestão Operacional</span></div>
+      <button class="btn-icon" onclick="window.closeGestaoDrawer()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="drawer-body" id="gestao-drawer-body">
+      <!-- Forms from tables will be dynamically moved here on load -->
+    </div>
+  </div>
+</div>
 
 <!-- Confirm Modal -->
 <div id="confirm-modal" class="modal-overlay" style="display:none; z-index:9000;">
@@ -3946,7 +3983,7 @@
       const cardsHtml = items.map(b => {
         const anexoHtml = b.anexo_url ? `<a href="${b.anexo_url}" target="_blank" class="kanban-anexo-link" onclick="event.stopPropagation()">📎</a>` : '';
         return `
-          <div class="kanban-card" onclick="window.editBrinde('${b.id}')">
+          <div class="kanban-card" draggable="true" ondragstart="window.dragStart(event, '${b.id}', 'brinde')" onclick="window.editBrinde('${b.id}')">
             <div class="kanban-card-title">
               <span>${escapeHtml(b.titulo||'')}</span>
               ${anexoHtml}
@@ -3961,7 +3998,7 @@
       }).join('');
       
       return `
-        <div class="kanban-column">
+        <div class="kanban-column" ondragover="window.dragOver(event)" ondrop="window.drop(event, '${col}', 'brinde')">
           <div class="kanban-column-header">
             <div style="display:flex; align-items:center; gap:8px;">
                <span style="width:8px;height:8px;border-radius:50%;background:${sc};"></span>
@@ -3969,7 +4006,7 @@
             </div>
             <span class="kanban-column-count">${items.length}</span>
           </div>
-          <div class="kanban-column-body">
+          <div class="kanban-column-body" id="col-brinde-${col.replace(' ','-')}">
             ${cardsHtml}
           </div>
         </div>
@@ -4212,7 +4249,7 @@
         const anexoHtml = u.anexo_url ? `<a href="${u.anexo_url}" target="_blank" class="kanban-anexo-link" onclick="event.stopPropagation()">📎 Anexo</a>` : '';
         const tamPill = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;margin-right:4px;">${u.tamanho}</span>` : '';
         return `
-          <div class="kanban-card" onclick="window.editUnif('${u.id}')">
+          <div class="kanban-card" draggable="true" ondragstart="window.dragStart(event, '${u.id}', 'uniforme')" onclick="window.editUnif('${u.id}')">
             <div class="kanban-card-title">
               <span>${tamPill}${escapeHtml(u.cor||'')}</span>
               ${anexoHtml}
@@ -4227,7 +4264,7 @@
       }).join('');
       
       return `
-        <div class="kanban-column">
+        <div class="kanban-column" ondragover="window.dragOver(event)" ondrop="window.drop(event, '${col}', 'uniforme')">
           <div class="kanban-column-header">
             <div style="display:flex; align-items:center; gap:8px;">
                <span style="width:8px;height:8px;border-radius:50%;background:${sc};"></span>
@@ -4235,7 +4272,7 @@
             </div>
             <span class="kanban-column-count">${items.length}</span>
           </div>
-          <div class="kanban-column-body">
+          <div class="kanban-column-body" id="col-unif-${col.replace(' ','-')}">
             ${cardsHtml}
           </div>
         </div>
@@ -4759,6 +4796,244 @@
      
      document.getElementById('btn-deploy-kit').textContent = 'Alocar no Evento';
      document.getElementById('btn-deploy-kit').disabled = false;
+  };
+
+  // ── INIT DRAWER GESTÃO OPERACIONAL ──
+  setTimeout(() => {
+    const drawerForms = ['estoque-add-form', 'brinde-add-form', 'unif-add-form', 'forn-add-form'];
+    const drawerBody = document.getElementById('gestao-drawer-body');
+    if(drawerBody) {
+      drawerForms.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) { el.style.display = 'none'; drawerBody.appendChild(el); }
+      });
+      const wrappers = {
+        'estoque-table-wrap': { type: 'estoque', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Add Almoxarifado' },
+        'brindes-table-wrap': { type: 'brinde', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Alocar Brinde (Saída)' },
+        'unif-table-wrap': { type: 'uniforme', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Registrar Uniforme' },
+        'forn-table-wrap': { type: 'fornecedor', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Fornecedor' }
+      };
+      for(const [id, cfg] of Object.entries(wrappers)) {
+        const wrap = document.getElementById(id);
+        if(wrap) {
+           const div = document.createElement('div');
+           div.style = "padding:16px; background:var(--surface); border-top:1px solid var(--border); display:flex; justify-content:flex-end;";
+           div.innerHTML = `<button class="btn-primary" onclick="window.openGestaoDrawer('${cfg.type}')" style="display:flex;align-items:center;gap:6px;">${cfg.label}</button>`;
+           wrap.parentNode.insertBefore(div, wrap.nextSibling);
+        }
+      }
+    }
+  }, 100);
+
+  // ── GESTÃO OPERACIONAL CORE (DRAWERS E CRUD) ──
+  window.openGestaoDrawer = function(type) {
+     const drawerOverlay = document.getElementById('gestao-drawer-overlay');
+     const forms = { 'estoque': 'estoque-add-form', 'brinde': 'brinde-add-form', 'uniforme': 'unif-add-form', 'fornecedor': 'forn-add-form' };
+     const titles = { 'estoque': 'Almoxarifado', 'brinde': 'Brinde (Alocação)', 'uniforme': 'Uniforme (Pedido)', 'fornecedor': 'Fornecedor' };
+     Object.values(forms).forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
+     const formId = forms[type];
+     if(formId) { const el = document.getElementById(formId); if(el) el.style.display = 'flex'; }
+     document.getElementById('drawer-title').innerHTML = `<i data-lucide="edit-3"></i> <span>Gestão: ${titles[type]}</span>`;
+     if(typeof lucide !== 'undefined') lucide.createIcons();
+     drawerOverlay.classList.add('open');
+     
+     const btnSave = document.getElementById(`btn-save-${type==='uniforme'?'unif':(type==='fornecedor'?'forn':type)}`);
+     if(btnSave) btnSave.onclick = () => window[`save${type.charAt(0).toUpperCase() + type.slice(1)}`]();
+  };
+
+  window.closeGestaoDrawer = function(e) {
+     if(e && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
+     document.getElementById('gestao-drawer-overlay').classList.remove('open');
+     ['estoque-id', 'brinde-id', 'unif-id', 'forn-id'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+     if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Adicionar';
+     if(document.getElementById('btn-save-brinde')) document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
+     if(document.getElementById('btn-save-unif')) document.getElementById('btn-save-unif').textContent = '+ Adicionar';
+     if(document.getElementById('btn-save-forn')) document.getElementById('btn-save-forn').textContent = '+ Adicionar';
+  };
+
+  // KANBAN DRAG E DROP API
+  let draggingCardId = null;
+  let draggingCardType = null;
+  
+  window.dragStart = function(e, id, type) {
+    draggingCardId = id;
+    draggingCardType = type;
+    e.dataTransfer.effectAllowed = 'move';
+    e.target.classList.add('dragging');
+  };
+  
+  document.addEventListener('dragend', (e) => {
+    if (e.target.classList && e.target.classList.remove) e.target.classList.remove('dragging');
+    document.querySelectorAll('.kanban-column').forEach(c => c.classList.remove('drag-over'));
+  });
+
+  window.dragOver = function(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const col = e.currentTarget;
+    if(!col.classList.contains('drag-over')) col.classList.add('drag-over');
+  };
+
+  window.drop = async function(e, newStatus, type) {
+    e.preventDefault();
+    document.querySelectorAll('.kanban-column').forEach(c => c.classList.remove('drag-over'));
+    if (!draggingCardId || type !== draggingCardType) return;
+    
+    const collectionName = type === 'uniforme' ? 'uniformes' : 'brindes';
+    try {
+      await db.collection(collectionName).doc(draggingCardId).update({ status: newStatus });
+      showToast('Status atualizado! ✅', 'success');
+      if (type === 'uniforme') await loadUniformes();
+      else if (type === 'brinde') await loadBrindes();
+    } catch(err) {
+      showToast('Erro ao atualizar status.', 'error');
+    }
+  };
+
+  // CRUD GESTÃO OPERACIONAL (UNIFORMES)
+  window.editUnif = function(id) {
+    const u = UNIFORMES.find(x => x.id === id);
+    if(!u) return;
+    document.getElementById('unif-id').value = u.id;
+    document.getElementById('unif-estoque-id').value = u.estoque_id || '';
+    document.getElementById('unif-cor').value = u.cor || '';
+    document.getElementById('unif-tamanho').value = u.tamanho || 'Único';
+    document.getElementById('unif-qtd').value = u.qtd || 1;
+    document.getElementById('unif-vlr').value = u.vlr_unit || 0;
+    document.getElementById('unif-data').value = u.data_pedido || '';
+    document.getElementById('unif-data-prevista').value = u.data_prevista || '';
+    document.getElementById('unif-status').value = u.status || 'Pedido';
+    document.getElementById('unif-fornecedor').value = u.fornecedor_id || '';
+    document.getElementById('unif-evento').value = u.evento_id || '';
+    document.getElementById('unif-obs').value = u.obs || '';
+    document.getElementById('unif-anexo-url').value = u.anexo_url || '';
+    document.getElementById('unif-anexo-name').textContent = u.anexo_url ? "Anexo atual mantido" : "";
+    document.getElementById('btn-save-unif').textContent = 'Salvar Alterações';
+    window.openGestaoDrawer('uniforme');
+  };
+
+  window.saveUniforme = async function() {
+    const id = document.getElementById('unif-id').value;
+    const estoque_id = document.getElementById('unif-estoque-id').value;
+    const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
+    if(!estoque_id || qtd < 1) { showToast('Item do estoque e Qtd exigidos!','warning'); return; }
+    
+    let axUrl = document.getElementById('unif-anexo-url').value;
+    const axFile = document.getElementById('unif-anexo').files[0];
+    
+    const btn = document.getElementById('btn-save-unif');
+    if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
+    
+    try {
+      if(axFile) {
+        showToast('Fazendo upload do anexo...', 'info');
+        const storageRef = firebase.storage().ref();
+        const fRef = storageRef.child(`anexos_sg/${Date.now()}_${axFile.name}`);
+        const snap = await fRef.put(axFile);
+        axUrl = await snap.ref.getDownloadURL();
+      }
+      
+      const payload = {
+        estoque_id, qtd,
+        cor: document.getElementById('unif-cor').value,
+        tamanho: document.getElementById('unif-tamanho').value,
+        vlr_unit: parseFloat(document.getElementById('unif-vlr').value) || 0,
+        data_pedido: document.getElementById('unif-data').value,
+        data_prevista: document.getElementById('unif-data-prevista').value,
+        status: document.getElementById('unif-status').value,
+        fornecedor_id: document.getElementById('unif-fornecedor').value,
+        evento_id: document.getElementById('unif-evento').value,
+        obs: document.getElementById('unif-obs').value,
+        anexo_url: axUrl
+      };
+      
+      if(id) { 
+        await db.collection("uniformes").doc(id).update(payload); 
+        showToast('Uniforme salvo!','success'); 
+      } else {
+        payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
+        await db.collection("uniformes").add(payload);
+        showToast('Uniforme adicionado!','success');
+      }
+      window.closeGestaoDrawer();
+      await loadUniformes();
+    } catch(err) { showToast('Erro ao salvar.', 'error'); }
+    finally { if(btn) { btn.textContent = 'Adicionar'; btn.disabled = false; } }
+  };
+
+  window.deleteUnif = async function(id) {
+    if(!await showConfirm('Excluir Uniforme?', 'Esta exclusão é permanente.')) return;
+    try {
+      await db.collection("uniformes").doc(id).delete();
+      showToast('Uniforme excluído!', 'warning');
+      await loadUniformes();
+    } catch(e) { showToast('Erro ao excluir.', 'error'); }
+  };
+
+  // CRUD BRINDES
+  window.editBrinde = function(id) {
+    const b = BRINDES.find(x => x.id === id);
+    if(!b) return;
+    document.getElementById('brinde-id').value = b.id;
+    document.getElementById('brinde-estoque-id').value = b.estoque_id || '';
+    document.getElementById('brinde-titulo').value = b.titulo || '';
+    document.getElementById('brinde-nivel').value = b.nivel || 'Massa';
+    document.getElementById('brinde-desc').value = b.descricao || '';
+    document.getElementById('brinde-qtd').value = b.qtd || 1;
+    document.getElementById('brinde-vlr').value = b.vlr_unit || 0;
+    document.getElementById('brinde-status').value = b.status || 'Cotação';
+    document.getElementById('brinde-fornecedor').value = b.fornecedor_id || '';
+    document.getElementById('brinde-evento').value = b.evento_id || '';
+    document.getElementById('brinde-anexo-url').value = b.anexo_url || '';
+    document.getElementById('brinde-anexo-name').textContent = b.anexo_url ? "Anexo mantido" : "";
+    document.getElementById('btn-save-brinde').textContent = 'Salvar';
+    window.openGestaoDrawer('brinde');
+  };
+
+  // (Nota: Brindes possui a func salvar parcialmente duplicada num lugar que não vimos, mas para o btn save central nós redefinimos:)
+  window.saveBrinde = async function() {
+    const id = document.getElementById('brinde-id').value;
+    const estoque_id = document.getElementById('brinde-estoque-id').value;
+    const qtd = parseInt(document.getElementById('brinde-qtd').value) || 0;
+    if(!estoque_id || qtd < 1) { showToast('Item e Qtd exigidos!','warning'); return; }
+    
+    let axUrl = document.getElementById('brinde-anexo-url').value;
+    const axFile = document.getElementById('brinde-anexo').files[0];
+    
+    const btn = document.getElementById('btn-save-brinde');
+    if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
+    
+    try {
+      if(axFile) {
+        showToast('Fazendo upload...', 'info');
+        const fRef = firebase.storage().ref().child(`anexos_sg/${Date.now()}_${axFile.name}`);
+        const snap = await fRef.put(axFile);
+        axUrl = await snap.ref.getDownloadURL();
+      }
+      const payload = {
+        estoque_id, qtd,
+        titulo: document.getElementById('brinde-titulo').value,
+        nivel: document.getElementById('brinde-nivel').value,
+        descricao: document.getElementById('brinde-desc').value,
+        vlr_unit: parseFloat(document.getElementById('brinde-vlr').value) || 0,
+        status: document.getElementById('brinde-status').value,
+        fornecedor_id: document.getElementById('brinde-fornecedor').value,
+        evento_id: document.getElementById('brinde-evento').value,
+        anexo_url: axUrl
+      };
+      
+      if(id) { 
+        await db.collection("brindes").doc(id).update(payload); 
+        showToast('Brinde salvo!','success'); 
+      } else {
+        payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
+        await db.collection("brindes").add(payload);
+        showToast('Brinde adicionado!','success');
+      }
+      window.closeGestaoDrawer();
+      await loadBrindes();
+    } catch(err) { showToast('Erro.', 'error'); }
+    finally { if(btn) { btn.textContent = 'Adicionar'; btn.disabled = false; } }
   };
 
   document.addEventListener('DOMContentLoaded', () => {
