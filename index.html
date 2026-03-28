@@ -1045,10 +1045,11 @@
                 <table class="gestao-table" id="unif-table">
                   <thead><tr>
                     <th>Qtd</th>
-                    <th>Cor</th>
+                    <th>Cor / Tamanho</th>
                     <th>Vlr Unit.</th>
-                    <th>Custo Total</th>
+                    <th>Total</th>
                     <th>Data Pedido</th>
+                    <th>Data Prev.</th>
                     <th>Status</th>
                     <th>Fornecedor</th>
                     <th>Evento Vinculado</th>
@@ -3333,7 +3334,7 @@
     return e ? e.evento : '—';
   }
 
-  // ── Preencher selects de fornecedor/evento nos forms ──
+  // ── Preencher selects de fornecedor/evento nos forms e nos filtros ──
   function populateGestaoSelects() {
     ['brinde-fornecedor','unif-fornecedor','estoque-fornecedor'].forEach(selId => {
       const sel = document.getElementById(selId);
@@ -3347,6 +3348,8 @@
       });
       if (cur) sel.value = cur;
     });
+
+    // Selects de vínculo (forms de adicionar/editar)
     ['brinde-evento','unif-evento'].forEach(selId => {
       const sel = document.getElementById(selId);
       if (!sel) return;
@@ -3355,6 +3358,20 @@
       EVENTS.filter(e => e.tipo !== 'Feriado').sort((a,b) => (parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0))).forEach(e => {
         const opt = document.createElement('option');
         opt.value = e.id; opt.textContent = `${e.evento} (${e.mes_ref||''})`;
+        sel.appendChild(opt);
+      });
+      if (cur) sel.value = cur;
+    });
+
+    // Selects de filtro de evento (filtros de tabela/kanban)
+    ['filtro-brinde-evento','filtro-unif-evento'].forEach(selId => {
+      const sel = document.getElementById(selId);
+      if (!sel) return;
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">Todos os Eventos</option>';
+      EVENTS.filter(e => e.tipo !== 'Feriado').sort((a,b) => (parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0))).forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e.id; opt.textContent = e.evento;
         sel.appendChild(opt);
       });
       if (cur) sel.value = cur;
@@ -3509,7 +3526,7 @@
       await loadEstoque();
       setTimeout(() => window.lastSavedId = null, 3000);
     } catch(e) { showToast('Erro ao salvar no almoxarifado.', 'error'); }
-    btn.disabled = false;
+    finally { btn.textContent = id ? 'Salvar Alterações' : '+ Registrar no Almoxarifado'; btn.disabled = false; }
   };
 
   window.deleteEstoque = async (id) => {
@@ -3643,7 +3660,7 @@
       await loadFornecedores();
       setTimeout(() => window.lastSavedId = null, 3000);
     } catch(e) { showToast('Erro ao salvar fornecedor.', 'error'); }
-    btn.disabled = false;
+    finally { btn.textContent = id ? 'Salvar Alterações' : '+ Adicionar'; btn.disabled = false; }
   };
 
   window.deleteForn = async (id) => {
@@ -3795,17 +3812,21 @@
     const e = ESTOQUE.find(x => x.id === eid);
     const lbl = document.getElementById('lbl-saldo-brinde');
     if (!e) {
-      document.getElementById('brinde-titulo').value = '';
-      document.getElementById('brinde-nivel').value = 'Massa';
-      document.getElementById('brinde-vlr').value = '';
+      if (!document.getElementById('brinde-id').value) {
+        document.getElementById('brinde-titulo').value = '';
+        document.getElementById('brinde-nivel').value = 'Massa';
+        document.getElementById('brinde-vlr').value = '';
+      }
       if(lbl) lbl.innerHTML = 'Saldo: —';
       return;
     }
-    document.getElementById('brinde-titulo').value = e.nome;
-    document.getElementById('brinde-nivel').value = e.nivel || 'Massa';
-    document.getElementById('brinde-vlr').value = e.vlr_unit || 0;
-    if (e.fornecedor_id) document.getElementById('brinde-fornecedor').value = e.fornecedor_id;
-    
+    const isNew = !document.getElementById('brinde-id').value;
+    if (isNew) {
+      document.getElementById('brinde-titulo').value = e.nome;
+      document.getElementById('brinde-nivel').value = e.nivel || 'Massa';
+      document.getElementById('brinde-vlr').value = e.vlr_unit || 0;
+      if (e.fornecedor_id) document.getElementById('brinde-fornecedor').value = e.fornecedor_id;
+    }
     const saldo = (parseInt(e.qtd_inicial)||0) - getEstoqueAlocado(e.id);
     if(lbl) lbl.innerHTML = `Saldo em Estoque: <b style="color:${saldo <= 0 ? 'var(--red)' : 'var(--green)'}">${saldo}</b>`;
   };
@@ -3897,7 +3918,7 @@
       await loadEstoque(); // refresh saldos globais
       setTimeout(() => window.lastSavedId = null, 3000);
     } catch(e) { showToast('Erro ao salvar brinde.', 'error'); }
-    btn.disabled = false;
+    finally { btn.textContent = id ? 'Salvar Alterações' : '+ Adicionar'; btn.disabled = false; }
   };
 
   window.deleteBrinde = async (id) => {
@@ -4055,17 +4076,21 @@
     const e = ESTOQUE.find(x => x.id === eid);
     const lbl = document.getElementById('lbl-saldo-unif');
     if (!e) {
-      document.getElementById('unif-cor').value = '';
-      document.getElementById('unif-tamanho').value = 'Único';
-      document.getElementById('unif-vlr').value = '';
+      if (!document.getElementById('unif-id').value) {
+        document.getElementById('unif-cor').value = '';
+        document.getElementById('unif-tamanho').value = 'Único';
+        document.getElementById('unif-vlr').value = '';
+      }
       if(lbl) lbl.innerHTML = 'Saldo: —';
       return;
     }
-    document.getElementById('unif-cor').value = e.cor || e.nome;
-    document.getElementById('unif-tamanho').value = e.tamanho || 'Único';
-    document.getElementById('unif-vlr').value = e.vlr_unit || 0;
-    if (e.fornecedor_id) document.getElementById('unif-fornecedor').value = e.fornecedor_id;
-    
+    const isNew = !document.getElementById('unif-id').value;
+    if (isNew) {
+      document.getElementById('unif-cor').value = e.cor || e.nome;
+      document.getElementById('unif-tamanho').value = e.tamanho || 'Único';
+      document.getElementById('unif-vlr').value = e.vlr_unit || 0;
+      if (e.fornecedor_id) document.getElementById('unif-fornecedor').value = e.fornecedor_id;
+    }
     const saldo = (parseInt(e.qtd_inicial)||0) - getEstoqueAlocado(e.id);
     if(lbl) lbl.innerHTML = `Saldo em Estoque: <b style="color:${saldo <= 0 ? 'var(--red)' : 'var(--green)'}">${saldo}</b>`;
   };
@@ -4084,10 +4109,19 @@
     document.getElementById('unif-fornecedor').value = u.fornecedor_id || '';
     document.getElementById('unif-evento').value = u.evento_id || '';
     document.getElementById('unif-obs').value = u.obs || '';
+    // Restaurar anexo existente
+    if (document.getElementById('unif-anexo-url')) document.getElementById('unif-anexo-url').value = u.anexo_url || '';
+    if (document.getElementById('unif-anexo-name')) document.getElementById('unif-anexo-name').innerHTML = u.anexo_url ? `<a href="${u.anexo_url}" target="_blank">Ver anexo atual</a>` : '';
     document.getElementById('btn-save-unif').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-unif').style.display = 'inline-block';
     
-    window.autofillUnif(); // update saldo visualmente
+    // Apenas atualiza saldo — não sobrescreve campos já preenchidos
+    const lbl = document.getElementById('lbl-saldo-unif');
+    const estItem = ESTOQUE.find(x => x.id === u.estoque_id);
+    if (estItem && lbl) {
+      const saldo = (parseInt(estItem.qtd_inicial)||0) - getEstoqueAlocado(estItem.id);
+      lbl.innerHTML = `Saldo em Estoque: <b style="color:${saldo <= 0 ? 'var(--red)' : 'var(--green)'}">${saldo}</b>`;
+    }
     document.getElementById('unif-qtd').dispatchEvent(new Event('input'));
     const form = document.getElementById('unif-add-form');
     if(form) form.scrollIntoView({behavior:'smooth', block:'nearest'});
@@ -4098,6 +4132,9 @@
     ['unif-estoque-id','unif-qtd','unif-cor','unif-vlr','unif-data','unif-data-prevista','unif-obs','unif-fornecedor','unif-evento'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
     document.getElementById('unif-tamanho').value = 'Único';
     document.getElementById('unif-status').value = 'Pedido';
+    if (document.getElementById('unif-anexo')) document.getElementById('unif-anexo').value = '';
+    if (document.getElementById('unif-anexo-url')) document.getElementById('unif-anexo-url').value = '';
+    if (document.getElementById('unif-anexo-name')) document.getElementById('unif-anexo-name').innerHTML = '';
     document.getElementById('btn-save-unif').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-unif').style.display = 'none';
     const lbl = document.getElementById('lbl-saldo-unif');
@@ -4130,6 +4167,16 @@
         obs:           document.getElementById('unif-obs').value.trim()
     };
     
+    // Preservar anexo existente se não selecionar novo arquivo
+    const fileInputUnif = document.getElementById('unif-anexo');
+    if (fileInputUnif && fileInputUnif.files[0]) {
+      const url = await window.uploadAnexoHelper(fileInputUnif.files[0], 'uniformes');
+      if (url) payload.anexo_url = url;
+    } else {
+      const existingUrl = document.getElementById('unif-anexo-url')?.value;
+      if (existingUrl) payload.anexo_url = existingUrl;
+    }
+
     try {
       if (id) {
         await db.collection("uniformes").doc(id).update(payload);
@@ -4145,7 +4192,7 @@
       await loadUniformes();
       setTimeout(() => window.lastSavedId = null, 3000);
     } catch(e) { showToast('Erro ao salvar uniforme.', 'error'); }
-    btn.disabled = false;
+    finally { btn.textContent = id ? 'Salvar Alterações' : '+ Adicionar'; btn.disabled = false; }
   };
 
   window.deleteUnif = async (id) => {
@@ -4227,12 +4274,14 @@
   // usamos um flag para carregar os módulos da primeira vez que o painel for renderizado.
   let _fornLoaded=false, _estoqueLoaded=false, _brindesLoaded=false, _unifLoaded=false;
 
+  let _kitsLoaded = false;
   function loadGestaoModules() {
     if (userRole !== 'admin') return;
     if (!_fornLoaded)     { _fornLoaded=true;     loadFornecedores(); }
     if (!_estoqueLoaded)  { _estoqueLoaded=true;  loadEstoque(); }
     if (!_brindesLoaded)  { _brindesLoaded=true;  loadBrindes(); }
     if (!_unifLoaded)     { _unifLoaded=true;      loadUniformes(); }
+    if (!_kitsLoaded)     { _kitsLoaded=true;      loadKits(); }
   }
 
   // Helper de Upload de Arquivos
@@ -4350,7 +4399,8 @@
     });
     if(!itens.length) { showToast('Inclua ao menos um item válido.', 'warning'); return; }
     
-    document.getElementById('btn-save-kit').textContent = 'Salvando...';
+    document.getElementById('btn-save-kit').textContent = 'Salvando...'; 
+    document.getElementById('btn-save-kit').disabled = true;
     try {
       if(id) {
          await db.collection("kits").doc(id).update({ nome, itens });
@@ -4363,8 +4413,10 @@
       await loadKits();
     } catch(e) {
       showToast('Erro ao salvar o Kit.', 'error');
+    } finally {
+      document.getElementById('btn-save-kit').textContent = 'Salvar Kit';
+      document.getElementById('btn-save-kit').disabled = false;
     }
-    document.getElementById('btn-save-kit').textContent = 'Salvar Kit';
   };
   
   window.deleteKit = async function(id) {
@@ -4373,7 +4425,7 @@
        await db.collection("kits").doc(id).delete();
        showToast('Kit deletado.', 'success');
        await loadKits();
-    } catch(e) {}
+    } catch(e) { showToast('Erro ao excluir o Kit.', 'error'); }
   };
 
   // ── ALOCAÇÃO DE KITS ──
