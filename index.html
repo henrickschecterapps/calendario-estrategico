@@ -783,6 +783,7 @@
                     <th>Brinde</th>
                     <th>Descrição</th>
                     <th>Nível</th>
+                    <th>Status</th>
                     <th>Qtd</th>
                     <th>Vlr Unit.</th>
                     <th>Total</th>
@@ -790,7 +791,7 @@
                     <th>Evento Vinculado</th>
                     <th></th>
                   </tr></thead>
-                  <tbody id="brindes-body"><tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde cadastrado.</td></tr></tbody>
+                  <tbody id="brindes-body"><tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde cadastrado.</td></tr></tbody>
                 </table>
                 <!-- FORM ADD BRINDE -->
                 <div class="gestao-add-bar" id="brinde-add-form">
@@ -3213,10 +3214,12 @@
     if (evento) list = list.filter(b => b.evento_id === evento);
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde encontrado.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde encontrado.</td></tr>';
       return;
     }
     
+    const statusCores = { 'Cotação':'var(--muted)', 'Aprovado':'var(--teal)', 'Pedido':'var(--amber)', 'Recebido':'var(--green)' };
+
     tbody.innerHTML = list.map(b => {
       const qtd  = parseInt(b.qtd) || 0;
       const vlr  = parseFloat(b.vlr_unit) || 0;
@@ -3225,10 +3228,14 @@
         ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
         : `<span class="valor-total-pill zero">—</span>`;
       const isNew = window.lastSavedId === b.id ? 'flash-green' : '';
+      const sc = statusCores[b.status] || 'var(--muted)';
+      const statusHtml = `<span style="font-size:0.7rem;font-weight:700;border:1px solid ${sc};color:${sc};padding:2px 6px;border-radius:12px;white-space:nowrap;">${b.status||'Cotação'}</span>`;
+
       return `<tr class="${isNew}">
         <td><strong>${highlight(b.titulo||'', busca)}</strong></td>
         <td style="color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(b.descricao||'')}">${highlight(b.descricao||'—', busca)}</td>
         <td>${nivelBadge(b.nivel)}</td>
+        <td>${statusHtml}</td>
         <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
         <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
         <td>${totalPill}</td>
@@ -3368,14 +3375,16 @@
       const totalPill = total > 0
         ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
         : `<span class="valor-total-pill zero">—</span>`;
-      const dataFmt = u.data_pedido ? new Date(u.data_pedido+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+      const dataFmt = u.data_pedido ? new Date(u.data_pedido+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}) : '—';
+      const prevFmt = u.data_prevista ? new Date(u.data_prevista+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}) : '—';
       const isNew = window.lastSavedId === u.id ? 'flash-green' : '';
       return `<tr class="${isNew}">
         <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
         <td>${u.cor ? `<span style="display:inline-flex;align-items:center;gap:6px;font-weight:600">${u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;">${u.tamanho}</span>` : ''} ${highlight(u.cor, busca)}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
         <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
         <td>${totalPill}</td>
-        <td style="font-size:0.78rem;color:var(--muted)">${dataFmt}</td>
+        <td style="font-size:0.75rem;color:var(--muted)">${dataFmt}</td>
+        <td style="font-size:0.75rem;font-weight:600;color:var(--text)">${prevFmt}</td>
         <td>${unifStatusBadge(u.status)}</td>
         <td style="font-size:0.78rem">${fornNome(u.fornecedor_id)}</td>
         <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${u.evento_id ? escapeHtml(eventoNome(u.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
@@ -3409,6 +3418,7 @@
     document.getElementById('unif-cor').value = u.cor || '';
     document.getElementById('unif-vlr').value = u.vlr_unit || '';
     document.getElementById('unif-data').value = u.data_pedido || '';
+    document.getElementById('unif-data-prevista').value = u.data_prevista || '';
     document.getElementById('unif-status').value = u.status || 'Pedido';
     document.getElementById('unif-fornecedor').value = u.fornecedor_id || '';
     document.getElementById('unif-evento').value = u.evento_id || '';
@@ -3422,7 +3432,7 @@
 
   document.getElementById('btn-cancel-unif').onclick = () => {
     document.getElementById('unif-id').value = '';
-    ['unif-qtd','unif-cor','unif-vlr','unif-data','unif-obs','unif-fornecedor','unif-evento'].forEach(id => document.getElementById(id).value = '');
+    ['unif-qtd','unif-cor','unif-vlr','unif-data','unif-data-prevista','unif-obs','unif-fornecedor','unif-evento'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('unif-tamanho').value = 'Único';
     document.getElementById('unif-status').value = 'Pedido';
     document.getElementById('btn-save-unif').textContent = '+ Adicionar';
@@ -3445,6 +3455,7 @@
         cor:           document.getElementById('unif-cor').value.trim(),
         vlr_unit:      vlr,
         data_pedido:   document.getElementById('unif-data').value || '',
+        data_prevista: document.getElementById('unif-data-prevista').value || '',
         status:        document.getElementById('unif-status').value,
         fornecedor_id: document.getElementById('unif-fornecedor').value || '',
         evento_id:     document.getElementById('unif-evento').value || '',
