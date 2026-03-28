@@ -907,7 +907,7 @@
                     <button class="btn-primary" onclick="window.migrarLegadoEstoque()" style="font-size:0.75rem;display:none;" title="Migrar itens">⚙️</button>
                   </div>
 
-                  <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap" id="estoque-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <table class="gestao-table" id="estoque-table">
                       <thead><tr>
                         <th>Tipo</th>
@@ -1185,7 +1185,7 @@
                     <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()">
                   </div>
 
-                  <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap" id="forn-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <table class="gestao-table" id="forn-table">
                       <thead><tr>
                         <th>Nome do Fornecedor</th><th>E-mail</th><th>Telefone</th><th>Itens Vinculados</th><th></th>
@@ -3752,8 +3752,7 @@
     document.getElementById('estoque-fornecedor').value = e.fornecedor_id || '';
     document.getElementById('btn-save-estoque').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-estoque').style.display = 'inline-block';
-    const form = document.getElementById('estoque-add-form');
-    if(form) form.scrollIntoView({behavior:'smooth', block:'nearest'});
+    window.openGestaoDrawer('estoque');
   };
 
   document.getElementById('btn-cancel-estoque').onclick = () => {
@@ -3765,6 +3764,7 @@
     window.toggleEstoqueFields();
     document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
     document.getElementById('btn-cancel-estoque').style.display = 'none';
+    if(typeof window.closeGestaoDrawer === 'function') window.closeGestaoDrawer();
   };
 
   document.getElementById('btn-save-estoque').onclick = async () => {
@@ -3903,7 +3903,7 @@
     document.getElementById('forn-tel').value = f.telefone || '';
     document.getElementById('btn-save-forn').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-forn').style.display = 'inline-block';
-    document.getElementById('forn-add-form').scrollIntoView({behavior:'smooth', block:'nearest'});
+    window.openGestaoDrawer('fornecedor');
   };
 
   document.getElementById('btn-cancel-forn').onclick = () => {
@@ -3911,6 +3911,7 @@
     ['forn-nome','forn-email','forn-tel'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('btn-save-forn').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-forn').style.display = 'none';
+    if(typeof window.closeGestaoDrawer === 'function') window.closeGestaoDrawer();
   };
 
   document.getElementById('btn-save-forn').onclick = async () => {
@@ -4838,7 +4839,9 @@
      drawerOverlay.classList.add('open');
      
      const btnSave = document.getElementById(`btn-save-${type==='uniforme'?'unif':(type==='fornecedor'?'forn':type)}`);
-     if(btnSave) btnSave.onclick = () => window[`save${type.charAt(0).toUpperCase() + type.slice(1)}`]();
+     if(btnSave && (type === 'uniforme' || type === 'brinde')) {
+        btnSave.onclick = () => window[`save${type.charAt(0).toUpperCase() + type.slice(1)}`]();
+     }
   };
 
   window.closeGestaoDrawer = function(e) {
