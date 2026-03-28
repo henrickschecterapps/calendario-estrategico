@@ -347,6 +347,40 @@
   .urgency-low  { color: var(--green); font-weight: 600; }
   #btn-export-pdf:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
+  /* ── ADMIN LAYOUT COM ABAS LATERAIS ── */
+  .admin-layout { display: grid; grid-template-columns: 220px 1fr; gap: 0; min-height: 700px; height: calc(100vh - 200px); max-height: 900px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  .admin-sidenav { background: var(--surface2); border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+  .admin-sidenav-header { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  .admin-sidenav-title { font-family: var(--font-heading); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .admin-nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; border: none; background: transparent; width: 100%; text-align: left; font-family: inherit; font-size: 0.88rem; font-weight: 600; color: var(--muted); border-radius: 0; transition: all 0.2s; position: relative; }
+  .admin-nav-item:hover { background: rgba(0,0,0,0.04); color: var(--text); }
+  [data-theme="dark"] .admin-nav-item:hover { background: rgba(255,255,255,0.05); }
+  .admin-nav-item.active { color: var(--accent); background: rgba(37,99,235,0.07); font-weight: 700; }
+  .admin-nav-item.active::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--accent); border-radius: 0 3px 3px 0; }
+  .admin-nav-item .nav-icon { font-size: 1.1rem; flex-shrink: 0; width: 22px; text-align: center; }
+  .admin-nav-badge { margin-left: auto; font-size: 0.68rem; font-weight: 800; padding: 2px 7px; border-radius: 10px; background: var(--red); color: #fff; animation: pulse-green 2s infinite; }
+  .admin-nav-divider { height: 1px; background: var(--border); margin: 8px 20px; }
+  .admin-section { display: none; padding: 32px; flex-direction: column; gap: 24px; animation: fadeIn 0.25s ease; overflow-y: auto; flex: 1; }
+  .admin-section.active { display: flex; }
+  #asec-operacional.active { display: flex; flex-direction: column; padding: 0; gap: 0; overflow: hidden; }
+  #asec-operacional > div:last-child { overflow-y: auto; flex: 1; }
+  .admin-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-shrink: 0; }
+  .admin-section-heading { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text); }
+  .admin-section-sub { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+  /* Sections wrapper */
+  .admin-layout > div:last-child { display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+  @media (max-width: 900px) {
+    .admin-layout { grid-template-columns: 1fr; height: auto; max-height: none; }
+    .admin-sidenav { flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 8px; border-right: none; border-bottom: 1px solid var(--border); gap: 4px; }
+    .admin-sidenav-header { display: none; }
+    .admin-nav-item { padding: 8px 14px; border-radius: 8px; white-space: nowrap; font-size: 0.82rem; }
+    .admin-nav-item.active::before { display: none; }
+    .admin-nav-item.active { background: var(--accent); color: #fff; border-radius: 8px; }
+    .admin-nav-divider { width: 1px; height: 24px; margin: 0 4px; }
+    .admin-section { padding: 20px; max-height: none; }
+  }
+
   /* ── MOBILE RESPONSIVO ── */
   @media (max-width: 768px) {
     header { padding: 0 16px; height: 60px; }
@@ -667,474 +701,507 @@
 
       <div id="view-admin" class="view-container">
 
-        <!-- KPI ROW 1: original 4 -->
-        <div class="admin-grid" id="dash-kpi-grid">
-          <div class="admin-card"><div class="admin-card-title">Total de Eventos</div><div class="admin-card-value" id="dash-total">0</div><div class="admin-card-sub" id="dash-total-sub"></div></div>
-          <div class="admin-card"><div class="admin-card-title" style="color:var(--c-comercial)">Comerciais</div><div class="admin-card-value" id="dash-comercial">0</div><div class="admin-card-sub" id="dash-comercial-sub"></div></div>
-          <div class="admin-card"><div class="admin-card-title" style="color:var(--c-interno)">Internos</div><div class="admin-card-value" id="dash-interno">0</div><div class="admin-card-sub" id="dash-interno-sub"></div></div>
-          <div class="admin-card"><div class="admin-card-title" style="color:var(--green)">Confirmados</div><div class="admin-card-value" id="dash-confirmados">0</div><div class="admin-card-sub" id="dash-confirmados-sub"></div></div>
-          <div class="admin-card"><div class="admin-card-title" style="color:var(--accent)">Próximos 30 dias</div><div class="admin-card-value" id="dash-proximos">0</div><div class="admin-card-sub" id="dash-proximos-sub"></div></div>
-          <div class="admin-card"><div class="admin-card-title" style="color:var(--teal)">Taxa de Confirmação</div><div class="admin-card-value" id="dash-taxa">0%</div><div class="admin-card-sub" id="dash-taxa-sub"></div></div>
-          <div class="admin-card"><div class="admin-card-title" style="color:var(--amber)">Vagas Disponíveis</div><div class="admin-card-value" id="dash-vagas">0</div><div class="admin-card-sub" id="dash-vagas-sub"></div></div>
-          <div class="admin-card"><div class="admin-card-title" style="color:var(--purple)">Concluídos</div><div class="admin-card-value" id="dash-concluidos">0</div><div class="admin-card-sub" id="dash-concluidos-sub"></div></div>
-        </div>
+        <!-- ADMIN LAYOUT: SIDENAV + CONTENT -->
+        <div class="admin-layout">
 
-        <!-- EXPORT BUTTON -->
-        <div style="display:flex; justify-content:flex-end; margin-bottom:24px; gap:12px;">
-          <button class="btn-icon" id="btn-export-pdf" style="font-weight:700;">📄 Exportar PDF</button>
-        </div>
-
-        <!-- HEATMAP -->
-        <div class="admin-panel" style="margin-bottom:24px;" id="panel-heatmap">
-          <h3>🗓️ Densidade Anual de Eventos</h3>
-          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Concentração de eventos por semana ao longo do ano</p>
-          <div id="heatmap-container" style="overflow-x:auto;"></div>
-          <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:0.75rem;color:var(--muted);">
-            <span>Menos</span>
-            <div style="display:flex;gap:3px;">
-              <div style="width:12px;height:12px;border-radius:2px;background:var(--surface2);border:1px solid var(--border);"></div>
-              <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.2)"></div>
-              <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.45)"></div>
-              <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.7)"></div>
-              <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.95)"></div>
+          <!-- ── SIDENAV LATERAL ── -->
+          <nav class="admin-sidenav">
+            <div class="admin-sidenav-header">
+              <div class="admin-sidenav-title">Painel Admin</div>
             </div>
-            <span>Mais</span>
-          </div>
-        </div>
+            <button class="admin-nav-item active" data-section="dashboard" onclick="switchAdminSection('dashboard', this)">
+              <span class="nav-icon">📊</span> Dashboard
+            </button>
+            <button class="admin-nav-item" data-section="eventos" onclick="switchAdminSection('eventos', this)">
+              <span class="nav-icon">📅</span> Eventos
+            </button>
+            <div class="admin-nav-divider"></div>
+            <button class="admin-nav-item" data-section="operacional" onclick="switchAdminSection('operacional', this)">
+              <span class="nav-icon">📦</span> Operacional
+            </button>
+            <div class="admin-nav-divider"></div>
+            <button class="admin-nav-item" data-section="configuracoes" onclick="switchAdminSection('configuracoes', this)">
+              <span class="nav-icon">⚙️</span> Configurações
+            </button>
+          </nav>
 
-        <div class="admin-panels">
+          <!-- ── SECTIONS ── -->
+          <div style="overflow:hidden; display:flex; flex-direction:column;">
 
-          <!-- CHART: Eventos por Mês -->
-          <div class="admin-panel">
-            <h3>📅 Eventos por Mês</h3>
-            <div class="chart-container"><canvas id="chartMeses"></canvas></div>
-          </div>
-
-          <!-- CHART: Por Status -->
-          <div class="admin-panel">
-            <h3>📊 Distribuição por Status</h3>
-            <div class="chart-container"><canvas id="chartStatus"></canvas></div>
-          </div>
-
-          <!-- CHART: Tipo (original, mantido) -->
-          <div class="admin-panel">
-            <h3>🔵 Tipo de Evento</h3>
-            <div class="chart-container"><canvas id="chartTipos"></canvas></div>
-          </div>
-
-          <!-- CHART: Ranking por Responsável -->
-          <div class="admin-panel">
-            <h3>👤 Ranking por Organizador</h3>
-            <div class="chart-container"><canvas id="chartResp"></canvas></div>
-          </div>
-
-          <!-- TABELA: Vagas Abertas -->
-          <div class="admin-panel" style="grid-column: 1 / -1;" id="panel-vagas">
-            <h3>🎫 Eventos com Vagas Disponíveis</h3>
-            <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Eventos comerciais confirmados ou planejados com vagas em aberto, ordenados por urgência.</p>
-            <div id="vagas-table-container"></div>
-          </div>
-
-          <!-- LISTA RÁPIDA DE EDIÇÃO -->
-          <div class="admin-panel" style="grid-column: 1 / -1;">
-            <h3>📋 Lista Rápida de Edição</h3>
-            <table class="list-table" style="border: none; box-shadow: none;">
-              <thead><tr><th>Data</th><th>Evento</th><th>Responsável (Org)</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead>
-              <tbody id="admin-event-list-body"></tbody>
-            </table>
-          </div>
-
-          <!-- APROVAÇÃO DE ACESSOS -->
-          <div class="admin-panel">
-            <h3>🔐 Aprovação de Acessos</h3>
-            <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Contas @tripla aguardando liberação do sistema.</p>
-            <div id="users-pending-list" style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 250px; overflow-y:auto; padding:8px; background: var(--bg);">
-               <div style="text-align:center; padding: 20px; color: var(--muted); font-size: 0.85rem;">Nenhuma solicitação pendente.</div>
-            </div>
-          </div>
-
-          <!-- IMPORTAR CSV -->
-          <div class="admin-panel">
-            <h3>📥 Importar via Planilha</h3>
-            <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Baixe o modelo (CSV), preencha e importe múltiplos eventos de uma vez.</p>
-            <button class="btn-icon" id="btn-download-csv" style="margin-bottom:16px; font-weight:700">📄 Baixar Modelo CSV</button>
-            <div class="file-drop" id="file-dropzone" onclick="document.getElementById('csv-file').click()"><div style="font-size:2rem; margin-bottom:12px">📁</div><div style="font-weight:600">Arraste o <b>.csv</b> aqui</div><input type="file" id="csv-file" accept=".csv"></div>
-            <button class="btn-primary" id="btn-upload-csv" style="width:100%" disabled>Iniciar Importação</button>
-          </div>
-          
-          <!-- GERENCIAR ORGANIZADORES -->
-          <div class="admin-panel">
-            <h3>👥 Gerenciar Organizadores</h3>
-            <div style="display:flex; gap:12px; margin-bottom:16px;"><input type="text" id="new-resp-input" class="admin-input" style="margin:0" placeholder="Nome..."><button class="btn-primary" id="btn-add-resp">Add</button></div>
-            <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 200px; overflow-y:auto; padding:8px; background: var(--bg);" id="resp-list-admin"></div>
-          </div>
-
-          <!-- ════════════════════════════════════════
-               GESTÃO DE BRINDES / FORNECEDORES / UNIFORMES
-               ════════════════════════════════════════ -->
-          <div class="admin-panel" style="grid-column: 1 / -1;">
-            <h3>🎁 Gestão Operacional</h3>
-            <p style="font-size:0.82rem;color:var(--muted);margin-bottom:20px;">Gerencie brindes, fornecedores e uniformes dos eventos. Os brindes são vinculados aos eventos e visíveis apenas para administradores.</p>
-
-            <!-- Sub-tabs -->
-            <div class="gestao-tabs">
-              <button class="gestao-tab active" data-gtab="estoque">📦 Almoxarifado</button>
-              <button class="gestao-tab" data-gtab="brindes">🎁 Pedidos/Eventos (Brindes)</button>
-              <button class="gestao-tab" data-gtab="uniformes">👕 Pedidos/Eventos (Uniformes)</button>
-              <button class="gestao-tab" data-gtab="fornecedores">🏢 Fornecedores</button>
-            </div>
-
-            <!-- ── ESTOQUE GLOBAL (MATRIZ) ── -->
-            <div class="gestao-pane active" id="gpane-estoque">
-              
-              <div class="filter-bar-gestao">
-                <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
-                <input type="text" id="filtro-estoque-busca" placeholder="Buscar no estoque..." oninput="renderEstoque()">
-                <select id="filtro-estoque-tipo" onchange="renderEstoque()">
-                  <option value="">Qualquer Tipo</option>
-                  <option value="brinde">Brinde</option>
-                  <option value="uniforme">Uniforme</option>
-                </select>
-                <div style="flex:1;"></div>
-                <button class="btn-secondary" onclick="window.openModalKits()" style="font-size:0.75rem;margin-right:8px;" title="Configurar Kits de Itens">📦 Kits Automáticos</button>
-                <button class="btn-primary" onclick="window.openDeployKitModal()" style="font-size:0.75rem;margin-right:8px;" title="Alocar Kit para Evento">🚀 Alocar Kit</button>
-                <button class="btn-primary" onclick="window.migrarLegadoEstoque()" style="font-size:0.75rem;display:none;" title="Migrar itens">⚙️</button>
+            <!-- ════ SEÇÃO: DASHBOARD ════ -->
+            <div class="admin-section active" id="asec-dashboard">
+              <div class="admin-section-header">
+                <div>
+                  <div class="admin-section-heading">Dashboard</div>
+                  <div class="admin-section-sub">Visão geral e métricas estratégicas dos eventos</div>
+                </div>
+                <button class="btn-icon" id="btn-export-pdf" style="font-weight:700;">📄 Exportar PDF</button>
               </div>
 
-              <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                <table class="gestao-table" id="estoque-table">
-                  <thead><tr>
-                    <th>Tipo</th>
-                    <th>Item de Estoque</th>
-                    <th>Subtipo / Nível</th>
-                    <th>Custo Unit.</th>
-                    <th>Fornecedor Padrão</th>
-                    <th>Estoque Original</th>
-                    <th>Alocado (Saídas)</th>
-                    <th>Saldo Atual</th>
-                    <th></th>
-                  </tr></thead>
-                  <tbody id="estoque-body"><tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item cadastrado no Almoxarifado.</td></tr></tbody>
+              <!-- KPIs -->
+              <div class="admin-grid" id="dash-kpi-grid">
+                <div class="admin-card"><div class="admin-card-title">Total de Eventos</div><div class="admin-card-value" id="dash-total">0</div><div class="admin-card-sub" id="dash-total-sub"></div></div>
+                <div class="admin-card"><div class="admin-card-title" style="color:var(--c-comercial)">Comerciais</div><div class="admin-card-value" id="dash-comercial">0</div><div class="admin-card-sub" id="dash-comercial-sub"></div></div>
+                <div class="admin-card"><div class="admin-card-title" style="color:var(--c-interno)">Internos</div><div class="admin-card-value" id="dash-interno">0</div><div class="admin-card-sub" id="dash-interno-sub"></div></div>
+                <div class="admin-card"><div class="admin-card-title" style="color:var(--green)">Confirmados</div><div class="admin-card-value" id="dash-confirmados">0</div><div class="admin-card-sub" id="dash-confirmados-sub"></div></div>
+                <div class="admin-card"><div class="admin-card-title" style="color:var(--accent)">Próximos 30 dias</div><div class="admin-card-value" id="dash-proximos">0</div><div class="admin-card-sub" id="dash-proximos-sub"></div></div>
+                <div class="admin-card"><div class="admin-card-title" style="color:var(--teal)">Taxa de Confirmação</div><div class="admin-card-value" id="dash-taxa">0%</div><div class="admin-card-sub" id="dash-taxa-sub"></div></div>
+                <div class="admin-card"><div class="admin-card-title" style="color:var(--amber)">Vagas Disponíveis</div><div class="admin-card-value" id="dash-vagas">0</div><div class="admin-card-sub" id="dash-vagas-sub"></div></div>
+                <div class="admin-card"><div class="admin-card-title" style="color:var(--purple)">Concluídos</div><div class="admin-card-value" id="dash-concluidos">0</div><div class="admin-card-sub" id="dash-concluidos-sub"></div></div>
+              </div>
+
+              <!-- Heatmap -->
+              <div class="admin-panel" id="panel-heatmap" style="margin:0;">
+                <h3>🗓️ Densidade Anual de Eventos</h3>
+                <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Concentração de eventos por semana ao longo do ano</p>
+                <div id="heatmap-container" style="overflow-x:auto;"></div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:0.75rem;color:var(--muted);">
+                  <span>Menos</span>
+                  <div style="display:flex;gap:3px;">
+                    <div style="width:12px;height:12px;border-radius:2px;background:var(--surface2);border:1px solid var(--border);"></div>
+                    <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.2)"></div>
+                    <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.45)"></div>
+                    <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.7)"></div>
+                    <div class="heatmap-leg" style="--hc:rgba(37,99,235,0.95)"></div>
+                  </div>
+                  <span>Mais</span>
+                </div>
+              </div>
+
+              <!-- Gráficos -->
+              <div class="admin-panels" style="margin:0;">
+                <div class="admin-panel">
+                  <h3>📅 Eventos por Mês</h3>
+                  <div class="chart-container"><canvas id="chartMeses"></canvas></div>
+                </div>
+                <div class="admin-panel">
+                  <h3>📊 Distribuição por Status</h3>
+                  <div class="chart-container"><canvas id="chartStatus"></canvas></div>
+                </div>
+                <div class="admin-panel">
+                  <h3>🔵 Tipo de Evento</h3>
+                  <div class="chart-container"><canvas id="chartTipos"></canvas></div>
+                </div>
+                <div class="admin-panel">
+                  <h3>👤 Ranking por Organizador</h3>
+                  <div class="chart-container"><canvas id="chartResp"></canvas></div>
+                </div>
+              </div>
+
+              <!-- Vagas -->
+              <div class="admin-panel" style="grid-column: 1 / -1; margin:0;" id="panel-vagas">
+                <h3>🎫 Eventos com Vagas Disponíveis</h3>
+                <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Eventos comerciais confirmados ou planejados com vagas em aberto, ordenados por urgência.</p>
+                <div id="vagas-table-container"></div>
+              </div>
+            </div>
+
+            <!-- ════ SEÇÃO: EVENTOS ════ -->
+            <div class="admin-section" id="asec-eventos">
+              <div class="admin-section-header">
+                <div>
+                  <div class="admin-section-heading">Gerenciar Eventos</div>
+                  <div class="admin-section-sub">Edite, crie e gerencie todos os eventos do calendário</div>
+                </div>
+                <button class="btn-primary" onclick="window.openAdminForm('')" style="gap:8px;">＋ Novo Evento</button>
+              </div>
+
+              <div class="admin-panel" style="margin:0;">
+                <table class="list-table" style="border: none; box-shadow: none;">
+                  <thead><tr><th>Data</th><th>Evento</th><th>Responsável</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead>
+                  <tbody id="admin-event-list-body"></tbody>
                 </table>
-                <!-- FORM ADD ESTOQUE -->
-                <div class="gestao-add-bar" id="estoque-add-form" style="display:flex; flex-direction:column; gap:16px;">
-                  <input type="hidden" id="estoque-id">
-                  
-                  <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
-                    <div class="gestao-field">
-                      <label>Tipo *</label>
-                      <select class="gestao-input" id="estoque-tipo" onchange="window.toggleEstoqueFields()">
-                        <option value="brinde">Brinde</option>
-                        <option value="uniforme">Uniforme</option>
-                      </select>
+              </div>
+            </div>
+
+            <!-- ════ SEÇÃO: OPERACIONAL ════ -->
+            <div class="admin-section" id="asec-operacional" style="padding:0; gap:0;">
+              <!-- Sub-tabs operacional -->
+              <div style="padding:24px 32px 0; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0;">
+                <div style="margin-bottom:16px;">
+                  <div class="admin-section-heading">Gestão Operacional</div>
+                  <div class="admin-section-sub">Almoxarifado, brindes, uniformes e fornecedores dos eventos</div>
+                </div>
+                <div class="gestao-tabs" style="border-bottom:none; margin-bottom:0;">
+                  <button class="gestao-tab active" data-gtab="estoque">📦 Almoxarifado</button>
+                  <button class="gestao-tab" data-gtab="brindes">🎁 Brindes</button>
+                  <button class="gestao-tab" data-gtab="uniformes">👕 Uniformes</button>
+                  <button class="gestao-tab" data-gtab="fornecedores">🏢 Fornecedores</button>
+                </div>
+              </div>
+
+              <div style="padding:24px 32px; overflow-y:auto; flex:1;">
+
+                <!-- ── ESTOQUE GLOBAL (MATRIZ) ── -->
+                <div class="gestao-pane active" id="gpane-estoque">
+                  <div class="filter-bar-gestao">
+                    <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
+                    <input type="text" id="filtro-estoque-busca" placeholder="Buscar no estoque..." oninput="renderEstoque()">
+                    <select id="filtro-estoque-tipo" onchange="renderEstoque()">
+                      <option value="">Qualquer Tipo</option>
+                      <option value="brinde">Brinde</option>
+                      <option value="uniforme">Uniforme</option>
+                    </select>
+                    <div style="flex:1;"></div>
+                    <button class="btn-secondary" onclick="window.openModalKits()" style="font-size:0.75rem;margin-right:8px;" title="Configurar Kits de Itens">📦 Kits Automáticos</button>
+                    <button class="btn-primary" onclick="window.openDeployKitModal()" style="font-size:0.75rem;margin-right:8px;" title="Alocar Kit para Evento">🚀 Alocar Kit</button>
+                    <button class="btn-primary" onclick="window.migrarLegadoEstoque()" style="font-size:0.75rem;display:none;" title="Migrar itens">⚙️</button>
+                  </div>
+
+                  <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    <table class="gestao-table" id="estoque-table">
+                      <thead><tr>
+                        <th>Tipo</th>
+                        <th>Item de Estoque</th>
+                        <th>Subtipo / Nível</th>
+                        <th>Custo Unit.</th>
+                        <th>Fornecedor</th>
+                        <th>Qtd Total</th>
+                        <th>Alocado</th>
+                        <th>Saldo</th>
+                        <th></th>
+                      </tr></thead>
+                      <tbody id="estoque-body"><tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item no almoxarifado.</td></tr></tbody>
+                    </table>
+                    <!-- FORM ADD ESTOQUE -->
+                    <div class="gestao-add-bar" id="estoque-add-form" style="display:flex; flex-direction:column; gap:16px;">
+                      <input type="hidden" id="estoque-id">
+                      <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                        <div class="gestao-field">
+                          <label>Tipo *</label>
+                          <select class="gestao-input" id="estoque-tipo" onchange="window.toggleEstoqueFields()">
+                            <option value="brinde">🎁 Brinde</option>
+                            <option value="uniforme">👕 Uniforme</option>
+                          </select>
+                        </div>
+                        <div class="gestao-field" style="flex:2; min-width:180px;">
+                          <label id="lbl-estoque-nome">Nome do Brinde *</label>
+                          <input type="text" class="gestao-input w-full" id="estoque-nome" placeholder="Ex: Caneca Personalizada">
+                        </div>
+                        <div class="gestao-field" id="wrap-est-nivel">
+                          <label>Nível</label>
+                          <select class="gestao-input" id="estoque-nivel">
+                            <option value="Massa">Massa</option>
+                            <option value="Qualificação">Qualificação</option>
+                            <option value="VIP">VIP</option>
+                          </select>
+                        </div>
+                        <div class="gestao-field" id="wrap-est-tamanho" style="display:none;">
+                          <label>Tamanho</label>
+                          <select class="gestao-input" id="estoque-tamanho">
+                            <option value="Único">Único</option>
+                            <option value="PP">PP</option><option value="P">P</option><option value="M">M</option>
+                            <option value="G">G</option><option value="GG">GG</option><option value="XGG">XGG</option>
+                          </select>
+                        </div>
+                        <div class="gestao-field" id="wrap-est-cor" style="display:none;">
+                          <label>Cor / Modelo</label>
+                          <input type="text" class="gestao-input w-sm" id="estoque-cor" placeholder="Ex: Azul Marinho">
+                        </div>
+                        <div class="gestao-field">
+                          <label>Qtd Inicial</label>
+                          <input type="number" class="gestao-input w-sm" id="estoque-qtd" min="0" placeholder="0">
+                        </div>
+                        <div class="gestao-field">
+                          <label>Custo Padrão (R$)</label>
+                          <input type="number" class="gestao-input w-sm" id="estoque-vlr" min="0" step="0.01" placeholder="0,00">
+                        </div>
+                        <div class="gestao-field" style="min-width:150px;">
+                          <label>Fornecedor</label>
+                          <select class="gestao-input" id="estoque-fornecedor">
+                            <option value="">— Selecionar —</option>
+                          </select>
+                        </div>
+                        <div style="flex:1;"></div>
+                        <button class="btn-icon" id="btn-cancel-estoque" style="display:none; white-space:nowrap;">✕ Cancelar</button>
+                        <button class="btn-primary" id="btn-save-estoque" style="white-space:nowrap;">+ Registrar no Almoxarifado</button>
+                      </div>
                     </div>
-                    <div class="gestao-field" style="flex:2;min-width:180px;">
-                      <label id="lbl-estoque-nome">Nome do Item *</label>
-                      <input type="text" class="gestao-input w-full" id="estoque-nome" placeholder="Ex: Copo Térmico">
-                    </div>
-                    <div class="gestao-field" id="wrap-est-nivel">
-                      <label>Nível</label>
-                      <select class="gestao-input" id="estoque-nivel">
+                  </div>
+                </div>
+
+                <!-- ── BRINDES (ALOCAÇÃO) ── -->
+                <div class="gestao-pane" id="gpane-brindes">
+                  <div class="gestao-summary" id="brindes-summary"></div>
+
+                  <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                      <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
+                      <input type="text" id="filtro-brinde-busca" placeholder="Buscar brinde..." oninput="renderBrindes()">
+                      <select id="filtro-brinde-nivel" onchange="renderBrindes()">
+                        <option value="">Todos os Níveis</option>
                         <option value="Massa">Massa</option>
                         <option value="Qualificação">Qualificação</option>
                         <option value="VIP">VIP</option>
                       </select>
-                    </div>
-                    <div class="gestao-field" id="wrap-est-tamanho" style="display:none;">
-                      <label>Tamanho</label>
-                      <select class="gestao-input" id="estoque-tamanho">
-                        <option value="Único">Único</option>
-                        <option value="PP">PP</option>
-                        <option value="P">P</option>
-                        <option value="M">M</option>
-                        <option value="G">G</option>
-                        <option value="GG">GG</option>
+                      <select id="filtro-brinde-evento" onchange="renderBrindes()">
+                        <option value="">Todos os Eventos</option>
                       </select>
                     </div>
-                    <div class="gestao-field" id="wrap-est-cor" style="display:none;">
-                      <label>Cor / Modelo</label>
-                      <input type="text" class="gestao-input w-sm" id="estoque-cor">
-                    </div>
-                    <div class="gestao-field">
-                      <label>Fornecedor Habitual</label>
-                      <select class="gestao-input" id="estoque-fornecedor">
-                        <option value="">— Selecionar —</option>
-                      </select>
+                    <div class="gestao-view-toggles">
+                      <button id="btn-brinde-view-table" class="view-toggle active" onclick="window.setBrindeView('table')">📄 Lista</button>
+                      <button id="btn-brinde-view-kanban" class="view-toggle" onclick="window.setBrindeView('kanban')">⊞ Kanban</button>
                     </div>
                   </div>
 
-                  <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
-                    <div class="gestao-field">
-                      <label>Qtd Comprada (Acervo)</label>
-                      <input type="number" class="gestao-input w-sm" id="estoque-qtd" min="0" placeholder="0">
+                  <div id="brindes-kanban" class="hide kanban-board"></div>
+
+                  <div class="gestao-table-wrap" id="brindes-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    <table class="gestao-table" id="brindes-table">
+                      <thead><tr>
+                        <th>Brinde</th><th>Descrição</th><th>Nível</th><th>Status</th>
+                        <th>Qtd</th><th>Vlr Unit.</th><th>Total</th><th>Fornecedor</th><th>Evento Vinculado</th><th></th>
+                      </tr></thead>
+                      <tbody id="brindes-body"><tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde cadastrado.</td></tr></tbody>
+                    </table>
+                    <!-- FORM ADD BRINDE -->
+                    <div class="gestao-add-bar" id="brinde-add-form">
+                      <input type="hidden" id="brinde-id">
+                      <div class="gestao-field" style="flex:2;min-width:180px;">
+                        <label>Item do Almoxarifado *</label>
+                        <select class="gestao-input w-full" id="brinde-estoque-id" onchange="window.autofillBrinde()">
+                          <option value="">— Selecione um Brinde Mestre —</option>
+                        </select>
+                        <input type="hidden" id="brinde-titulo">
+                        <input type="hidden" id="brinde-nivel" value="Massa">
+                      </div>
+                      <div class="gestao-field" style="flex:3;min-width:160px;">
+                        <label>Observação / Uso</label>
+                        <input type="text" class="gestao-input w-full" id="brinde-desc" placeholder="Detalhes da alocação">
+                      </div>
+                      <div class="gestao-field">
+                        <label>Qtd (Saída)</label>
+                        <input type="number" class="gestao-input w-sm" id="brinde-qtd" min="1" placeholder="0">
+                        <div id="lbl-saldo-brinde" style="font-size:0.7rem; color:var(--muted); margin-top:2px;">Saldo: —</div>
+                      </div>
+                      <div class="gestao-field">
+                        <label>Vlr Unit. (R$)</label>
+                        <input type="number" class="gestao-input w-sm" id="brinde-vlr" min="0" step="0.01" placeholder="0,00">
+                      </div>
+                      <div class="gestao-field" style="min-width:140px;">
+                        <label>Status</label>
+                        <select class="gestao-input" id="brinde-status">
+                          <option value="Cotação">Cotação</option>
+                          <option value="Aprovado">Aprovado</option>
+                          <option value="Pedido">Pedido</option>
+                          <option value="Recebido">Recebido</option>
+                        </select>
+                      </div>
+                      <div class="gestao-field" style="min-width:140px;">
+                        <label>Fornecedor</label>
+                        <select class="gestao-input" id="brinde-fornecedor">
+                          <option value="">— Selecionar —</option>
+                        </select>
+                      </div>
+                      <div class="gestao-field" style="min-width:160px;">
+                        <label>Evento Vinculado</label>
+                        <select class="gestao-input" id="brinde-evento">
+                          <option value="">— Sem vínculo —</option>
+                        </select>
+                      </div>
+                      <div class="gestao-field" style="min-width:160px;">
+                        <label>Anexo (Moc/NF)</label>
+                        <input type="file" class="gestao-input" id="brinde-anexo" accept=".pdf,.jpg,.jpeg,.png,.webp">
+                        <input type="hidden" id="brinde-anexo-url">
+                        <div id="brinde-anexo-name" style="font-size:0.7rem; color:var(--accent); margin-top:2px;"></div>
+                      </div>
+                      <div class="gestao-add-bar-actions">
+                        <button class="btn-icon gestao-total-preview" id="brinde-total-preview" style="pointer-events:none;font-size:0.75rem;"></button>
+                      </div>
+                      <button class="btn-icon" id="btn-cancel-brinde" style="display:none; white-space:nowrap;">✕ Cancelar</button>
+                      <button class="btn-primary" id="btn-save-brinde" style="white-space:nowrap;">+ Adicionar</button>
                     </div>
-                    <div class="gestao-field">
-                      <label>Custo Padrão (R$)</label>
-                      <input type="number" class="gestao-input w-sm" id="estoque-vlr" min="0" step="0.01" placeholder="0,00">
-                    </div>
-                    <div style="flex:1;"></div>
-                    <button class="btn-icon" id="btn-cancel-estoque" style="display:none; white-space:nowrap;">✕ Cancelar</button>
-                    <button class="btn-primary" id="btn-save-estoque" style="white-space:nowrap;">+ Registrar no Almoxarifado</button>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <!-- ── BRINDES (ALOCAÇÃO) ── -->
-            <div class="gestao-pane" id="gpane-brindes">
-              <div class="gestao-summary" id="brindes-summary"></div>
-              
-              <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                  <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
-                  <input type="text" id="filtro-brinde-busca" placeholder="Buscar brinde..." oninput="renderBrindes()">
-                  <select id="filtro-brinde-nivel" onchange="renderBrindes()">
-                    <option value="">Todos os Níveis</option>
-                    <option value="Massa">Massa</option>
-                    <option value="Qualificação">Qualificação</option>
-                    <option value="VIP">VIP</option>
-                  </select>
-                  <select id="filtro-brinde-evento" onchange="renderBrindes()">
-                    <option value="">Todos os Eventos</option>
-                  </select>
-                </div>
-                <!-- KANBAN TOGGLE -->
-                <div class="gestao-view-toggles">
-                  <button id="btn-brinde-view-table" class="view-toggle active" onclick="window.setBrindeView('table')">📄 Lista</button>
-                  <button id="btn-brinde-view-kanban" class="view-toggle" onclick="window.setBrindeView('kanban')">⊞ Kanban</button>
-                </div>
-              </div>
+                <!-- ── UNIFORMES ── -->
+                <div class="gestao-pane" id="gpane-uniformes">
+                  <div class="gestao-summary" id="uniformes-summary"></div>
 
-              <!-- KANBAN CONTAINER -->
-              <div id="brindes-kanban" class="hide kanban-board"></div>
-
-              <div class="gestao-table-wrap" id="brindes-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                <table class="gestao-table" id="brindes-table">
-                  <thead><tr>
-                    <th>Brinde</th>
-                    <th>Descrição</th>
-                    <th>Nível</th>
-                    <th>Status</th>
-                    <th>Qtd</th>
-                    <th>Vlr Unit.</th>
-                    <th>Total</th>
-                    <th>Fornecedor</th>
-                    <th>Evento Vinculado</th>
-                    <th></th>
-                  </tr></thead>
-                  <tbody id="brindes-body"><tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde cadastrado.</td></tr></tbody>
-                </table>
-                <!-- FORM ADD BRINDE (ALOCAÇÃO) -->
-                <div class="gestao-add-bar" id="brinde-add-form">
-                  <input type="hidden" id="brinde-id">
-                  <div class="gestao-field" style="flex:2;min-width:180px;">
-                    <label>Item do Almoxarifado *</label>
-                    <select class="gestao-input w-full" id="brinde-estoque-id" onchange="window.autofillBrinde()">
-                      <option value="">— Selecione um Brinde Mestre —</option>
-                    </select>
-                    <input type="hidden" id="brinde-titulo">
-                    <input type="hidden" id="brinde-nivel" value="Massa">
-                  </div>
-                  <div class="gestao-field" style="flex:3;min-width:160px;">
-                    <label>Observação / Uso</label>
-                    <input type="text" class="gestao-input w-full" id="brinde-desc" placeholder="Detalhes da alocação">
-                  </div>
-                  <div class="gestao-field">
-                    <label>Qtd (Saída)</label>
-                    <input type="number" class="gestao-input w-sm" id="brinde-qtd" min="1" placeholder="0">
-                    <div id="lbl-saldo-brinde" style="font-size:0.7rem; color:var(--muted); margin-top:2px;">Saldo: —</div>
-                  </div>
-                  <div class="gestao-field">
-                    <label>Vlr Unit. (R$)</label>
-                    <input type="number" class="gestao-input w-sm" id="brinde-vlr" min="0" step="0.01" placeholder="0,00">
-                  </div>
-                  <div class="gestao-field" style="min-width:140px;">
-                    <label>Fornecedor</label>
-                    <select class="gestao-input" id="brinde-fornecedor">
-                      <option value="">— Selecionar —</option>
-                    </select>
-                  </div>
-                  <div class="gestao-field" style="min-width:160px;">
-                    <label>Evento Vinculado</label>
-                    <select class="gestao-input" id="brinde-evento">
-                      <option value="">— Sem vínculo —</option>
-                    </select>
-                  </div>
-                  <div class="gestao-field" style="min-width:140px;">
-                    <label>Anexo (Moc/NF)</label>
-                    <input type="file" class="gestao-input" id="brinde-anexo" accept="image/*,application/pdf" style="font-size:0.75rem;">
-                    <input type="hidden" id="brinde-anexo-url">
-                    <div id="brinde-anexo-name" style="font-size:0.7rem; color:var(--accent); margin-top:2px;"></div>
-                  </div>
-                  <button class="btn-icon" id="btn-cancel-brinde" style="display:none; align-self:flex-end;">✕ Cancelar</button>
-                  <button class="btn-primary" id="btn-save-brinde" style="align-self:flex-end;white-space:nowrap;">+ Adicionar</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- ── FORNECEDORES ── -->
-            <div class="gestao-pane" id="gpane-fornecedores">
-              
-              <div class="filter-bar-gestao">
-                <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Buscar:</span>
-                <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()">
-              </div>
-
-              <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                <table class="gestao-table" id="forn-table">
-                  <thead><tr>
-                    <th>Nome do Fornecedor</th>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                    <th>Itens Vinculados</th>
-                    <th></th>
-                  </tr></thead>
-                  <tbody id="forn-body"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Nenhum fornecedor cadastrado.</td></tr></tbody>
-                </table>
-                <!-- FORM ADD FORNECEDOR -->
-                <div class="gestao-add-bar" id="forn-add-form">
-                  <input type="hidden" id="forn-id">
-                  <div class="gestao-field" style="flex:2;min-width:160px;">
-                    <label>Nome do Fornecedor *</label>
-                    <input type="text" class="gestao-input w-full" id="forn-nome" placeholder="Ex: Gráfica XYZ">
-                  </div>
-                  <div class="gestao-field" style="flex:2;min-width:160px;">
-                    <label>E-mail</label>
-                    <input type="email" class="gestao-input w-full" id="forn-email" placeholder="contato@fornecedor.com">
-                  </div>
-                  <div class="gestao-field" style="flex:1;min-width:130px;">
-                    <label>Telefone / WhatsApp</label>
-                    <input type="text" class="gestao-input w-full" id="forn-tel" placeholder="(11) 99999-9999">
-                  </div>
-                  <button class="btn-icon" id="btn-cancel-forn" style="display:none; align-self:flex-end;">✕ Cancelar</button>
-                  <button class="btn-primary" id="btn-save-forn" style="align-self:flex-end;white-space:nowrap;">+ Adicionar</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- ── UNIFORMES ── -->
-            <div class="gestao-pane" id="gpane-uniformes">
-              <div class="gestao-summary" id="uniformes-summary"></div>
-              
-              <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                  <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
-                  <input type="text" id="filtro-unif-busca" placeholder="Cor ou observação..." oninput="renderUniformes()">
-                  <select id="filtro-unif-status" onchange="renderUniformes()">
-                    <option value="">Todos os Status</option>
-                    <option value="Pedido">Pedido</option>
-                    <option value="Em Produção">Em Produção</option>
-                    <option value="Entregue">Entregue</option>
-                    <option value="Cancelado">Cancelado</option>
-                  </select>
-                  <select id="filtro-unif-evento" onchange="renderUniformes()">
-                    <option value="">Todos os Eventos</option>
-                  </select>
-                </div>
-                <!-- KANBAN TOGGLE -->
-                <div class="gestao-view-toggles">
-                  <button id="btn-unif-view-table" class="view-toggle active" onclick="window.setUnifView('table')">📄 Lista</button>
-                  <button id="btn-unif-view-kanban" class="view-toggle" onclick="window.setUnifView('kanban')">⊞ Kanban</button>
-                </div>
-              </div>
-
-              <!-- KANBAN CONTAINER -->
-              <div id="unif-kanban" class="hide kanban-board"></div>
-
-              <div class="gestao-table-wrap" id="unif-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
-                <table class="gestao-table" id="unif-table">
-                  <thead><tr>
-                    <th>Qtd</th>
-                    <th>Cor / Tamanho</th>
-                    <th>Vlr Unit.</th>
-                    <th>Total</th>
-                    <th>Data Pedido</th>
-                    <th>Data Prev.</th>
-                    <th>Status</th>
-                    <th>Fornecedor</th>
-                    <th>Evento Vinculado</th>
-                    <th>Observações</th>
-                    <th></th>
-                  </tr></thead>
-                  <tbody id="unif-body"><tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme cadastrado.</td></tr></tbody>
-                </table>
-                <!-- FORM ADD UNIFORME (ALOCAÇÃO) -->
-                <div class="gestao-add-bar" id="unif-add-form" style="display:flex; flex-direction:column; gap:16px;">
-                  <input type="hidden" id="unif-id">
-                  
-                  <!-- Linha 1 -->
-                  <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
-                    <div class="gestao-field" style="flex:2;min-width:180px;">
-                      <label>Item do Almoxarifado *</label>
-                      <select class="gestao-input w-full" id="unif-estoque-id" onchange="window.autofillUnif()">
-                        <option value="">— Selecione um Uniforme Mestre —</option>
-                      </select>
-                      <input type="hidden" id="unif-cor">
-                      <input type="hidden" id="unif-tamanho" value="Único">
-                    </div>
-                    <div class="gestao-field">
-                      <label>Qtd (Saída) *</label>
-                      <input type="number" class="gestao-input w-sm" id="unif-qtd" min="1" placeholder="0">
-                      <div id="lbl-saldo-unif" style="font-size:0.7rem; color:var(--muted); margin-top:2px;">Saldo: —</div>
-                    </div>
-                    <div class="gestao-field">
-                      <label>Vlr Unit. (R$)</label>
-                      <input type="number" class="gestao-input w-sm" id="unif-vlr" min="0" step="0.01" placeholder="0,00">
-                    </div>
-                    <div class="gestao-field">
-                      <label>Data do Pedido</label>
-                      <input type="date" class="gestao-input w-md" id="unif-data">
-                    </div>
-                    <div class="gestao-field">
-                      <label>Previsão</label>
-                      <input type="date" class="gestao-input w-md" id="unif-data-prevista">
-                    </div>
-                    <div class="gestao-field">
-                      <label>Status</label>
-                      <select class="gestao-input" id="unif-status">
+                  <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                      <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
+                      <input type="text" id="filtro-unif-busca" placeholder="Cor ou observação..." oninput="renderUniformes()">
+                      <select id="filtro-unif-status" onchange="renderUniformes()">
+                        <option value="">Todos os Status</option>
                         <option value="Pedido">Pedido</option>
                         <option value="Em Produção">Em Produção</option>
                         <option value="Entregue">Entregue</option>
                         <option value="Cancelado">Cancelado</option>
                       </select>
-                    </div>
-                  </div>
-                  
-                  <!-- Linha 2 -->
-                  <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
-                    <div class="gestao-field" style="min-width:140px;">
-                      <label>Fornecedor</label>
-                      <select class="gestao-input" id="unif-fornecedor">
-                        <option value="">— Selecionar —</option>
+                      <select id="filtro-unif-evento" onchange="renderUniformes()">
+                        <option value="">Todos os Eventos</option>
                       </select>
                     </div>
-                    <div class="gestao-field" style="min-width:160px;">
-                      <label>Evento Vinculado</label>
-                      <select class="gestao-input" id="unif-evento">
-                        <option value="">— Sem vínculo —</option>
-                      </select>
+                    <div class="gestao-view-toggles">
+                      <button id="btn-unif-view-table" class="view-toggle active" onclick="window.setUnifView('table')">📄 Lista</button>
+                      <button id="btn-unif-view-kanban" class="view-toggle" onclick="window.setUnifView('kanban')">⊞ Kanban</button>
                     </div>
-                    <div class="gestao-field" style="flex:2;min-width:160px;">
-                      <label>Observações</label>
-                      <input type="text" class="gestao-input w-full" id="unif-obs" placeholder="Tamanhos, detalhes...">
-                    </div>
-                    <div class="gestao-field" style="min-width:140px;">
-                      <label>Anexo (Moc/NF)</label>
-                      <input type="file" class="gestao-input" id="unif-anexo" accept="image/*,application/pdf" style="font-size:0.75rem;">
-                      <input type="hidden" id="unif-anexo-url">
-                      <div id="unif-anexo-name" style="font-size:0.7rem; color:var(--accent); margin-top:2px;"></div>
-                    </div>
-                    <div style="flex:1;"></div>
-                    <button class="btn-icon" id="btn-cancel-unif" style="display:none; white-space:nowrap;">✕ Cancelar</button>
-                    <button class="btn-primary" id="btn-save-unif" style="white-space:nowrap;">+ Adicionar</button>
                   </div>
+
+                  <div id="unif-kanban" class="hide kanban-board"></div>
+
+                  <div class="gestao-table-wrap" id="unif-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    <table class="gestao-table" id="unif-table">
+                      <thead><tr>
+                        <th>Qtd</th><th>Cor / Tamanho</th><th>Vlr Unit.</th><th>Total</th>
+                        <th>Data Pedido</th><th>Data Prev.</th><th>Status</th><th>Fornecedor</th><th>Evento Vinculado</th><th>Observações</th><th></th>
+                      </tr></thead>
+                      <tbody id="unif-body"><tr><td colspan="11" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme cadastrado.</td></tr></tbody>
+                    </table>
+                    <!-- FORM ADD UNIFORME -->
+                    <div class="gestao-add-bar" id="unif-add-form" style="display:flex; flex-direction:column; gap:16px;">
+                      <input type="hidden" id="unif-id">
+                      <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                        <div class="gestao-field" style="flex:2;min-width:180px;">
+                          <label>Item do Almoxarifado *</label>
+                          <select class="gestao-input w-full" id="unif-estoque-id" onchange="window.autofillUnif()">
+                            <option value="">— Selecione um Uniforme Mestre —</option>
+                          </select>
+                          <input type="hidden" id="unif-cor">
+                          <input type="hidden" id="unif-tamanho" value="Único">
+                        </div>
+                        <div class="gestao-field">
+                          <label>Qtd (Saída) *</label>
+                          <input type="number" class="gestao-input w-sm" id="unif-qtd" min="1" placeholder="0">
+                          <div id="lbl-saldo-unif" style="font-size:0.7rem; color:var(--muted); margin-top:2px;">Saldo: —</div>
+                        </div>
+                        <div class="gestao-field">
+                          <label>Vlr Unit. (R$)</label>
+                          <input type="number" class="gestao-input w-sm" id="unif-vlr" min="0" step="0.01" placeholder="0,00">
+                        </div>
+                        <div class="gestao-field">
+                          <label>Data do Pedido</label>
+                          <input type="date" class="gestao-input w-md" id="unif-data">
+                        </div>
+                        <div class="gestao-field">
+                          <label>Previsão</label>
+                          <input type="date" class="gestao-input w-md" id="unif-data-prevista">
+                        </div>
+                        <div class="gestao-field">
+                          <label>Status</label>
+                          <select class="gestao-input" id="unif-status">
+                            <option value="Pedido">Pedido</option>
+                            <option value="Em Produção">Em Produção</option>
+                            <option value="Entregue">Entregue</option>
+                            <option value="Cancelado">Cancelado</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                        <div class="gestao-field" style="min-width:150px;">
+                          <label>Fornecedor</label>
+                          <select class="gestao-input" id="unif-fornecedor">
+                            <option value="">— Selecionar —</option>
+                          </select>
+                        </div>
+                        <div class="gestao-field" style="min-width:160px;">
+                          <label>Evento Vinculado</label>
+                          <select class="gestao-input" id="unif-evento">
+                            <option value="">— Sem vínculo —</option>
+                          </select>
+                        </div>
+                        <div class="gestao-field" style="flex:2;min-width:160px;">
+                          <label>Observações</label>
+                          <input type="text" class="gestao-input w-full" id="unif-obs" placeholder="Referência, cor, modelo...">
+                        </div>
+                        <div class="gestao-field" style="min-width:160px;">
+                          <label>Anexo (Moc/NF)</label>
+                          <input type="file" class="gestao-input" id="unif-anexo" accept=".pdf,.jpg,.jpeg,.png,.webp">
+                          <input type="hidden" id="unif-anexo-url">
+                          <div id="unif-anexo-name" style="font-size:0.7rem; color:var(--accent); margin-top:2px;"></div>
+                        </div>
+                        <div style="flex:1;"></div>
+                        <button class="btn-icon" id="btn-cancel-unif" style="display:none; white-space:nowrap;">✕ Cancelar</button>
+                        <button class="btn-primary" id="btn-save-unif" style="white-space:nowrap;">+ Adicionar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ── FORNECEDORES ── -->
+                <div class="gestao-pane" id="gpane-fornecedores">
+                  <div class="filter-bar-gestao">
+                    <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Buscar:</span>
+                    <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()">
+                  </div>
+
+                  <div class="gestao-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                    <table class="gestao-table" id="forn-table">
+                      <thead><tr>
+                        <th>Nome do Fornecedor</th><th>E-mail</th><th>Telefone</th><th>Itens Vinculados</th><th></th>
+                      </tr></thead>
+                      <tbody id="forn-body"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Nenhum fornecedor cadastrado.</td></tr></tbody>
+                    </table>
+                    <!-- FORM ADD FORNECEDOR -->
+                    <div class="gestao-add-bar" id="forn-add-form">
+                      <input type="hidden" id="forn-id">
+                      <div class="gestao-field" style="flex:2;min-width:160px;">
+                        <label>Nome do Fornecedor *</label>
+                        <input type="text" class="gestao-input w-full" id="forn-nome" placeholder="Ex: Gráfica XYZ">
+                      </div>
+                      <div class="gestao-field" style="flex:2;min-width:160px;">
+                        <label>E-mail</label>
+                        <input type="email" class="gestao-input w-full" id="forn-email" placeholder="contato@fornecedor.com">
+                      </div>
+                      <div class="gestao-field" style="flex:1;min-width:130px;">
+                        <label>Telefone / WhatsApp</label>
+                        <input type="text" class="gestao-input w-full" id="forn-tel" placeholder="(11) 99999-9999">
+                      </div>
+                      <button class="btn-icon" id="btn-cancel-forn" style="display:none; align-self:flex-end;">✕ Cancelar</button>
+                      <button class="btn-primary" id="btn-save-forn" style="align-self:flex-end;white-space:nowrap;">+ Adicionar</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div><!-- /operacional inner -->
+            </div>
+
+            <!-- ════ SEÇÃO: CONFIGURAÇÕES ════ -->
+            <div class="admin-section" id="asec-configuracoes">
+              <div class="admin-section-header">
+                <div>
+                  <div class="admin-section-heading">Configurações</div>
+                  <div class="admin-section-sub">Gerenciar pessoas, acessos e importação de dados</div>
+                </div>
+              </div>
+
+              <div class="admin-panels" style="margin:0;">
+                <!-- Aprovação de Acessos -->
+                <div class="admin-panel">
+                  <h3>🔐 Aprovação de Acessos</h3>
+                  <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Contas @tripla aguardando liberação do sistema.</p>
+                  <div id="users-pending-list" style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 250px; overflow-y:auto; padding:8px; background: var(--bg);">
+                     <div style="text-align:center; padding: 20px; color: var(--muted); font-size: 0.85rem;">Nenhuma solicitação pendente.</div>
+                  </div>
+                </div>
+
+                <!-- Gerenciar Organizadores -->
+                <div class="admin-panel">
+                  <h3>👥 Gerenciar Organizadores</h3>
+                  <div style="display:flex; gap:12px; margin-bottom:16px;">
+                    <input type="text" id="new-resp-input" class="admin-input" style="margin:0" placeholder="Nome...">
+                    <button class="btn-primary" id="btn-add-resp">Add</button>
+                  </div>
+                  <div style="border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 200px; overflow-y:auto; padding:8px; background: var(--bg);" id="resp-list-admin"></div>
+                </div>
+
+                <!-- Importar CSV -->
+                <div class="admin-panel">
+                  <h3>📥 Importar via Planilha</h3>
+                  <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Baixe o modelo (CSV), preencha e importe múltiplos eventos de uma vez.</p>
+                  <button class="btn-icon" id="btn-download-csv" style="margin-bottom:16px; font-weight:700">📄 Baixar Modelo CSV</button>
+                  <div class="file-drop" id="file-dropzone" onclick="document.getElementById('csv-file').click()"><div style="font-size:2rem; margin-bottom:12px">📁</div><div style="font-weight:600">Arraste o <b>.csv</b> aqui</div><input type="file" id="csv-file" accept=".csv"></div>
+                  <button class="btn-primary" id="btn-upload-csv" style="width:100%" disabled>Iniciar Importação</button>
                 </div>
               </div>
             </div>
 
-          </div><!-- /admin-panel gestão -->
+          </div><!-- /sections wrapper -->
+        </div><!-- /admin-layout -->
 
-        </div><!-- /admin-panels -->
+      </div><!-- /view-admin -->
+
       </div>
     </main>
   </div>
@@ -1800,9 +1867,27 @@
   async function loadPendingUsers() {
     const list = document.getElementById('users-pending-list');
     try {
-      const snap = await db.collection("users").get(); let html = '';
-      snap.forEach(doc => { let d = doc.data(); if(d.role === 'pending') html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--border);"><span style="font-weight:600; font-size:0.9rem;">${d.email}</span><button class="btn-icon" style="color:var(--green); border-color:var(--green)" onclick="window.approveUser('${doc.id}')">Aprovar</button></div>`; });
+      const snap = await db.collection("users").get();
+      let html = ''; let pendingCount = 0;
+      snap.forEach(doc => {
+        let d = doc.data();
+        if(d.role === 'pending') {
+          pendingCount++;
+          html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--border);"><span style="font-weight:600; font-size:0.9rem;">${d.email}</span><button class="btn-icon" style="color:var(--green); border-color:var(--green)" onclick="window.approveUser('${doc.id}')">Aprovar</button></div>`;
+        }
+      });
       list.innerHTML = html || '<div style="text-align:center; padding: 20px; color: var(--muted); font-size: 0.85rem;">Nenhuma solicitação pendente.</div>';
+      // Atualizar badge na sidenav
+      const cfgBtn = document.querySelector('.admin-nav-item[data-section="configuracoes"]');
+      if (cfgBtn) {
+        let badge = cfgBtn.querySelector('.admin-nav-badge');
+        if (pendingCount > 0) {
+          if (!badge) { badge = document.createElement('span'); badge.className = 'admin-nav-badge'; cfgBtn.appendChild(badge); }
+          badge.textContent = pendingCount;
+        } else {
+          if (badge) badge.remove();
+        }
+      }
     } catch(e) {}
   }
   window.approveUser = async (uid) => { try { await db.collection("users").doc(uid).update({ role: 'approved' }); loadPendingUsers(); showToast('Usuário aprovado com sucesso!', 'success'); } catch(e) { showToast('Erro ao aprovar usuário.', 'error'); } }
@@ -4271,6 +4356,27 @@
 
   // ── Carrega tudo ao entrar no painel admin ──
   // Ao invés de capturar a função anterior (que pode não estar definida ainda),
+  // ── NAVEGAÇÃO ENTRE SEÇÕES DO ADMIN ──
+  window.switchAdminSection = function(section, btn) {
+    // Ativar botão nav
+    document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    // Ativar seção
+    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('asec-' + section);
+    if (target) target.classList.add('active');
+    // Carregar módulos operacionais na primeira visita
+    if (section === 'operacional') {
+      loadGestaoModules();
+    }
+    // Re-renderizar charts quando Dashboard for ativado
+    if (section === 'dashboard') {
+      setTimeout(() => {
+        if (typeof renderDashboardAdmin === 'function') renderDashboardAdmin();
+      }, 50);
+    }
+  };
+
   // usamos um flag para carregar os módulos da primeira vez que o painel for renderizado.
   let _fornLoaded=false, _estoqueLoaded=false, _brindesLoaded=false, _unifLoaded=false;
 
