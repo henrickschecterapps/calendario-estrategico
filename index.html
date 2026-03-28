@@ -1255,8 +1255,8 @@
 <div class="hm-tooltip" id="hm-tooltip"></div>
 
 <!-- Confirm Modal -->
-<div id="confirm-modal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;max-width:440px;width:100%;box-shadow:var(--shadow-lg);text-align:center;">
+<div id="confirm-modal" class="modal-overlay" style="z-index:9000;">
+  <div class="modal" style="padding:40px;max-width:440px;width:100%;text-align:center;">
     <div id="confirm-icon" style="color:var(--red);display:flex;justify-content:center;margin-bottom:16px;"><i data-lucide="trash-2" style="width:48px;height:48px;stroke-width:1.5;"></i></div>
     <h3 id="confirm-title" style="font-family:var(--font-heading);font-size:1.3rem;margin-bottom:8px;">Excluir evento?</h3>
     <p id="confirm-msg" style="color:var(--muted);font-size:0.9rem;margin-bottom:28px;line-height:1.6;"></p>
@@ -1579,20 +1579,29 @@
     setTimeout(() => { t.classList.add('removing'); setTimeout(() => t.remove(), 260); }, duration);
   }
 
-  // ── CONFIRM MODAL ──
+  // ── CONFIRM MODAL (MEHORADO) ──
   let confirmResolve = null;
-  function showConfirm(title, msg) {
+  window.showConfirm = function(title, msg) {
     return new Promise(resolve => {
       confirmResolve = resolve;
       document.getElementById('confirm-title').textContent = title;
       document.getElementById('confirm-msg').textContent = msg;
       const modal = document.getElementById('confirm-modal');
       modal.classList.add('open');
-      modal.style.display = 'flex';
     });
-  }
-  document.getElementById('confirm-cancel-btn').onclick = () => { document.getElementById('confirm-modal').style.display='none'; if(confirmResolve) confirmResolve(false); confirmResolve=null; };
-  document.getElementById('confirm-ok-btn').onclick = () => { document.getElementById('confirm-modal').style.display='none'; if(confirmResolve) confirmResolve(true); confirmResolve=null; };
+  };
+
+  window.closeConfirm = function(val) {
+    const modal = document.getElementById('confirm-modal');
+    modal.classList.remove('open');
+    if (confirmResolve) {
+      confirmResolve(val);
+      confirmResolve = null;
+    }
+  };
+  document.getElementById('confirm-cancel-btn').onclick = () => window.closeConfirm(false);
+  document.getElementById('confirm-ok-btn').onclick = () => window.closeConfirm(true);
+  document.getElementById('confirm-modal').onclick = (e) => { if(e.target === e.currentTarget) window.closeConfirm(false); };
 
   // ── SKELETON LOADING ──
   function showSkeletonTimeline(n = 4) {
@@ -4833,7 +4842,12 @@
     document.addEventListener('keydown', (e) => {
       // ESC - Fechar modais
       if (e.key === 'Escape') {
-        document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+        const cModal = document.getElementById('confirm-modal');
+        if (cModal && cModal.classList.contains('open')) {
+          if (typeof window.closeConfirm === 'function') window.closeConfirm(false);
+        } else {
+          document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+        }
       }
       // CTRL+S - Salvar Formulário Admin (se estiver aberto e visível)
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
