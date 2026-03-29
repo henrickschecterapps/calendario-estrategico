@@ -3686,7 +3686,11 @@
       document.querySelectorAll('.gestao-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.gestao-pane').forEach(p => p.classList.remove('active'));
       tab.classList.add('active');
-      document.getElementById('gpane-' + tab.dataset.gtab).classList.add('active');
+      const pane = document.getElementById('gpane-' + tab.dataset.gtab);
+      if(pane) {
+        pane.classList.remove('hide');
+        pane.classList.add('active');
+      }
     };
   });
 
