@@ -1670,6 +1670,7 @@
   let EVENTS = [], RESPONSAVEIS = [];
   let ESTOQUE = [], BRINDES = [], UNIFORMES = [], FORNECEDORES_LIST = [], PARTICIPANTES_LIST = [];
   let KITS = [];
+  let loadDataFromFirebase = async () => {}; // Declaração global para evitar erros de referência
   
   const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -2032,34 +2033,6 @@
     } catch(error) { err.textContent = "Erro ao registrar. Email já existe?"; document.getElementById('btn-reg-submit').textContent = "Solicitar Acesso"; }
   };
   document.getElementById('btn-logout').onclick = () => auth.signOut(); document.getElementById('btn-logout-pending').onclick = () => auth.signOut();
-
-  // ── DATA FETCHING (COM FALLBACK 100% GARANTIDO) ──
-  async function _loadDataCore() {
-    showSkeletonTimeline(4);
-    try {
-      const eSnap = await db.collection("eventos").get();
-      EVENTS = []; eSnap.forEach(doc => { EVENTS.push({ id: doc.id, ...doc.data() }); });
-      if (EVENTS.length === 0) {
-         EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
-      }
-      const rSnap = await db.collection("responsaveis").get(); 
-      RESPONSAVEIS = []; rSnap.forEach(doc => { RESPONSAVEIS.push({ id: doc.id, ...doc.data() }); });
-      if(userRole === 'admin') await loadPendingUsers();
-    } catch (e) { 
-      console.warn("Sem internet ou Firebase bloqueado. Carregando modo local.");
-      EVENTS = [...ORIGINAL_EVENTS].map((e, i) => ({ id: 'mock_'+i, ...e }));
-    }
-    if(EVENTS.length > 0) {
-      let evsSorted = EVENTS.map(e=>parseDate(e.data_ini)).filter(d=>d).sort((a,b)=>a-b);
-      let firstFuture = evsSorted.find(d => d.getTime() >= currentMonthStart.getTime());
-      let targetDate = firstFuture || evsSorted[evsSorted.length - 1]; 
-      if(targetDate) { calMonth = targetDate.getMonth(); calYear = targetDate.getFullYear(); miniMonth = targetDate.getMonth(); miniYear = targetDate.getFullYear(); currentWeekStart = getStartOfWeek(targetDate); }
-    }
-    initUI();
-    checkUpcomingNotifications();
-  }
-  // loadDataFromFirebase starts as alias; Operacional block overrides it with cache+offline wrapper
-  let loadDataFromFirebase = _loadDataCore;
 
   async function loadPendingUsers() {
     const list = document.getElementById('users-pending-list');
