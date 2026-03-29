@@ -3483,15 +3483,12 @@
       RESPONSAVEIS = [];
       rSnap.forEach(doc => RESPONSAVEIS.push({ id: doc.id, ...doc.data() }));
       saveCache(EVENTS, RESPONSAVEIS);
-      if (userRole === 'admin') await loadPendingUsers();
-      if (typeof loadParticipantes === 'function') await loadParticipantes();
-      if (typeof loadFornecedores === 'function') await loadFornecedores();
-      if (typeof loadEstoque === 'function') await loadEstoque();
-      if (typeof loadUniformes === 'function') await loadUniformes();
-      if (typeof loadBrindes === 'function') await loadBrindes();
+      if (userRole === 'admin') {
+        try { await loadPendingUsers(); } catch(e2) { console.warn("loadPendingUsers:", e2); }
+      }
       setOfflineMode(false);
     } catch(e) {
-      console.warn("Firebase inacessível. Usando cache ou fallback.");
+      console.warn("Firebase inacessível. Usando cache ou fallback.", e);
       if (!cached) EVENTS = [...ORIGINAL_EVENTS].map((e,i)=>({id:'mock_'+i,...e}));
       setOfflineMode(true);
     }
@@ -3503,6 +3500,14 @@
     }
     initUI();
     checkUpcomingNotifications();
+    // Carregar módulos operacionais INDEPENDENTEMENTE (erros não afetam os eventos)
+    setTimeout(async () => {
+      try { if (typeof loadParticipantes === 'function') await loadParticipantes(); } catch(e) { console.warn("loadParticipantes:", e); }
+      try { if (typeof loadFornecedores === 'function') await loadFornecedores(); } catch(e) { console.warn("loadFornecedores:", e); }
+      try { if (typeof loadEstoque === 'function') await loadEstoque(); } catch(e) { console.warn("loadEstoque:", e); }
+      try { if (typeof loadUniformes === 'function') await loadUniformes(); } catch(e) { console.warn("loadUniformes:", e); }
+      try { if (typeof loadBrindes === 'function') await loadBrindes(); } catch(e) { console.warn("loadBrindes:", e); }
+    }, 500);
   };
 
   // ── MODO OFFLINE ──
