@@ -1238,7 +1238,7 @@
                     <div style="flex:1"></div>
                     <button class="btn-primary" onclick="window.novoRegistro('participante')">+ Novo Participante</button>
                   </div>
-                  <div class="gestao-table-wrap">
+                  <div class="gestao-table-wrap" id="part-table-wrap">
                     <table class="gestao-table">
                       <thead><tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Função Padrão</th><th>Tam. Camisa</th><th style="text-align:right">Ações</th></tr></thead>
                       <tbody id="participantes-body"></tbody>
@@ -5030,7 +5030,8 @@
         'estoque-table-wrap': { type: 'estoque', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Add Almoxarifado' },
         'brindes-table-wrap': { type: 'brinde', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Alocar Brinde (Saída)' },
         'unif-table-wrap': { type: 'uniforme', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Registrar Uniforme' },
-        'forn-table-wrap': { type: 'fornecedor', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Fornecedor' }
+        'forn-table-wrap': { type: 'fornecedor', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Fornecedor' },
+        'part-table-wrap': { type: 'participante', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Participante' }
       };
       for(const [id, cfg] of Object.entries(wrappers)) {
         const wrap = document.getElementById(id);
