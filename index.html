@@ -1236,7 +1236,7 @@
                     <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
                     <input type="text" id="filtro-part-busca" placeholder="Nome ou telefone..." oninput="window.renderParticipantes()" class="admin-input" style="width:280px; margin:0;">
                     <div style="flex:1"></div>
-                    <button class="btn-primary" onclick="window.novoRegistro('participante')">+ Novo Participante</button>
+                    <button class="btn-primary" onclick="window.togglePartForm(true)" id="btn-novo-participante"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> Novo Participante</button>
                   </div>
                   <div class="gestao-table-wrap" id="part-table-wrap">
                     <table class="gestao-table">
@@ -1245,8 +1245,8 @@
                     </table>
                   </div>
 
-                  <!-- FORM ADD PARTICIPANTE -->
-                  <div class="gestao-add-bar" id="part-add-form" style="display:none; flex-direction:column; gap:16px;">
+                  <!-- FORM ADD PARTICIPANTE (inline, nao usa drawer) -->
+                  <div id="part-add-form" style="display:none; flex-direction:column; gap:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-top:16px;">
                     <input type="hidden" id="part-id">
                     <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
                       <div class="gestao-field" style="flex:2;min-width:180px;">
@@ -1270,16 +1270,19 @@
                       <div class="gestao-field" style="flex:1;min-width:140px;">
                         <label>Tamanho Camisa</label>
                         <select class="gestao-input w-full" id="part-tamanho">
+                          <option value="PP">PP</option>
                           <option value="P">P</option>
-                          <option value="M">M</option>
+                          <option value="M" selected>M</option>
                           <option value="G">G</option>
                           <option value="GG">GG</option>
                           <option value="EXG">EXG</option>
                           <option value="Único">Único</option>
                         </select>
                       </div>
-                      <button class="btn-icon" id="btn-cancel-part" style="display:none; align-self:flex-end;">✕ Cancelar</button>
-                      <button class="btn-primary" id="btn-save-part" style="align-self:flex-end;white-space:nowrap;">+ Salvar Participante</button>
+                      <div style="display:flex; gap:8px; align-self:flex-end;">
+                        <button class="btn-icon" id="btn-cancel-part" onclick="window.togglePartForm(false)"> Cancelar</button>
+                        <button class="btn-primary" id="btn-save-part" style="white-space:nowrap;">+ Salvar Participante</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -4121,8 +4124,30 @@
     document.getElementById('part-funcao').value = p.funcao || '';
     document.getElementById('part-tamanho').value = p.tamanho || 'M';
     document.getElementById('btn-save-part').textContent = 'Salvar Alterações';
-    document.getElementById('btn-cancel-part').style.display = 'inline-block';
-    window.openGestaoDrawer('participante');
+    window.togglePartForm(true);
+  };
+
+  window.togglePartForm = function(show) {
+    const form = document.getElementById('part-add-form');
+    const btnNovo = document.getElementById('btn-novo-participante');
+    if(!form) return;
+    if(show) {
+      form.style.display = 'flex';
+      if(btnNovo) btnNovo.style.display = 'none';
+      // Limpar se for novo registro
+      if(!document.getElementById('part-id').value) {
+        ['part-nome','part-email','part-tel','part-funcao'].forEach(fid => document.getElementById(fid).value = '');
+        document.getElementById('part-tamanho').value = 'M';
+        document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
+      }
+      setTimeout(() => { const el = document.getElementById('part-nome'); if(el) el.focus(); }, 100);
+    } else {
+      form.style.display = 'none';
+      if(btnNovo) btnNovo.style.display = '';
+      document.getElementById('part-id').value = '';
+      ['part-nome','part-email','part-tel','part-funcao'].forEach(fid => document.getElementById(fid).value = '');
+      document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
+    }
   };
 
   window.deletePart = async (id) => {
@@ -4132,14 +4157,6 @@
       showToast('Participante removido!', 'success');
       await loadParticipantes();
     } catch(e) { showToast('Erro ao remover.', 'error'); }
-  };
-
-  document.getElementById('btn-cancel-part').onclick = () => {
-    window.closeGestaoDrawer();
-    document.getElementById('part-id').value = '';
-    ['part-nome','part-email','part-tel','part-funcao'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
-    document.getElementById('btn-cancel-part').style.display = 'none';
   };
 
   document.getElementById('btn-save-part').onclick = async () => {
@@ -4165,8 +4182,8 @@
         showToast('Participante cadastrado!', 'success');
       }
       await loadParticipantes();
-      window.closeGestaoDrawer();
-    } catch(e) { showToast('Erro ao salvar.', 'error'); }
+      window.togglePartForm(false);
+    } catch(e) { showToast('Erro ao salvar.', 'error'); console.error(e); }
     finally { btn.textContent = '+ Salvar Participante'; btn.disabled = false; }
   };
 
@@ -5024,7 +5041,7 @@
 
   // ── INIT DRAWER GESTÃO OPERACIONAL ──
   setTimeout(() => {
-    const drawerForms = ['estoque-add-form', 'brinde-add-form', 'unif-add-form', 'forn-add-form', 'part-add-form'];
+    const drawerForms = ['estoque-add-form', 'brinde-add-form', 'unif-add-form', 'forn-add-form'];
     const drawerBody = document.getElementById('gestao-drawer-body');
     if(drawerBody) {
       drawerForms.forEach(id => {
@@ -5035,8 +5052,7 @@
         'estoque-table-wrap': { type: 'estoque', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Add Almoxarifado' },
         'brindes-table-wrap': { type: 'brinde', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Alocar Brinde (Saída)' },
         'unif-table-wrap': { type: 'uniforme', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Registrar Uniforme' },
-        'forn-table-wrap': { type: 'fornecedor', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Fornecedor' },
-        'part-table-wrap': { type: 'participante', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Participante' }
+        'forn-table-wrap': { type: 'fornecedor', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Fornecedor' }
       };
       for(const [id, cfg] of Object.entries(wrappers)) {
         const wrap = document.getElementById(id);
