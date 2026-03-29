@@ -899,6 +899,7 @@
                   <button class="gestao-tab" data-gtab="brindes"><i data-lucide="gift" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Brindes</button>
                   <button class="gestao-tab" data-gtab="uniformes"><i data-lucide="shirt" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Uniformes</button>
                   <button class="gestao-tab" data-gtab="fornecedores"><i data-lucide="truck" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Fornecedores</button>
+                  <button class="gestao-tab" data-gtab="participantes"><i data-lucide="users" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Participantes</button>
                 </div>
               </div>
 
@@ -1229,6 +1230,60 @@
                   </div>
                 </div>
 
+                <!-- ── CADASTRO DE PARTICIPANTES ── -->
+                <div class="gestao-pane hide" id="gpane-participantes">
+                  <div class="filter-bar-gestao">
+                    <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
+                    <input type="text" id="filtro-part-busca" placeholder="Nome ou telefone..." oninput="window.renderParticipantes()" class="admin-input" style="width:280px; margin:0;">
+                    <div style="flex:1"></div>
+                    <button class="btn-primary" onclick="window.novoRegistro('participante')">+ Novo Participante</button>
+                  </div>
+                  <div class="gestao-table-wrap">
+                    <table class="gestao-table">
+                      <thead><tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Função Padrão</th><th>Tam. Camisa</th><th style="text-align:right">Ações</th></tr></thead>
+                      <tbody id="participantes-body"></tbody>
+                    </table>
+                  </div>
+
+                  <!-- FORM ADD PARTICIPANTE -->
+                  <div class="gestao-add-bar" id="part-add-form" style="display:none; flex-direction:column; gap:16px;">
+                    <input type="hidden" id="part-id">
+                    <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                      <div class="gestao-field" style="flex:2;min-width:180px;">
+                        <label>Nome Completo *</label>
+                        <input type="text" class="gestao-input w-full" id="part-nome" placeholder="Ex: João Silva">
+                      </div>
+                      <div class="gestao-field" style="flex:2;min-width:180px;">
+                        <label>Email</label>
+                        <input type="email" class="gestao-input w-full" id="part-email" placeholder="email@exemplo.com">
+                      </div>
+                      <div class="gestao-field" style="flex:1;min-width:140px;">
+                        <label>Telefone</label>
+                        <input type="text" class="gestao-input w-full" id="part-tel" placeholder="(00) 00000-0000">
+                      </div>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                      <div class="gestao-field" style="flex:1;min-width:180px;">
+                        <label>Função Padrão</label>
+                        <input type="text" class="gestao-input w-full" id="part-funcao" placeholder="Ex: Coordenador">
+                      </div>
+                      <div class="gestao-field" style="flex:1;min-width:140px;">
+                        <label>Tamanho Camisa</label>
+                        <select class="gestao-input w-full" id="part-tamanho">
+                          <option value="P">P</option>
+                          <option value="M">M</option>
+                          <option value="G">G</option>
+                          <option value="GG">GG</option>
+                          <option value="EXG">EXG</option>
+                          <option value="Único">Único</option>
+                        </select>
+                      </div>
+                      <button class="btn-icon" id="btn-cancel-part" style="display:none; align-self:flex-end;">✕ Cancelar</button>
+                      <button class="btn-primary" id="btn-save-part" style="align-self:flex-end;white-space:nowrap;">+ Salvar Participante</button>
+                    </div>
+                  </div>
+                </div>
+
               </div><!-- /operacional inner -->
             </div>
 
@@ -1445,7 +1500,8 @@
             <div style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; background:var(--surface2); padding:12px; border-radius:var(--radius); border:1px solid var(--border);">
               <div style="flex:1;min-width:140px;">
                 <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Membro</label>
-                <input type="text" id="equipe-nome" class="admin-input" style="margin:0;" placeholder="Ex: Henrique">
+                <input type="text" id="equipe-nome" class="admin-input" style="margin:0;" placeholder="Ex: Henrique" list="lista-participantes">
+                <datalist id="lista-participantes"></datalist>
               </div>
               <div style="flex:1;min-width:140px;">
                 <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Função</label>
@@ -1612,6 +1668,7 @@
 
   let currentUser = null, userRole = null;
   let EVENTS = [], RESPONSAVEIS = [];
+  let ESTOQUE = [], BRINDES = [], UNIFORMES = [], FORNECEDORES_LIST = [], PARTICIPANTES_LIST = [];
   let KITS = [];
   
   const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -2898,7 +2955,7 @@
     if(!nome) return showToast('Informe o nome do participante.', 'warning');
     
     let mid = camInp.value || '';
-    let mobj = { nome, funcao: funcInp.value.trim(), camisa_id: '', estoque_id: '' };
+    let mobj = { nome, funcao: funcInp.value.trim(), camisa_id: '', estoque_id: '', origem: 'global' };
     
     if (mid.startsWith('est_')) {
         mobj.estoque_id = mid.replace('est_', '');
@@ -2909,9 +2966,20 @@
     window.currentEquipe.push(mobj);
     nomeInp.value = '';
     funcInp.value = '';
+    camInp.value = '';
     window.renderEquipeBuilder();
     nomeInp.focus();
   };
+
+  // Preenchimento automático ao selecionar participante
+  document.getElementById('equipe-nome').addEventListener('input', (e) => {
+    const nome = e.target.value;
+    const p = PARTICIPANTES_LIST.find(x => x.nome === nome);
+    if (p) {
+      document.getElementById('equipe-funcao').value = p.funcao || '';
+      // Aqui poderíamos sugerir o tamanho da camisa no select se houvesse match exato
+    }
+  });
 
   async function loadEventHistory(id) {
     const historyList = document.getElementById('history-list');
@@ -3744,21 +3812,20 @@
 
   function getEstoqueAlocado(estId) {
     let sum = 0;
-    // 1. Alocações em Brindes
-    BRINDES.filter(b => b.estoque_id === estId).forEach(b => sum += parseInt(b.qtd||0));
-    // 2. Alocações em Uniformes
-    UNIFORMES.filter(u => u.estoque_id === estId).forEach(u => sum += parseInt(u.qtd||0));
-    // 3. Alocações individuais em Participantes (Equipe)
+    // Saída: Registros individuais na equipe dos eventos
     EVENTS.forEach(ev => {
-        if (ev.equipe && Array.isArray(ev.equipe)) {
-            ev.equipe.forEach(m => {
-                // Checa se o participante tem esse item do estoque vinculado
-                if (m.estoque_id === estId) sum += 1;
-                // Legado: se m.camisa_id aponta para um UNIFORME que por sua vez aponta para este estoque,
-                // já está contado no item 2 (UNIFORMES sum += qtd), então não somamos aqui para não duplicar.
-            });
-        }
+      if (ev.equipe && Array.isArray(ev.equipe)) {
+        ev.equipe.forEach(m => { if (m.estoque_id === estId) sum += 1; });
+      }
     });
+    return sum;
+  }
+
+  function getEstoqueEntradas(estId) {
+    let sum = 0;
+    // Entrada: Pedidos de Brindes/Uniformes com status terminal (Recebido/Entregue/Concluído)
+    BRINDES.filter(b => b.estoque_id === estId && (b.status === 'Recebido' || b.status === 'Entregue' || b.status === 'Concluído')).forEach(b => sum += parseInt(b.qtd||0));
+    UNIFORMES.filter(u => u.estoque_id === estId && (u.status === 'Recebido' || u.status === 'Entregue' || u.status === 'Concluído')).forEach(u => sum += parseInt(u.qtd||0));
     return sum;
   }
 
@@ -3777,9 +3844,9 @@
     }
 
     tbody.innerHTML = list.map(e => {
-      const qtdTotal = parseInt(e.qtd_inicial)||0;
-      const qtdAlocada = getEstoqueAlocado(e.id);
-      const saldo = qtdTotal - qtdAlocada;
+      const entradas = getEstoqueEntradas(e.id);
+      const saidas = getEstoqueAlocado(e.id);
+      const saldo = entradas - saidas;
       const vlr = parseFloat(e.vlr_unit)||0;
       const isBrinde = e.tipo === 'brinde';
       let subtipoHtml = isBrinde ? nivelBadge(e.nivel) : `<span style="font-size:0.75rem;font-weight:700;">Tam: ${e.tamanho||'Único'}</span>`;
@@ -4011,6 +4078,116 @@
     const ok = await showConfirm('Excluir fornecedor?', msg);
     if (!ok) return;
     try { await db.collection("fornecedores").doc(id).delete(); showToast('Fornecedor excluído.', 'warning'); await loadFornecedores(); } catch(e) { showToast('Erro ao excluir.', 'error'); }
+  };
+
+  // ════════════ PARTICIPANTES (BASE GLOBAL) ════════════
+  async function loadParticipantes() {
+    try {
+      const snap = await db.collection("participantes").orderBy("nome").get();
+      PARTICIPANTES_LIST = [];
+      snap.forEach(doc => PARTICIPANTES_LIST.push({ id: doc.id, ...doc.data() }));
+    } catch(e) { PARTICIPANTES_LIST = []; }
+    renderParticipantes();
+  }
+
+  window.renderParticipantes = function() {
+    const tbody = document.getElementById('participantes-body');
+    if (!tbody) return;
+    const busca = (document.getElementById('filtro-part-busca')?.value || '').toLowerCase();
+    let list = PARTICIPANTES_LIST;
+    if (busca) list = list.filter(p => (p.nome||'').toLowerCase().includes(busca) || (p.telefone||'').toLowerCase().includes(busca));
+
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted);">Nenhum participante encontrado.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(p => {
+      const isNew = window.lastSavedId === p.id ? 'flash-green' : '';
+      return `<tr class="${isNew}">
+        <td><strong>${highlight(p.nome, busca)}</strong></td>
+        <td>${p.email || '—'}</td>
+        <td>${p.telefone || '—'}</td>
+        <td><span class="badge badge-interno">${p.funcao || 'N/A'}</span></td>
+        <td><span class="badge badge-comercial">${p.tamanho || 'U'}</span></td>
+        <td style="text-align:right">
+          <button class="tbl-action edit" onclick="window.editPart('${p.id}')">✏️</button>
+          <button class="tbl-action del" onclick="window.deletePart('${p.id}')">🗑️</button>
+        </td>
+      </tr>`;
+    }).join('');
+    
+    updateParticipantDatalist();
+  };
+
+  function updateParticipantDatalist() {
+    let dl = document.getElementById('dl-participantes');
+    if(!dl) {
+      dl = document.createElement('datalist');
+      dl.id = 'dl-participantes';
+      document.body.appendChild(dl);
+    }
+    dl.innerHTML = PARTICIPANTES_LIST.map(p => `<option value="${escapeHtml(p.nome)}">${p.funcao || 'Padrão'}</option>`).join('');
+    const inp = document.getElementById('equipe-nome');
+    if (inp) inp.setAttribute('list', 'dl-participantes');
+  }
+
+  window.editPart = (id) => {
+    const p = PARTICIPANTES_LIST.find(x => x.id === id); if(!p) return;
+    document.getElementById('part-id').value = id;
+    document.getElementById('part-nome').value = p.nome || '';
+    document.getElementById('part-email').value = p.email || '';
+    document.getElementById('part-tel').value = p.telefone || '';
+    document.getElementById('part-funcao').value = p.funcao || '';
+    document.getElementById('part-tamanho').value = p.tamanho || 'M';
+    document.getElementById('btn-save-part').textContent = 'Salvar Alterações';
+    document.getElementById('btn-cancel-part').style.display = 'inline-block';
+    window.openGestaoDrawer('participante');
+  };
+
+  window.deletePart = async (id) => {
+    if(!await showConfirm('Excluir Participante?', 'Isso não removerá ele de eventos passados.')) return;
+    try {
+      await db.collection("participantes").doc(id).delete();
+      showToast('Participante removido!', 'success');
+      await loadParticipantes();
+    } catch(e) { showToast('Erro ao remover.', 'error'); }
+  };
+
+  document.getElementById('btn-cancel-part').onclick = () => {
+    window.closeGestaoDrawer();
+    document.getElementById('part-id').value = '';
+    ['part-nome','part-email','part-tel','part-funcao'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
+    document.getElementById('btn-cancel-part').style.display = 'none';
+  };
+
+  document.getElementById('btn-save-part').onclick = async () => {
+    const id = document.getElementById('part-id').value;
+    const nome = document.getElementById('part-nome').value.trim();
+    if(!nome) { showToast('Nome é obrigatório!', 'warning'); return; }
+    const payload = {
+      nome,
+      email: document.getElementById('part-email').value.trim(),
+      telefone: document.getElementById('part-tel').value.trim(),
+      funcao: document.getElementById('part-funcao').value.trim(),
+      tamanho: document.getElementById('part-tamanho').value
+    };
+    const btn = document.getElementById('btn-save-part');
+    btn.textContent = 'Salvando...'; btn.disabled = true;
+    try {
+      if(id) {
+        await db.collection("participantes").doc(id).update(payload);
+        showToast('Participante atualizado!', 'success');
+      } else {
+        const docRef = await db.collection("participantes").add({ ...payload, criado_em: firebase.firestore.FieldValue.serverTimestamp() });
+        window.lastSavedId = docRef.id;
+        showToast('Participante cadastrado!', 'success');
+      }
+      await loadParticipantes();
+      window.closeGestaoDrawer();
+    } catch(e) { showToast('Erro ao salvar.', 'error'); }
+    finally { btn.textContent = '+ Salvar Participante'; btn.disabled = false; }
   };
 
   // ════════════ BRINDES ════════════
@@ -4867,7 +5044,7 @@
 
   // ── INIT DRAWER GESTÃO OPERACIONAL ──
   setTimeout(() => {
-    const drawerForms = ['estoque-add-form', 'brinde-add-form', 'unif-add-form', 'forn-add-form'];
+    const drawerForms = ['estoque-add-form', 'brinde-add-form', 'unif-add-form', 'forn-add-form', 'part-add-form'];
     const drawerBody = document.getElementById('gestao-drawer-body');
     if(drawerBody) {
       drawerForms.forEach(id => {
@@ -4895,8 +5072,20 @@
   // ── GESTÃO OPERACIONAL CORE (DRAWERS E CRUD) ──
   window.openGestaoDrawer = function(type) {
      const drawerOverlay = document.getElementById('gestao-drawer-overlay');
-     const forms = { 'estoque': 'estoque-add-form', 'brinde': 'brinde-add-form', 'uniforme': 'unif-add-form', 'fornecedor': 'forn-add-form' };
-     const titles = { 'estoque': 'Almoxarifado', 'brinde': 'Brinde (Alocação)', 'uniforme': 'Uniforme (Pedido)', 'fornecedor': 'Fornecedor' };
+     const forms = { 
+       'estoque': 'estoque-add-form', 
+       'brinde': 'brinde-add-form', 
+       'uniforme': 'unif-add-form', 
+       'fornecedor': 'forn-add-form',
+       'participante': 'part-add-form'
+     };
+     const titles = { 
+       'estoque': 'Almoxarifado', 
+       'brinde': 'Brinde (Pedido de Compra)', 
+       'uniforme': 'Uniforme (Pedido de Compra)', 
+       'fornecedor': 'Fornecedor',
+       'participante': 'Participante'
+     };
      Object.values(forms).forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
      const formId = forms[type];
      if(formId) { const el = document.getElementById(formId); if(el) el.style.display = 'flex'; }
@@ -4904,9 +5093,12 @@
      if(typeof lucide !== 'undefined') lucide.createIcons();
      drawerOverlay.classList.add('open');
      
-     const btnSave = document.getElementById(`btn-save-${type==='uniforme'?'unif':(type==='fornecedor'?'forn':type)}`);
-     if(btnSave && (type === 'uniforme' || type === 'brinde')) {
-        btnSave.onclick = () => window[`save${type.charAt(0).toUpperCase() + type.slice(1)}`]();
+     const btnSaveId = type === 'uniforme' ? 'unif' : (type === 'fornecedor' ? 'forn' : (type === 'participante' ? 'part' : type));
+     const btnSave = document.getElementById(`btn-save-${btnSaveId}`);
+     if(btnSave && (type === 'uniforme' || type === 'brinde' || type === 'participante')) {
+        // As funções de save já possuem seus próprios listeners via onclick no HTML ou declarados no JS
+        // Mas garantimos que o texto esteja correto
+        if (btnSave.textContent.includes('Salvando')) return; 
      }
      
      // Stock badge logic
@@ -4932,7 +5124,7 @@
      const item = ESTOQUE.find(e => e.id === selectEl.value);
      if (item) {
          const alocado = getEstoqueAlocado(item.id);
-         let disp = (parseInt(item.qtd_inicial) || 0) - alocado;
+         const entradas = getEstoqueEntradas(item.id); const saidas = getEstoqueAlocado(item.id); let disp = entradas - saidas;
          // Se editando, soma de volta o que já está reservado neste registro
          const rid = document.getElementById(type === 'brinde' ? 'brinde-id' : 'unif-id').value;
          if (rid) {
@@ -4951,12 +5143,13 @@
   window.closeGestaoDrawer = function(e) {
      if(e && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
      document.getElementById('gestao-drawer-overlay').classList.remove('open');
-     ['estoque-id', 'brinde-id', 'unif-id', 'forn-id'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+     ['estoque-id', 'brinde-id', 'unif-id', 'forn-id', 'part-id'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
      // Reset button text
      if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
      if(document.getElementById('btn-save-brinde')) document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
      if(document.getElementById('btn-save-unif')) document.getElementById('btn-save-unif').textContent = '+ Adicionar';
      if(document.getElementById('btn-save-forn')) document.getElementById('btn-save-forn').textContent = '+ Adicionar';
+     if(document.getElementById('btn-save-part')) document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
      // Clear badges
      document.querySelectorAll('.estoque-saldo-badge').forEach(b => b.remove());
   };
@@ -4968,9 +5161,19 @@
          const el = document.getElementById(id); if(el) el.value = '';
      });
      document.getElementById('estoque-tipo').value = 'brinde';
+     window.toggleEstoqueFields();
      document.getElementById('estoque-nivel').value = 'Massa';
      document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
      window.openGestaoDrawer('estoque');
+  };
+
+  window.toggleEstoqueFields = function() {
+     const tipo = document.getElementById('estoque-tipo').value;
+     const isBrinde = tipo === 'brinde';
+     document.getElementById('lbl-estoque-nome').textContent = isBrinde ? 'Nome do Brinde *' : 'Peça do Uniforme *';
+     document.getElementById('wrap-est-nivel').style.display = isBrinde ? 'block' : 'none';
+     document.getElementById('wrap-est-tamanho').style.display = isBrinde ? 'none' : 'block';
+     document.getElementById('wrap-est-cor').style.display = isBrinde ? 'none' : 'block';
   };
 
   window.novoRegistro = function(type) {
@@ -5204,8 +5407,10 @@
     finally { if(btn) { btn.textContent = 'Adicionar'; btn.disabled = false; } }
   };
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     if (typeof lucide !== 'undefined') lucide.createIcons();
+    // Carregar módulos operacionais na inicialização
+    if (typeof loadParticipantes === 'function') await loadParticipantes();
     // ── KEYBOARD SHORTCUTS (UX PRO) ──
     document.addEventListener('keydown', (e) => {
       // ESC - Fechar modais
@@ -5228,6 +5433,35 @@
       }
     });
   });
+
+  /** 
+   * SCRIPT DE MIGRAÇÃO ÚNICA:
+   * Define o status de todos os Brindes e Uniformes como 'Recebido' 
+   * para que o Almoxarifado reconheça como entrada de estoque.
+   */
+  window.migrarStatusEstoque = async function() {
+    if(!await showConfirm('Migrar Status de Estoque?', 'Isso marcará todos os Brindes e Uniformes atuais como "Recebido" para alimentar o saldo do Almoxarifado. Deseja continuar?')) return;
+    
+    showToast('Iniciando migração de status...', 'info');
+    try {
+      const bSnap = await db.collection("brindes").get();
+      const uSnap = await db.collection("uniformes").get();
+      const batch = db.batch();
+      
+      bSnap.forEach(doc => { if(!doc.data().status) batch.update(doc.ref, { status: 'Recebido' }); });
+      uSnap.forEach(doc => { if(!doc.data().status) batch.update(doc.ref, { status: 'Recebido' }); });
+      
+      await batch.commit();
+      showToast('Migração concluída com sucesso! 📦', 'success');
+      // Recarregar tudo
+      if(typeof loadBrindes === 'function') await loadBrindes();
+      if(typeof loadUniformes === 'function') await loadUniformes();
+      if(typeof loadEstoque === 'function') await loadEstoque();
+    } catch(err) {
+      console.error(err);
+      showToast('Erro ao realizar migração.', 'error');
+    }
+  };
 </script>
 </body>
 </html>
