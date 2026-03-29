@@ -3484,6 +3484,11 @@
       rSnap.forEach(doc => RESPONSAVEIS.push({ id: doc.id, ...doc.data() }));
       saveCache(EVENTS, RESPONSAVEIS);
       if (userRole === 'admin') await loadPendingUsers();
+      if (typeof loadParticipantes === 'function') await loadParticipantes();
+      if (typeof loadFornecedores === 'function') await loadFornecedores();
+      if (typeof loadEstoque === 'function') await loadEstoque();
+      if (typeof loadUniformes === 'function') await loadUniformes();
+      if (typeof loadBrindes === 'function') await loadBrindes();
       setOfflineMode(false);
     } catch(e) {
       console.warn("Firebase inacessível. Usando cache ou fallback.");
@@ -5379,8 +5384,6 @@
 
   document.addEventListener('DOMContentLoaded', async () => {
     if (typeof lucide !== 'undefined') lucide.createIcons();
-    // Carregar módulos operacionais na inicialização
-    if (typeof loadParticipantes === 'function') await loadParticipantes();
     // ── KEYBOARD SHORTCUTS (UX PRO) ──
     document.addEventListener('keydown', (e) => {
       // ESC - Fechar modais
