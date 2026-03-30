@@ -1501,10 +1501,11 @@
             <label class="form-label" style="color:var(--green)">Participantes da Tripla (Equipe)</label>
             <div id="equipe-builder-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;"></div>
             <div style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; background:var(--surface2); padding:12px; border-radius:var(--radius); border:1px solid var(--border);">
-              <div style="flex:1;min-width:140px;">
-                <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Membro</label>
-                <input type="text" id="equipe-nome" class="admin-input" style="margin:0;" placeholder="Ex: Henrique" list="lista-participantes">
-                <datalist id="lista-participantes"></datalist>
+              <div style="flex:2;min-width:180px;">
+                <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Participante</label>
+                <select id="equipe-nome" class="admin-input" style="margin:0;">
+                  <option value="">— Selecionar participante —</option>
+                </select>
               </div>
               <div style="flex:1;min-width:140px;">
                 <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Função</label>
@@ -1518,7 +1519,6 @@
               </div>
               <button class="btn-primary" id="btn-add-equipe" style="margin:0; height:42px;">+ Adicionar</button>
             </div>
-            <!-- Backup for legacy -->
             <input type="hidden" id="edit-participantes">
           </div>
         </div>
@@ -2924,14 +2924,17 @@
 
   document.getElementById('btn-add-equipe').onclick = (e) => {
     e.preventDefault();
-    const nomeInp = document.getElementById('equipe-nome');
+    const nomeSelect = document.getElementById('equipe-nome');
     const funcInp = document.getElementById('equipe-funcao');
     const camInp = document.getElementById('equipe-camisa');
-    const nome = nomeInp.value.trim();
-    if(!nome) return showToast('Informe o nome do participante.', 'warning');
+    const selectedOpt = nomeSelect.options[nomeSelect.selectedIndex];
+    const nome = selectedOpt ? selectedOpt.text : '';
+    const partId = nomeSelect.value;
+    if(!partId) return showToast('Selecione um participante da lista.', 'warning');
+    if(window.currentEquipe.some(m => m.part_id === partId)) return showToast('Este participante já foi adicionado.', 'warning');
     
     let mid = camInp.value || '';
-    let mobj = { nome, funcao: funcInp.value.trim(), camisa_id: '', estoque_id: '', origem: 'global' };
+    let mobj = { nome, funcao: funcInp.value.trim() || (selectedOpt.dataset.funcao || ''), camisa_id: '', estoque_id: '', part_id: partId, origem: 'global' };
     
     if (mid.startsWith('est_')) {
         mobj.estoque_id = mid.replace('est_', '');
@@ -2940,20 +2943,19 @@
     }
     
     window.currentEquipe.push(mobj);
-    nomeInp.value = '';
+    nomeSelect.value = '';
     funcInp.value = '';
     camInp.value = '';
     window.renderEquipeBuilder();
-    nomeInp.focus();
+    nomeSelect.focus();
   };
 
-  // Preenchimento automático ao selecionar participante
-  document.getElementById('equipe-nome').addEventListener('input', (e) => {
-    const nome = e.target.value;
-    const p = PARTICIPANTES_LIST.find(x => x.nome === nome);
-    if (p) {
-      document.getElementById('equipe-funcao').value = p.funcao || '';
-      // Aqui poderíamos sugerir o tamanho da camisa no select se houvesse match exato
+  // Preenchimento automático de função ao selecionar participante
+  document.getElementById('equipe-nome').addEventListener('change', (e) => {
+    const partId = e.target.value;
+    const p = PARTICIPANTES_LIST.find(x => x.id === partId);
+    if (p && p.funcao) {
+      document.getElementById('equipe-funcao').value = p.funcao;
     }
   });
 
@@ -4108,15 +4110,19 @@
   };
 
   function updateParticipantDatalist() {
-    let dl = document.getElementById('dl-participantes');
-    if(!dl) {
-      dl = document.createElement('datalist');
-      dl.id = 'dl-participantes';
-      document.body.appendChild(dl);
+    // Popular o select dropdown de equipe no formulário de eventos
+    const sel = document.getElementById('equipe-nome');
+    if(sel && sel.tagName === 'SELECT') {
+      const currentVal = sel.value;
+      sel.innerHTML = '<option value="">— Selecionar participante —</option>' +
+        PARTICIPANTES_LIST.map(p =>
+          `<option value="${escapeHtml(p.id)}" data-funcao="${escapeHtml(p.funcao||'')}">${escapeHtml(p.nome)}${p.funcao ? ' · ' + escapeHtml(p.funcao) : ''}</option>`
+        ).join('');
+      if(currentVal) sel.value = currentVal;
     }
-    dl.innerHTML = PARTICIPANTES_LIST.map(p => `<option value="${escapeHtml(p.nome)}">${p.funcao || 'Padrão'}</option>`).join('');
-    const inp = document.getElementById('equipe-nome');
-    if (inp) inp.setAttribute('list', 'dl-participantes');
+    // Manter compatibilidade com datalist legado se existir
+    const dl = document.getElementById('lista-participantes');
+    if(dl) dl.innerHTML = PARTICIPANTES_LIST.map(p => `<option value="${escapeHtml(p.nome)}">${p.funcao||''}</option>`).join('');
   }
 
   window.editPart = (id) => {
