@@ -1527,7 +1527,13 @@
         <div class="form-grid">
           <div><label class="form-label">Formato</label><input type="text" class="admin-input" id="edit-formato" placeholder="Presencial / Online / Híbrido"></div>
           <div><label class="form-label">Cota Comercial</label><input type="text" class="admin-input" id="edit-cota"></div>
-          <div><label class="form-label">Vagas Livres</label><input type="text" class="admin-input" id="edit-vagas" placeholder="Ex: 5 executivos"></div>
+          <div style="position:relative;">
+            <label class="form-label">Vagas do Evento (Capacidade)</label>
+            <input type="text" class="admin-input" id="edit-vagas" placeholder="Ex: 50" oninput="if(window.updateVagasSaldo) window.updateVagasSaldo()">
+            <div id="vagas-restantes-info" style="font-size:0.75rem; font-weight:700; color:var(--muted); margin-top:4px;">
+              Vagas Restantes: <span id="vagas-saldo-val" style="color:var(--green)">—</span>
+            </div>
+          </div>
         </div>
 
         <div class="admin-section-title">Informações Adicionais</div>
@@ -2856,6 +2862,8 @@
     const selectEl = document.getElementById('equipe-camisa');
     if(!listEl || !selectEl) return;
     
+    // Atualizar o saldo de vagas quando a equipe muda
+    if (window.updateVagasSaldo) window.updateVagasSaldo();
     // 1. Calculate Options from Almoxarifado (Direct) + Legacy Uniformes
     let optionsHtml = '<option value="">Sem item / uniforme</option>';
     
@@ -2920,6 +2928,32 @@
   window.delEquipeMember = function(idx) {
     window.currentEquipe.splice(idx, 1);
     window.renderEquipeBuilder();
+  };
+
+  /**
+   * Calcula e exibe o saldo de vagas (Vagas Totais - Integrantes da Equipe)
+   */
+  window.updateVagasSaldo = function() {
+    const totalInp = document.getElementById('edit-vagas');
+    const saldoValEl = document.getElementById('vagas-saldo-val');
+    if (!totalInp || !saldoValEl) return;
+
+    let totalRaw = totalInp ? totalInp.value + '' : '0';
+    // Extrai apenas os dígitos para o cálculo (mantendo compatibilidade com texto legado)
+    const total = parseInt(totalRaw.replace(/\D/g, '')) || 0;
+    const ocupadas = (window.currentEquipe || []).length;
+    const restam = Math.max(0, total - ocupadas);
+
+    saldoValEl.textContent = restam;
+    
+    // Alerta visual se as vagas acabarem ou ficarem negativas
+    if (restam === 0 && total > 0) {
+      saldoValEl.style.color = 'var(--red)';
+    } else if (total < ocupadas) {
+      saldoValEl.style.color = 'var(--red)';
+    } else {
+      saldoValEl.style.color = 'var(--green)';
+    }
   };
 
   document.getElementById('btn-add-equipe').onclick = (e) => {
