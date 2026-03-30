@@ -3015,6 +3015,11 @@
     window.currentEquipe = ev.equipe ? JSON.parse(JSON.stringify(ev.equipe)) : [];
     if (window.currentEquipe.length === 0 && ev.participantes) window.currentEquipe = [{nome: ev.participantes, funcao: '', camisa_id: ''}];
     window.renderEquipeBuilder();
+    
+    // Garantir que o dropdown de participantes esteja populado e campos limpos
+    if (typeof updateParticipantDatalist === 'function') updateParticipantDatalist();
+    document.getElementById('equipe-funcao').value = '';
+    document.getElementById('equipe-camisa').value = '';
 
     // Reset UI state
     document.querySelectorAll('.admin-input').forEach(i => i.classList.remove('valid','invalid'));
