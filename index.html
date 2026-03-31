@@ -938,7 +938,7 @@
                       <tbody id="estoque-body"><tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item no almoxarifado.</td></tr></tbody>
                     </table>
                     <!-- FORM ADD ESTOQUE -->
-                    <div class="gestao-add-bar" id="estoque-add-form" style="display:flex; flex-direction:column; gap:16px;">
+                    <div class="gestao-add-bar" id="estoque-add-form" style="display:none; flex-direction:column; gap:16px;">
                       <input type="hidden" id="estoque-id">
                       <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
                         <div class="gestao-field">
@@ -3913,7 +3913,8 @@
     document.getElementById('estoque-fornecedor').value = e.fornecedor_id || '';
     document.getElementById('btn-save-estoque').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-estoque').style.display = 'inline-block';
-    window.openGestaoDrawer('estoque');
+    document.getElementById('estoque-add-form').style.display = 'flex';
+    document.getElementById('estoque-add-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   document.getElementById('btn-cancel-estoque').onclick = () => {
@@ -3925,7 +3926,7 @@
     window.toggleEstoqueFields();
     document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
     document.getElementById('btn-cancel-estoque').style.display = 'none';
-    if(typeof window.closeGestaoDrawer === 'function') window.closeGestaoDrawer();
+    document.getElementById('estoque-add-form').style.display = 'none';
   };
 
   document.getElementById('btn-save-estoque').onclick = async () => {
@@ -5090,7 +5091,7 @@
 
   // ── INIT DRAWER GESTÃO OPERACIONAL ──
   setTimeout(() => {
-    const drawerForms = ['estoque-add-form', 'brinde-add-form', 'unif-add-form', 'forn-add-form'];
+    const drawerForms = ['brinde-add-form', 'unif-add-form', 'forn-add-form'];
     const drawerBody = document.getElementById('gestao-drawer-body');
     if(drawerBody) {
       drawerForms.forEach(id => {
@@ -5210,7 +5211,9 @@
      window.toggleEstoqueFields();
      document.getElementById('estoque-nivel').value = 'Massa';
      document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
-     window.openGestaoDrawer('estoque');
+     document.getElementById('btn-cancel-estoque').style.display = 'inline-block';
+     document.getElementById('estoque-add-form').style.display = 'flex';
+     document.getElementById('estoque-add-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   window.toggleEstoqueFields = function() {
