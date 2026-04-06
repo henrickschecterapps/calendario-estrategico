@@ -893,11 +893,11 @@
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
                   <div>
                     <div class="admin-section-heading" style="font-size:1.2rem;">⚙️ Gestão Operacional</div>
-                    <div class="admin-section-sub">Almoxarifado · Brindes · Uniformes · Fornecedores</div>
+                    <div class="admin-section-sub">Estoque · Brindes · Uniformes · Fornecedores</div>
                   </div>
                 </div>
                 <div class="gestao-tabs" style="border-bottom:none; margin-bottom:0;">
-                  <button class="gestao-tab active" data-gtab="estoque"><i data-lucide="boxes" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Almoxarifado</button>
+                  <button class="gestao-tab active" data-gtab="estoque"><i data-lucide="boxes" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Estoque</button>
                   <button class="gestao-tab" data-gtab="brindes"><i data-lucide="gift" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Brindes</button>
                   <button class="gestao-tab" data-gtab="uniformes"><i data-lucide="shirt" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Uniformes</button>
                   <button class="gestao-tab" data-gtab="fornecedores"><i data-lucide="truck" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Fornecedores</button>
@@ -941,7 +941,7 @@
                     </table>
                     <!-- FORM ADD ESTOQUE -->
                     <div class="gestao-add-bar" id="estoque-add-form" style="display:none; flex-direction:column; gap:12px; border:2px solid var(--accent); background:var(--surface2); padding:18px; border-radius:12px; margin:12px;">
-                      <div style="font-weight:800;font-size:0.85rem;color:var(--accent);margin-bottom:4px;">📦 Novo Item no Almoxarifado</div>
+                      <div style="font-weight:800;font-size:0.85rem;color:var(--accent);margin-bottom:4px;">📦 Novo Item no Estoque</div>
                       <input type="hidden" id="estoque-id">
                       <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
                         <div class="gestao-field">
@@ -1025,18 +1025,15 @@
                     <!-- FORM ADD BRINDE -->
                     <div class="gestao-add-bar" id="brinde-add-form">
                       <input type="hidden" id="brinde-id">
+                      <input type="hidden" id="brinde-estoque-id" value="">
                       <div class="gestao-field" style="flex:2;min-width:180px;">
-                        <label>Item do Almoxarifado *</label>
-                        <select class="gestao-input w-full" id="brinde-estoque-id" onchange="window.autofillBrinde()">
-                          <option value="">— Selecione um Brinde —</option>
-                        </select>
-                        <input type="hidden" id="brinde-titulo">
+                        <label>Nome do Brinde *</label>
+                        <input type="text" class="gestao-input w-full" id="brinde-titulo" placeholder="Ex: Caneca Personalizada">
                         <input type="hidden" id="brinde-nivel" value="Massa">
                       </div>
                       <div class="gestao-field">
-                        <label>Qtd (Saída)</label>
+                        <label>Qtd do Pedido</label>
                         <input type="number" class="gestao-input w-sm" id="brinde-qtd" min="1" placeholder="0">
-                        <div id="lbl-saldo-brinde" style="font-size:0.7rem; color:var(--muted); margin-top:2px;">Saldo: —</div>
                       </div>
                       <div class="gestao-field">
                         <label>Vlr Unit. (R$)</label>
@@ -1103,18 +1100,22 @@
                     <div class="gestao-add-bar" id="unif-add-form" style="display:flex; flex-direction:column; gap:12px;">
                       <input type="hidden" id="unif-id">
                       <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                        <input type="hidden" id="unif-estoque-id" value="">
                         <div class="gestao-field" style="flex:2;min-width:180px;">
-                          <label>Item do Almoxarifado *</label>
-                          <select class="gestao-input w-full" id="unif-estoque-id" onchange="window.autofillUnif()">
-                            <option value="">— Selecione um Uniforme —</option>
+                          <label>Descrição do Uniforme *</label>
+                          <input type="text" class="gestao-input w-full" id="unif-cor" placeholder="Ex: Camiseta Polo Branca">
+                        </div>
+                        <div class="gestao-field">
+                          <label>Tamanho</label>
+                          <select class="gestao-input" id="unif-tamanho">
+                            <option value="Único">Único</option>
+                            <option value="PP">PP</option><option value="P">P</option><option value="M">M</option>
+                            <option value="G">G</option><option value="GG">GG</option><option value="XGG">XGG</option>
                           </select>
-                          <input type="hidden" id="unif-cor">
-                          <input type="hidden" id="unif-tamanho" value="Único">
                         </div>
                         <div class="gestao-field">
                           <label>Qtd *</label>
                           <input type="number" class="gestao-input w-sm" id="unif-qtd" min="1" placeholder="0">
-                          <div id="lbl-saldo-unif" style="font-size:0.7rem; color:var(--muted); margin-top:2px;">Saldo: —</div>
                         </div>
                         <div class="gestao-field">
                           <label>Vlr Unit. (R$)</label>
@@ -1542,7 +1543,7 @@
             <input type="text" class="gestao-input w-full" id="kit-nome" placeholder="Ex: Kit Staff VIP">
           </div>
           <div style="margin-top:20px;">
-            <label style="font-weight:700;font-size:0.85rem;color:var(--muted);margin-bottom:8px;display:block;">Itens do Almoxarifado contidos no Kit</label>
+            <label style="font-weight:700;font-size:0.85rem;color:var(--muted);margin-bottom:8px;display:block;">Itens do Estoque contidos no Kit</label>
             <div id="kit-items-container" style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
               <!-- Linhas de itens inseridas aqui -->
             </div>
@@ -2816,12 +2817,12 @@
     
     // Atualizar o saldo de vagas quando a equipe muda
     if (window.updateVagasSaldo) window.updateVagasSaldo();
-    // 1. Calculate Options from Almoxarifado (Direct) + Legacy Uniformes
+    // 1. Calculate Options from Estoque (Direct) + Legacy Uniformes
     let optionsHtml = '<option value="">Sem item / uniforme</option>';
     
-    // Direct from Almoxarifado (Central)
+    // Direct from Estoque (Central)
     if (typeof ESTOQUE !== 'undefined' && ESTOQUE.length > 0) {
-        optionsHtml += '<optgroup label="Almoxarifado Central">';
+        optionsHtml += '<optgroup label="Estoque Central">';
         ESTOQUE.filter(e => e.tipo === 'uniforme' || e.tipo === 'brinde').forEach(e => {
             const qtdTotal = parseInt(e.qtd_inicial) || 0;
             const alocado = getEstoqueAlocado(e.id);
@@ -3752,24 +3753,7 @@
       if (cur) sel.value = cur;
     });
     
-    // Populate Brindes/Uniformes base items from Estoque Global
-    ['brinde-estoque-id','unif-estoque-id'].forEach(selId => {
-      const sel = document.getElementById(selId);
-      if (!sel) return;
-      const cur = sel.value;
-      const isBrinde = selId === 'brinde-estoque-id';
-      sel.innerHTML = `<option value="">— Selecione ${isBrinde ? 'um Brinde' : 'um Uniforme'} Mestre —</option>`;
-      ESTOQUE.filter(x => x.tipo === (isBrinde ? 'brinde' : 'uniforme')).sort((a,b)=>(a.nome||'').localeCompare(b.nome||'')).forEach(e => {
-        const opt = document.createElement('option');
-        opt.value = e.id;
-        const saldo = (parseInt(e.qtd_inicial)||0) - getEstoqueAlocado(e.id);
-        const sub = isBrinde ? e.nivel : `Tamanho ${e.tamanho||'U'}${e.cor ? ' - '+e.cor : ''}`;
-        opt.textContent = `${e.nome} (${sub}) — Saldo: ${saldo}`;
-        if (saldo <= 0) opt.textContent = `⚠️ ` + opt.textContent;
-        sel.appendChild(opt);
-      });
-      if (cur) sel.value = cur;
-    });
+    // brinde-estoque-id e unif-estoque-id são hidden inputs — não vinculam mais item mestre
   }
 
   // ════════════ ALMOXARIFADO (ESTOQUE GLOBAL) ════════════
@@ -3820,7 +3804,7 @@
     if (tipo) list = list.filter(e => e.tipo === tipo);
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item cadastrado no Almoxarifado.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item cadastrado no Estoque.</td></tr>';
       return;
     }
 
@@ -3916,7 +3900,7 @@
       await loadEstoque();
       setTimeout(() => window.lastSavedId = null, 3000);
     } catch(e) { showToast('Erro ao salvar no almoxarifado.', 'error'); }
-    finally { btn.textContent = id ? 'Salvar Alterações' : '+ Registrar no Almoxarifado'; btn.disabled = false; }
+    finally { btn.textContent = id ? 'Salvar Alterações' : '+ Registrar no Estoque'; btn.disabled = false; }
   };
 
   window.deleteEstoque = async (id) => {
@@ -3926,7 +3910,7 @@
   };
 
   window.migrarLegadoEstoque = async () => {
-    const ok = await showConfirm('Integração de Estoque Global', 'Isso transformará todos os Brindes e Uniformes existentes em registros matrizes do Almoxarifado Central, calculando o que já foi usado como saída. É recomendado rodar apenas 1 vez. Continuar?');
+    const ok = await showConfirm('Integração de Estoque Global', 'Isso transformará todos os Brindes e Uniformes existentes em registros matrizes do Estoque Central, calculando o que já foi usado como saída. É recomendado rodar apenas 1 vez. Continuar?');
     if (!ok) return;
     try {
       const batch = db.batch();
@@ -4323,34 +4307,12 @@
       <div class="gestao-summary-card"><div class="gestao-summary-label">Itens VIP</div><div class="gestao-summary-value" style="color:var(--purple)">${vip}</div></div>`;
   }
 
-  window.autofillBrinde = function() {
-    const eid = document.getElementById('brinde-estoque-id').value;
-    const e = ESTOQUE.find(x => x.id === eid);
-    const lbl = document.getElementById('lbl-saldo-brinde');
-    if (!e) {
-      if (!document.getElementById('brinde-id').value) {
-        document.getElementById('brinde-titulo').value = '';
-        document.getElementById('brinde-nivel').value = 'Massa';
-        document.getElementById('brinde-vlr').value = '';
-      }
-      if(lbl) lbl.innerHTML = 'Saldo: —';
-      return;
-    }
-    const isNew = !document.getElementById('brinde-id').value;
-    if (isNew) {
-      document.getElementById('brinde-titulo').value = e.nome;
-      document.getElementById('brinde-nivel').value = e.nivel || 'Massa';
-      document.getElementById('brinde-vlr').value = e.vlr_unit || 0;
-      if (e.fornecedor_id) document.getElementById('brinde-fornecedor').value = e.fornecedor_id;
-    }
-    const saldo = (parseInt(e.qtd_inicial)||0) - getEstoqueAlocado(e.id);
-    if(lbl) lbl.innerHTML = `Saldo em Estoque: <b style="color:${saldo <= 0 ? 'var(--red)' : 'var(--green)'}">${saldo}</b>`;
-  };
+  // autofillBrinde removido — Brindes não vinculam mais item mestre do Estoque
+  window.autofillBrinde = function() {};
 
   window.editBrinde = (id) => {
     const b = BRINDES.find(x => x.id === id); if(!b) return;
     document.getElementById('brinde-id').value = id;
-    document.getElementById('brinde-estoque-id').value = b.estoque_id || '';
     document.getElementById('brinde-titulo').value = b.titulo || '';
     if (document.getElementById('brinde-desc')) document.getElementById('brinde-desc').value = b.descricao || '';
     document.getElementById('brinde-nivel').value = b.nivel || 'Massa';
@@ -4363,7 +4325,6 @@
     document.getElementById('btn-save-brinde').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-brinde').style.display = 'inline-block';
     
-    window.autofillBrinde(); // Atualiza saldo visualmente
     document.getElementById('brinde-qtd').dispatchEvent(new Event('input'));
     const form = document.getElementById('brinde-add-form');
     if(form) form.scrollIntoView({behavior:'smooth', block:'nearest'});
@@ -4371,34 +4332,30 @@
 
   document.getElementById('btn-cancel-brinde').onclick = () => {
     document.getElementById('brinde-id').value = '';
-    ['brinde-estoque-id','brinde-titulo','brinde-qtd','brinde-vlr','brinde-evento'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
+    ['brinde-titulo','brinde-qtd','brinde-vlr','brinde-evento'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
     ['brinde-desc','brinde-fornecedor'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
     document.getElementById('brinde-nivel').value = 'Massa';
     if (document.getElementById('brinde-status')) document.getElementById('brinde-status').value = 'Cotação';
     if (document.getElementById('brinde-anexo-url')) document.getElementById('brinde-anexo-url').value = '';
     document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-brinde').style.display = 'none';
-    const lbl = document.getElementById('lbl-saldo-brinde');
-    if(lbl) lbl.innerHTML = 'Saldo: —';
     document.getElementById('brinde-qtd').dispatchEvent(new Event('input'));
   };
 
   document.getElementById('btn-save-brinde').onclick = async () => {
     const id = document.getElementById('brinde-id').value;
-    const estId = document.getElementById('brinde-estoque-id').value;
-    if (!estId) { showToast('Selecione um Brinde mestre do Almoxarifado.', 'warning'); return; }
-    
     const titulo = document.getElementById('brinde-titulo').value.trim();
+    if (!titulo) { showToast('Informe o nome do brinde.', 'warning'); return; }
+
     const btn = document.getElementById('btn-save-brinde');
     btn.textContent = 'Salvando...'; btn.disabled = true;
     const qtd    = parseInt(document.getElementById('brinde-qtd').value) || 0;
     const vlr    = parseFloat(document.getElementById('brinde-vlr').value) || 0;
-    
+
     let statusEl = document.getElementById('brinde-status');
     const statusVal = statusEl ? statusEl.value : 'Cotação';
 
     const payload = {
-        estoque_id:    estId,
         titulo,
         descricao:     document.getElementById('brinde-desc')?.value?.trim() || '',
         nivel:         document.getElementById('brinde-nivel').value,
@@ -4411,7 +4368,7 @@
 
     const existingUrl = document.getElementById('brinde-anexo-url')?.value;
     if (existingUrl) payload.anexo_url = existingUrl;
-    
+
     try {
       if (id) {
         await db.collection("brindes").doc(id).update(payload);
@@ -4420,12 +4377,11 @@
       } else {
         payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
         const docRef = await db.collection("brindes").add(payload);
-        showToast('Brinde alocado com sucesso! 🎁', 'success');
+        showToast('Brinde adicionado! 🎁', 'success');
         window.lastSavedId = docRef.id;
       }
       document.getElementById('btn-cancel-brinde').click();
       await loadBrindes();
-      await loadEstoque(); // refresh saldos globais
       setTimeout(() => window.lastSavedId = null, 3000);
     } catch(e) { showToast('Erro ao salvar brinde.', 'error'); }
     finally { btn.textContent = id ? 'Salvar Alterações' : '+ Adicionar'; btn.disabled = false; }
@@ -4520,7 +4476,7 @@
     const evento= document.getElementById('filtro-unif-evento')?.value || '';
     
     let list = UNIFORMES;
-    if (busca) list = list.filter(u => (u.cor||'').toLowerCase().includes(busca) || (u.obs||'').toLowerCase().includes(busca) || (ESTOQUE.find(e=>e.id===u.estoque_id)?.nome||'').toLowerCase().includes(busca));
+    if (busca) list = list.filter(u => (u.cor||'').toLowerCase().includes(busca) || (u.obs||'').toLowerCase().includes(busca));
     if (status) list = list.filter(u => u.status === status);
     if (evento) list = list.filter(u => u.evento_id === evento);
 
@@ -4543,7 +4499,7 @@
         ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
         : `<span class="valor-total-pill zero">—</span>`;
       const isNew = window.lastSavedId === u.id ? 'flash-green' : '';
-      const nomeMestre = ESTOQUE.find(e=>e.id===u.estoque_id)?.nome || u.cor || '—';
+      const nomeMestre = u.cor || '—';
       const tamPill = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;margin-right:4px;">${u.tamanho}</span>` : '';
 
       return `<tr class="${isNew}">
@@ -4576,34 +4532,12 @@
       <div class="gestao-summary-card"><div class="gestao-summary-label">Entregues</div><div class="gestao-summary-value" style="color:var(--teal)">${entregue}</div></div>`;
   }
 
-  window.autofillUnif = function() {
-    const eid = document.getElementById('unif-estoque-id').value;
-    const e = ESTOQUE.find(x => x.id === eid);
-    const lbl = document.getElementById('lbl-saldo-unif');
-    if (!e) {
-      if (!document.getElementById('unif-id').value) {
-        document.getElementById('unif-cor').value = '';
-        document.getElementById('unif-tamanho').value = 'Único';
-        document.getElementById('unif-vlr').value = '';
-      }
-      if(lbl) lbl.innerHTML = 'Saldo: —';
-      return;
-    }
-    const isNew = !document.getElementById('unif-id').value;
-    if (isNew) {
-      document.getElementById('unif-cor').value = e.cor || e.nome;
-      document.getElementById('unif-tamanho').value = e.tamanho || 'Único';
-      document.getElementById('unif-vlr').value = e.vlr_unit || 0;
-      if (e.fornecedor_id) document.getElementById('unif-fornecedor').value = e.fornecedor_id;
-    }
-    const saldo = (parseInt(e.qtd_inicial)||0) - getEstoqueAlocado(e.id);
-    if(lbl) lbl.innerHTML = `Saldo em Estoque: <b style="color:${saldo <= 0 ? 'var(--red)' : 'var(--green)'}">${saldo}</b>`;
-  };
+  // autofillUnif removido — Uniformes não vinculam mais item mestre do Estoque
+  window.autofillUnif = function() {};
 
   window.editUnif = (id) => {
     const u = UNIFORMES.find(x => x.id === id); if(!u) return;
     document.getElementById('unif-id').value = id;
-    document.getElementById('unif-estoque-id').value = u.estoque_id || '';
     document.getElementById('unif-qtd').value = u.qtd || '';
     document.getElementById('unif-tamanho').value = u.tamanho || 'Único';
     document.getElementById('unif-cor').value = u.cor || '';
@@ -4617,13 +4551,6 @@
     if (document.getElementById('unif-anexo-url')) document.getElementById('unif-anexo-url').value = u.anexo_url || '';
     document.getElementById('btn-save-unif').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-unif').style.display = 'inline-block';
-    
-    const lbl = document.getElementById('lbl-saldo-unif');
-    const estItem = ESTOQUE.find(x => x.id === u.estoque_id);
-    if (estItem && lbl) {
-      const saldo = (parseInt(estItem.qtd_inicial)||0) - getEstoqueAlocado(estItem.id);
-      lbl.innerHTML = `Saldo em Estoque: <b style="color:${saldo <= 0 ? 'var(--red)' : 'var(--green)'}">${saldo}</b>`;
-    }
     document.getElementById('unif-qtd').dispatchEvent(new Event('input'));
     // scroll to form inside table wrap if visible
     const form = document.getElementById('unif-add-form');
@@ -4638,34 +4565,31 @@
 
   document.getElementById('btn-cancel-unif').onclick = () => {
     document.getElementById('unif-id').value = '';
-    ['unif-estoque-id','unif-qtd','unif-cor','unif-vlr','unif-evento'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
+    ['unif-qtd','unif-cor','unif-vlr','unif-evento'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
     ['unif-data','unif-data-prevista','unif-fornecedor','unif-obs'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
     document.getElementById('unif-tamanho').value = 'Único';
     document.getElementById('unif-status').value = 'Pedido';
     if (document.getElementById('unif-anexo-url')) document.getElementById('unif-anexo-url').value = '';
     document.getElementById('btn-save-unif').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-unif').style.display = 'none';
-    const lbl = document.getElementById('lbl-saldo-unif');
-    if(lbl) lbl.innerHTML = 'Saldo: —';
     document.getElementById('unif-qtd').dispatchEvent(new Event('input'));
   };
 
   document.getElementById('btn-save-unif').onclick = async () => {
     const id = document.getElementById('unif-id').value;
-    const estId = document.getElementById('unif-estoque-id').value;
-    if (!estId) { showToast('Selecione um Uniforme mestre do Almoxarifado.', 'warning'); return; }
-    
+    const cor = document.getElementById('unif-cor').value.trim();
+    if (!cor) { showToast('Informe a descrição do uniforme.', 'warning'); return; }
+
     const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
-    if (!qtd) { showToast('Informe a quantidade de saídas (alocações).', 'warning'); return; }
+    if (!qtd) { showToast('Informe a quantidade.', 'warning'); return; }
     const btn = document.getElementById('btn-save-unif');
     btn.textContent = 'Salvando...'; btn.disabled = true;
     const vlr = parseFloat(document.getElementById('unif-vlr').value) || 0;
-    
+
     const payload = {
-        estoque_id:    estId,
         qtd,
         tamanho:       document.getElementById('unif-tamanho').value,
-        cor:           document.getElementById('unif-cor').value.trim(),
+        cor:           cor,
         vlr_unit:      vlr,
         data_pedido:   document.getElementById('unif-data').value || '',
         data_prevista: document.getElementById('unif-data-prevista').value || '',
@@ -4896,7 +4820,7 @@
     const div = document.createElement('div');
     div.className = 'kit-item-row';
     
-    let optHtml = '<option value="">— Selecionar Item do Almoxarifado —</option>';
+    let optHtml = '<option value="">— Selecionar Item do Estoque —</option>';
     ESTOQUE.forEach(e => {
        const tipo = e.tipo==='brinde'?'🎁 Brinde':'👕 Uniforme';
        optHtml += `<option value="${e.id}" ${e.id===estId?'selected':''}>${tipo} - ${escapeHtml(e.nome)}</option>`;
@@ -5033,7 +4957,7 @@
         if(el) { el.style.display = 'none'; drawerBody.appendChild(el); }
       });
       const wrappers = {
-        'estoque-table-wrap': { type: 'estoque', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Add Almoxarifado' },
+        'estoque-table-wrap': { type: 'estoque', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Add Estoque' },
         'brindes-table-wrap': { type: 'brinde', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Alocar Brinde (Saída)' },
         'unif-table-wrap': { type: 'uniforme', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Registrar Uniforme' },
         'forn-table-wrap': { type: 'fornecedor', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Fornecedor' }
@@ -5061,7 +4985,7 @@
        'participante': 'part-add-form'
      };
      const titles = { 
-       'estoque': 'Almoxarifado', 
+       'estoque': 'Estoque', 
        'brinde': 'Brinde (Pedido de Compra)', 
        'uniforme': 'Uniforme (Pedido de Compra)', 
        'fornecedor': 'Fornecedor',
@@ -5082,51 +5006,17 @@
         if (btnSave.textContent.includes('Salvando')) return; 
      }
      
-     // Stock badge logic
-     if (type === 'brinde' || type === 'uniforme') {
-         const selectId = type === 'brinde' ? 'brinde-estoque-id' : 'unif-estoque-id';
-         const selectEl = document.getElementById(selectId);
-         if (selectEl) {
-             selectEl.onchange = () => window.updateDrawerStockBadge(type);
-             window.updateDrawerStockBadge(type);
-         }
-     }
   };
 
-  window.updateDrawerStockBadge = function(type) {
-     const selectId = type === 'brinde' ? 'brinde-estoque-id' : 'unif-estoque-id';
-     const selectEl = document.getElementById(selectId);
-     if (!selectEl) return;
-     const container = selectEl.parentElement;
-     const oldBadge = container.querySelector('.estoque-saldo-badge');
-     if (oldBadge) oldBadge.remove();
-     if (!selectEl.value) return;
-     
-     const item = ESTOQUE.find(e => e.id === selectEl.value);
-     if (item) {
-         const alocado = getEstoqueAlocado(item.id);
-         const entradas = getEstoqueEntradas(item.id); const saidas = getEstoqueAlocado(item.id); let disp = entradas - saidas;
-         // Se editando, soma de volta o que já está reservado neste registro
-         const rid = document.getElementById(type === 'brinde' ? 'brinde-id' : 'unif-id').value;
-         if (rid) {
-             const r = (type === 'brinde' ? BRINDES : UNIFORMES).find(x => x.id === rid);
-             if (r && r.estoque_id === item.id) disp += parseInt(r.qtd || 0);
-         }
-         const badge = document.createElement('div');
-         badge.className = 'estoque-saldo-badge';
-         badge.style = `font-size:0.72rem;font-weight:700;color:${disp>0?'var(--green)':'var(--red)'};margin-top:4px;display:flex;align-items:center;gap:4px;`;
-         badge.innerHTML = `<i data-lucide="package" style="width:12px;height:12px;"></i> Saldo Almoxarifado: ${disp} un.`;
-         container.appendChild(badge);
-         if(typeof lucide !== 'undefined') lucide.createIcons();
-     }
-  };
+  // updateDrawerStockBadge removido — Brindes/Uniformes não vinculam mais item do Estoque
+  window.updateDrawerStockBadge = function(type) {};
 
   window.closeGestaoDrawer = function(e) {
      if(e && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
      document.getElementById('gestao-drawer-overlay').classList.remove('open');
      ['estoque-id', 'brinde-id', 'unif-id', 'forn-id', 'part-id'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
      // Reset button text
-     if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
+     if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Estoque';
      if(document.getElementById('btn-save-brinde')) document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
      if(document.getElementById('btn-save-unif')) document.getElementById('btn-save-unif').textContent = '+ Adicionar';
      if(document.getElementById('btn-save-forn')) document.getElementById('btn-save-forn').textContent = '+ Adicionar';
@@ -5220,8 +5110,7 @@
     const u = UNIFORMES.find(x => x.id === id);
     if(!u) return;
     document.getElementById('unif-id').value = u.id;
-    document.getElementById('unif-estoque-id').value = u.estoque_id || '';
-    if (document.getElementById('unif-cor')) document.getElementById('unif-cor').value = u.cor || '';
+    document.getElementById('unif-cor').value = u.cor || '';
     document.getElementById('unif-tamanho').value = u.tamanho || 'Único';
     document.getElementById('unif-qtd').value = u.qtd || 1;
     document.getElementById('unif-vlr').value = u.vlr_unit || 0;
@@ -5243,34 +5132,19 @@
 
   window.saveUniforme = async function() {
     const id = document.getElementById('unif-id').value;
-    const estoque_id = document.getElementById('unif-estoque-id').value;
+    const cor = document.getElementById('unif-cor').value.trim();
     const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
-    if(!estoque_id || qtd < 1) { showToast('Item do estoque e Qtd exigidos!','warning'); return; }
+    if(!cor || qtd < 1) { showToast('Descrição e Qtd exigidos!','warning'); return; }
     
     const axUrl = document.getElementById('unif-anexo-url')?.value || '';
     const btn = document.getElementById('btn-save-unif');
     
-    // VALIDAÇÃO DE ESTOQUE
-    const estItem = ESTOQUE.find(e => e.id === estoque_id);
-    if (estItem) {
-        const alocado = getEstoqueAlocado(estItem.id);
-        let disponivel = (parseInt(estItem.qtd_inicial) || 0) - alocado;
-        if (id) {
-            const currentRec = UNIFORMES.find(u => u.id === id);
-            if (currentRec && currentRec.estoque_id === estItem.id) disponivel += parseInt(currentRec.qtd || 0);
-        }
-        if (qtd > disponivel) {
-            showToast(`Saldo insuficiente! Disponível: ${disponivel}`, 'warning');
-            return;
-        }
-    }
-
     if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
-    
+
     try {
       const payload = {
-        estoque_id, qtd,
-        cor: document.getElementById('unif-cor')?.value || '',
+        qtd,
+        cor: cor,
         tamanho: document.getElementById('unif-tamanho').value,
         vlr_unit: parseFloat(document.getElementById('unif-vlr').value) || 0,
         data_pedido: document.getElementById('unif-data')?.value || '',
@@ -5311,7 +5185,6 @@
     const b = BRINDES.find(x => x.id === id);
     if(!b) return;
     document.getElementById('brinde-id').value = b.id;
-    document.getElementById('brinde-estoque-id').value = b.estoque_id || '';
     document.getElementById('brinde-titulo').value = b.titulo || '';
     document.getElementById('brinde-nivel').value = b.nivel || 'Massa';
     if (document.getElementById('brinde-desc')) document.getElementById('brinde-desc').value = b.descricao || '';
@@ -5332,34 +5205,19 @@
 
   window.saveBrinde = async function() {
     const id = document.getElementById('brinde-id').value;
-    const estoque_id = document.getElementById('brinde-estoque-id').value;
+    const titulo = document.getElementById('brinde-titulo').value.trim();
     const qtd = parseInt(document.getElementById('brinde-qtd').value) || 0;
-    if(!estoque_id || qtd < 1) { showToast('Item e Qtd exigidos!','warning'); return; }
+    if(!titulo || qtd < 1) { showToast('Nome e Qtd exigidos!','warning'); return; }
     
     const axUrl = document.getElementById('brinde-anexo-url')?.value || '';
     const btn = document.getElementById('btn-save-brinde');
-
-    // VALIDAÇÃO DE ESTOQUE
-    const estItem = ESTOQUE.find(e => e.id === estoque_id);
-    if (estItem) {
-        const alocado = getEstoqueAlocado(estItem.id);
-        let disponivel = (parseInt(estItem.qtd_inicial) || 0) - alocado;
-        if (id) {
-            const currentRec = BRINDES.find(b => b.id === id);
-            if (currentRec && currentRec.estoque_id === estItem.id) disponivel += parseInt(currentRec.qtd || 0);
-        }
-        if (qtd > disponivel) {
-            showToast(`Saldo insuficiente! Disponível: ${disponivel}`, 'warning');
-            return;
-        }
-    }
 
     if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
     
     try {
       const payload = {
-        estoque_id, qtd,
-        titulo: document.getElementById('brinde-titulo').value,
+        qtd,
+        titulo,
         nivel: document.getElementById('brinde-nivel').value,
         descricao: document.getElementById('brinde-desc')?.value || '',
         vlr_unit: parseFloat(document.getElementById('brinde-vlr').value) || 0,
@@ -5412,10 +5270,10 @@
   /** 
    * SCRIPT DE MIGRAÇÃO ÚNICA:
    * Define o status de todos os Brindes e Uniformes como 'Recebido' 
-   * para que o Almoxarifado reconheça como entrada de estoque.
+   * Script de migração legado — não utilizado com o novo fluxo.
    */
   window.migrarStatusEstoque = async function() {
-    if(!await showConfirm('Migrar Status de Estoque?', 'Isso marcará todos os Brindes e Uniformes atuais como "Recebido" para alimentar o saldo do Almoxarifado. Deseja continuar?')) return;
+    if(!await showConfirm('Migrar Status de Estoque?', 'Isso marcará todos os Brindes e Uniformes atuais como "Recebido" para alimentar o saldo do Estoque. Deseja continuar?')) return;
     
     showToast('Iniciando migração de status...', 'info');
     try {
