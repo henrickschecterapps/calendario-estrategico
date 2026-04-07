@@ -907,7 +907,7 @@
 
               <div style="padding:20px 28px; overflow-y:auto; flex:1;">
 
-                <!-- ── ESTOQUE GLOBAL (MATRIZ) ── -->
+                <!-- ── ESTOQUE ── -->
                 <div class="gestao-pane active" id="gpane-estoque">
                   <div class="filter-bar-gestao">
                     <i data-lucide="search" style="width:14px;height:14px;color:var(--muted);"></i>
@@ -931,13 +931,11 @@
                         <th>Item</th>
                         <th>Tamanho / Cor</th>
                         <th>Custo Unit.</th>
+                        <th>Qtd em Estoque</th>
                         <th>Fornecedor</th>
-                        <th>Qtd</th>
-                        <th>Alocado</th>
-                        <th style="color:var(--green)">Saldo ✓</th>
                         <th></th>
                       </tr></thead>
-                      <tbody id="estoque-body"><tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item no estoque.</td></tr></tbody>
+                      <tbody id="estoque-body"><tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item no estoque.</td></tr></tbody>
                     </table>
                     <!-- FORM ADD ESTOQUE -->
                     <div class="gestao-add-bar" id="estoque-add-form" style="display:none; flex-direction:column; gap:12px; border:2px solid var(--accent); background:var(--surface2); padding:18px; border-radius:12px; margin:12px;">
@@ -972,7 +970,7 @@
                           <input type="text" class="gestao-input w-sm" id="estoque-cor" placeholder="Ex: Preto">
                         </div>
                         <div class="gestao-field">
-                          <label>Qtd *</label>
+                          <label>Qtd</label>
                           <input type="number" class="gestao-input w-sm" id="estoque-qtd" min="0" placeholder="0">
                         </div>
                         <div class="gestao-field">
@@ -1018,26 +1016,33 @@
                     <table class="gestao-table" id="brindes-table">
                       <thead><tr>
                         <th>Brinde</th><th>Nível</th><th>Status</th>
-                        <th>Qtd</th><th>Vlr Unit.</th><th>Total</th><th>Evento</th><th></th>
+                        <th>Qtd</th><th>Vlr Unit.</th><th>Total</th><th>Fornecedor</th><th>Evento</th><th></th>
                       </tr></thead>
-                      <tbody id="brindes-body"><tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde cadastrado.</td></tr></tbody>
+                      <tbody id="brindes-body"><tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde cadastrado.</td></tr></tbody>
                     </table>
                     <!-- FORM ADD BRINDE -->
                     <div class="gestao-add-bar" id="brinde-add-form">
                       <input type="hidden" id="brinde-id">
-                      <input type="hidden" id="brinde-estoque-id" value="">
+                      <input type="hidden" id="brinde-estoque-id">
                       <div class="gestao-field" style="flex:2;min-width:180px;">
                         <label>Nome do Brinde *</label>
                         <input type="text" class="gestao-input w-full" id="brinde-titulo" placeholder="Ex: Caneca Personalizada">
-                        <input type="hidden" id="brinde-nivel" value="Massa">
+                      </div>
+                      <div class="gestao-field" style="min-width:120px;">
+                        <label>Nível</label>
+                        <select class="gestao-input" id="brinde-nivel">
+                          <option value="Massa">Massa</option>
+                          <option value="Qualificação">Qualificação</option>
+                          <option value="VIP">VIP</option>
+                        </select>
                       </div>
                       <div class="gestao-field">
-                        <label>Qtd do Pedido</label>
+                        <label>Qtd</label>
                         <input type="number" class="gestao-input w-sm" id="brinde-qtd" min="1" placeholder="0">
                       </div>
                       <div class="gestao-field">
                         <label>Vlr Unit. (R$)</label>
-                        <input type="number" class="gestao-input w-sm" id="brinde-vlr" min="0" step="0.01" placeholder="auto">
+                        <input type="number" class="gestao-input w-sm" id="brinde-vlr" min="0" step="0.01" placeholder="0,00">
                       </div>
                       <div class="gestao-field" style="min-width:140px;">
                         <label>Status</label>
@@ -1048,6 +1053,12 @@
                           <option value="Recebido">Recebido</option>
                         </select>
                       </div>
+                      <div class="gestao-field" style="min-width:140px;">
+                        <label>Fornecedor</label>
+                        <select class="gestao-input" id="brinde-fornecedor">
+                          <option value="">— Selecionar —</option>
+                        </select>
+                      </div>
                       <div class="gestao-field" style="min-width:160px;">
                         <label>Evento Vinculado</label>
                         <select class="gestao-input" id="brinde-evento">
@@ -1055,7 +1066,6 @@
                         </select>
                       </div>
                       <input type="hidden" id="brinde-desc">
-                      <input type="hidden" id="brinde-fornecedor">
                       <input type="hidden" id="brinde-anexo-url">
                       <div class="gestao-add-bar-actions">
                         <button class="btn-icon gestao-total-preview" id="brinde-total-preview" style="pointer-events:none;font-size:0.75rem;"></button>
@@ -1091,19 +1101,19 @@
                   <div class="gestao-table-wrap hide" id="unif-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <table class="gestao-table" id="unif-table">
                       <thead><tr>
-                        <th>Qtd</th><th>Item / Tamanho</th><th>Vlr Unit.</th><th>Total</th>
+                        <th>Descrição</th><th>Tam.</th><th>Qtd</th><th>Vlr Unit.</th><th>Total</th>
                         <th>Status</th><th>Fornecedor</th><th>Evento</th><th></th>
                       </tr></thead>
-                      <tbody id="unif-body"><tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme cadastrado.</td></tr></tbody>
+                      <tbody id="unif-body"><tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme cadastrado.</td></tr></tbody>
                     </table>
-                    <!-- FORM ADD UNIFORME (simplificado) -->
+                    <!-- FORM ADD UNIFORME -->
                     <div class="gestao-add-bar" id="unif-add-form" style="display:flex; flex-direction:column; gap:12px;">
                       <input type="hidden" id="unif-id">
+                      <input type="hidden" id="unif-estoque-id">
                       <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
-                        <input type="hidden" id="unif-estoque-id" value="">
                         <div class="gestao-field" style="flex:2;min-width:180px;">
                           <label>Descrição do Uniforme *</label>
-                          <input type="text" class="gestao-input w-full" id="unif-cor" placeholder="Ex: Camiseta Polo Branca">
+                          <input type="text" class="gestao-input w-full" id="unif-cor" placeholder="Ex: Camisa Polo Azul">
                         </div>
                         <div class="gestao-field">
                           <label>Tamanho</label>
@@ -1119,7 +1129,7 @@
                         </div>
                         <div class="gestao-field">
                           <label>Vlr Unit. (R$)</label>
-                          <input type="number" class="gestao-input w-sm" id="unif-vlr" min="0" step="0.01" placeholder="auto">
+                          <input type="number" class="gestao-input w-sm" id="unif-vlr" min="0" step="0.01" placeholder="0,00">
                         </div>
                         <div class="gestao-field">
                           <label>Status</label>
@@ -1130,6 +1140,12 @@
                             <option value="Cancelado">Cancelado</option>
                           </select>
                         </div>
+                        <div class="gestao-field" style="min-width:140px;">
+                          <label>Fornecedor</label>
+                          <select class="gestao-input" id="unif-fornecedor">
+                            <option value="">— Selecionar —</option>
+                          </select>
+                        </div>
                         <div class="gestao-field" style="min-width:160px;">
                           <label>Evento Vinculado</label>
                           <select class="gestao-input" id="unif-evento">
@@ -1138,7 +1154,6 @@
                         </div>
                         <input type="hidden" id="unif-data">
                         <input type="hidden" id="unif-data-prevista">
-                        <input type="hidden" id="unif-fornecedor">
                         <input type="hidden" id="unif-obs">
                         <input type="hidden" id="unif-anexo-url">
                         <button class="btn-icon" id="btn-cancel-unif" style="display:none; white-space:nowrap;"><i data-lucide="x" style="width:14px;height:14px;"></i> Cancelar</button>
@@ -1543,7 +1558,7 @@
             <input type="text" class="gestao-input w-full" id="kit-nome" placeholder="Ex: Kit Staff VIP">
           </div>
           <div style="margin-top:20px;">
-            <label style="font-weight:700;font-size:0.85rem;color:var(--muted);margin-bottom:8px;display:block;">Itens do Estoque contidos no Kit</label>
+            <label style="font-weight:700;font-size:0.85rem;color:var(--muted);margin-bottom:8px;display:block;">Itens do Almoxarifado contidos no Kit</label>
             <div id="kit-items-container" style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
               <!-- Linhas de itens inseridas aqui -->
             </div>
@@ -2817,12 +2832,12 @@
     
     // Atualizar o saldo de vagas quando a equipe muda
     if (window.updateVagasSaldo) window.updateVagasSaldo();
-    // 1. Calculate Options from Estoque (Direct) + Legacy Uniformes
+    // 1. Calculate Options from Almoxarifado (Direct) + Legacy Uniformes
     let optionsHtml = '<option value="">Sem item / uniforme</option>';
     
-    // Direct from Estoque (Central)
+    // Direct from Almoxarifado (Central)
     if (typeof ESTOQUE !== 'undefined' && ESTOQUE.length > 0) {
-        optionsHtml += '<optgroup label="Estoque Central">';
+        optionsHtml += '<optgroup label="Almoxarifado Central">';
         ESTOQUE.filter(e => e.tipo === 'uniforme' || e.tipo === 'brinde').forEach(e => {
             const qtdTotal = parseInt(e.qtd_inicial) || 0;
             const alocado = getEstoqueAlocado(e.id);
@@ -3712,6 +3727,7 @@
 
   // ── Preencher selects de fornecedor/evento nos forms e nos filtros ──
   function populateGestaoSelects() {
+    // Fornecedor selects
     ['brinde-fornecedor','unif-fornecedor','estoque-fornecedor'].forEach(selId => {
       const sel = document.getElementById(selId);
       if (!sel) return;
@@ -3725,7 +3741,7 @@
       if (cur) sel.value = cur;
     });
 
-    // Selects de vínculo (forms de adicionar/editar)
+    // Evento selects (vínculo nos forms)
     ['brinde-evento','unif-evento'].forEach(selId => {
       const sel = document.getElementById(selId);
       if (!sel) return;
@@ -3739,7 +3755,7 @@
       if (cur) sel.value = cur;
     });
 
-    // Selects de filtro de evento (filtros de tabela/kanban)
+    // Filtros de evento nas tabelas
     ['filtro-brinde-evento','filtro-unif-evento'].forEach(selId => {
       const sel = document.getElementById(selId);
       if (!sel) return;
@@ -3752,8 +3768,6 @@
       });
       if (cur) sel.value = cur;
     });
-    
-    // brinde-estoque-id e unif-estoque-id são hidden inputs — não vinculam mais item mestre
   }
 
   // ════════════ ALMOXARIFADO (ESTOQUE GLOBAL) ════════════
@@ -3804,31 +3818,24 @@
     if (tipo) list = list.filter(e => e.tipo === tipo);
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item cadastrado no Estoque.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item cadastrado no Estoque.</td></tr>';
       return;
     }
 
     tbody.innerHTML = list.map(e => {
-      const entradas = typeof getEstoqueEntradas === 'function' ? getEstoqueEntradas(e.id) : (e.qtd_inicial || 0);
-      const saidas = typeof getEstoqueAlocado === 'function' ? getEstoqueAlocado(e.id) : 0;
-      const saldo = entradas - saidas;
       const vlr = parseFloat(e.vlr_unit)||0;
-      const isBrinde = e.tipo === 'brinde';
       const isNew = window.lastSavedId === e.id ? 'flash-green' : '';
-      
       const emojiMap = { brinde:'🎁', uniforme:'👕', moletom:'🧥', meia:'🧦', acessorio:'🎒', outro:'📦' };
       const tipoEmoji = emojiMap[e.tipo] || '📦';
       const tipoLabel = e.tipo ? e.tipo.charAt(0).toUpperCase() + e.tipo.slice(1) : 'Item';
 
       return `<tr class="${isNew}">
-        <td><span class="badge ${isBrinde ? 'nivel-massa' : 'nivel-vip'}" style="font-size:0.7rem; text-transform:capitalize;">${tipoEmoji} ${tipoLabel}</span></td>
+        <td><span class="badge nivel-massa" style="font-size:0.7rem;text-transform:capitalize;">${tipoEmoji} ${tipoLabel}</span></td>
         <td><strong>${highlight(e.nome, busca)}</strong></td>
         <td><span style="font-size:0.75rem;font-weight:700;">${e.tamanho && e.tamanho !== 'Único' ? e.tamanho : '—'} ${e.cor ? '· ' + e.cor : ''}</span></td>
         <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
+        <td style="font-weight:700;color:var(--text)">${parseInt(e.qtd_inicial)||0}</td>
         <td style="font-size:0.75rem">${typeof fornNome === 'function' ? fornNome(e.fornecedor_id) : (e.fornecedor_id||'—')}</td>
-        <td style="font-weight:700;color:var(--text)">${entradas}</td>
-        <td style="font-weight:700;color:var(--amber)">${saidas}</td>
-        <td style="font-weight:800;color:${saldo<0?'var(--red)':saldo===0?'var(--muted)':'var(--green)'}">${saldo}</td>
         <td style="text-align:right;white-space:nowrap;">
           <button class="tbl-action edit" onclick="window.editEstoque('${e.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
           <button class="tbl-action del" onclick="window.deleteEstoque('${e.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
@@ -3900,7 +3907,7 @@
       await loadEstoque();
       setTimeout(() => window.lastSavedId = null, 3000);
     } catch(e) { showToast('Erro ao salvar no almoxarifado.', 'error'); }
-    finally { btn.textContent = id ? 'Salvar Alterações' : '+ Registrar no Estoque'; btn.disabled = false; }
+    finally { btn.textContent = id ? 'Salvar Alterações' : '+ Registrar no Almoxarifado'; btn.disabled = false; }
   };
 
   window.deleteEstoque = async (id) => {
@@ -3910,7 +3917,7 @@
   };
 
   window.migrarLegadoEstoque = async () => {
-    const ok = await showConfirm('Integração de Estoque Global', 'Isso transformará todos os Brindes e Uniformes existentes em registros matrizes do Estoque Central, calculando o que já foi usado como saída. É recomendado rodar apenas 1 vez. Continuar?');
+    const ok = await showConfirm('Integração de Estoque Global', 'Isso transformará todos os Brindes e Uniformes existentes em registros matrizes do Almoxarifado Central, calculando o que já foi usado como saída. É recomendado rodar apenas 1 vez. Continuar?');
     if (!ok) return;
     try {
       const batch = db.batch();
@@ -4207,16 +4214,16 @@
       const items = list.filter(b => (b.status || 'Cotação') === col);
       const sc = statusCores[col] || 'var(--muted)';
       const cardsHtml = items.map(b => {
-        const anexoHtml = b.anexo_url ? `<a href="${b.anexo_url}" target="_blank" class="kanban-anexo-link" onclick="event.stopPropagation()">📎</a>` : '';
+        const vlrStr = b.vlr_unit > 0 ? fmtBRL(parseFloat(b.vlr_unit)) : '';
         return `
           <div class="kanban-card" draggable="true" ondragstart="window.dragStart(event, '${b.id}', 'brinde')" onclick="window.editBrinde('${b.id}')">
             <div class="kanban-card-title">
               <span>${escapeHtml(b.titulo||'')}</span>
-              ${anexoHtml}
+              <span style="font-size:0.65rem;">${nivelBadge(b.nivel)}</span>
             </div>
-            <div class="kanban-card-desc">${escapeHtml(b.descricao||'—')}</div>
+            <div class="kanban-card-desc">${escapeHtml(fornNome(b.fornecedor_id)||'—')}</div>
             <div class="kanban-card-meta">
-               <span class="kanban-card-badge">${b.qtd||0} un.</span>
+               <span class="kanban-card-badge">${b.qtd||0} un.${vlrStr ? ' · ' + vlrStr : ''}</span>
                ${b.evento_id ? `<span class="kanban-card-badge" style="color:var(--accent);">${escapeHtml(eventoNome(b.evento_id))}</span>` : ''}
             </div>
           </div>
@@ -4284,6 +4291,7 @@
         <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
         <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
         <td>${totalPill}</td>
+        <td style="font-size:0.78rem">${fornNome(b.fornecedor_id)}</td>
         <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${b.evento_id ? escapeHtml(eventoNome(b.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
         <td style="text-align:right;white-space:nowrap;">
           <button class="tbl-action edit" onclick="window.editBrinde('${b.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
@@ -4307,68 +4315,40 @@
       <div class="gestao-summary-card"><div class="gestao-summary-label">Itens VIP</div><div class="gestao-summary-value" style="color:var(--purple)">${vip}</div></div>`;
   }
 
-  // autofillBrinde removido — Brindes não vinculam mais item mestre do Estoque
-  window.autofillBrinde = function() {};
-
-  window.editBrinde = (id) => {
-    const b = BRINDES.find(x => x.id === id); if(!b) return;
-    document.getElementById('brinde-id').value = id;
-    document.getElementById('brinde-titulo').value = b.titulo || '';
-    if (document.getElementById('brinde-desc')) document.getElementById('brinde-desc').value = b.descricao || '';
-    document.getElementById('brinde-nivel').value = b.nivel || 'Massa';
-    document.getElementById('brinde-qtd').value = b.qtd || '';
-    document.getElementById('brinde-vlr').value = b.vlr_unit || '';
-    if (document.getElementById('brinde-fornecedor')) document.getElementById('brinde-fornecedor').value = b.fornecedor_id || '';
-    document.getElementById('brinde-evento').value = b.evento_id || '';
-    if (document.getElementById('brinde-status')) document.getElementById('brinde-status').value = b.status || 'Cotação';
-    if (document.getElementById('brinde-anexo-url')) document.getElementById('brinde-anexo-url').value = b.anexo_url || '';
-    document.getElementById('btn-save-brinde').textContent = 'Salvar Alterações';
-    document.getElementById('btn-cancel-brinde').style.display = 'inline-block';
-    
-    document.getElementById('brinde-qtd').dispatchEvent(new Event('input'));
-    const form = document.getElementById('brinde-add-form');
-    if(form) form.scrollIntoView({behavior:'smooth', block:'nearest'});
-  };
-
   document.getElementById('btn-cancel-brinde').onclick = () => {
     document.getElementById('brinde-id').value = '';
-    ['brinde-titulo','brinde-qtd','brinde-vlr','brinde-evento'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
-    ['brinde-desc','brinde-fornecedor'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
-    document.getElementById('brinde-nivel').value = 'Massa';
-    if (document.getElementById('brinde-status')) document.getElementById('brinde-status').value = 'Cotação';
+    ['brinde-titulo','brinde-qtd','brinde-vlr','brinde-fornecedor','brinde-evento'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
+    if (document.getElementById('brinde-desc')) document.getElementById('brinde-desc').value = '';
     if (document.getElementById('brinde-anexo-url')) document.getElementById('brinde-anexo-url').value = '';
+    document.getElementById('brinde-nivel').value = 'Massa';
+    document.getElementById('brinde-status').value = 'Cotação';
     document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-brinde').style.display = 'none';
-    document.getElementById('brinde-qtd').dispatchEvent(new Event('input'));
   };
 
   document.getElementById('btn-save-brinde').onclick = async () => {
     const id = document.getElementById('brinde-id').value;
     const titulo = document.getElementById('brinde-titulo').value.trim();
     if (!titulo) { showToast('Informe o nome do brinde.', 'warning'); return; }
-
     const btn = document.getElementById('btn-save-brinde');
     btn.textContent = 'Salvando...'; btn.disabled = true;
-    const qtd    = parseInt(document.getElementById('brinde-qtd').value) || 0;
-    const vlr    = parseFloat(document.getElementById('brinde-vlr').value) || 0;
-
-    let statusEl = document.getElementById('brinde-status');
-    const statusVal = statusEl ? statusEl.value : 'Cotação';
+    const qtd = parseInt(document.getElementById('brinde-qtd').value) || 0;
+    const vlr = parseFloat(document.getElementById('brinde-vlr').value) || 0;
+    const statusVal = document.getElementById('brinde-status').value;
 
     const payload = {
         titulo,
-        descricao:     document.getElementById('brinde-desc')?.value?.trim() || '',
         nivel:         document.getElementById('brinde-nivel').value,
         status:        statusVal,
         qtd,
         vlr_unit:      vlr,
-        fornecedor_id: document.getElementById('brinde-fornecedor')?.value || '',
-        evento_id:     document.getElementById('brinde-evento').value || ''
+        fornecedor_id: document.getElementById('brinde-fornecedor').value || '',
+        evento_id:     document.getElementById('brinde-evento').value || '',
+        descricao:     document.getElementById('brinde-desc')?.value?.trim() || ''
     };
-
     const existingUrl = document.getElementById('brinde-anexo-url')?.value;
     if (existingUrl) payload.anexo_url = existingUrl;
-
+    
     try {
       if (id) {
         await db.collection("brindes").doc(id).update(payload);
@@ -4433,17 +4413,16 @@
       const items = list.filter(u => (u.status || 'Pedido') === col);
       const sc = scMapping[col] || 'var(--muted)';
       const cardsHtml = items.map(u => {
-        const anexoHtml = u.anexo_url ? `<a href="${u.anexo_url}" target="_blank" class="kanban-anexo-link" onclick="event.stopPropagation()">📎 Anexo</a>` : '';
-        const tamPill = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;margin-right:4px;">${u.tamanho}</span>` : '';
+        const tamPill = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.65rem;padding:2px 5px;background:var(--accent);color:#fff;border-radius:4px;margin-right:4px;">${u.tamanho}</span>` : '';
+        const vlrStr = u.vlr_unit > 0 ? fmtBRL(parseFloat(u.vlr_unit)) : '';
         return `
           <div class="kanban-card" draggable="true" ondragstart="window.dragStart(event, '${u.id}', 'uniforme')" onclick="window.editUnif('${u.id}')">
             <div class="kanban-card-title">
-              <span>${tamPill}${escapeHtml(u.cor||'')}</span>
-              ${anexoHtml}
+              <span>${tamPill}${escapeHtml(u.cor||'Uniforme')}</span>
             </div>
-            <div class="kanban-card-desc">${escapeHtml(u.obs||'—')}</div>
+            <div class="kanban-card-desc">${escapeHtml(fornNome(u.fornecedor_id)||'—')}</div>
             <div class="kanban-card-meta">
-               <span class="kanban-card-badge">${u.qtd||0} un.</span>
+               <span class="kanban-card-badge">${u.qtd||0} un.${vlrStr ? ' · ' + vlrStr : ''}</span>
                ${u.evento_id ? `<span class="kanban-card-badge" style="color:var(--accent);">${escapeHtml(eventoNome(u.evento_id))}</span>` : ''}
             </div>
           </div>
@@ -4487,7 +4466,7 @@
     }
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme encontrado.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme encontrado.</td></tr>';
       return;
     }
     
@@ -4499,12 +4478,13 @@
         ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
         : `<span class="valor-total-pill zero">—</span>`;
       const isNew = window.lastSavedId === u.id ? 'flash-green' : '';
-      const nomeMestre = u.cor || '—';
-      const tamPill = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;margin-right:4px;">${u.tamanho}</span>` : '';
+      const desc = u.cor || '—';
+      const tam = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;">${u.tamanho}</span>` : '—';
 
       return `<tr class="${isNew}">
+        <td style="font-weight:600">${highlight(desc, busca)}</td>
+        <td>${tam}</td>
         <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
-        <td>${tamPill}<span style="font-weight:600">${highlight(nomeMestre, busca)}</span></td>
         <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
         <td>${totalPill}</td>
         <td>${unifStatusBadge(u.status)}</td>
@@ -4515,6 +4495,7 @@
           <button class="tbl-action del" onclick="window.deleteUnif('${u.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
         </td>
       </tr>`;
+    }).join('');
     }).join('');
     if (typeof lucide !== 'undefined') lucide.createIcons();
   }
@@ -4532,74 +4513,56 @@
       <div class="gestao-summary-card"><div class="gestao-summary-label">Entregues</div><div class="gestao-summary-value" style="color:var(--teal)">${entregue}</div></div>`;
   }
 
-  // autofillUnif removido — Uniformes não vinculam mais item mestre do Estoque
-  window.autofillUnif = function() {};
-
   window.editUnif = (id) => {
     const u = UNIFORMES.find(x => x.id === id); if(!u) return;
     document.getElementById('unif-id').value = id;
-    document.getElementById('unif-qtd').value = u.qtd || '';
-    document.getElementById('unif-tamanho').value = u.tamanho || 'Único';
     document.getElementById('unif-cor').value = u.cor || '';
+    document.getElementById('unif-tamanho').value = u.tamanho || 'Único';
+    document.getElementById('unif-qtd').value = u.qtd || '';
     document.getElementById('unif-vlr').value = u.vlr_unit || '';
-    if (document.getElementById('unif-data')) document.getElementById('unif-data').value = u.data_pedido || '';
-    if (document.getElementById('unif-data-prevista')) document.getElementById('unif-data-prevista').value = u.data_prevista || '';
     document.getElementById('unif-status').value = u.status || 'Pedido';
-    if (document.getElementById('unif-fornecedor')) document.getElementById('unif-fornecedor').value = u.fornecedor_id || '';
+    document.getElementById('unif-fornecedor').value = u.fornecedor_id || '';
     document.getElementById('unif-evento').value = u.evento_id || '';
+    if (document.getElementById('unif-data')) document.getElementById('unif-data').value = u.data_pedido || '';
     if (document.getElementById('unif-obs')) document.getElementById('unif-obs').value = u.obs || '';
     if (document.getElementById('unif-anexo-url')) document.getElementById('unif-anexo-url').value = u.anexo_url || '';
     document.getElementById('btn-save-unif').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-unif').style.display = 'inline-block';
-    document.getElementById('unif-qtd').dispatchEvent(new Event('input'));
-    // scroll to form inside table wrap if visible
-    const form = document.getElementById('unif-add-form');
-    if(form && !document.getElementById('unif-table-wrap').classList.contains('hide')) {
-      form.scrollIntoView({behavior:'smooth', block:'nearest'});
-    } else {
-      // switch to table view to show form
-      window.setUnifView('table');
-      setTimeout(() => form?.scrollIntoView({behavior:'smooth', block:'nearest'}), 200);
-    }
+    window.setUnifView('table');
+    setTimeout(() => document.getElementById('unif-add-form')?.scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
   };
 
   document.getElementById('btn-cancel-unif').onclick = () => {
     document.getElementById('unif-id').value = '';
-    ['unif-qtd','unif-cor','unif-vlr','unif-evento'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
-    ['unif-data','unif-data-prevista','unif-fornecedor','unif-obs'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
+    ['unif-cor','unif-qtd','unif-vlr','unif-evento','unif-fornecedor'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
+    ['unif-data','unif-obs','unif-anexo-url'].forEach(id => {let el=document.getElementById(id); if(el) el.value = '';});
     document.getElementById('unif-tamanho').value = 'Único';
     document.getElementById('unif-status').value = 'Pedido';
-    if (document.getElementById('unif-anexo-url')) document.getElementById('unif-anexo-url').value = '';
     document.getElementById('btn-save-unif').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-unif').style.display = 'none';
-    document.getElementById('unif-qtd').dispatchEvent(new Event('input'));
   };
 
   document.getElementById('btn-save-unif').onclick = async () => {
     const id = document.getElementById('unif-id').value;
     const cor = document.getElementById('unif-cor').value.trim();
     if (!cor) { showToast('Informe a descrição do uniforme.', 'warning'); return; }
-
     const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
     if (!qtd) { showToast('Informe a quantidade.', 'warning'); return; }
     const btn = document.getElementById('btn-save-unif');
     btn.textContent = 'Salvando...'; btn.disabled = true;
     const vlr = parseFloat(document.getElementById('unif-vlr').value) || 0;
-
+    
     const payload = {
         qtd,
         tamanho:       document.getElementById('unif-tamanho').value,
-        cor:           cor,
+        cor,
         vlr_unit:      vlr,
-        data_pedido:   document.getElementById('unif-data').value || '',
-        data_prevista: document.getElementById('unif-data-prevista').value || '',
+        data_pedido:   document.getElementById('unif-data')?.value || '',
         status:        document.getElementById('unif-status').value,
         fornecedor_id: document.getElementById('unif-fornecedor').value || '',
         evento_id:     document.getElementById('unif-evento').value || '',
-        obs:           document.getElementById('unif-obs').value.trim()
+        obs:           document.getElementById('unif-obs')?.value?.trim() || ''
     };
-    
-    // Preservar anexo existente se não selecionar novo arquivo
     const existingUrl = document.getElementById('unif-anexo-url')?.value;
     if (existingUrl) payload.anexo_url = existingUrl;
 
@@ -4820,7 +4783,7 @@
     const div = document.createElement('div');
     div.className = 'kit-item-row';
     
-    let optHtml = '<option value="">— Selecionar Item do Estoque —</option>';
+    let optHtml = '<option value="">— Selecionar Item do Almoxarifado —</option>';
     ESTOQUE.forEach(e => {
        const tipo = e.tipo==='brinde'?'🎁 Brinde':'👕 Uniforme';
        optHtml += `<option value="${e.id}" ${e.id===estId?'selected':''}>${tipo} - ${escapeHtml(e.nome)}</option>`;
@@ -4957,7 +4920,7 @@
         if(el) { el.style.display = 'none'; drawerBody.appendChild(el); }
       });
       const wrappers = {
-        'estoque-table-wrap': { type: 'estoque', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Add Estoque' },
+        'estoque-table-wrap': { type: 'estoque', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Add Almoxarifado' },
         'brindes-table-wrap': { type: 'brinde', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Alocar Brinde (Saída)' },
         'unif-table-wrap': { type: 'uniforme', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Registrar Uniforme' },
         'forn-table-wrap': { type: 'fornecedor', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Fornecedor' }
@@ -4985,7 +4948,7 @@
        'participante': 'part-add-form'
      };
      const titles = { 
-       'estoque': 'Estoque', 
+       'estoque': 'Almoxarifado', 
        'brinde': 'Brinde (Pedido de Compra)', 
        'uniforme': 'Uniforme (Pedido de Compra)', 
        'fornecedor': 'Fornecedor',
@@ -5006,17 +4969,51 @@
         if (btnSave.textContent.includes('Salvando')) return; 
      }
      
+     // Stock badge logic
+     if (type === 'brinde' || type === 'uniforme') {
+         const selectId = type === 'brinde' ? 'brinde-estoque-id' : 'unif-estoque-id';
+         const selectEl = document.getElementById(selectId);
+         if (selectEl) {
+             selectEl.onchange = () => window.updateDrawerStockBadge(type);
+             window.updateDrawerStockBadge(type);
+         }
+     }
   };
 
-  // updateDrawerStockBadge removido — Brindes/Uniformes não vinculam mais item do Estoque
-  window.updateDrawerStockBadge = function(type) {};
+  window.updateDrawerStockBadge = function(type) {
+     const selectId = type === 'brinde' ? 'brinde-estoque-id' : 'unif-estoque-id';
+     const selectEl = document.getElementById(selectId);
+     if (!selectEl) return;
+     const container = selectEl.parentElement;
+     const oldBadge = container.querySelector('.estoque-saldo-badge');
+     if (oldBadge) oldBadge.remove();
+     if (!selectEl.value) return;
+     
+     const item = ESTOQUE.find(e => e.id === selectEl.value);
+     if (item) {
+         const alocado = getEstoqueAlocado(item.id);
+         const entradas = getEstoqueEntradas(item.id); const saidas = getEstoqueAlocado(item.id); let disp = entradas - saidas;
+         // Se editando, soma de volta o que já está reservado neste registro
+         const rid = document.getElementById(type === 'brinde' ? 'brinde-id' : 'unif-id').value;
+         if (rid) {
+             const r = (type === 'brinde' ? BRINDES : UNIFORMES).find(x => x.id === rid);
+             if (r && r.estoque_id === item.id) disp += parseInt(r.qtd || 0);
+         }
+         const badge = document.createElement('div');
+         badge.className = 'estoque-saldo-badge';
+         badge.style = `font-size:0.72rem;font-weight:700;color:${disp>0?'var(--green)':'var(--red)'};margin-top:4px;display:flex;align-items:center;gap:4px;`;
+         badge.innerHTML = `<i data-lucide="package" style="width:12px;height:12px;"></i> Saldo Almoxarifado: ${disp} un.`;
+         container.appendChild(badge);
+         if(typeof lucide !== 'undefined') lucide.createIcons();
+     }
+  };
 
   window.closeGestaoDrawer = function(e) {
      if(e && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
      document.getElementById('gestao-drawer-overlay').classList.remove('open');
      ['estoque-id', 'brinde-id', 'unif-id', 'forn-id', 'part-id'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
      // Reset button text
-     if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Estoque';
+     if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
      if(document.getElementById('btn-save-brinde')) document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
      if(document.getElementById('btn-save-unif')) document.getElementById('btn-save-unif').textContent = '+ Adicionar';
      if(document.getElementById('btn-save-forn')) document.getElementById('btn-save-forn').textContent = '+ Adicionar';
@@ -5114,15 +5111,13 @@
     document.getElementById('unif-tamanho').value = u.tamanho || 'Único';
     document.getElementById('unif-qtd').value = u.qtd || 1;
     document.getElementById('unif-vlr').value = u.vlr_unit || 0;
-    if (document.getElementById('unif-data')) document.getElementById('unif-data').value = u.data_pedido || '';
-    if (document.getElementById('unif-data-prevista')) document.getElementById('unif-data-prevista').value = u.data_prevista || '';
     document.getElementById('unif-status').value = u.status || 'Pedido';
-    if (document.getElementById('unif-fornecedor')) document.getElementById('unif-fornecedor').value = u.fornecedor_id || '';
+    document.getElementById('unif-fornecedor').value = u.fornecedor_id || '';
     document.getElementById('unif-evento').value = u.evento_id || '';
+    if (document.getElementById('unif-data')) document.getElementById('unif-data').value = u.data_pedido || '';
     if (document.getElementById('unif-obs')) document.getElementById('unif-obs').value = u.obs || '';
     if (document.getElementById('unif-anexo-url')) document.getElementById('unif-anexo-url').value = u.anexo_url || '';
     document.getElementById('btn-save-unif').textContent = 'Salvar Alterações';
-    // Switch to table view so form is visible
     window.setUnifView('table');
     setTimeout(() => {
       document.getElementById('btn-cancel-unif').style.display = 'inline-block';
@@ -5134,28 +5129,21 @@
     const id = document.getElementById('unif-id').value;
     const cor = document.getElementById('unif-cor').value.trim();
     const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
-    if(!cor || qtd < 1) { showToast('Descrição e Qtd exigidos!','warning'); return; }
-    
-    const axUrl = document.getElementById('unif-anexo-url')?.value || '';
+    if(!cor) { showToast('Informe a descrição do uniforme!','warning'); return; }
     const btn = document.getElementById('btn-save-unif');
-    
     if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
-
     try {
       const payload = {
-        qtd,
-        cor: cor,
+        qtd, cor,
         tamanho: document.getElementById('unif-tamanho').value,
         vlr_unit: parseFloat(document.getElementById('unif-vlr').value) || 0,
         data_pedido: document.getElementById('unif-data')?.value || '',
-        data_prevista: document.getElementById('unif-data-prevista')?.value || '',
         status: document.getElementById('unif-status').value,
-        fornecedor_id: document.getElementById('unif-fornecedor')?.value || '',
+        fornecedor_id: document.getElementById('unif-fornecedor').value || '',
         evento_id: document.getElementById('unif-evento').value,
         obs: document.getElementById('unif-obs')?.value || '',
-        anexo_url: axUrl
+        anexo_url: document.getElementById('unif-anexo-url')?.value || ''
       };
-      
       if(id) { 
         await db.collection("uniformes").doc(id).update(payload); 
         showToast('Uniforme salvo!','success'); 
@@ -5166,7 +5154,6 @@
       }
       document.getElementById('btn-cancel-unif')?.click();
       await loadUniformes();
-      if (typeof loadEstoque === 'function') await loadEstoque(); 
     } catch(err) { showToast('Erro ao salvar.', 'error'); }
     finally { if(btn) { btn.textContent = id ? 'Salvar Alterações' : '+ Adicionar'; btn.disabled = false; } }
   };
@@ -5187,15 +5174,14 @@
     document.getElementById('brinde-id').value = b.id;
     document.getElementById('brinde-titulo').value = b.titulo || '';
     document.getElementById('brinde-nivel').value = b.nivel || 'Massa';
-    if (document.getElementById('brinde-desc')) document.getElementById('brinde-desc').value = b.descricao || '';
     document.getElementById('brinde-qtd').value = b.qtd || 1;
     document.getElementById('brinde-vlr').value = b.vlr_unit || 0;
     document.getElementById('brinde-status').value = b.status || 'Cotação';
-    if (document.getElementById('brinde-fornecedor')) document.getElementById('brinde-fornecedor').value = b.fornecedor_id || '';
+    document.getElementById('brinde-fornecedor').value = b.fornecedor_id || '';
     document.getElementById('brinde-evento').value = b.evento_id || '';
+    if (document.getElementById('brinde-desc')) document.getElementById('brinde-desc').value = b.descricao || '';
     if (document.getElementById('brinde-anexo-url')) document.getElementById('brinde-anexo-url').value = b.anexo_url || '';
-    document.getElementById('btn-save-brinde').textContent = 'Salvar';
-    // Switch to table view so form is visible
+    document.getElementById('btn-save-brinde').textContent = 'Salvar Alterações';
     window.setBrindeView('table');
     setTimeout(() => {
       document.getElementById('btn-cancel-brinde').style.display = 'inline-block';
@@ -5207,26 +5193,20 @@
     const id = document.getElementById('brinde-id').value;
     const titulo = document.getElementById('brinde-titulo').value.trim();
     const qtd = parseInt(document.getElementById('brinde-qtd').value) || 0;
-    if(!titulo || qtd < 1) { showToast('Nome e Qtd exigidos!','warning'); return; }
-    
-    const axUrl = document.getElementById('brinde-anexo-url')?.value || '';
+    if(!titulo) { showToast('Nome do brinde é obrigatório!','warning'); return; }
     const btn = document.getElementById('btn-save-brinde');
-
     if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
-    
     try {
       const payload = {
-        qtd,
-        titulo,
+        titulo, qtd,
         nivel: document.getElementById('brinde-nivel').value,
         descricao: document.getElementById('brinde-desc')?.value || '',
         vlr_unit: parseFloat(document.getElementById('brinde-vlr').value) || 0,
         status: document.getElementById('brinde-status').value,
-        fornecedor_id: document.getElementById('brinde-fornecedor')?.value || '',
+        fornecedor_id: document.getElementById('brinde-fornecedor').value || '',
         evento_id: document.getElementById('brinde-evento').value,
-        anexo_url: axUrl
+        anexo_url: document.getElementById('brinde-anexo-url')?.value || ''
       };
-      
       if(id) { 
         await db.collection("brindes").doc(id).update(payload); 
         showToast('Brinde salvo!','success'); 
@@ -5237,7 +5217,6 @@
       }
       document.getElementById('btn-cancel-brinde')?.click();
       await loadBrindes();
-      if (typeof loadEstoque === 'function') await loadEstoque();
     } catch(err) { showToast('Erro.', 'error'); }
     finally { if(btn) { btn.textContent = id ? 'Salvar Alterações' : '+ Adicionar'; btn.disabled = false; } }
   };
@@ -5270,10 +5249,10 @@
   /** 
    * SCRIPT DE MIGRAÇÃO ÚNICA:
    * Define o status de todos os Brindes e Uniformes como 'Recebido' 
-   * Script de migração legado — não utilizado com o novo fluxo.
+   * para que o Almoxarifado reconheça como entrada de estoque.
    */
   window.migrarStatusEstoque = async function() {
-    if(!await showConfirm('Migrar Status de Estoque?', 'Isso marcará todos os Brindes e Uniformes atuais como "Recebido" para alimentar o saldo do Estoque. Deseja continuar?')) return;
+    if(!await showConfirm('Migrar Status de Estoque?', 'Isso marcará todos os Brindes e Uniformes atuais como "Recebido" para alimentar o saldo do Almoxarifado. Deseja continuar?')) return;
     
     showToast('Iniciando migração de status...', 'info');
     try {
