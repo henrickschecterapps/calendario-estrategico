@@ -221,8 +221,8 @@
   .cal-month-label { font-family: var(--font-heading); font-size: 1.5rem; text-transform: capitalize; }
   .cal-dow-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 6px; }
   .cal-dow { padding: 7px 4px; text-align: center; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #fff; background: var(--accent); border-radius: var(--radius-sm); letter-spacing: 0.04em; }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; grid-auto-rows: minmax(120px, auto); align-items: stretch; }
-  .cal-day { background: var(--surface); min-height: 120px; height: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: 0.2s; box-sizing: border-box; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; grid-auto-rows: 1fr; align-items: stretch; }
+  .cal-day { background: var(--surface); min-height: 120px; height: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: 0.2s; box-sizing: border-box; overflow: hidden; }
   .cal-day:hover { background: var(--surface2); transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: var(--muted); }
   .cal-day.other-month { opacity: 0.4; background: var(--bg); }
   .cal-day.today { border: 2px solid var(--accent); }
@@ -430,8 +430,8 @@
     .modal { max-height: 95vh; border-radius: 16px 16px 0 0; }
     .modal-overlay { padding: 0; align-items: flex-end; }
     .cal-dow-header { gap: 3px; margin-bottom: 3px; }
-    .cal-grid { gap: 3px; grid-auto-rows: minmax(70px, auto); }
-    .cal-day { min-height: 70px; height: 100%; padding: 6px; }
+    .cal-grid { gap: 3px; grid-auto-rows: 1fr; }
+    .cal-day { min-height: 70px; height: 100%; padding: 6px; overflow: hidden; }
     .week-grid { grid-template-columns: repeat(7, minmax(90px, 1fr)); overflow-x: auto; }
     .admin-panels { grid-template-columns: 1fr; }
     .form-grid { grid-template-columns: 1fr; }
@@ -1176,7 +1176,7 @@
                   <div class="gestao-table-wrap" id="forn-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <table class="gestao-table" id="forn-table">
                       <thead><tr>
-                        <th>Nome do Fornecedor</th><th>E-mail</th><th>Telefone</th><th>Itens Vinculados</th><th></th>
+                        <th>Empresa Fornecedora</th><th>Contato (Responsável)</th><th>E-mail</th><th>Telefone</th><th>Itens Vinculados</th><th></th>
                       </tr></thead>
                       <tbody id="forn-body"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Nenhum fornecedor cadastrado.</td></tr></tbody>
                     </table>
@@ -1184,8 +1184,12 @@
                     <div class="gestao-add-bar" id="forn-add-form">
                       <input type="hidden" id="forn-id">
                       <div class="gestao-field" style="flex:2;min-width:160px;">
-                        <label>Nome do Fornecedor *</label>
+                        <label>Empresa Fornecedora *</label>
                         <input type="text" class="gestao-input w-full" id="forn-nome" placeholder="Ex: Gráfica XYZ">
+                      </div>
+                      <div class="gestao-field" style="flex:2;min-width:160px;">
+                        <label>Contato (Responsável)</label>
+                        <input type="text" class="gestao-input w-full" id="forn-contato" placeholder="Ex: João Silva">
                       </div>
                       <div class="gestao-field" style="flex:2;min-width:160px;">
                         <label>E-mail</label>
@@ -3969,10 +3973,10 @@
     
     const busca = (document.getElementById('filtro-forn-busca')?.value || '').toLowerCase();
     let list = FORNECEDORES_LIST;
-    if (busca) list = list.filter(f => (f.nome||'').toLowerCase().includes(busca) || (f.email||'').toLowerCase().includes(busca) || (f.telefone||'').toLowerCase().includes(busca));
+    if (busca) list = list.filter(f => (f.nome||'').toLowerCase().includes(busca) || (f.contato||'').toLowerCase().includes(busca) || (f.email||'').toLowerCase().includes(busca) || (f.telefone||'').toLowerCase().includes(busca));
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Nenhum fornecedor encontrado.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted);">Nenhum fornecedor encontrado.</td></tr>';
       return;
     }
     
@@ -3983,6 +3987,7 @@
       const isNew = window.lastSavedId === f.id ? 'flash-green' : '';
       return `<tr class="${isNew}">
         <td><strong>${highlight(f.nome, document.getElementById('filtro-forn-busca')?.value)}</strong></td>
+        <td>${f.contato ? `<span style="font-weight:600;">${escapeHtml(f.contato)}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
         <td>${f.email ? `<a href="mailto:${escapeHtml(f.email)}" style="color:var(--accent);font-weight:600;">${escapeHtml(f.email)}</a>` : '<span style="color:var(--muted)">—</span>'}</td>
         <td>${f.telefone ? `<a href="tel:${escapeHtml(f.telefone)}" style="color:var(--teal);font-weight:600;">${escapeHtml(f.telefone)}</a>` : '<span style="color:var(--muted)">—</span>'}</td>
         <td>${total > 0 ? `<span style="font-weight:700">${total} item${total!==1?'s':''}</span> <span style="color:var(--muted);font-size:0.75rem;">(${bCount} brinde${bCount!==1?'s':''}, ${uCount} unif.)</span>` : '<span style="color:var(--muted)">0 itens</span>'}</td>
@@ -3998,6 +4003,7 @@
     const f = FORNECEDORES_LIST.find(x => x.id === id); if(!f) return;
     document.getElementById('forn-id').value = id;
     document.getElementById('forn-nome').value = f.nome || '';
+    document.getElementById('forn-contato').value = f.contato || '';
     document.getElementById('forn-email').value = f.email || '';
     document.getElementById('forn-tel').value = f.telefone || '';
     document.getElementById('btn-save-forn').textContent = 'Salvar Alterações';
@@ -4007,7 +4013,7 @@
 
   document.getElementById('btn-cancel-forn').onclick = () => {
     document.getElementById('forn-id').value = '';
-    ['forn-nome','forn-email','forn-tel'].forEach(id => document.getElementById(id).value = '');
+    ['forn-nome','forn-contato','forn-email','forn-tel'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('btn-save-forn').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-forn').style.display = 'none';
     if(typeof window.closeGestaoDrawer === 'function') window.closeGestaoDrawer();
@@ -4016,18 +4022,19 @@
   document.getElementById('btn-save-forn').onclick = async () => {
     const id = document.getElementById('forn-id').value;
     const nome = document.getElementById('forn-nome').value.trim();
+    const contato = document.getElementById('forn-contato').value.trim();
     const email = document.getElementById('forn-email').value.trim();
     const telefone = document.getElementById('forn-tel').value.trim();
-    if (!nome) { showToast('Nome do fornecedor é obrigatório.', 'warning'); return; }
+    if (!nome) { showToast('Empresa fornecedora é obrigatória.', 'warning'); return; }
     const btn = document.getElementById('btn-save-forn');
     btn.textContent = 'Salvando...'; btn.disabled = true;
     try {
       if (id) {
-        await db.collection("fornecedores").doc(id).update({ nome, email, telefone });
+        await db.collection("fornecedores").doc(id).update({ nome, contato, email, telefone });
         showToast('Fornecedor atualizado!', 'success');
         window.lastSavedId = id;
       } else {
-        const docRef = await db.collection("fornecedores").add({ nome, email, telefone, criado_em: firebase.firestore.FieldValue.serverTimestamp() });
+        const docRef = await db.collection("fornecedores").add({ nome, contato, email, telefone, criado_em: firebase.firestore.FieldValue.serverTimestamp() });
         showToast('Fornecedor cadastrado! 🏢', 'success');
         window.lastSavedId = docRef.id;
       }
