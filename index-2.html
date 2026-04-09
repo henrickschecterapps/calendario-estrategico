@@ -219,9 +219,9 @@
   /* ── VIEWS: MÊS, SEMANA E LISTA ── */
   .cal-nav { display: flex; justify-content: space-between; margin-bottom: 24px; align-items: center; }
   .cal-month-label { font-family: var(--font-heading); font-size: 1.5rem; text-transform: capitalize; }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; grid-auto-rows: minmax(120px, auto); align-items: stretch; }
   .cal-dow { padding: 12px 4px; text-align: center; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--muted); background: var(--surface); border-radius: var(--radius-sm); border: 1px solid var(--border); }
-  .cal-day { background: var(--surface); min-height: 120px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: 0.2s; }
+  .cal-day { background: var(--surface); min-height: 120px; height: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: 0.2s; box-sizing: border-box; }
   .cal-day:hover { background: var(--surface2); transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: var(--muted); }
   .cal-day.other-month { opacity: 0.4; background: var(--bg); }
   .cal-day.today { border: 2px solid var(--accent); }
@@ -428,8 +428,8 @@
     .event-date-day { font-size: 1.4rem; }
     .modal { max-height: 95vh; border-radius: 16px 16px 0 0; }
     .modal-overlay { padding: 0; align-items: flex-end; }
-    .cal-grid { gap: 3px; }
-    .cal-day { min-height: 70px; padding: 6px; }
+    .cal-grid { gap: 3px; grid-auto-rows: minmax(70px, auto); }
+    .cal-day { min-height: 70px; height: 100%; padding: 6px; }
     .week-grid { grid-template-columns: repeat(7, minmax(90px, 1fr)); overflow-x: auto; }
     .admin-panels { grid-template-columns: 1fr; }
     .form-grid { grid-template-columns: 1fr; }
