@@ -219,8 +219,9 @@
   /* ── VIEWS: MÊS, SEMANA E LISTA ── */
   .cal-nav { display: flex; justify-content: space-between; margin-bottom: 24px; align-items: center; }
   .cal-month-label { font-family: var(--font-heading); font-size: 1.5rem; text-transform: capitalize; }
+  .cal-dow-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 6px; }
+  .cal-dow { padding: 7px 4px; text-align: center; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #fff; background: var(--accent); border-radius: var(--radius-sm); letter-spacing: 0.04em; }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; grid-auto-rows: minmax(120px, auto); align-items: stretch; }
-  .cal-dow { padding: 12px 4px; text-align: center; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--muted); background: var(--surface); border-radius: var(--radius-sm); border: 1px solid var(--border); }
   .cal-day { background: var(--surface); min-height: 120px; height: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: 0.2s; box-sizing: border-box; }
   .cal-day:hover { background: var(--surface2); transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: var(--muted); }
   .cal-day.other-month { opacity: 0.4; background: var(--bg); }
@@ -428,6 +429,7 @@
     .event-date-day { font-size: 1.4rem; }
     .modal { max-height: 95vh; border-radius: 16px 16px 0 0; }
     .modal-overlay { padding: 0; align-items: flex-end; }
+    .cal-dow-header { gap: 3px; margin-bottom: 3px; }
     .cal-grid { gap: 3px; grid-auto-rows: minmax(70px, auto); }
     .cal-day { min-height: 70px; height: 100%; padding: 6px; }
     .week-grid { grid-template-columns: repeat(7, minmax(90px, 1fr)); overflow-x: auto; }
@@ -755,6 +757,7 @@
       
       <div id="view-calendar" class="view-container">
         <div class="cal-nav"><button class="btn-icon" id="cal-prev"><i data-lucide="chevron-left"></i></button><span class="cal-month-label" id="cal-month-label"></span><button class="btn-icon" id="cal-next"><i data-lucide="chevron-right"></i></button></div>
+        <div class="cal-dow-header" id="cal-dow-header"></div>
         <div class="cal-grid" id="cal-grid"></div>
       </div>
 
@@ -1119,7 +1122,6 @@
                           <label>Tamanho</label>
                           <select class="gestao-input" id="unif-tamanho">
                             <option value="Único">Único</option>
-                            <option value="BabyLook P">BabyLook P</option><option value="BabyLook M">BabyLook M</option><option value="BabyLook G">BabyLook G</option>
                             <option value="PP">PP</option><option value="P">P</option><option value="M">M</option>
                             <option value="G">G</option><option value="GG">GG</option><option value="XGG">XGG</option>
                           </select>
@@ -1239,10 +1241,6 @@
                       <div class="gestao-field" style="flex:1;min-width:140px;">
                         <label>Tamanho Camisa</label>
                         <select class="gestao-input w-full" id="part-tamanho">
-                          <option value="PP">BabyLook P</option>
-                          <option value="PP">BabyLook M</option>
-                          <option value="PP">BabyLook G</option>
-                          <option value="PP">BabyLook GG</option>
                           <option value="PP">PP</option>
                           <option value="P">P</option>
                           <option value="M" selected>M</option>
@@ -2351,7 +2349,8 @@
     document.getElementById('cal-month-label').textContent = `${MONTHS_PT[calMonth]} ${calYear}`;
     const fd = new Date(calYear, calMonth, 1).getDay(), dim = new Date(calYear, calMonth+1, 0).getDate(), cells = Math.ceil((fd + dim) / 7) * 7, evMap = {};
     getFilteredEvents().forEach(e => { const ini = parseDate(e.data_ini), fim = parseDate(e.data_fim) || ini; if (!ini) return; let d = new Date(ini); while (d <= fim) { if(d.getFullYear()===calYear && d.getMonth()===calMonth){ if(!evMap[d.getDate()]) evMap[d.getDate()]=[]; evMap[d.getDate()].push(e); } d.setDate(d.getDate()+1); } });
-    let html = DAYS_PT.map(d => `<div class="cal-dow">${d}</div>`).join('');
+    document.getElementById('cal-dow-header').innerHTML = DAYS_PT.map(d => `<div class="cal-dow">${d}</div>`).join('');
+    let html = '';
     for (let i = 0; i < cells; i++) {
       const dNum = i - fd + 1, isOther = dNum<1||dNum>dim, isToday = !isOther&&dNum===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear(), evs = !isOther&&evMap[dNum] ? evMap[dNum] : [];
       html += `<div class="cal-day ${isOther?'other-month':''} ${isToday?'today':''}"><div class="cal-day-num">${isOther?'':dNum}</div>${evs.slice(0,3).map(e => `<div class="cal-event-pill ${(e.tipo||'').toLowerCase()}" onclick="event.stopPropagation(); window.openEventView('${e.id}')">${e.evento}</div>`).join('')}${evs.length>3 ? `<div style="font-size:0.6rem;font-weight:700;color:var(--muted)">+${evs.length-3}</div>` : ''}</div>`;
