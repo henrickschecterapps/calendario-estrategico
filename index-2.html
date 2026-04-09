@@ -1479,12 +1479,7 @@
                 <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Função</label>
                 <input type="text" id="equipe-funcao" class="admin-input" style="margin:0;" placeholder="Ex: Fotógrafo">
               </div>
-              <div style="flex:1.5;min-width:160px;">
-                <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Uniforme</label>
-                <select id="equipe-camisa" class="admin-input" style="margin:0;">
-                  <option value="">Sem uniforme</option>
-                </select>
-              </div>
+              <select id="equipe-camisa" class="admin-input" style="display:none;margin:0;"></select>
               <button class="btn-primary" id="btn-add-equipe" style="margin:0; height:42px;">+ Adicionar</button>
             </div>
             <input type="hidden" id="edit-participantes">
@@ -2871,22 +2866,14 @@
       return;
     }
     listEl.innerHTML = window.currentEquipe.map((m, i) => {
-      let unifBadge = '';
-      if (m.camisa_id) {
-         const u = UNIFORMES.find(x => x.id === m.camisa_id);
-         if (u) unifBadge = `<span style="font-size:0.7rem;color:var(--accent);font-weight:700;"><i data-lucide="package" style="width:12px;height:12px;"></i> Lote: ${u.cor}</span>`;
-      } else if (m.estoque_id) {
-         const e = ESTOQUE.find(x => x.id === m.estoque_id);
-         if (e) unifBadge = `<span style="font-size:0.7rem;color:var(--teal);font-weight:700;"><i data-lucide="box" style="width:12px;height:12px;"></i> Master: ${e.nome}</span>`;
-      }
-      
       const funcBadge = m.funcao ? `<span style="font-size:0.7rem;background:var(--border);padding:2px 6px;border-radius:4px;font-weight:700;">${escapeHtml(m.funcao)}</span>` : '';
+      const tamBadge = m.tamanho ? `<span style="font-size:0.7rem;background:rgba(3,87,213,0.10);color:var(--accent);border:1px solid rgba(3,87,213,0.2);padding:2px 7px;border-radius:4px;font-weight:700;" title="Tamanho de uniforme">👕 ${escapeHtml(m.tamanho)}</span>` : '';
       
       return `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);padding:8px 12px;border-radius:var(--radius-sm);">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-weight:700;font-size:0.9rem;">${escapeHtml(m.nome)}</span>
           ${funcBadge}
-          ${unifBadge}
+          ${tamBadge}
         </div>
         <button class="btn-icon" onclick="window.delEquipeMember(${i})" style="color:var(--red);"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>
       </div>`;
@@ -2935,19 +2922,14 @@
     if(!partId) return showToast('Selecione um participante da lista.', 'warning');
     if(window.currentEquipe.some(m => m.part_id === partId)) return showToast('Este participante já foi adicionado.', 'warning');
     
-    let mid = camInp.value || '';
-    let mobj = { nome, funcao: funcInp.value.trim() || (selectedOpt.dataset.funcao || ''), camisa_id: '', estoque_id: '', part_id: partId, origem: 'global' };
+    const partData = PARTICIPANTES_LIST.find(x => x.id === partId);
+    const tamanho = (partData && partData.tamanho) ? partData.tamanho : '';
     
-    if (mid.startsWith('est_')) {
-        mobj.estoque_id = mid.replace('est_', '');
-    } else if (mid.startsWith('unif_')) {
-        mobj.camisa_id = mid.replace('unif_', '');
-    }
+    let mobj = { nome, funcao: funcInp.value.trim() || (selectedOpt.dataset.funcao || ''), camisa_id: '', estoque_id: '', part_id: partId, origem: 'global', tamanho };
     
     window.currentEquipe.push(mobj);
     nomeSelect.value = '';
     funcInp.value = '';
-    camInp.value = '';
     window.renderEquipeBuilder();
     nomeSelect.focus();
   };
@@ -3016,6 +2998,13 @@
     // Hydrate Equipe Builder
     window.currentEquipe = ev.equipe ? JSON.parse(JSON.stringify(ev.equipe)) : [];
     if (window.currentEquipe.length === 0 && ev.participantes) window.currentEquipe = [{nome: ev.participantes, funcao: '', camisa_id: ''}];
+    // Enriquecer membros existentes com tamanho do cadastro, se não estiver salvo
+    window.currentEquipe.forEach(m => {
+      if (!m.tamanho && m.part_id) {
+        const pd = PARTICIPANTES_LIST.find(x => x.id === m.part_id);
+        if (pd && pd.tamanho) m.tamanho = pd.tamanho;
+      }
+    });
     window.renderEquipeBuilder();
     
     // Garantir que o dropdown de participantes esteja populado e campos limpos
