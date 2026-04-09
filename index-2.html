@@ -1010,7 +1010,6 @@
                     <select id="filtro-brinde-evento" onchange="renderBrindes()">
                       <option value="">Todos os Eventos</option>
                     </select>
-                    <button class="btn-primary" onclick="window.novoRegistro('brinde')" style="font-size:0.82rem;"><i data-lucide="plus" style="width:14px;height:14px;"></i> Novo Brinde</button>
                   </div>
 
                   <div id="brindes-kanban" class="kanban-board"></div>
@@ -1096,7 +1095,6 @@
                     <select id="filtro-unif-evento" onchange="renderUniformes()">
                       <option value="">Todos os Eventos</option>
                     </select>
-                    <button class="btn-primary" onclick="window.novoRegistro('uniforme')" style="font-size:0.82rem;"><i data-lucide="plus" style="width:14px;height:14px;"></i> Novo Uniforme</button>
                   </div>
 
                   <div id="unif-kanban" class="kanban-board"></div>
@@ -4256,13 +4254,15 @@
 
   window.setBrindeView = function(view) {
     window.currentBrindeView = view;
-    
+    const kanbanBtn = document.getElementById('brindes-kanban-btn-bar');
     if (view === 'table') {
       document.getElementById('brindes-table-wrap').classList.remove('hide');
       document.getElementById('brindes-kanban').classList.add('hide');
+      if (kanbanBtn) kanbanBtn.style.display = 'none';
     } else {
       document.getElementById('brindes-table-wrap').classList.add('hide');
       document.getElementById('brindes-kanban').classList.remove('hide');
+      if (kanbanBtn) kanbanBtn.style.display = 'flex';
     }
     renderBrindes();
   };
@@ -4455,12 +4455,15 @@
 
   window.setUnifView = function(view) {
     window.currentUnifView = view;
+    const kanbanBtn = document.getElementById('unif-kanban-btn-bar');
     if (view === 'table') {
       document.getElementById('unif-table-wrap').classList.remove('hide');
       document.getElementById('unif-kanban').classList.add('hide');
+      if (kanbanBtn) kanbanBtn.style.display = 'none';
     } else {
       document.getElementById('unif-table-wrap').classList.add('hide');
       document.getElementById('unif-kanban').classList.remove('hide');
+      if (kanbanBtn) kanbanBtn.style.display = 'flex';
     }
     renderUniformes();
   };
@@ -4982,10 +4985,25 @@
       });
       const wrappers = {
         'estoque-table-wrap': { type: 'estoque', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Add Almoxarifado' },
-        'brindes-table-wrap': { type: 'brinde', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Alocar Brinde (Saída)' },
+        'brindes-table-wrap': { type: 'brinde', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo pedido de brinde' },
         'unif-table-wrap': { type: 'uniforme', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Registrar Uniforme' },
         'forn-table-wrap': { type: 'fornecedor', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Fornecedor' }
       };
+      // Botão flutuante também para kanban de brindes e uniformes
+      const kanbanButtons = {
+        'brindes-kanban': { type: 'brinde', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo pedido de brinde' },
+        'unif-kanban': { type: 'uniforme', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Registrar Uniforme' }
+      };
+      for(const [id, cfg] of Object.entries(kanbanButtons)) {
+        const wrap = document.getElementById(id);
+        if(wrap) {
+          const div = document.createElement('div');
+          div.style = "padding:16px; background:var(--surface); border-top:1px solid var(--border); display:flex; justify-content:flex-end;";
+          div.id = `${id}-btn-bar`;
+          div.innerHTML = `<button class="btn-primary" onclick="window.openGestaoDrawer('${cfg.type}')" style="display:flex;align-items:center;gap:6px;">${cfg.label}</button>`;
+          wrap.parentNode.insertBefore(div, wrap.nextSibling);
+        }
+      }
       for(const [id, cfg] of Object.entries(wrappers)) {
         const wrap = document.getElementById(id);
         if(wrap) {
