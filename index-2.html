@@ -1621,7 +1621,7 @@
       <div class="modal-body">
         <div class="bento-grid">
           <div class="bento-item"><div class="bento-header"><i data-lucide="briefcase"></i> Operação</div><div class="bento-value"><span id="view-status">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Formato:</span> <span id="view-formato">-</span></div></div>
-          <div class="bento-item" id="block-cota"><div class="bento-header"><i data-lucide="award"></i> Comercial</div><div class="bento-value"><span id="view-cota">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Vagas Livres:</span> <span id="view-vagas">-</span></div></div>
+          <div class="bento-item" id="block-cota"><div class="bento-header"><i data-lucide="award"></i> Comercial</div><div class="bento-value"><span id="view-cota">-</span><br><div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;font-size:0.82rem;"><span style="color:var(--accent);font-weight:700;">👷 Staff: <span id="view-vagas-staff">—</span></span><span style="color:var(--green);font-weight:700;">👥 Cliente: <span id="view-vagas-cliente">—</span></span><span style="color:var(--purple);font-weight:700;">⭐ VIP: <span id="view-vagas-vip">—</span></span></div></div></div>
           <div class="bento-item full" id="block-participantes" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2);"><div class="bento-header" style="color: var(--green);"><i data-lucide="users"></i> Participantes (Equipe Tripla) <span id="view-participantes-count" style="margin-left:auto;font-size:0.7rem;background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3);padding:2px 8px;border-radius:20px;font-weight:800;"></span></div><div class="bento-value" id="view-participantes" style="font-size: 0.9rem;">-</div></div>
           <div class="bento-item full" id="block-publico"><div class="bento-header"><i data-lucide="users"></i> Público Alvo</div><div class="bento-value" id="view-publico">-</div></div>
           <div class="bento-item full" id="block-beneficios"><div class="bento-header"><i data-lucide="sparkles"></i> Benefícios / Entregas</div><div class="bento-value" id="view-beneficios" style="white-space: pre-wrap;">-</div></div>
@@ -1741,11 +1741,38 @@
         <div class="form-grid">
           <div><label class="form-label">Formato</label><input type="text" class="admin-input" id="edit-formato" placeholder="Presencial / Online / Híbrido"></div>
           <div><label class="form-label">Cota Comercial</label><input type="text" class="admin-input" id="edit-cota"></div>
-          <div style="position:relative;">
-            <label class="form-label">Vagas do Evento (Capacidade)</label>
-            <input type="text" class="admin-input" id="edit-vagas" placeholder="Ex: 50" oninput="if(window.updateVagasSaldo) window.updateVagasSaldo()">
-            <div id="vagas-restantes-info" style="font-size:0.75rem; font-weight:700; color:var(--muted); margin-top:4px;">
-              Vagas Restantes: <span id="vagas-saldo-val" style="color:var(--green)">—</span>
+          <div style="grid-column: 1 / -1;">
+            <label class="form-label">Vagas do Evento por Categoria</label>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; margin-bottom:8px;">
+              <div>
+                <label style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                  <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:rgba(3,87,213,0.12);color:var(--accent);">
+                    <i data-lucide="hard-hat" style="width:12px;height:12px;"></i>
+                  </span> Staff
+                </label>
+                <input type="number" min="0" class="admin-input" id="edit-vagas-staff" placeholder="0" style="margin-bottom:0;" oninput="if(window.updateVagasSaldo) window.updateVagasSaldo()">
+              </div>
+              <div>
+                <label style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                  <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:rgba(5,150,105,0.12);color:var(--green);">
+                    <i data-lucide="users" style="width:12px;height:12px;"></i>
+                  </span> Cliente
+                </label>
+                <input type="number" min="0" class="admin-input" id="edit-vagas-cliente" placeholder="0" style="margin-bottom:0;" oninput="if(window.updateVagasSaldo) window.updateVagasSaldo()">
+              </div>
+              <div>
+                <label style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                  <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:rgba(124,58,237,0.12);color:var(--purple);">
+                    <i data-lucide="star" style="width:12px;height:12px;"></i>
+                  </span> VIP
+                </label>
+                <input type="number" min="0" class="admin-input" id="edit-vagas-vip" placeholder="0" style="margin-bottom:0;" oninput="if(window.updateVagasSaldo) window.updateVagasSaldo()">
+              </div>
+            </div>
+            <div id="vagas-restantes-info" style="font-size:0.75rem;font-weight:700;color:var(--muted);padding:8px 12px;background:var(--surface2);border-radius:var(--radius-sm);display:flex;gap:16px;flex-wrap:wrap;">
+              <span>Total: <span id="vagas-total-val" style="color:var(--accent)">0</span></span>
+              <span>Equipe alocada: <span id="vagas-ocupadas-val" style="color:var(--muted)">0</span></span>
+              <span>Restantes: <span id="vagas-saldo-val" style="color:var(--green)">—</span></span>
             </div>
           </div>
         </div>
@@ -2734,12 +2761,16 @@
     const proximos   = EVENTS.filter(e => { const d = parseDate(e.data_ini); return d && d >= now && d <= in30; }).length;
     const taxa       = total > 0 ? Math.round((confirmados / total) * 100) : 0;
 
-    // Vagas numéricas (tenta extrair número do campo vagas)
+    // Vagas: soma das 3 categorias (Staff + Cliente + VIP)
     let vagasTotal = 0;
     EVENTS.forEach(e => {
-      if (e.tipo === 'Comercial' && e.vagas) {
-        const n = parseInt((e.vagas+'').replace(/\D/g,''));
-        if (!isNaN(n)) vagasTotal += n;
+      if (e.tipo === 'Comercial') {
+        vagasTotal += (parseInt(e.vagas_staff)||0) + (parseInt(e.vagas_cliente)||0) + (parseInt(e.vagas_vip)||0);
+        // fallback para campo legado
+        if (!e.vagas_staff && !e.vagas_cliente && !e.vagas_vip && e.vagas) {
+          const n = parseInt((e.vagas+'').replace(/\D/g,''));
+          if (!isNaN(n)) vagasTotal += n;
+        }
       }
     });
 
@@ -2976,12 +3007,19 @@
     const container = document.getElementById('vagas-table-container');
     const now = new Date(); now.setHours(0,0,0,0);
     const eventsWithVagas = EVENTS
-      .filter(e => e.tipo === 'Comercial' && e.vagas && !['Concluído','Cancelado'].includes(e.status))
+      .filter(e => {
+        if (e.tipo !== 'Comercial' || ['Concluído','Cancelado'].includes(e.status)) return false;
+        const totalVagas = (parseInt(e.vagas_staff)||0) + (parseInt(e.vagas_cliente)||0) + (parseInt(e.vagas_vip)||0);
+        return totalVagas > 0 || e.vagas;
+      })
       .map(e => {
         const d = parseDate(e.data_ini);
         const daysUntil = d ? Math.ceil((d - now)/(1000*60*60*24)) : 999;
-        const vagasNum = parseInt((e.vagas+'').replace(/\D/g,'')) || null;
-        return { ...e, daysUntil, vagasNum };
+        const staff   = parseInt(e.vagas_staff)  || 0;
+        const cliente = parseInt(e.vagas_cliente) || 0;
+        const vip     = parseInt(e.vagas_vip)     || 0;
+        const total   = staff + cliente + vip || parseInt((e.vagas+'').replace(/\D/g,'')) || 0;
+        return { ...e, daysUntil, staff, cliente, vip, vagasTotal: total };
       })
       .filter(e => e.daysUntil >= 0)
       .sort((a,b) => a.daysUntil - b.daysUntil);
@@ -2993,17 +3031,23 @@
 
     container.innerHTML = `
       <table class="vagas-table">
-        <thead><tr><th>Evento</th><th>Data</th><th>Vagas</th><th>Cota</th><th>Status</th><th>Urgência</th></tr></thead>
+        <thead><tr><th>Evento</th><th>Data</th><th style="color:var(--accent)">Staff</th><th style="color:var(--green)">Cliente</th><th style="color:var(--purple)">VIP</th><th>Total</th><th>Cota</th><th>Status</th><th>Urgência</th></tr></thead>
         <tbody>
           ${eventsWithVagas.map(e => {
             let urgClass = 'urgency-low', urgLabel = `${e.daysUntil}d`;
             if (e.daysUntil <= 7)  { urgClass = 'urgency-high'; urgLabel = `🔴 ${e.daysUntil}d`; }
             else if (e.daysUntil <= 30) { urgClass = 'urgency-mid'; urgLabel = `🟡 ${e.daysUntil}d`; }
             else { urgLabel = `🟢 ${e.daysUntil}d`; }
+            const fmtVaga = (n, color) => n > 0
+              ? `<span style="font-weight:800;color:${color}">${n}</span>`
+              : `<span style="color:var(--muted)">—</span>`;
             return `<tr onclick="window.openEventView('${e.id}')">
               <td style="font-weight:800;">${e.evento}</td>
               <td>${dateFmt(e)}</td>
-              <td>${e.vagas}</td>
+              <td>${fmtVaga(e.staff,   'var(--accent)')}</td>
+              <td>${fmtVaga(e.cliente, 'var(--green)')}</td>
+              <td>${fmtVaga(e.vip,     'var(--purple)')}</td>
+              <td style="font-weight:800;">${e.vagasTotal}</td>
               <td>${e.cota ? cotaBadge(e.cota) : '<span style="color:var(--muted)">—</span>'}</td>
               <td>${statusBadge(e.status)}</td>
               <td class="${urgClass}">${urgLabel}</td>
@@ -3036,7 +3080,17 @@
     document.getElementById('view-status').textContent = ev.status || '-';
     document.getElementById('view-formato').textContent = ev.formato || 'Não definido';
     const blockCota = document.getElementById('block-cota');
-    if (ev.cota || ev.vagas) { blockCota.style.display = 'block'; document.getElementById('view-cota').innerHTML = cotaBadge(ev.cota) || '-'; document.getElementById('view-vagas').textContent = ev.vagas || '-'; } else { blockCota.style.display = 'none'; }
+    const staff   = parseInt(ev.vagas_staff)  || 0;
+    const cliente = parseInt(ev.vagas_cliente) || 0;
+    const vip     = parseInt(ev.vagas_vip)     || 0;
+    const hasVagas = ev.cota || staff > 0 || cliente > 0 || vip > 0 || ev.vagas;
+    if (hasVagas) {
+      blockCota.style.display = 'block';
+      document.getElementById('view-cota').innerHTML = cotaBadge(ev.cota) || '-';
+      document.getElementById('view-vagas-staff').textContent   = staff   || '—';
+      document.getElementById('view-vagas-cliente').textContent = cliente || '—';
+      document.getElementById('view-vagas-vip').textContent     = vip     || '—';
+    } else { blockCota.style.display = 'none'; }
 
     // Financeiro Consolidado
     const costBrindes = BRINDES.filter(b => b.evento_id === ev.id).reduce((s, b) => s + (parseFloat(b.vlr_unit)||0) * (parseInt(b.qtd)||0), 0);
@@ -3230,22 +3284,23 @@
    * Calcula e exibe o saldo de vagas (Vagas Totais - Integrantes da Equipe)
    */
   window.updateVagasSaldo = function() {
-    const totalInp = document.getElementById('edit-vagas');
-    const saldoValEl = document.getElementById('vagas-saldo-val');
-    if (!totalInp || !saldoValEl) return;
+    const saldoValEl   = document.getElementById('vagas-saldo-val');
+    const totalValEl   = document.getElementById('vagas-total-val');
+    const ocupadasEl   = document.getElementById('vagas-ocupadas-val');
+    if (!saldoValEl) return;
 
-    let totalRaw = totalInp ? totalInp.value + '' : '0';
-    // Extrai apenas os dígitos para o cálculo (mantendo compatibilidade com texto legado)
-    const total = parseInt(totalRaw.replace(/\D/g, '')) || 0;
+    const staff   = parseInt(document.getElementById('edit-vagas-staff')?.value)  || 0;
+    const cliente = parseInt(document.getElementById('edit-vagas-cliente')?.value) || 0;
+    const vip     = parseInt(document.getElementById('edit-vagas-vip')?.value)     || 0;
+    const total   = staff + cliente + vip;
     const ocupadas = (window.currentEquipe || []).length;
-    const restam = Math.max(0, total - ocupadas);
+    const restam   = total - ocupadas;
 
-    saldoValEl.textContent = restam;
-    
-    // Alerta visual se as vagas acabarem ou ficarem negativas
-    if (restam === 0 && total > 0) {
-      saldoValEl.style.color = 'var(--red)';
-    } else if (total < ocupadas) {
+    if (totalValEl)  totalValEl.textContent  = total;
+    if (ocupadasEl)  ocupadasEl.textContent  = ocupadas;
+    saldoValEl.textContent = total > 0 ? restam : '—';
+
+    if (total > 0 && restam <= 0) {
       saldoValEl.style.color = 'var(--red)';
     } else {
       saldoValEl.style.color = 'var(--green)';
@@ -3310,7 +3365,7 @@
     if(userRole !== 'admin' && userRole !== 'editor') return showToast("Acesso restrito. Apenas admins e editores podem editar.", 'error');
     let ev = EVENTS.find(e => e.id === id);
     if(!id || !ev) {
-      ev = { id:"", evento:"", data_ini:"", data_fim:"", hora_ini:"", hora_fim:"", responsavel:"", tipo:"Comercial", status:"Planejado", cota:"", vagas:"", publico:"", beneficios:"", obs:"", formato:"", participantes:"", localidade:"", links:"" };
+      ev = { id:"", evento:"", data_ini:"", data_fim:"", hora_ini:"", hora_fim:"", responsavel:"", tipo:"Comercial", status:"Planejado", cota:"", vagas_staff:"", vagas_cliente:"", vagas_vip:"", publico:"", beneficios:"", obs:"", formato:"", participantes:"", localidade:"", links:"" };
       document.getElementById('form-title').textContent = "+ Cadastrar Novo Evento";
       document.getElementById('btn-delete').style.display = 'none';
       document.getElementById('btn-cancel-edit').style.display = 'none';
@@ -3327,7 +3382,8 @@
       'id':'id', 'nome':'evento', 'ini':'data_ini', 'fim':'data_fim', 
       'hora-ini':'hora_ini', 'hora-fim':'hora_fim', 'tipo':'tipo', 
       'status':'status', 'formato':'formato', 'cota':'cota', 
-      'vagas':'vagas', 'publico':'publico', 'beneficios':'beneficios', 
+      'vagas-staff':'vagas_staff', 'vagas-cliente':'vagas_cliente', 'vagas-vip':'vagas_vip',
+      'publico':'publico', 'beneficios':'beneficios', 
       'obs':'obs', 'participantes':'participantes', 
       'localidade':'localidade', 'links':'links' 
     };
@@ -3530,7 +3586,10 @@
       status:       document.getElementById('edit-status').value,
       formato:      document.getElementById('edit-formato').value,
       cota:         document.getElementById('edit-cota').value,
-      vagas:        document.getElementById('edit-vagas').value,
+      vagas_staff:   parseInt(document.getElementById('edit-vagas-staff')?.value)  || 0,
+      vagas_cliente: parseInt(document.getElementById('edit-vagas-cliente')?.value) || 0,
+      vagas_vip:     parseInt(document.getElementById('edit-vagas-vip')?.value)     || 0,
+      vagas:         (parseInt(document.getElementById('edit-vagas-staff')?.value)||0) + (parseInt(document.getElementById('edit-vagas-cliente')?.value)||0) + (parseInt(document.getElementById('edit-vagas-vip')?.value)||0),
       publico:      document.getElementById('edit-publico').value,
       beneficios:   document.getElementById('edit-beneficios').value,
       obs:          document.getElementById('edit-obs').value,
