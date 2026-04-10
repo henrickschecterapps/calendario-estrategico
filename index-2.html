@@ -329,7 +329,8 @@
   .cal-day-num { font-size: 0.9rem; font-weight: 800; margin-bottom: 8px; color: var(--muted); }
   .cal-day.today .cal-day-num { background: var(--accent); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
   .cal-event-pill { font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 1px solid rgba(0,0,0,0.05); }
-  .cal-event-pill.comercial { background: rgba(59,130,246,0.15); color: var(--c-comercial); }
+  .cal-event-pill.comercial, .cal-event-pill.comercial-interno { background: rgba(59,130,246,0.15); color: var(--c-comercial); }
+  .cal-event-pill.comercial-patrocinado { background: rgba(0,160,255,0.15); color: var(--accent-light); }
   .cal-event-pill.interno { background: rgba(16,185,129,0.15); color: var(--c-interno); }
   .cal-event-pill.feriado { background: rgba(245,158,11,0.15); color: var(--c-feriado); }
 
@@ -871,7 +872,8 @@
         <h3>Tipo de Evento</h3>
         <div class="filter-group">
           <button class="filter-btn active" data-filter-type="all"><span class="filter-dot" style="background:var(--muted)"></span>Todos</button>
-          <button class="filter-btn" data-filter-type="Comercial"><span class="filter-dot" style="background:var(--c-comercial)"></span>Comercial</button>
+          <button class="filter-btn" data-filter-type="Comercial Interno"><span class="filter-dot" style="background:var(--c-comercial)"></span>Comercial Interno</button>
+          <button class="filter-btn" data-filter-type="Comercial Patrocinado"><span class="filter-dot" style="background:var(--accent-light)"></span>Comercial Patrocinado</button>
           <button class="filter-btn" data-filter-type="Interno"><span class="filter-dot" style="background:var(--c-interno)"></span>Interno</button>
           <button class="filter-btn" data-filter-type="Feriado"><span class="filter-dot" style="background:var(--c-feriado)"></span>Feriados</button>
         </div>
@@ -1690,7 +1692,7 @@
             <label class="form-label">Hora Fim</label>
             <input type="time" class="admin-input" id="edit-hora-fim" placeholder="18:00">
           </div>
-          <div><label class="form-label">Tipo</label><select class="admin-input select-css" id="edit-tipo"><option>Comercial</option><option>Interno</option><option>Feriado</option></select></div>
+          <div><label class="form-label">Tipo</label><select class="admin-input select-css" id="edit-tipo"><option>Comercial Interno</option><option>Comercial Patrocinado</option><option>Interno</option><option>Feriado</option></select></div>
           <div><label class="form-label">Status</label><select class="admin-input select-css" id="edit-status"><option>Planejado</option><option>Confirmado</option><option>Em negociação</option><option>Concluído</option><option>Cancelado</option></select></div>
         </div>
 
@@ -1905,14 +1907,14 @@
     {tipo:"Interno",responsavel:"Jéss e Jê",mes_ref:"Janeiro",data_ini:"2026-01-28",data_fim:"2026-01-30",evento:"Tripla Conecta",status:"Planejado",formato:"Presencial",participantes:"Todos"},
     {tipo:"Feriado",responsavel:"",mes_ref:"Fevereiro",data_ini:"2026-02-17",data_fim:"2026-02-17",evento:"Carnaval",status:"Planejado"},
     {tipo:"Interno",responsavel:"G&G",mes_ref:"Fevereiro",data_ini:"2026-02-26",data_fim:"2026-02-26",evento:"Embarca Tripla",status:"Planejado",formato:"Online"},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-09",data_fim:"2026-03-09",evento:"Cybersecurity Forum",cota:"Ouro",vagas:"13 convites",status:"Confirmado",formato:"Presencial"},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-17",data_fim:"2026-03-20",evento:"UTCAL Summit",vagas:"8 executivos",status:"Planejado",formato:"Presencial"},
-    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Março",data_ini:"2026-03-26",data_fim:"2026-03-26",evento:"GPTI Experience",cota:"Cota Ouro",vagas:"2",status:"Planejado",formato:"Presencial"},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Abril",data_ini:"2026-04-15",data_fim:"2026-04-16",evento:"Cloudflare Immerse SP 2026",cota:"Platinum",vagas:"5",status:"Confirmado",formato:"Presencial"},
+    {tipo:"Comercial Patrocinado",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-09",data_fim:"2026-03-09",evento:"Cybersecurity Forum",cota:"Ouro",vagas:"13 convites",status:"Confirmado",formato:"Presencial"},
+    {tipo:"Comercial Patrocinado",responsavel:"Jê",mes_ref:"Março",data_ini:"2026-03-17",data_fim:"2026-03-20",evento:"UTCAL Summit",vagas:"8 executivos",status:"Planejado",formato:"Presencial"},
+    {tipo:"Comercial Patrocinado",responsavel:"Jess",mes_ref:"Março",data_ini:"2026-03-26",data_fim:"2026-03-26",evento:"GPTI Experience",cota:"Cota Ouro",vagas:"2",status:"Planejado",formato:"Presencial"},
+    {tipo:"Comercial Patrocinado",responsavel:"Jê",mes_ref:"Abril",data_ini:"2026-04-15",data_fim:"2026-04-16",evento:"Cloudflare Immerse SP 2026",cota:"Platinum",vagas:"5",status:"Confirmado",formato:"Presencial"},
     {tipo:"Feriado",responsavel:"",mes_ref:"Abril",data_ini:"2026-04-21",data_fim:"2026-04-21",evento:"Tiradentes",status:"Planejado"},
-    {tipo:"Comercial",responsavel:"Jess",mes_ref:"Maio",data_ini:"2026-05-12",data_fim:"2026-05-12",evento:"Security Leaders BH",cota:"Bronze",vagas:"6 executivos",status:"Planejado",formato:"Presencial"},
+    {tipo:"Comercial Patrocinado",responsavel:"Jess",mes_ref:"Maio",data_ini:"2026-05-12",data_fim:"2026-05-12",evento:"Security Leaders BH",cota:"Bronze",vagas:"6 executivos",status:"Planejado",formato:"Presencial"},
     {tipo:"Interno",responsavel:"G&G",mes_ref:"Julho",data_ini:"2026-07-09",data_fim:"2026-07-09",evento:"Embarca Tripla",status:"Planejado",formato:"Online"},
-    {tipo:"Comercial",responsavel:"Jê",mes_ref:"Setembro",data_ini:"2026-09-15",data_fim:"2026-09-17",evento:"Mind the Sec",cota:"Diamond",status:"Planejado",formato:"Presencial"},
+    {tipo:"Comercial Patrocinado",responsavel:"Jê",mes_ref:"Setembro",data_ini:"2026-09-15",data_fim:"2026-09-17",evento:"Mind the Sec",cota:"Diamond",status:"Planejado",formato:"Presencial"},
     {tipo:"Feriado",responsavel:"",mes_ref:"Outubro",data_ini:"2026-10-12",data_fim:"2026-10-12",evento:"Dia de N. Sra. Aparecida",status:"Planejado"}
   ];
 
@@ -1926,7 +1928,7 @@
   const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const DAYS_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   const STATUS_CLASS = {'Planejado':'planejado','Confirmado':'confirmado','Em negociação':'negociacao','Concluído':'concluido','Cancelado':'cancelado'};
-  const TYPE_COLOR = { Comercial:'var(--c-comercial)', Interno:'var(--c-interno)', Feriado:'var(--c-feriado)' };
+  const TYPE_COLOR = { 'Comercial Interno':'var(--c-comercial)', 'Comercial Patrocinado':'var(--accent-light)', Interno:'var(--c-interno)', Feriado:'var(--c-feriado)' };
   let isAdmin = false;
   
   // ── TOAST SYSTEM ──
@@ -2628,7 +2630,7 @@
     let html = '';
     for (let i = 0; i < cells; i++) {
       const dNum = i - fd + 1, isOther = dNum<1||dNum>dim, isToday = !isOther&&dNum===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear(), evs = !isOther&&evMap[dNum] ? evMap[dNum] : [];
-      html += `<div class="cal-day ${isOther?'other-month':''} ${isToday?'today':''}"><div class="cal-day-num">${isOther?'':dNum}</div>${evs.slice(0,3).map(e => `<div class="cal-event-pill ${(e.tipo||'').toLowerCase()}" onclick="event.stopPropagation(); window.openEventView('${e.id}')">${e.evento}</div>`).join('')}${evs.length>3 ? `<div style="font-size:0.6rem;font-weight:700;color:var(--muted)">+${evs.length-3}</div>` : ''}</div>`;
+      html += `<div class="cal-day ${isOther?'other-month':''} ${isToday?'today':''}"><div class="cal-day-num">${isOther?'':dNum}</div>${evs.slice(0,3).map(e => `<div class="cal-event-pill ${(e.tipo||'').toLowerCase().replace(/\s+/g,'-')}" onclick="event.stopPropagation(); window.openEventView('${e.id}')">${e.evento}</div>`).join('')}${evs.length>3 ? `<div style="font-size:0.6rem;font-weight:700;color:var(--muted)">+${evs.length-3}</div>` : ''}</div>`;
     } document.getElementById('cal-grid').innerHTML = html;
   }
 
@@ -2754,7 +2756,7 @@
     const in30 = new Date(now); in30.setDate(in30.getDate() + 30);
 
     const total      = EVENTS.length;
-    const comerciais = EVENTS.filter(e => e.tipo === 'Comercial').length;
+    const comerciais = EVENTS.filter(e => e.tipo === 'Comercial Interno' || e.tipo === 'Comercial Patrocinado').length;
     const internos   = EVENTS.filter(e => e.tipo === 'Interno').length;
     const confirmados= EVENTS.filter(e => e.status === 'Confirmado').length;
     const concluidos = EVENTS.filter(e => e.status === 'Concluído').length;
@@ -2764,7 +2766,7 @@
     // Vagas: soma das 3 categorias (Staff + Cliente + VIP)
     let vagasTotal = 0;
     EVENTS.forEach(e => {
-      if (e.tipo === 'Comercial') {
+      if (e.tipo === 'Comercial Interno' || e.tipo === 'Comercial Patrocinado') {
         vagasTotal += (parseInt(e.vagas_staff)||0) + (parseInt(e.vagas_cliente)||0) + (parseInt(e.vagas_vip)||0);
         // fallback para campo legado
         if (!e.vagas_staff && !e.vagas_cliente && !e.vagas_vip && e.vagas) {
@@ -2826,7 +2828,7 @@
     try {
       myChart = new Chart(ctxTipo, {
         type: 'doughnut',
-        data: { labels: ['Comercial','Interno','Feriado'], datasets: [{ data: [comerciais, internos, EVENTS.filter(e=>e.tipo==='Feriado').length], backgroundColor: ['#3b82f6','#10b981','#f59e0b'], borderWidth: 0 }] },
+        data: { labels: ['Comercial Interno','Comercial Patrocinado','Interno','Feriado'], datasets: [{ data: [EVENTS.filter(e=>e.tipo==='Comercial Interno').length, EVENTS.filter(e=>e.tipo==='Comercial Patrocinado').length, internos, EVENTS.filter(e=>e.tipo==='Feriado').length], backgroundColor: ['#3b82f6','#00A0FF','#10b981','#f59e0b'], borderWidth: 0 }] },
         options: { ...chartDefaults, cutout: '65%' }
       });
       chartReady('chart-state-tipos');
@@ -2838,7 +2840,7 @@
     const byMonthCom = Array(12).fill(0), byMonthInt = Array(12).fill(0);
     EVENTS.forEach(e => {
       const d = parseDate(e.data_ini); if (!d) return;
-      if (e.tipo === 'Comercial') byMonthCom[d.getMonth()]++;
+      if (e.tipo === 'Comercial Interno' || e.tipo === 'Comercial Patrocinado') byMonthCom[d.getMonth()]++;
       else if (e.tipo === 'Interno') byMonthInt[d.getMonth()]++;
     });
     try {
@@ -2847,7 +2849,7 @@
         data: {
           labels: MONTHS_SHORT,
           datasets: [
-            { label: 'Comercial', data: byMonthCom, backgroundColor: 'rgba(59,130,246,0.8)', borderRadius: 4, borderSkipped: false },
+            { label: 'Comerciais', data: byMonthCom, backgroundColor: 'rgba(59,130,246,0.8)', borderRadius: 4, borderSkipped: false },
             { label: 'Interno',   data: byMonthInt, backgroundColor: 'rgba(16,185,129,0.8)',  borderRadius: 4, borderSkipped: false }
           ]
         },
@@ -3008,7 +3010,7 @@
     const now = new Date(); now.setHours(0,0,0,0);
     const eventsWithVagas = EVENTS
       .filter(e => {
-        if (e.tipo !== 'Comercial' || ['Concluído','Cancelado'].includes(e.status)) return false;
+        if ((e.tipo !== 'Comercial Interno' && e.tipo !== 'Comercial Patrocinado') || ['Concluído','Cancelado'].includes(e.status)) return false;
         const totalVagas = (parseInt(e.vagas_staff)||0) + (parseInt(e.vagas_cliente)||0) + (parseInt(e.vagas_vip)||0);
         return totalVagas > 0 || e.vagas;
       })
@@ -3365,7 +3367,7 @@
     if(userRole !== 'admin' && userRole !== 'editor') return showToast("Acesso restrito. Apenas admins e editores podem editar.", 'error');
     let ev = EVENTS.find(e => e.id === id);
     if(!id || !ev) {
-      ev = { id:"", evento:"", data_ini:"", data_fim:"", hora_ini:"", hora_fim:"", responsavel:"", tipo:"Comercial", status:"Planejado", cota:"", vagas_staff:"", vagas_cliente:"", vagas_vip:"", publico:"", beneficios:"", obs:"", formato:"", participantes:"", localidade:"", links:"" };
+      ev = { id:"", evento:"", data_ini:"", data_fim:"", hora_ini:"", hora_fim:"", responsavel:"", tipo:"Comercial Interno", status:"Planejado", cota:"", vagas_staff:"", vagas_cliente:"", vagas_vip:"", publico:"", beneficios:"", obs:"", formato:"", participantes:"", localidade:"", links:"" };
       document.getElementById('form-title').textContent = "+ Cadastrar Novo Evento";
       document.getElementById('btn-delete').style.display = 'none';
       document.getElementById('btn-cancel-edit').style.display = 'none';
