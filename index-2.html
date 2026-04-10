@@ -354,26 +354,38 @@
   .admin-card-value { font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: var(--text); line-height: 1; }
 
   /* KPI card com ícone temático */
-  .admin-card { position: relative; }
-  .admin-card-icon {
-    position: absolute; top: 16px; right: 16px;
-    width: 36px; height: 36px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0.85;
-    overflow: visible;
+  .admin-card {
+    display: flex;
+    flex-direction: column;
   }
-  .admin-card-icon i,
+  .admin-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .admin-card-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.9;
+    flex-shrink: 0;
+  }
   .admin-card-icon svg,
   .admin-card-icon .lucide {
     width: 18px !important;
     height: 18px !important;
-    min-width: 18px !important;
-    min-height: 18px !important;
-    max-width: 18px !important;
-    max-height: 18px !important;
     stroke-width: 2 !important;
-    flex-shrink: 0 !important;
     display: block !important;
+  }
+  /* Remove margin-bottom do title pois agora está no header */
+  .admin-card-header .admin-card-title {
+    margin-bottom: 0;
   }
   
   .admin-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; }
@@ -985,36 +997,60 @@
               <!-- KPIs -->
               <div class="admin-grid" id="dash-kpi-grid">
                 <div class="admin-card">
-                  <div class="admin-card-icon" style="background:rgba(3,87,213,0.1);color:#0357D5;"><i data-lucide="calendar" style="width:18px;height:18px;stroke-width:2;"></i></div>
-                  <div class="admin-card-title">Total de Eventos</div><div class="admin-card-value" id="dash-total">0</div><div class="admin-card-sub" id="dash-total-sub"></div>
+                  <div class="admin-card-header">
+                    <div class="admin-card-title">Total de Eventos</div>
+                    <div class="admin-card-icon" style="background:rgba(3,87,213,0.1);color:#0357D5;"><i data-lucide="calendar"></i></div>
+                  </div>
+                  <div class="admin-card-value" id="dash-total">0</div><div class="admin-card-sub" id="dash-total-sub"></div>
                 </div>
                 <div class="admin-card">
-                  <div class="admin-card-icon" style="background:rgba(3,87,213,0.1);color:var(--c-comercial);"><i data-lucide="briefcase" style="width:18px;height:18px;stroke-width:2;"></i></div>
-                  <div class="admin-card-title" style="color:var(--c-comercial)">Comerciais</div><div class="admin-card-value" id="dash-comercial">0</div><div class="admin-card-sub" id="dash-comercial-sub"></div>
+                  <div class="admin-card-header">
+                    <div class="admin-card-title" style="color:var(--c-comercial)">Comerciais</div>
+                    <div class="admin-card-icon" style="background:rgba(3,87,213,0.1);color:var(--c-comercial);"><i data-lucide="briefcase"></i></div>
+                  </div>
+                  <div class="admin-card-value" id="dash-comercial">0</div><div class="admin-card-sub" id="dash-comercial-sub"></div>
                 </div>
                 <div class="admin-card">
-                  <div class="admin-card-icon" style="background:rgba(5,150,105,0.1);color:var(--c-interno);"><i data-lucide="users" style="width:18px;height:18px;stroke-width:2;"></i></div>
-                  <div class="admin-card-title" style="color:var(--c-interno)">Internos</div><div class="admin-card-value" id="dash-interno">0</div><div class="admin-card-sub" id="dash-interno-sub"></div>
+                  <div class="admin-card-header">
+                    <div class="admin-card-title" style="color:var(--c-interno)">Internos</div>
+                    <div class="admin-card-icon" style="background:rgba(5,150,105,0.1);color:var(--c-interno);"><i data-lucide="users"></i></div>
+                  </div>
+                  <div class="admin-card-value" id="dash-interno">0</div><div class="admin-card-sub" id="dash-interno-sub"></div>
                 </div>
                 <div class="admin-card">
-                  <div class="admin-card-icon" style="background:rgba(5,150,105,0.12);color:var(--green);"><i data-lucide="check-circle-2" style="width:18px;height:18px;stroke-width:2;"></i></div>
-                  <div class="admin-card-title" style="color:var(--green)">Confirmados</div><div class="admin-card-value" id="dash-confirmados">0</div><div class="admin-card-sub" id="dash-confirmados-sub"></div>
+                  <div class="admin-card-header">
+                    <div class="admin-card-title" style="color:var(--green)">Confirmados</div>
+                    <div class="admin-card-icon" style="background:rgba(5,150,105,0.12);color:var(--green);"><i data-lucide="check-circle-2"></i></div>
+                  </div>
+                  <div class="admin-card-value" id="dash-confirmados">0</div><div class="admin-card-sub" id="dash-confirmados-sub"></div>
                 </div>
                 <div class="admin-card">
-                  <div class="admin-card-icon" style="background:rgba(3,87,213,0.1);color:var(--accent);"><i data-lucide="clock" style="width:18px;height:18px;stroke-width:2;"></i></div>
-                  <div class="admin-card-title" style="color:var(--accent)">Próximos 30 dias</div><div class="admin-card-value" id="dash-proximos">0</div><div class="admin-card-sub" id="dash-proximos-sub"></div>
+                  <div class="admin-card-header">
+                    <div class="admin-card-title" style="color:var(--accent)">Próximos 30 dias</div>
+                    <div class="admin-card-icon" style="background:rgba(3,87,213,0.1);color:var(--accent);"><i data-lucide="clock"></i></div>
+                  </div>
+                  <div class="admin-card-value" id="dash-proximos">0</div><div class="admin-card-sub" id="dash-proximos-sub"></div>
                 </div>
                 <div class="admin-card">
-                  <div class="admin-card-icon" style="background:rgba(13,148,136,0.1);color:var(--teal);"><i data-lucide="trending-up" style="width:18px;height:18px;stroke-width:2;"></i></div>
-                  <div class="admin-card-title" style="color:var(--teal)">Taxa de Confirmação</div><div class="admin-card-value" id="dash-taxa">0%</div><div class="admin-card-sub" id="dash-taxa-sub"></div>
+                  <div class="admin-card-header">
+                    <div class="admin-card-title" style="color:var(--teal)">Taxa de Confirmação</div>
+                    <div class="admin-card-icon" style="background:rgba(13,148,136,0.1);color:var(--teal);"><i data-lucide="trending-up"></i></div>
+                  </div>
+                  <div class="admin-card-value" id="dash-taxa">0%</div><div class="admin-card-sub" id="dash-taxa-sub"></div>
                 </div>
                 <div class="admin-card">
-                  <div class="admin-card-icon" style="background:rgba(217,119,6,0.1);color:var(--amber);"><i data-lucide="ticket" style="width:18px;height:18px;stroke-width:2;"></i></div>
-                  <div class="admin-card-title" style="color:var(--amber)">Vagas Disponíveis</div><div class="admin-card-value" id="dash-vagas">0</div><div class="admin-card-sub" id="dash-vagas-sub"></div>
+                  <div class="admin-card-header">
+                    <div class="admin-card-title" style="color:var(--amber)">Vagas Disponíveis</div>
+                    <div class="admin-card-icon" style="background:rgba(217,119,6,0.1);color:var(--amber);"><i data-lucide="ticket"></i></div>
+                  </div>
+                  <div class="admin-card-value" id="dash-vagas">0</div><div class="admin-card-sub" id="dash-vagas-sub"></div>
                 </div>
                 <div class="admin-card">
-                  <div class="admin-card-icon" style="background:rgba(124,58,237,0.1);color:var(--purple);"><i data-lucide="flag" style="width:18px;height:18px;stroke-width:2;"></i></div>
-                  <div class="admin-card-title" style="color:var(--purple)">Concluídos</div><div class="admin-card-value" id="dash-concluidos">0</div><div class="admin-card-sub" id="dash-concluidos-sub"></div>
+                  <div class="admin-card-header">
+                    <div class="admin-card-title" style="color:var(--purple)">Concluídos</div>
+                    <div class="admin-card-icon" style="background:rgba(124,58,237,0.1);color:var(--purple);"><i data-lucide="flag"></i></div>
+                  </div>
+                  <div class="admin-card-value" id="dash-concluidos">0</div><div class="admin-card-sub" id="dash-concluidos-sub"></div>
                 </div>
               </div>
 
