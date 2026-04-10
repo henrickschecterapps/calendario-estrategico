@@ -25,7 +25,7 @@
     --brand-vivid-sky:   #38DBFF;
 
     /* Light Theme */
-    --bg: #f0f5ff; --surface: #ffffff; --surface2: #e8f0fe;
+    --bg: #f0f5ff; --surface: #ffffff; --surface2: #d9e8ff;
     --border: #c7d7f5; --text: #0d1a3a; --muted: #4a6080;
     --accent: #0357D5; --accent-hover: #152454; --accent-glow: rgba(3,87,213,0.18);
     --accent-light: #00A0FF; --accent-highlight: #38DBFF;
@@ -352,11 +352,36 @@
   .admin-card:hover { transform: translateY(-3px); border-color: var(--muted); }
   .admin-card-title { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 12px; }
   .admin-card-value { font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: var(--text); line-height: 1; }
+
+  /* KPI card com ícone temático */
+  .admin-card { position: relative; overflow: hidden; }
+  .admin-card-icon {
+    position: absolute; top: 16px; right: 16px;
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.85;
+  }
+  .admin-card-icon svg { width: 18px; height: 18px; stroke-width: 2; }
   
   .admin-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; }
   .admin-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow-sm); }
   .admin-panel h3 { font-family: var(--font-heading); font-size: 1.25rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
   .chart-container { position: relative; height: 250px; width: 100%; margin-bottom: 16px; }
+
+  /* Estado de erro e loading para gráficos */
+  .chart-state {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; font-size: 0.82rem; font-weight: 600; color: var(--muted);
+    background: var(--surface); border-radius: var(--radius-sm);
+    pointer-events: none;
+  }
+  .chart-state.hidden { display: none; }
+  .chart-state-icon { width: 36px; height: 36px; opacity: 0.5; }
+  .chart-state.error { color: var(--red); }
+  .chart-state.error .chart-state-icon { opacity: 0.7; }
+  .chart-state.loading .chart-state-icon { animation: spin 1s linear infinite; opacity: 0.4; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   
   .admin-input { width: 100%; padding: 12px 16px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); font-family: inherit; font-weight: 500; font-size: 0.9rem; margin-bottom: 16px; transition: 0.2s; }
   .admin-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); outline: none; }
@@ -946,14 +971,38 @@
 
               <!-- KPIs -->
               <div class="admin-grid" id="dash-kpi-grid">
-                <div class="admin-card"><div class="admin-card-title">Total de Eventos</div><div class="admin-card-value" id="dash-total">0</div><div class="admin-card-sub" id="dash-total-sub"></div></div>
-                <div class="admin-card"><div class="admin-card-title" style="color:var(--c-comercial)">Comerciais</div><div class="admin-card-value" id="dash-comercial">0</div><div class="admin-card-sub" id="dash-comercial-sub"></div></div>
-                <div class="admin-card"><div class="admin-card-title" style="color:var(--c-interno)">Internos</div><div class="admin-card-value" id="dash-interno">0</div><div class="admin-card-sub" id="dash-interno-sub"></div></div>
-                <div class="admin-card"><div class="admin-card-title" style="color:var(--green)">Confirmados</div><div class="admin-card-value" id="dash-confirmados">0</div><div class="admin-card-sub" id="dash-confirmados-sub"></div></div>
-                <div class="admin-card"><div class="admin-card-title" style="color:var(--accent)">Próximos 30 dias</div><div class="admin-card-value" id="dash-proximos">0</div><div class="admin-card-sub" id="dash-proximos-sub"></div></div>
-                <div class="admin-card"><div class="admin-card-title" style="color:var(--teal)">Taxa de Confirmação</div><div class="admin-card-value" id="dash-taxa">0%</div><div class="admin-card-sub" id="dash-taxa-sub"></div></div>
-                <div class="admin-card"><div class="admin-card-title" style="color:var(--amber)">Vagas Disponíveis</div><div class="admin-card-value" id="dash-vagas">0</div><div class="admin-card-sub" id="dash-vagas-sub"></div></div>
-                <div class="admin-card"><div class="admin-card-title" style="color:var(--purple)">Concluídos</div><div class="admin-card-value" id="dash-concluidos">0</div><div class="admin-card-sub" id="dash-concluidos-sub"></div></div>
+                <div class="admin-card">
+                  <div class="admin-card-icon" style="background:rgba(3,87,213,0.1);color:#0357D5;"><i data-lucide="calendar" style="width:18px;height:18px;stroke-width:2;"></i></div>
+                  <div class="admin-card-title">Total de Eventos</div><div class="admin-card-value" id="dash-total">0</div><div class="admin-card-sub" id="dash-total-sub"></div>
+                </div>
+                <div class="admin-card">
+                  <div class="admin-card-icon" style="background:rgba(3,87,213,0.1);color:var(--c-comercial);"><i data-lucide="briefcase" style="width:18px;height:18px;stroke-width:2;"></i></div>
+                  <div class="admin-card-title" style="color:var(--c-comercial)">Comerciais</div><div class="admin-card-value" id="dash-comercial">0</div><div class="admin-card-sub" id="dash-comercial-sub"></div>
+                </div>
+                <div class="admin-card">
+                  <div class="admin-card-icon" style="background:rgba(5,150,105,0.1);color:var(--c-interno);"><i data-lucide="users" style="width:18px;height:18px;stroke-width:2;"></i></div>
+                  <div class="admin-card-title" style="color:var(--c-interno)">Internos</div><div class="admin-card-value" id="dash-interno">0</div><div class="admin-card-sub" id="dash-interno-sub"></div>
+                </div>
+                <div class="admin-card">
+                  <div class="admin-card-icon" style="background:rgba(5,150,105,0.12);color:var(--green);"><i data-lucide="check-circle-2" style="width:18px;height:18px;stroke-width:2;"></i></div>
+                  <div class="admin-card-title" style="color:var(--green)">Confirmados</div><div class="admin-card-value" id="dash-confirmados">0</div><div class="admin-card-sub" id="dash-confirmados-sub"></div>
+                </div>
+                <div class="admin-card">
+                  <div class="admin-card-icon" style="background:rgba(3,87,213,0.1);color:var(--accent);"><i data-lucide="clock" style="width:18px;height:18px;stroke-width:2;"></i></div>
+                  <div class="admin-card-title" style="color:var(--accent)">Próximos 30 dias</div><div class="admin-card-value" id="dash-proximos">0</div><div class="admin-card-sub" id="dash-proximos-sub"></div>
+                </div>
+                <div class="admin-card">
+                  <div class="admin-card-icon" style="background:rgba(13,148,136,0.1);color:var(--teal);"><i data-lucide="trending-up" style="width:18px;height:18px;stroke-width:2;"></i></div>
+                  <div class="admin-card-title" style="color:var(--teal)">Taxa de Confirmação</div><div class="admin-card-value" id="dash-taxa">0%</div><div class="admin-card-sub" id="dash-taxa-sub"></div>
+                </div>
+                <div class="admin-card">
+                  <div class="admin-card-icon" style="background:rgba(217,119,6,0.1);color:var(--amber);"><i data-lucide="ticket" style="width:18px;height:18px;stroke-width:2;"></i></div>
+                  <div class="admin-card-title" style="color:var(--amber)">Vagas Disponíveis</div><div class="admin-card-value" id="dash-vagas">0</div><div class="admin-card-sub" id="dash-vagas-sub"></div>
+                </div>
+                <div class="admin-card">
+                  <div class="admin-card-icon" style="background:rgba(124,58,237,0.1);color:var(--purple);"><i data-lucide="flag" style="width:18px;height:18px;stroke-width:2;"></i></div>
+                  <div class="admin-card-title" style="color:var(--purple)">Concluídos</div><div class="admin-card-value" id="dash-concluidos">0</div><div class="admin-card-sub" id="dash-concluidos-sub"></div>
+                </div>
               </div>
 
               <!-- Heatmap -->
@@ -978,19 +1027,31 @@
               <div class="admin-panels" style="margin:0;">
                 <div class="admin-panel">
                   <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="bar-chart-horizontal" style="color:var(--muted)"></i> Eventos por Mês</h3>
-                  <div class="chart-container"><canvas id="chartMeses"></canvas></div>
+                  <div class="chart-container">
+                    <canvas id="chartMeses"></canvas>
+                    <div class="chart-state loading" id="chart-state-meses"><i data-lucide="loader-2" class="chart-state-icon"></i><span>Carregando...</span></div>
+                  </div>
                 </div>
                 <div class="admin-panel">
                   <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="pie-chart" style="color:var(--muted)"></i> Distribuição por Status</h3>
-                  <div class="chart-container"><canvas id="chartStatus"></canvas></div>
+                  <div class="chart-container">
+                    <canvas id="chartStatus"></canvas>
+                    <div class="chart-state loading" id="chart-state-status"><i data-lucide="loader-2" class="chart-state-icon"></i><span>Carregando...</span></div>
+                  </div>
                 </div>
                 <div class="admin-panel">
                   <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="layers" style="color:var(--muted)"></i> Tipo de Evento</h3>
-                  <div class="chart-container"><canvas id="chartTipos"></canvas></div>
+                  <div class="chart-container">
+                    <canvas id="chartTipos"></canvas>
+                    <div class="chart-state loading" id="chart-state-tipos"><i data-lucide="loader-2" class="chart-state-icon"></i><span>Carregando...</span></div>
+                  </div>
                 </div>
                 <div class="admin-panel">
                   <h3 style="display:flex;align-items:center;gap:8px;"><i data-lucide="users" style="color:var(--muted)"></i> Ranking por Organizador</h3>
-                  <div class="chart-container"><canvas id="chartResp"></canvas></div>
+                  <div class="chart-container">
+                    <canvas id="chartResp"></canvas>
+                    <div class="chart-state loading" id="chart-state-resp"><i data-lucide="loader-2" class="chart-state-icon"></i><span>Carregando...</span></div>
+                  </div>
                 </div>
               </div>
 
@@ -2664,14 +2725,32 @@
     const tc = getChartTextColor();
     const chartDefaults = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { weight: '600' } } } } };
 
+    // Helper: esconde o loading state quando o gráfico renderizar com sucesso
+    function chartReady(id) {
+      const el = document.getElementById(id);
+      if (el) { el.classList.remove('loading'); el.classList.add('hidden'); }
+    }
+    // Helper: mostra estado de erro
+    function chartError(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('loading', 'hidden');
+      el.classList.add('error');
+      el.innerHTML = '<i data-lucide="alert-triangle" class="chart-state-icon" style="color:var(--red);opacity:0.7;width:32px;height:32px;"></i><span>Não foi possível carregar</span>';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
     // ── CHART 1: Tipo (doughnut) ──
     const ctxTipo = document.getElementById('chartTipos');
     if (myChart) myChart.destroy();
-    myChart = new Chart(ctxTipo, {
-      type: 'doughnut',
-      data: { labels: ['Comercial','Interno','Feriado'], datasets: [{ data: [comerciais, internos, EVENTS.filter(e=>e.tipo==='Feriado').length], backgroundColor: ['#3b82f6','#10b981','#f59e0b'], borderWidth: 0 }] },
-      options: { ...chartDefaults, cutout: '65%' }
-    });
+    try {
+      myChart = new Chart(ctxTipo, {
+        type: 'doughnut',
+        data: { labels: ['Comercial','Interno','Feriado'], datasets: [{ data: [comerciais, internos, EVENTS.filter(e=>e.tipo==='Feriado').length], backgroundColor: ['#3b82f6','#10b981','#f59e0b'], borderWidth: 0 }] },
+        options: { ...chartDefaults, cutout: '65%' }
+      });
+      chartReady('chart-state-tipos');
+    } catch(e) { chartError('chart-state-tipos'); }
 
     // ── CHART 2: Por Mês (bar empilhado) ──
     const ctxMes = document.getElementById('chartMeses');
@@ -2682,17 +2761,20 @@
       if (e.tipo === 'Comercial') byMonthCom[d.getMonth()]++;
       else if (e.tipo === 'Interno') byMonthInt[d.getMonth()]++;
     });
-    chartMeses = new Chart(ctxMes, {
-      type: 'bar',
-      data: {
-        labels: MONTHS_SHORT,
-        datasets: [
-          { label: 'Comercial', data: byMonthCom, backgroundColor: 'rgba(59,130,246,0.8)', borderRadius: 4, borderSkipped: false },
-          { label: 'Interno',   data: byMonthInt, backgroundColor: 'rgba(16,185,129,0.8)',  borderRadius: 4, borderSkipped: false }
-        ]
-      },
-      options: { ...chartDefaults, scales: { x: { stacked: true, ticks: { color: tc }, grid: { display: false } }, y: { stacked: true, ticks: { color: tc, stepSize: 1 }, grid: { color: 'rgba(128,128,128,0.1)' } } }, plugins: { ...chartDefaults.plugins, tooltip: { mode: 'index' } } }
-    });
+    try {
+      chartMeses = new Chart(ctxMes, {
+        type: 'bar',
+        data: {
+          labels: MONTHS_SHORT,
+          datasets: [
+            { label: 'Comercial', data: byMonthCom, backgroundColor: 'rgba(59,130,246,0.8)', borderRadius: 4, borderSkipped: false },
+            { label: 'Interno',   data: byMonthInt, backgroundColor: 'rgba(16,185,129,0.8)',  borderRadius: 4, borderSkipped: false }
+          ]
+        },
+        options: { ...chartDefaults, scales: { x: { stacked: true, ticks: { color: tc }, grid: { display: false } }, y: { stacked: true, ticks: { color: tc, stepSize: 1 }, grid: { color: 'rgba(128,128,128,0.1)' } } }, plugins: { ...chartDefaults.plugins, tooltip: { mode: 'index' } } }
+      });
+      chartReady('chart-state-meses');
+    } catch(e) { chartError('chart-state-meses'); }
 
     // ── CHART 3: Por Status (doughnut) ──
     const ctxSt = document.getElementById('chartStatus');
@@ -2700,11 +2782,14 @@
     const statusLabels = ['Planejado','Confirmado','Em negociação','Concluído','Cancelado'];
     const statusColors = ['#94a3b8','#10b981','#f59e0b','#8b5cf6','#ef4444'];
     const statusData = statusLabels.map(s => EVENTS.filter(e => e.status === s).length);
-    chartStatus = new Chart(ctxSt, {
-      type: 'doughnut',
-      data: { labels: statusLabels, datasets: [{ data: statusData, backgroundColor: statusColors, borderWidth: 0 }] },
-      options: { ...chartDefaults, cutout: '60%' }
-    });
+    try {
+      chartStatus = new Chart(ctxSt, {
+        type: 'doughnut',
+        data: { labels: statusLabels, datasets: [{ data: statusData, backgroundColor: statusColors, borderWidth: 0 }] },
+        options: { ...chartDefaults, cutout: '60%' }
+      });
+      chartReady('chart-state-status');
+    } catch(e) { chartError('chart-state-status'); }
 
     // ── CHART 4: Ranking por Responsável (bar horizontal) ──
     const ctxResp = document.getElementById('chartResp');
@@ -2712,14 +2797,17 @@
     const respCount = {};
     EVENTS.forEach(e => { getRespArray(e.responsavel).forEach(r => { respCount[r] = (respCount[r]||0) + 1; }); });
     const respSorted = Object.entries(respCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
-    chartResp = new Chart(ctxResp, {
-      type: 'bar',
-      data: {
-        labels: respSorted.map(r=>r[0]),
-        datasets: [{ label: 'Eventos', data: respSorted.map(r=>r[1]), backgroundColor: respSorted.map((_,i)=>`hsl(${210+i*25},70%,55%)`), borderRadius: 6 }]
-      },
-      options: { ...chartDefaults, indexAxis: 'y', scales: { x: { ticks: { color: tc, stepSize: 1 }, grid: { color: 'rgba(128,128,128,0.1)' } }, y: { ticks: { color: tc } } }, plugins: { ...chartDefaults.plugins, legend: { display: false } } }
-    });
+    try {
+      chartResp = new Chart(ctxResp, {
+        type: 'bar',
+        data: {
+          labels: respSorted.map(r=>r[0]),
+          datasets: [{ label: 'Eventos', data: respSorted.map(r=>r[1]), backgroundColor: respSorted.map((_,i)=>`hsl(${210+i*25},70%,55%)`), borderRadius: 6 }]
+        },
+        options: { ...chartDefaults, indexAxis: 'y', scales: { x: { ticks: { color: tc, stepSize: 1 }, grid: { color: 'rgba(128,128,128,0.1)' } }, y: { ticks: { color: tc } } }, plugins: { ...chartDefaults.plugins, legend: { display: false } } }
+      });
+      chartReady('chart-state-resp');
+    } catch(e) { chartError('chart-state-resp'); }
 
     // ── HEATMAP ANUAL ──
     renderHeatmap();
