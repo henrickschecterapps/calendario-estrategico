@@ -2384,7 +2384,12 @@
 
   function getFilteredEvents() {
     return EVENTS.filter(e => {
-      if (filterType !== 'all' && e.tipo !== filterType) return false;
+      if (filterType !== 'all') {
+        const tipoEvento = e.tipo;
+        // Compatibilidade retroativa: 'Comercial' legado é tratado como 'Comercial Interno'
+        const tipoNorm = tipoEvento === 'Comercial' ? 'Comercial Interno' : tipoEvento;
+        if (tipoNorm !== filterType) return false;
+      }
       if (filterStatus !== 'all' && e.status !== filterStatus) return false;
       if (filterFormato !== 'all' && (e.formato||'').toLowerCase() !== filterFormato.toLowerCase()) return false;
       // Multi-responsável
@@ -2630,7 +2635,7 @@
     let html = '';
     for (let i = 0; i < cells; i++) {
       const dNum = i - fd + 1, isOther = dNum<1||dNum>dim, isToday = !isOther&&dNum===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear(), evs = !isOther&&evMap[dNum] ? evMap[dNum] : [];
-      html += `<div class="cal-day ${isOther?'other-month':''} ${isToday?'today':''}"><div class="cal-day-num">${isOther?'':dNum}</div>${evs.slice(0,3).map(e => `<div class="cal-event-pill ${(e.tipo||'').toLowerCase().replace(/\s+/g,'-')}" onclick="event.stopPropagation(); window.openEventView('${e.id}')">${e.evento}</div>`).join('')}${evs.length>3 ? `<div style="font-size:0.6rem;font-weight:700;color:var(--muted)">+${evs.length-3}</div>` : ''}</div>`;
+      html += `<div class="cal-day ${isOther?'other-month':''} ${isToday?'today':''}"><div class="cal-day-num">${isOther?'':dNum}</div>${evs.slice(0,3).map(e => `<div class="cal-event-pill ${(e.tipo==='Comercial'?'Comercial Interno':e.tipo||'').toLowerCase().replace(/\s+/g,'-')}" onclick="event.stopPropagation(); window.openEventView('${e.id}')">${e.evento}</div>`).join('')}${evs.length>3 ? `<div style="font-size:0.6rem;font-weight:700;color:var(--muted)">+${evs.length-3}</div>` : ''}</div>`;
     } document.getElementById('cal-grid').innerHTML = html;
   }
 
@@ -2756,7 +2761,7 @@
     const in30 = new Date(now); in30.setDate(in30.getDate() + 30);
 
     const total      = EVENTS.length;
-    const comerciais = EVENTS.filter(e => e.tipo === 'Comercial Interno' || e.tipo === 'Comercial Patrocinado').length;
+    const comerciais = EVENTS.filter(e => e.tipo === 'Comercial Interno' || e.tipo === 'Comercial Patrocinado' || e.tipo === 'Comercial').length;
     const internos   = EVENTS.filter(e => e.tipo === 'Interno').length;
     const confirmados= EVENTS.filter(e => e.status === 'Confirmado').length;
     const concluidos = EVENTS.filter(e => e.status === 'Concluído').length;
@@ -2766,7 +2771,7 @@
     // Vagas: soma das 3 categorias (Staff + Cliente + VIP)
     let vagasTotal = 0;
     EVENTS.forEach(e => {
-      if ((e.tipo === 'Comercial Interno' || e.tipo === 'Comercial Patrocinado') && e.status !== 'Concluído' && e.status !== 'Cancelado') {
+      if ((e.tipo === 'Comercial Interno' || e.tipo === 'Comercial Patrocinado' || e.tipo === 'Comercial') && e.status !== 'Concluído' && e.status !== 'Cancelado') {
         vagasTotal += (parseInt(e.vagas_staff)||0) + (parseInt(e.vagas_cliente)||0) + (parseInt(e.vagas_vip)||0);
         // fallback para campo legado
         if (!e.vagas_staff && !e.vagas_cliente && !e.vagas_vip && e.vagas) {
@@ -2828,7 +2833,7 @@
     try {
       myChart = new Chart(ctxTipo, {
         type: 'doughnut',
-        data: { labels: ['Comercial Interno','Comercial Patrocinado','Interno','Feriado'], datasets: [{ data: [EVENTS.filter(e=>e.tipo==='Comercial Interno').length, EVENTS.filter(e=>e.tipo==='Comercial Patrocinado').length, internos, EVENTS.filter(e=>e.tipo==='Feriado').length], backgroundColor: ['#3b82f6','#00A0FF','#10b981','#f59e0b'], borderWidth: 0 }] },
+        data: { labels: ['Comercial Interno','Comercial Patrocinado','Interno','Feriado'], datasets: [{ data: [EVENTS.filter(e=>e.tipo==='Comercial Interno'||e.tipo==='Comercial').length, EVENTS.filter(e=>e.tipo==='Comercial Patrocinado').length, internos, EVENTS.filter(e=>e.tipo==='Feriado').length], backgroundColor: ['#3b82f6','#00A0FF','#10b981','#f59e0b'], borderWidth: 0 }] },
         options: { ...chartDefaults, cutout: '65%' }
       });
       chartReady('chart-state-tipos');
@@ -2840,7 +2845,7 @@
     const byMonthCom = Array(12).fill(0), byMonthInt = Array(12).fill(0);
     EVENTS.forEach(e => {
       const d = parseDate(e.data_ini); if (!d) return;
-      if (e.tipo === 'Comercial Interno' || e.tipo === 'Comercial Patrocinado') byMonthCom[d.getMonth()]++;
+      if (e.tipo === 'Comercial Interno' || e.tipo === 'Comercial Patrocinado' || e.tipo === 'Comercial') byMonthCom[d.getMonth()]++;
       else if (e.tipo === 'Interno') byMonthInt[d.getMonth()]++;
     });
     try {
@@ -3010,7 +3015,7 @@
     const now = new Date(); now.setHours(0,0,0,0);
     const eventsWithVagas = EVENTS
       .filter(e => {
-        if ((e.tipo !== 'Comercial Interno' && e.tipo !== 'Comercial Patrocinado') || ['Concluído','Cancelado'].includes(e.status)) return false;
+        if ((e.tipo !== 'Comercial Interno' && e.tipo !== 'Comercial Patrocinado' && e.tipo !== 'Comercial') || ['Concluído','Cancelado'].includes(e.status)) return false;
         const totalVagas = (parseInt(e.vagas_staff)||0) + (parseInt(e.vagas_cliente)||0) + (parseInt(e.vagas_vip)||0);
         return totalVagas > 0 || e.vagas;
       })
