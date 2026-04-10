@@ -361,7 +361,13 @@
     display: flex; align-items: center; justify-content: center;
     opacity: 0.85;
   }
-  .admin-card-icon svg { width: 18px; height: 18px; stroke-width: 2; }
+  .admin-card-icon svg,
+  .admin-card-icon .lucide {
+    width: 18px !important;
+    height: 18px !important;
+    stroke-width: 2 !important;
+    flex-shrink: 0;
+  }
   
   .admin-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; }
   .admin-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow-sm); }
