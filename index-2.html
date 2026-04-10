@@ -2766,7 +2766,7 @@
     // Vagas: soma das 3 categorias (Staff + Cliente + VIP)
     let vagasTotal = 0;
     EVENTS.forEach(e => {
-      if (e.tipo === 'Comercial Interno' || e.tipo === 'Comercial Patrocinado') {
+      if ((e.tipo === 'Comercial Interno' || e.tipo === 'Comercial Patrocinado') && e.status !== 'Concluído' && e.status !== 'Cancelado') {
         vagasTotal += (parseInt(e.vagas_staff)||0) + (parseInt(e.vagas_cliente)||0) + (parseInt(e.vagas_vip)||0);
         // fallback para campo legado
         if (!e.vagas_staff && !e.vagas_cliente && !e.vagas_vip && e.vagas) {
