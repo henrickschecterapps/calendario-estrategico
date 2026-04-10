@@ -83,6 +83,56 @@
   /* Icon Utilities */
   .lucide { width: 1.1em; height: 1.1em; stroke-width: 2.2; flex-shrink: 0; }
 
+  /* ── #18 FOCO VIA TECLADO — WCAG AA ── */
+  /* Remove outline padrão feio, mas mantém foco visível para teclado */
+  *:focus { outline: none; }
+  *:focus-visible {
+    outline: 2.5px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  /* Botões primários e de ícone recebem ring mais visível */
+  .btn-primary:focus-visible,
+  .btn-icon:focus-visible {
+    outline: 2.5px solid var(--accent);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 5px var(--accent-glow);
+  }
+  /* Inputs e selects */
+  .admin-input:focus-visible,
+  .auth-input:focus-visible,
+  .select-css:focus-visible {
+    outline: 2.5px solid var(--accent);
+    outline-offset: 0;
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  /* Filter buttons na sidebar */
+  .filter-btn:focus-visible {
+    outline: 2.5px solid var(--accent);
+    outline-offset: 2px;
+    background: var(--surface2);
+  }
+  /* View tabs */
+  .view-tab:focus-visible,
+  .gestao-tab:focus-visible,
+  .admin-nav-item:focus-visible {
+    outline: 2.5px solid var(--accent);
+    outline-offset: 2px;
+  }
+  /* Cards clicáveis */
+  .event-card:focus-visible,
+  .kanban-card:focus-visible,
+  .upcoming-item:focus-visible {
+    outline: 2.5px solid var(--accent);
+    outline-offset: 3px;
+    box-shadow: var(--shadow), 0 0 0 5px var(--accent-glow);
+  }
+  /* Mini calendar days */
+  .mini-day:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
 
   /* ── LAYOUT & SIDEBAR ── */
   .app { display: flex; min-height: calc(100vh - 72px); }
@@ -125,8 +175,9 @@
   .view-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 20px; }
   .view-title { font-size: 2.2rem; letter-spacing: -0.03em; line-height: 1.1; color: var(--text); }
   .controls-right { display: flex; align-items: center; gap: 12px; }
-  .search-box { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 16px; }
-  .search-box input { background: none; border: none; outline: none; color: var(--text); font-size: 0.85rem; width: 140px; font-family: inherit; font-weight: 500;}
+  .search-box { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 16px; transition: border-color 0.2s, box-shadow 0.2s, width 0.25s cubic-bezier(0.16,1,0.3,1); }
+  .search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .search-box input { background: none; border: none; outline: none; color: var(--text); font-size: 0.85rem; width: 140px; font-family: inherit; font-weight: 500; transition: width 0.25s cubic-bezier(0.16,1,0.3,1); }
   .view-tabs { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; gap: 4px; }
   .view-tab { padding: 8px 16px; border-radius: 6px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
   .view-tab:hover, .view-tab.active { color: var(--text); }
@@ -192,8 +243,47 @@
   .kit-item-row { display:flex; gap:8px; align-items:center; background:var(--surface2); padding:8px; border-radius:6px; border:1px solid var(--border); }
   
   .kanban-board { display: flex; gap: 16px; min-height: 400px; padding: 24px; overflow-x: auto; background: var(--bg); border: 1px solid var(--border); border-top: none; border-bottom-left-radius: var(--radius); border-bottom-right-radius: var(--radius); }
-  .kanban-column { flex: 1; min-width: 250px; background: var(--surface2); border: 1px dashed var(--border); border-radius: var(--radius-sm); display: flex; flex-direction: column; }
-  .kanban-column-header { padding: 12px 16px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text); border-bottom: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .kanban-column { flex: 1; min-width: 250px; background: var(--surface2); border: 1px dashed var(--border); border-radius: var(--radius-sm); display: flex; flex-direction: column; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s; }
+  /* ── #13 KANBAN: DROP ZONE FEEDBACK ── */
+  .kanban-column.drag-over {
+    border: 2px dashed var(--accent) !important;
+    background: var(--accent-glow) !important;
+    box-shadow: inset 0 0 0 3px var(--accent-glow), 0 0 20px var(--accent-glow);
+  }
+  .kanban-column.drag-over .kanban-column-header {
+    color: var(--accent);
+  }
+  /* Card sendo arrastado fica "fantasma" */
+  .kanban-card.dragging {
+    opacity: 0.4;
+    transform: scale(0.97);
+    box-shadow: none;
+    cursor: grabbing;
+  }
+  /* Indicador de destino na coluna corpo */
+  .kanban-column.drag-over .kanban-column-body::before {
+    content: '↓ Soltar aqui';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border: 2px dashed var(--accent);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: rgba(255,255,255,0.05);
+    animation: dropPulse 1s ease infinite alternate;
+  }
+  @keyframes dropPulse {
+    from { opacity: 0.6; }
+    to   { opacity: 1; }
+  }
+  .kanban-column-header { padding: 12px 16px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text); border-bottom: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; transition: color 0.2s; }
   .kanban-column-count { background: var(--border); color: var(--muted); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; }
   .kanban-column-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 100px; }
   .kanban-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--shadow-sm); cursor: grab; transition: 0.2s; position: relative; }
@@ -215,6 +305,15 @@
   
   .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-weight: 500; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
   .empty-icon { color: var(--muted); opacity: 0.5; width: 48px; height: 48px; }
+  /* ── #11 EMPTY STATES CONTEXTUAIS ── */
+  .empty-state-title { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: var(--text); margin: 0; }
+  .empty-state-desc  { font-size: 0.83rem; color: var(--muted); font-weight: 500; max-width: 280px; line-height: 1.5; margin: 0; }
+  .empty-state-action { margin-top: 4px; background: linear-gradient(135deg, var(--accent), var(--accent-light, #00A0FF)); color: #fff; border: none; padding: 9px 20px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.82rem; font-weight: 700; transition: 0.2s; box-shadow: 0 4px 12px var(--accent-glow); display: inline-flex; align-items: center; gap: 6px; }
+  .empty-state-action:hover { opacity: 0.9; transform: translateY(-1px); }
+  /* Kanban column empty */
+  .kanban-empty-col { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 12px; gap: 6px; opacity: 0.5; }
+  .kanban-empty-col svg { width: 28px; height: 28px; color: var(--muted); }
+  .kanban-empty-col span { font-size: 0.72rem; font-weight: 700; color: var(--muted); text-align: center; }
 
   /* ── VIEWS: MÊS, SEMANA E LISTA ── */
   .cal-nav { display: flex; justify-content: space-between; margin-bottom: 24px; align-items: center; }
@@ -422,7 +521,11 @@
     .view-title { font-size: 1.5rem; }
     .view-controls { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
     .controls-right { width: 100%; flex-wrap: wrap; gap: 8px; }
-    .search-box input { width: 100px; }
+    /* ── #6 BUSCA MOBILE: OCUPA LARGURA TOTAL ── */
+    .search-box { flex: 1; min-width: 0; width: 100%; }
+    .search-box input { width: 100% !important; min-width: 0; flex: 1; }
+    /* Quando focado no mobile, a search box ocupa toda a linha */
+    .search-box:focus-within { width: 100%; }
     .view-tabs { flex-wrap: wrap; }
     .event-card { flex-direction: column; gap: 12px; }
     .event-date-col { flex-direction: row; gap: 8px; border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 12px; justify-content: flex-start; min-width: auto; }
@@ -569,13 +672,7 @@
   .drawer .form-row { display: flex; gap: 12px; width: 100%; }
   .drawer .form-row .gestao-field { min-width: 0 !important; flex: 1 !important; }
 
-  /* Kanban Drag and Drop */
-  .kanban-card { cursor: grab; transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s; }
-  .kanban-card:active { cursor: grabbing; transform: scale(1.02); box-shadow: var(--shadow-md); z-index: 10; }
-  .kanban-card.dragging { opacity: 0.5; }
-  .kanban-column.drag-over { background: rgba(0,160,255,0.06); border-radius: var(--radius); border: 2px dashed rgba(0,160,255,0.45); }
-  .kanban-column-body.drag-over { background: rgba(0,160,255,0.05); border-radius: var(--radius); border: 2px dashed rgba(56,219,255,0.4); }
-
+  /* Kanban Drag and Drop — estilos centralizados acima */
   /* Fix Tabela Responsiva */
   .gestao-table-wrap { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
   
@@ -771,7 +868,12 @@
           <thead><tr><th data-sort="data_ini">Data ↕</th><th data-sort="evento">Evento ↕</th><th data-sort="tipo">Tipo ↕</th><th data-sort="status">Status ↕</th><th>Participantes (Tripla)</th></tr></thead>
           <tbody id="list-body"></tbody>
         </table>
-        <div id="list-no-results" class="empty-state hide"><i data-lucide="inbox" class="empty-icon"></i><div>Nenhum evento encontrado.</div></div>
+        <div id="list-no-results" class="empty-state hide">
+          <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <p class="empty-state-title">Nenhum evento encontrado</p>
+          <p class="empty-state-desc">Tente ajustar os filtros ou a busca para ver outros eventos.</p>
+          <button class="empty-state-action" onclick="clearSearch(); document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); document.querySelector('[data-filter-status=\'all\']')?.classList.add('active'); initUI();">Limpar filtros</button>
+        </div>
       </div>
 
       <div id="view-admin" class="view-container">
@@ -1122,7 +1224,7 @@
                             <option value="Único">Único</option>
                             <option value="Baby Look P">Baby Look P</option><option value="Baby Look M">Baby Look M</option><option value="Baby Look G">Baby Look G</option><option value="Baby Look GG">Baby Look GG</option>
                             <option value="PP">PP</option><option value="P">P</option><option value="M">M</option>
-                            <option value="G">G</option><option value="GG">GG</option><option value="XGG">XGG</option><option value="EXG">EXG</option>
+                            <option value="G">G</option><option value="GG">GG</option><option value="XGG">XGG</option>
                           </select>
                         </div>
                         <div class="gestao-field">
@@ -4041,7 +4143,15 @@
     if (busca) list = list.filter(f => (f.nome||'').toLowerCase().includes(busca) || (f.contato||'').toLowerCase().includes(busca) || (f.email||'').toLowerCase().includes(busca) || (f.telefone||'').toLowerCase().includes(busca));
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted);">Nenhum fornecedor encontrado.</td></tr>';
+      const hasBusca = !!busca;
+      tbody.innerHTML = `<tr><td colspan="6">
+        <div class="empty-state" style="border:none;margin:8px 0;">
+          <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          <p class="empty-state-title">${hasBusca ? 'Nenhum fornecedor encontrado' : 'Sem fornecedores cadastrados'}</p>
+          <p class="empty-state-desc">${hasBusca ? 'Tente buscar por outro nome, contato ou e-mail.' : 'Cadastre fornecedores para vinculá-los a brindes e uniformes.'}</p>
+          ${!hasBusca ? `<button class="empty-state-action" onclick="window.openGestaoDrawer('fornecedor')">+ Novo Fornecedor</button>` : ''}
+        </div>
+      </td></tr>`;
       return;
     }
     
@@ -4136,7 +4246,15 @@
     if (busca) list = list.filter(p => (p.nome||'').toLowerCase().includes(busca) || (p.telefone||'').toLowerCase().includes(busca));
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted);">Nenhum participante encontrado.</td></tr>';
+      const hasBusca = !!busca;
+      tbody.innerHTML = `<tr><td colspan="6">
+        <div class="empty-state" style="border:none;margin:8px 0;">
+          <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <p class="empty-state-title">${hasBusca ? 'Nenhum participante encontrado' : 'Sem participantes cadastrados'}</p>
+          <p class="empty-state-desc">${hasBusca ? 'Tente buscar por outro nome ou telefone.' : 'Cadastre participantes para associá-los aos eventos da Tripla.'}</p>
+          ${!hasBusca ? `<button class="empty-state-action" onclick="window.togglePartForm(true)">+ Novo Participante</button>` : ''}
+        </div>
+      </td></tr>`;
       return;
     }
 
@@ -4280,7 +4398,7 @@
     kBoard.innerHTML = colunas.map(col => {
       const items = list.filter(b => (b.status || 'Cotação') === col);
       const sc = statusCores[col] || 'var(--muted)';
-      const cardsHtml = items.map(b => {
+      const cardsHtml = items.length > 0 ? items.map(b => {
         const vlrStr = b.vlr_unit > 0 ? fmtBRL(parseFloat(b.vlr_unit)) : '';
         return `
           <div class="kanban-card" draggable="true" ondragstart="window.dragStart(event, '${b.id}', 'brinde')" onclick="window.editBrinde('${b.id}')">
@@ -4295,7 +4413,7 @@
             </div>
           </div>
         `;
-      }).join('');
+      }).join('') : `<div class="kanban-empty-col"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg><span>Arraste cards aqui</span></div>`;
       
       return `
         <div class="kanban-column" ondragover="window.dragOver(event)" ondrop="window.drop(event, '${col}', 'brinde')">
@@ -4336,7 +4454,15 @@
     }
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde encontrado.</td></tr>';
+      const hasFiltros = busca || nivel || evento;
+      tbody.innerHTML = `<tr><td colspan="8">
+        <div class="empty-state" style="border:none;margin:8px 0;">
+          <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <p class="empty-state-title">${hasFiltros ? 'Nenhum brinde encontrado' : 'Sem brindes cadastrados'}</p>
+          <p class="empty-state-desc">${hasFiltros ? 'Tente ajustar os filtros de busca para encontrar o que procura.' : 'Adicione o primeiro brinde para começar a acompanhar pedidos de compra.'}</p>
+          ${!hasFiltros ? `<button class="empty-state-action" onclick="window.openGestaoDrawer('brinde')">+ Novo Brinde</button>` : ''}
+        </div>
+      </td></tr>`;
       return;
     }
     
@@ -4482,7 +4608,7 @@
     kBoard.innerHTML = colunas.map(col => {
       const items = list.filter(u => (u.status || 'Pedido') === col);
       const sc = scMapping[col] || 'var(--muted)';
-      const cardsHtml = items.map(u => {
+      const cardsHtml = items.length > 0 ? items.map(u => {
         const tamPill = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.65rem;padding:2px 5px;background:var(--accent);color:#fff;border-radius:4px;margin-right:4px;">${u.tamanho}</span>` : '';
         const vlrStr = u.vlr_unit > 0 ? fmtBRL(parseFloat(u.vlr_unit)) : '';
         return `
@@ -4497,7 +4623,7 @@
             </div>
           </div>
         `;
-      }).join('');
+      }).join('') : `<div class="kanban-empty-col"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg><span>Arraste cards aqui</span></div>`;
       
       return `
         <div class="kanban-column" ondragover="window.dragOver(event)" ondrop="window.drop(event, '${col}', 'uniforme')">
@@ -4536,7 +4662,15 @@
     }
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme encontrado.</td></tr>';
+      const hasFiltros = busca || status || evento;
+      tbody.innerHTML = `<tr><td colspan="9">
+        <div class="empty-state" style="border:none;margin:8px 0;">
+          <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          <p class="empty-state-title">${hasFiltros ? 'Nenhum uniforme encontrado' : 'Sem uniformes cadastrados'}</p>
+          <p class="empty-state-desc">${hasFiltros ? 'Tente ajustar os filtros para encontrar o uniforme desejado.' : 'Registre o primeiro pedido de uniforme para começar o controle.'}</p>
+          ${!hasFiltros ? `<button class="empty-state-action" onclick="window.openGestaoDrawer('uniforme')">+ Registrar Uniforme</button>` : ''}
+        </div>
+      </td></tr>`;
       return;
     }
     
@@ -5328,6 +5462,49 @@
         }
       }
     });
+
+    // ── #18 ACESSIBILIDADE: aria-labels nos botões de ícone do header ──
+    const ariaMap = {
+      'btn-sidebar-toggle': 'Abrir menu lateral',
+      'btn-theme':          'Alternar tema claro/escuro',
+      'btn-notif':          'Notificações',
+      'btn-logout':         'Sair da conta',
+      'btn-add-event':      'Novo evento',
+      'btn-clear-search':   'Limpar busca',
+      'cal-prev':           'Mês anterior',
+      'cal-next':           'Próximo mês',
+      'week-prev':          'Semana anterior',
+      'week-next':          'Próxima semana',
+      'mini-prev':          'Mês anterior no mini calendário',
+      'mini-next':          'Próximo mês no mini calendário',
+      'btn-toggle-past':    'Ver meses anteriores',
+    };
+    Object.entries(ariaMap).forEach(([id, label]) => {
+      const el = document.getElementById(id);
+      if (el && !el.getAttribute('aria-label')) el.setAttribute('aria-label', label);
+    });
+
+    // ── #18 TECLADO: event cards focáveis via Tab e ativáveis com Enter/Space ──
+    function makeCardKeyboardAccessible() {
+      document.querySelectorAll('.event-card, .kanban-card, .upcoming-item, .cal-day').forEach(card => {
+        if (!card.getAttribute('tabindex')) {
+          card.setAttribute('tabindex', '0');
+        }
+        if (!card._kbBound) {
+          card._kbBound = true;
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              card.click();
+            }
+          });
+        }
+      });
+    }
+    // Observa mudanças no DOM para aplicar em cards renderizados dinamicamente
+    const cardObserver = new MutationObserver(() => makeCardKeyboardAccessible());
+    cardObserver.observe(document.body, { childList: true, subtree: true });
+    makeCardKeyboardAccessible();
   });
 
   /** 
