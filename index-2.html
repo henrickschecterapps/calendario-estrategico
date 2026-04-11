@@ -1654,17 +1654,17 @@
              <div style="display:none;" id="view-cota">-</div>
              <div style="display:flex; gap:24px; flex-wrap:wrap; margin-top:8px;">
                <div>
-                 <div style="font-size:1.2rem; font-weight:800; line-height:1; color:var(--text); letter-spacing:-0.02em;" id="view-vagas-staff">—</div>
+                 <div style="font-size:1.2rem; font-weight:800; line-height:1; color:var(--accent); letter-spacing:-0.02em;" id="view-vagas-staff">—</div>
                  <div style="font-size:0.7rem; font-weight:700; color:var(--muted); margin-top:4px; text-transform:uppercase;">Staff</div>
                </div>
                <div style="width:1px; background:var(--border);"></div>
                <div>
-                 <div style="font-size:1.2rem; font-weight:800; line-height:1; color:var(--text); letter-spacing:-0.02em;" id="view-vagas-cliente">—</div>
+                 <div style="font-size:1.2rem; font-weight:800; line-height:1; color:var(--green); letter-spacing:-0.02em;" id="view-vagas-cliente">—</div>
                  <div style="font-size:0.7rem; font-weight:700; color:var(--muted); margin-top:4px; text-transform:uppercase;">Cliente</div>
                </div>
                <div style="width:1px; background:var(--border);"></div>
                <div>
-                 <div style="font-size:1.2rem; font-weight:800; line-height:1; color:var(--text); letter-spacing:-0.02em;" id="view-vagas-vip">—</div>
+                 <div style="font-size:1.2rem; font-weight:800; line-height:1; color:var(--purple); letter-spacing:-0.02em;" id="view-vagas-vip">—</div>
                  <div style="font-size:0.7rem; font-weight:700; color:var(--muted); margin-top:4px; text-transform:uppercase;">VIP</div>
                </div>
              </div>
@@ -1679,7 +1679,7 @@
             <!-- EQUIPE -->
             <div id="block-participantes">
               <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">
-                <h3 style="font-size:1.05rem; font-family:var(--font-heading); font-weight:800; color:var(--text); letter-spacing:-0.01em;">Equipe Tripla</h3>
+                <h3 style="font-size:1.05rem; font-family:var(--font-heading); font-weight:800; color:var(--text); letter-spacing:-0.01em; display:flex; align-items:center; gap:8px;"><i data-lucide="users" style="width:16px;height:16px;color:var(--accent);"></i> Equipe Tripla</h3>
                 <div id="view-participantes-count" style="font-size:0.75rem; font-weight:600; color:var(--muted);"></div>
               </div>
               <!-- The JS list will inject here -->
@@ -1689,7 +1689,7 @@
             <!-- CLIENTES -->
             <div id="block-clientes" style="display:none;">
               <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">
-                <h3 style="font-size:1.05rem; font-family:var(--font-heading); font-weight:800; color:var(--text); letter-spacing:-0.01em;">Clientes Convidados</h3>
+                <h3 style="font-size:1.05rem; font-family:var(--font-heading); font-weight:800; color:var(--text); letter-spacing:-0.01em; display:flex; align-items:center; gap:8px;"><i data-lucide="users" style="width:16px;height:16px;color:var(--green);"></i> Clientes Convidados</h3>
                 <div id="view-clientes-count" style="font-size:0.75rem; font-weight:600; color:var(--muted);"></div>
               </div>
               <div id="view-clientes"></div>
@@ -1698,7 +1698,7 @@
             <!-- VIPS -->
             <div id="block-vips" style="display:none;">
               <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">
-                <h3 style="font-size:1.05rem; font-family:var(--font-heading); font-weight:800; color:var(--text); letter-spacing:-0.01em;">Convidados VIP</h3>
+                <h3 style="font-size:1.05rem; font-family:var(--font-heading); font-weight:800; color:var(--text); letter-spacing:-0.01em; display:flex; align-items:center; gap:8px;"><i data-lucide="star" style="width:16px;height:16px;color:var(--purple);"></i> Convidados VIP</h3>
                 <div id="view-vips-count" style="font-size:0.75rem; font-weight:600; color:var(--muted);"></div>
               </div>
               <div id="view-vips"></div>
@@ -3312,9 +3312,9 @@
           if (item) unifBdg = `<span style="font-size:0.68rem;font-weight:700;background:rgba(5,150,105,0.1);color:var(--green);border:1px solid rgba(5,150,105,0.2);padding:2px 8px;border-radius:20px;white-space:nowrap;">👕 ${escapeHtml(item.nome||item.cor||'Uniforme')}${item.tamanho && item.tamanho!=='Único'?' '+item.tamanho:''}</span>`;
         }
         // Badge de tamanho do participante (campo do cadastro global)
-        const tamBdg = (!unifBdg && m.tamanho) ? `<span style="font-size:0.65rem;font-weight:600;border:1px solid var(--border);color:var(--text);padding:2px 6px;border-radius:4px;white-space:nowrap;">Gola: ${escapeHtml(m.tamanho)}</span>` : '';
+        const tamBdg = (!unifBdg && m.tamanho) ? `<span style="font-size:0.65rem;font-weight:600;background:rgba(3,87,213,0.06);color:var(--accent);padding:2px 6px;border-radius:4px;white-space:nowrap;">Gola: ${escapeHtml(m.tamanho)}</span>` : '';
         return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--surface2);transition:opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
-          <div style="width:28px;height:28px;border-radius:8px;background:var(--text);color:var(--bg);font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+          <div style="width:28px;height:28px;border-radius:8px;background:rgba(3,87,213,0.1);color:var(--accent);font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
           <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0;">
               <div style="font-weight:700;font-size:0.85rem;color:var(--text);white-space:nowrap;letter-spacing:-0.01em;">${escapeHtml(m.nome)}</div>
@@ -3346,7 +3346,7 @@
         const empBdg = m.empresa ? `<span style="font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="building" style="width:12px;height:12px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
         const cttBdg = m.contato ? `<span style="font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="phone" style="width:12px;height:12px;"></i> ${escapeHtml(m.contato)}</span>` : '';
         return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--surface2);transition:opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
-          <div style="width:28px;height:28px;border-radius:8px;background:var(--text);color:var(--bg);font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+          <div style="width:28px;height:28px;border-radius:8px;background:rgba(16,185,129,0.1);color:var(--green);font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
           <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
             <div style="font-weight:700;font-size:0.85rem;color:var(--text);white-space:nowrap;letter-spacing:-0.01em;">${escapeHtml(m.nome)}</div>
             <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-left:auto;">${empBdg}${cttBdg}</div>
@@ -3373,7 +3373,7 @@
         const empBdg = m.empresa ? `<span style="font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="building" style="width:12px;height:12px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
         const cttBdg = m.contato ? `<span style="font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="phone" style="width:12px;height:12px;"></i> ${escapeHtml(m.contato)}</span>` : '';
         return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--surface2);transition:opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
-          <div style="width:28px;height:28px;border-radius:8px;background:var(--text);color:var(--bg);font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+          <div style="width:28px;height:28px;border-radius:8px;background:rgba(139,92,246,0.1);color:var(--purple);font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
           <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
             <div style="font-weight:700;font-size:0.85rem;color:var(--text);white-space:nowrap;letter-spacing:-0.01em;">${escapeHtml(m.nome)}</div>
             <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-left:auto;">${empBdg}${cttBdg}</div>
