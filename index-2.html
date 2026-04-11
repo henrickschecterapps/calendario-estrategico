@@ -1620,26 +1620,26 @@
   <div class="modal" id="modal-container">
     
     <div id="mode-view">
-      <div class="modal-header-view" id="view-header" style="background: var(--surface); border-bottom: 1px solid var(--border); padding: 40px 32px 28px; position:relative; overflow:hidden;">
+      <div class="modal-header-view" id="view-header" style="background: var(--surface); border-bottom: 1px solid rgba(0,0,0,0.06); padding: 48px 40px 32px; position:relative; overflow:hidden;">
         <!-- Elementos decorativos (glare e radial) -->
-        <div style="position:absolute; top:-100px; right:-50px; width:450px; height:450px; background:radial-gradient(circle, var(--accent) 0%, transparent 60%); opacity:0.1; pointer-events:none; border-radius:50%;"></div>
-        <div style="position:absolute; bottom:-100px; left:-50px; width:350px; height:350px; background:radial-gradient(circle, var(--green) 0%, transparent 60%); opacity:0.08; pointer-events:none; border-radius:50%;"></div>
-        <div style="position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); opacity:0.5; pointer-events:none;"></div>
+        <div style="position:absolute; top:-150px; right:-50px; width:450px; height:450px; background:radial-gradient(circle, var(--accent) 0%, transparent 60%); opacity:0.08; pointer-events:none; border-radius:50%;"></div>
+        <div style="position:absolute; bottom:-100px; left:-100px; width:400px; height:400px; background:radial-gradient(circle, var(--green) 0%, transparent 60%); opacity:0.06; pointer-events:none; border-radius:50%;"></div>
+        <div style="position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent); opacity:0.8; pointer-events:none;"></div>
         
         <div class="modal-actions-top" style="z-index: 10;">
           <div id="view-temporal-badge-header"></div>
-          <button class="btn-icon" id="btn-export-pdf-modal" title="Exportar para PDF" style="background:var(--surface);box-shadow:var(--shadow-sm); font-weight:700;"><i data-lucide="file-output"></i> PDF</button>
-          <button class="btn-icon show-on-admin" id="btn-switch-edit" style="background:var(--surface);box-shadow:var(--shadow-sm); font-weight:700;"><i data-lucide="edit"></i> Editar</button>
-          <button class="btn-icon" id="modal-close-view" style="color:var(--muted);border:none;background:var(--surface2);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;transition:0.3s;" onmouseover="this.style.background='var(--red)';this.style.color='#fff';this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><i data-lucide="x"></i></button>
+          <button class="btn-icon" id="btn-export-pdf-modal" title="Exportar para PDF" style="background:var(--bg);box-shadow:0 1px 2px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6); font-weight:700;"><i data-lucide="file-output"></i> PDF</button>
+          <button class="btn-icon show-on-admin" id="btn-switch-edit" style="background:var(--bg);box-shadow:0 1px 2px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6); font-weight:700;"><i data-lucide="edit"></i> Editar</button>
+          <button class="btn-icon" id="modal-close-view" style="color:var(--muted);border:none;background:var(--bg);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;transition:0.3s;box-shadow:0 1px 2px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6);" onmouseover="this.style.background='var(--red)';this.style.color='#fff';this.style.boxShadow='none';this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)';this.style.background='var(--bg)';this.style.color='var(--muted)';this.style.boxShadow='0 1px 2px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6)';"><i data-lucide="x"></i></button>
         </div>
         
         <div id="view-badges" style="margin-bottom: 16px; display:flex; gap:8px; flex-wrap:wrap; z-index:10; position:relative;"></div>
         
-        <h2 class="modal-title" id="view-title" style="font-size: 2rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; color: var(--text); z-index:10; position:relative; letter-spacing: -0.05em; text-wrap: balance;">Nome do Evento</h2>
+        <h2 class="modal-title" id="view-title" style="font-size: 2.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 24px; background: linear-gradient(110deg, var(--text) 30%, var(--muted) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; z-index:10; position:relative; letter-spacing: -0.04em; text-wrap: balance;">Nome do Evento</h2>
         
         <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; z-index:10; position:relative;">
-           <div style="display:flex; align-items:center; gap:8px; background:var(--surface2); padding:6px 14px; border-radius:100px; border:1px solid var(--border); box-shadow:0 2px 10px rgba(0,0,0,0.02); font-weight:700; color:var(--text); font-size:0.85rem; letter-spacing:-0.01em;" id="view-date"><i data-lucide="calendar" style="width:14px;height:14px;color:var(--accent)"></i> <span>Data</span></div>
-           <div style="display:flex; align-items:center; gap:8px; background:var(--surface2); padding:6px 14px; border-radius:100px; border:1px solid var(--border); box-shadow:0 2px 10px rgba(0,0,0,0.02); font-size:0.85rem; letter-spacing:-0.01em;"><i data-lucide="user" style="width:14px;height:14px;color:var(--muted)"></i> <span style="font-weight:600; color:var(--muted);">Responsáveis:</span> <span id="view-resp-list" style="font-weight:700; color:var(--text);"></span></div>
+           <div style="display:flex; align-items:center; gap:8px; background:var(--bg); padding:8px 16px; border-radius:100px; border:1px solid rgba(0,0,0,0.05); box-shadow:0 1px 2px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.5); font-weight:700; color:var(--text); font-size:0.85rem; letter-spacing:-0.01em;" id="view-date"><i data-lucide="calendar" style="width:14px;height:14px;color:var(--accent)"></i> <span>Data</span></div>
+           <div style="display:flex; align-items:center; gap:8px; background:var(--bg); padding:8px 16px; border-radius:100px; border:1px solid rgba(0,0,0,0.05); box-shadow:0 1px 2px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.5); font-size:0.85rem; letter-spacing:-0.01em;"><i data-lucide="user" style="width:14px;height:14px;color:var(--muted)"></i> <span style="font-weight:600; color:var(--muted);">Responsáveis:</span> <span id="view-resp-list" style="font-weight:700; color:var(--text);"></span></div>
         </div>
       </div>
 
@@ -1665,40 +1665,41 @@
         </div>
 
         <!-- MAIN CONTENT AREA -->
-        <div style="padding: 32px; display:flex; flex-direction:column; gap:32px;">
+        <div style="padding: 32px; display:flex; flex-direction:column; gap:24px;">
           
           <!-- PARTICIPANTS SECTION -->
           <div id="wrapper-participantes" style="display:flex; flex-direction:column; gap:24px;">
             <!-- EQUIPE -->
-            <div id="block-participantes">
+            <div id="block-participantes" style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.02);">
               <div style="display:flex; flex-direction:column; gap:16px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid var(--border);">
-                  <div style="font-size:1.05rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; letter-spacing:-0.02em;"><span style="width:32px;height:32px;background:rgba(3,87,213,0.1);color:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;"><i data-lucide="users" style="width:16px;height:16px;"></i></span> Equipe Tripla (Staff)</div>
-                  <div id="view-participantes-count" style="font-size:0.7rem; font-weight:800; background:var(--surface); border:1px solid var(--border); padding:4px 12px; border-radius:100px; color:var(--text); box-shadow:var(--shadow-sm); letter-spacing:0.02em;"></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid var(--surface2);">
+                  <div style="font-size:1.1rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; letter-spacing:-0.02em;"><span style="width:32px;height:32px;background:rgba(3,87,213,0.1);color:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;"><i data-lucide="users" style="width:16px;height:16px;"></i></span> Equipe Tripla (Staff)</div>
+                  <div id="view-participantes-count" style="font-size:0.75rem; font-weight:800; background:var(--bg); border:1px solid var(--border); padding:4px 12px; border-radius:100px; color:var(--text); box-shadow:var(--shadow-sm); letter-spacing:0.02em;"></div>
                 </div>
-                <div id="view-participantes">-</div>
+                <!-- The JS list will inject here -->
+                <div id="view-participantes" style="margin-top:-8px;">-</div>
               </div>
             </div>
 
             <!-- CLIENTES -->
-            <div id="block-clientes" style="display:none;">
+            <div id="block-clientes" style="display:none; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.02);">
               <div style="display:flex; flex-direction:column; gap:16px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid var(--border);">
-                  <div style="font-size:1.05rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; letter-spacing:-0.02em;"><span style="width:32px;height:32px;background:rgba(16,185,129,0.1);color:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;"><i data-lucide="users" style="width:16px;height:16px;"></i></span> Clientes Convidados</div>
-                  <div id="view-clientes-count" style="font-size:0.7rem; font-weight:800; background:var(--surface); border:1px solid var(--border); padding:4px 12px; border-radius:100px; color:var(--text); box-shadow:var(--shadow-sm); letter-spacing:0.02em;"></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid var(--surface2);">
+                  <div style="font-size:1.1rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; letter-spacing:-0.02em;"><span style="width:32px;height:32px;background:rgba(16,185,129,0.1);color:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;"><i data-lucide="users" style="width:16px;height:16px;"></i></span> Clientes Convidados</div>
+                  <div id="view-clientes-count" style="font-size:0.75rem; font-weight:800; background:var(--bg); border:1px solid var(--border); padding:4px 12px; border-radius:100px; color:var(--text); box-shadow:var(--shadow-sm); letter-spacing:0.02em;"></div>
                 </div>
-                <div id="view-clientes">-</div>
+                <div id="view-clientes" style="margin-top:-8px;">-</div>
               </div>
             </div>
 
             <!-- VIPS -->
-            <div id="block-vips" style="display:none;">
+            <div id="block-vips" style="display:none; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.02);">
               <div style="display:flex; flex-direction:column; gap:16px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid var(--border);">
-                  <div style="font-size:1.05rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; letter-spacing:-0.02em;"><span style="width:32px;height:32px;background:rgba(139,92,246,0.1);color:var(--purple);border-radius:8px;display:flex;align-items:center;justify-content:center;"><i data-lucide="star" style="width:16px;height:16px;"></i></span> Convidados VIP</div>
-                  <div id="view-vips-count" style="font-size:0.7rem; font-weight:800; background:var(--surface); border:1px solid var(--border); padding:4px 12px; border-radius:100px; color:var(--text); box-shadow:var(--shadow-sm); letter-spacing:0.02em;"></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid var(--surface2);">
+                  <div style="font-size:1.1rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; letter-spacing:-0.02em;"><span style="width:32px;height:32px;background:rgba(139,92,246,0.1);color:var(--purple);border-radius:10px;display:flex;align-items:center;justify-content:center;"><i data-lucide="star" style="width:16px;height:16px;"></i></span> Convidados VIP</div>
+                  <div id="view-vips-count" style="font-size:0.75rem; font-weight:800; background:var(--bg); border:1px solid var(--border); padding:4px 12px; border-radius:100px; color:var(--text); box-shadow:var(--shadow-sm); letter-spacing:0.02em;"></div>
                 </div>
-                <div id="view-vips">-</div>
+                <div id="view-vips" style="margin-top:-8px;">-</div>
               </div>
             </div>
           </div>
@@ -3306,8 +3307,8 @@
         }
         // Badge de tamanho do participante (campo do cadastro global)
         const tamBdg = (!unifBdg && m.tamanho) ? `<span style="font-size:0.7rem;font-weight:700;background:rgba(3,87,213,0.10);color:var(--accent);padding:2px 8px;border-radius:20px;white-space:nowrap;">👕 ${escapeHtml(m.tamanho)}</span>` : '';
-        return `<div style="display:flex;align-items:center;gap:16px;padding:8px 12px;border-radius:8px;transition:0.1s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+        return `<div style="display:flex;align-items:center;gap:16px;padding:12px 16px;margin:0 -16px;border-bottom:1px solid var(--surface2);transition:background 0.15s;border-radius:12px;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 3px rgba(255,255,255,0.4),0 2px 6px rgba(3,87,213,0.25);">${initials}</div>
           <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0;">
               <div style="font-weight:800;font-size:0.95rem;color:var(--text);white-space:nowrap;">${escapeHtml(m.nome)}</div>
@@ -3316,7 +3317,7 @@
           </div>
         </div>`;
       }).join('');
-      document.getElementById('view-participantes').innerHTML = `<div style="display:flex;flex-direction:column;gap:2px;">${mapEquipe}</div>`;
+      document.getElementById('view-participantes').innerHTML = `<div style="display:flex;flex-direction:column;">${mapEquipe}</div>`;
       const countEl = document.getElementById('view-participantes-count');
       if (countEl) {
         let txt = `${ev.equipe.length} pessoa${ev.equipe.length !== 1 ? 's' : ''}`;
@@ -3338,15 +3339,15 @@
         const initials = (m.nome || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
         const empBdg = m.empresa ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="building" style="width:14px;height:14px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
         const cttBdg = m.contato ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="phone" style="width:14px;height:14px;"></i> ${escapeHtml(m.contato)}</span>` : '';
-        return `<div style="display:flex;align-items:center;gap:16px;padding:8px 12px;border-radius:8px;transition:0.1s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--green),#10b981);color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+        return `<div style="display:flex;align-items:center;gap:16px;padding:12px 16px;margin:0 -16px;border-bottom:1px solid var(--surface2);transition:background 0.15s;border-radius:12px;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--green),#10b981);color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 3px rgba(255,255,255,0.4),0 2px 6px rgba(16,185,129,0.25);">${initials}</div>
           <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
             <div style="font-weight:800;font-size:0.95rem;color:var(--text);white-space:nowrap;">${escapeHtml(m.nome)}</div>
             <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-left:auto;">${empBdg}${cttBdg}</div>
           </div>
         </div>`;
       }).join('');
-      document.getElementById('view-clientes').innerHTML = `<div style="display:flex;flex-direction:column;gap:2px;">${mapClientes}</div>`;
+      document.getElementById('view-clientes').innerHTML = `<div style="display:flex;flex-direction:column;">${mapClientes}</div>`;
       const countEl = document.getElementById('view-clientes-count');
       if (countEl) {
         let txt = `${ev.clientes.length} convidado${ev.clientes.length !== 1 ? 's' : ''}`;
@@ -3365,15 +3366,15 @@
         const initials = (m.nome || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
         const empBdg = m.empresa ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="building" style="width:14px;height:14px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
         const cttBdg = m.contato ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="phone" style="width:14px;height:14px;"></i> ${escapeHtml(m.contato)}</span>` : '';
-        return `<div style="display:flex;align-items:center;gap:16px;padding:8px 12px;border-radius:8px;transition:0.1s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--purple),#8b5cf6);color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+        return `<div style="display:flex;align-items:center;gap:16px;padding:12px 16px;margin:0 -16px;border-bottom:1px solid var(--surface2);transition:background 0.15s;border-radius:12px;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--purple),#8b5cf6);color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 3px rgba(255,255,255,0.4),0 2px 6px rgba(139,92,246,0.25);">${initials}</div>
           <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
             <div style="font-weight:800;font-size:0.95rem;color:var(--text);white-space:nowrap;">${escapeHtml(m.nome)}</div>
             <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-left:auto;">${empBdg}${cttBdg}</div>
           </div>
         </div>`;
       }).join('');
-      document.getElementById('view-vips').innerHTML = `<div style="display:flex;flex-direction:column;gap:2px;">${mapVips}</div>`;
+      document.getElementById('view-vips').innerHTML = `<div style="display:flex;flex-direction:column;">${mapVips}</div>`;
       const countEl = document.getElementById('view-vips-count');
       if (countEl) {
         let txt = `${ev.vips.length} convidado${ev.vips.length !== 1 ? 's' : ''}`;
