@@ -3221,7 +3221,15 @@
       }).join('');
       document.getElementById('view-participantes').innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;">${mapEquipe}</div>`;
       const countEl = document.getElementById('view-participantes-count');
-      if (countEl) countEl.textContent = `${ev.equipe.length} pessoa${ev.equipe.length !== 1 ? 's' : ''}`;
+      if (countEl) {
+        let txt = `${ev.equipe.length} pessoa${ev.equipe.length !== 1 ? 's' : ''}`;
+        const limit = parseInt(ev.vagas_staff) || 0;
+        if (limit > 0) {
+          const rest = Math.max(0, limit - ev.equipe.length);
+          txt += ` • ${rest} vaga${rest !== 1 ? 's' : ''} livre${rest !== 1 ? 's' : ''}`;
+        }
+        countEl.textContent = txt.toUpperCase();
+      }
       if (typeof refreshIcons === 'function') refreshIcons(); else if (typeof lucide !== 'undefined') setTimeout(() => lucide.createIcons(), 50);
     } else {
       toggleBlock('block-participantes', ev.participantes);
@@ -3241,7 +3249,15 @@
       }).join('');
       document.getElementById('view-clientes').innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;">${mapClientes}</div>`;
       const countEl = document.getElementById('view-clientes-count');
-      if (countEl) countEl.textContent = `${ev.clientes.length} convidado${ev.clientes.length !== 1 ? 's' : ''}`;
+      if (countEl) {
+        let txt = `${ev.clientes.length} convidado${ev.clientes.length !== 1 ? 's' : ''}`;
+        const limit = parseInt(ev.vagas_cliente) || 0;
+        if (limit > 0) {
+          const rest = Math.max(0, limit - ev.clientes.length);
+          txt += ` • ${rest} vaga${rest !== 1 ? 's' : ''} livre${rest !== 1 ? 's' : ''}`;
+        }
+        countEl.textContent = txt.toUpperCase();
+      }
     } else { document.getElementById('block-clientes').style.display = 'none'; }
 
     if (ev.vips && ev.vips.length > 0) {
@@ -3258,7 +3274,15 @@
       }).join('');
       document.getElementById('view-vips').innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;">${mapVips}</div>`;
       const countEl = document.getElementById('view-vips-count');
-      if (countEl) countEl.textContent = `${ev.vips.length} convidado${ev.vips.length !== 1 ? 's' : ''}`;
+      if (countEl) {
+        let txt = `${ev.vips.length} convidado${ev.vips.length !== 1 ? 's' : ''}`;
+        const limit = parseInt(ev.vagas_vip) || 0;
+        if (limit > 0) {
+          const rest = Math.max(0, limit - ev.vips.length);
+          txt += ` • ${rest} vaga${rest !== 1 ? 's' : ''} livre${rest !== 1 ? 's' : ''}`;
+        }
+        countEl.textContent = txt.toUpperCase();
+      }
     } else { document.getElementById('block-vips').style.display = 'none'; }
     if (typeof refreshIcons === 'function') refreshIcons(); else if (typeof lucide !== 'undefined') setTimeout(() => lucide.createIcons(), 50);
 
