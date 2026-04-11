@@ -1620,84 +1620,90 @@
   <div class="modal" id="modal-container">
     
     <div id="mode-view">
-      <div class="modal-header-view" id="view-header" style="background: var(--surface); border-bottom: 1px solid rgba(0,0,0,0.06); padding: 48px 40px 32px; position:relative; overflow:hidden;">
-        <!-- Elementos decorativos (glare e radial) -->
-        <div style="position:absolute; top:-150px; right:-50px; width:450px; height:450px; background:radial-gradient(circle, var(--accent) 0%, transparent 60%); opacity:0.08; pointer-events:none; border-radius:50%;"></div>
-        <div style="position:absolute; bottom:-100px; left:-100px; width:400px; height:400px; background:radial-gradient(circle, var(--green) 0%, transparent 60%); opacity:0.06; pointer-events:none; border-radius:50%;"></div>
-        <div style="position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent); opacity:0.8; pointer-events:none;"></div>
-        
+      <div class="modal-header-view" id="view-header" style="background: var(--bg); border-bottom: 1px solid var(--border); padding: 56px 48px 40px; position:relative;">
         <div class="modal-actions-top" style="z-index: 10;">
           <div id="view-temporal-badge-header"></div>
-          <button class="btn-icon" id="btn-export-pdf-modal" title="Exportar para PDF" style="background:var(--bg);box-shadow:0 1px 2px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6); font-weight:700;"><i data-lucide="file-output"></i> PDF</button>
-          <button class="btn-icon show-on-admin" id="btn-switch-edit" style="background:var(--bg);box-shadow:0 1px 2px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6); font-weight:700;"><i data-lucide="edit"></i> Editar</button>
-          <button class="btn-icon" id="modal-close-view" style="color:var(--muted);border:none;background:var(--bg);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;transition:0.3s;box-shadow:0 1px 2px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6);" onmouseover="this.style.background='var(--red)';this.style.color='#fff';this.style.boxShadow='none';this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)';this.style.background='var(--bg)';this.style.color='var(--muted)';this.style.boxShadow='0 1px 2px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6)';"><i data-lucide="x"></i></button>
+          <button class="btn-icon" id="btn-export-pdf-modal" title="Exportar para PDF" style="background:transparent; border:1px solid var(--border); font-weight:600; color:var(--text);"><i data-lucide="file-output"></i> PDF</button>
+          <button class="btn-icon show-on-admin" id="btn-switch-edit" style="background:transparent; border:1px solid var(--border); font-weight:600; color:var(--text);"><i data-lucide="edit"></i> Editar</button>
+          <button class="btn-icon" id="modal-close-view" style="color:var(--text); background:transparent; border:1px solid transparent; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; transition:0.2s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'"><i data-lucide="x"></i></button>
         </div>
         
-        <div id="view-badges" style="margin-bottom: 16px; display:flex; gap:8px; flex-wrap:wrap; z-index:10; position:relative;"></div>
+        <div id="view-badges" style="margin-bottom: 24px; display:flex; gap:12px; flex-wrap:wrap; z-index:10; position:relative;"></div>
         
-        <h2 class="modal-title" id="view-title" style="font-size: 2.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 24px; background: linear-gradient(110deg, var(--text) 30%, var(--muted) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; z-index:10; position:relative; letter-spacing: -0.04em; text-wrap: balance;">Nome do Evento</h2>
+        <h2 class="modal-title" id="view-title" style="font-family: var(--font-heading); font-size: 3.2rem; font-weight: 800; line-height: 1.05; margin-bottom: 24px; color: var(--text); z-index:10; position:relative; letter-spacing: -0.04em; text-wrap: balance;">Nome do Evento</h2>
         
-        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; z-index:10; position:relative;">
-           <div style="display:flex; align-items:center; gap:8px; background:var(--bg); padding:8px 16px; border-radius:100px; border:1px solid rgba(0,0,0,0.05); box-shadow:0 1px 2px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.5); font-weight:700; color:var(--text); font-size:0.85rem; letter-spacing:-0.01em;" id="view-date"><i data-lucide="calendar" style="width:14px;height:14px;color:var(--accent)"></i> <span>Data</span></div>
-           <div style="display:flex; align-items:center; gap:8px; background:var(--bg); padding:8px 16px; border-radius:100px; border:1px solid rgba(0,0,0,0.05); box-shadow:0 1px 2px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.5); font-size:0.85rem; letter-spacing:-0.01em;"><i data-lucide="user" style="width:14px;height:14px;color:var(--muted)"></i> <span style="font-weight:600; color:var(--muted);">Responsáveis:</span> <span id="view-resp-list" style="font-weight:700; color:var(--text);"></span></div>
+        <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:center; z-index:10; position:relative; font-size:0.9rem; font-weight:500; color:var(--muted); letter-spacing:-0.01em;">
+           <div style="display:flex; align-items:center; gap:8px;" id="view-date"><i data-lucide="calendar" style="width:16px;height:16px;"></i> <span>Data</span></div>
+           <div style="display:flex; align-items:center; gap:8px;"><i data-lucide="user" style="width:16px;height:16px;"></i> <span>Responsáveis:</span> <span id="view-resp-list" style="font-weight:700; color:var(--text);"></span></div>
         </div>
       </div>
 
       <div class="modal-body" style="padding: 0; background: var(--bg);">
         
         <!-- HIGH-LEVEL METRICS / OPERATIONAL SUMMARY -->
-        <div style="display:flex; flex-wrap:wrap; gap:0; background: var(--surface); border-bottom: 1px solid var(--border);">
-          <div style="flex:1; min-width:240px; border-right: 1px solid var(--border); padding: 20px 32px; display:flex; flex-direction:column; justify-content:center;">
-             <div style="font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:8px; display:flex; align-items:center; gap:6px;"><i data-lucide="briefcase" style="width:14px;height:14px;"></i> Operacional</div>
-             <div style="font-size:1.1rem; font-weight:800; color:var(--text); margin-bottom:4px; letter-spacing:-0.02em;" id="view-status">-</div>
-             <div style="font-size:0.85rem; color:var(--muted);"><span style="font-weight:600;">Formato:</span> <span id="view-formato">-</span></div>
+        <!-- HIGH-LEVEL METRICS / OPERATIONAL SUMMARY -->
+        <div style="display:flex; flex-wrap:wrap; gap:0; background: var(--bg); border-bottom: 1px solid var(--border);">
+          <div style="flex:1; min-width:240px; border-right: 1px solid var(--border); padding: 40px 48px; display:flex; flex-direction:column; justify-content:center;">
+             <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:12px;">Operacional</div>
+             <div style="font-size:1.6rem; font-weight:800; color:var(--text); margin-bottom:4px; letter-spacing:-0.03em;" id="view-status">-</div>
+             <div style="font-size:0.9rem; color:var(--muted); margin-top:8px;">Formato: <span id="view-formato" style="color:var(--text); font-weight:600;">-</span></div>
           </div>
           
-          <div style="flex:2; min-width:320px; padding: 20px 32px;" id="block-cota">
-             <div style="font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:8px; display:flex; align-items:center; gap:6px;"><i data-lucide="award" style="width:14px;height:14px;"></i> Estrutura Comercial & Vagas Globais</div>
-             <div style="margin-bottom:12px;" id="view-cota">-</div>
-             <div style="display:flex; gap:12px; flex-wrap:wrap; background:var(--surface2); padding:10px 16px; border-radius:100px; border:1px solid var(--border); box-shadow:inset 0 1px 3px rgba(0,0,0,0.02);">
-               <div style="display:flex;align-items:center;gap:6px;font-size:0.85rem;"><span style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;background:rgba(3,87,213,0.1);color:var(--accent);border-radius:50%;"><i data-lucide="hard-hat" style="width:12px;height:12px;"></i></span><span style="font-weight:700;color:var(--text);">Staff: <span id="view-vagas-staff">—</span></span></div>
-               <div style="display:flex;align-items:center;gap:6px;font-size:0.85rem;border-left:1px solid var(--border);padding-left:12px;"><span style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;background:rgba(16,185,129,0.1);color:var(--green);border-radius:50%;"><i data-lucide="users" style="width:12px;height:12px;"></i></span><span style="font-weight:700;color:var(--text);">Cliente: <span id="view-vagas-cliente">—</span></span></div>
-               <div style="display:flex;align-items:center;gap:6px;font-size:0.85rem;border-left:1px solid var(--border);padding-left:12px;"><span style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;background:rgba(139,92,246,0.1);color:var(--purple);border-radius:50%;"><i data-lucide="star" style="width:12px;height:12px;"></i></span><span style="font-weight:700;color:var(--text);">VIP: <span id="view-vagas-vip">—</span></span></div>
+          <div style="flex:2; min-width:320px; padding: 40px 48px;" id="block-cota">
+             <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:12px;">Distribuição de Vagas</div>
+             <div style="display:none;" id="view-cota">-</div>
+             <div style="display:flex; gap:48px; flex-wrap:wrap; margin-top:16px;">
+               <div>
+                 <div style="font-size:2.2rem; font-weight:800; line-height:1; color:var(--text); letter-spacing:-0.04em;" id="view-vagas-staff">—</div>
+                 <div style="font-size:0.8rem; font-weight:700; color:var(--muted); margin-top:6px; text-transform:uppercase; letter-spacing:0.05em;">Staff</div>
+               </div>
+               <div style="width:1px; background:var(--border);"></div>
+               <div>
+                 <div style="font-size:2.2rem; font-weight:800; line-height:1; color:var(--text); letter-spacing:-0.04em;" id="view-vagas-cliente">—</div>
+                 <div style="font-size:0.8rem; font-weight:700; color:var(--muted); margin-top:6px; text-transform:uppercase; letter-spacing:0.05em;">Cliente</div>
+               </div>
+               <div style="width:1px; background:var(--border);"></div>
+               <div>
+                 <div style="font-size:2.2rem; font-weight:800; line-height:1; color:var(--text); letter-spacing:-0.04em;" id="view-vagas-vip">—</div>
+                 <div style="font-size:0.8rem; font-weight:700; color:var(--muted); margin-top:6px; text-transform:uppercase; letter-spacing:0.05em;">VIP</div>
+               </div>
              </div>
           </div>
         </div>
 
         <!-- MAIN CONTENT AREA -->
-        <div style="padding: 32px; display:flex; flex-direction:column; gap:24px;">
+        <div style="padding: 48px; display:flex; flex-direction:column; gap:64px; background:var(--bg);">
           
           <!-- PARTICIPANTS SECTION -->
-          <div id="wrapper-participantes" style="display:flex; flex-direction:column; gap:24px;">
+          <div id="wrapper-participantes" style="display:flex; flex-direction:column; gap:56px;">
             <!-- EQUIPE -->
-            <div id="block-participantes" style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.02);">
-              <div style="display:flex; flex-direction:column; gap:16px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid var(--surface2);">
-                  <div style="font-size:1.1rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; letter-spacing:-0.02em;"><span style="width:32px;height:32px;background:rgba(3,87,213,0.1);color:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;"><i data-lucide="users" style="width:16px;height:16px;"></i></span> Equipe Tripla (Staff)</div>
-                  <div id="view-participantes-count" style="font-size:0.75rem; font-weight:800; background:var(--bg); border:1px solid var(--border); padding:4px 12px; border-radius:100px; color:var(--text); box-shadow:var(--shadow-sm); letter-spacing:0.02em;"></div>
-                </div>
-                <!-- The JS list will inject here -->
-                <div id="view-participantes" style="margin-top:-8px;">-</div>
+            <div id="block-participantes">
+              <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:24px; border-bottom:2px solid var(--text); padding-bottom:16px;">
+                <h3 style="font-size:1.6rem; font-family:var(--font-heading); font-weight:800; color:var(--text); letter-spacing:-0.03em;">Equipe Tripla</h3>
+                <div id="view-participantes-count" style="font-size:0.9rem; font-weight:600; color:var(--muted);"></div>
               </div>
+              <!-- The JS list will inject here -->
+              <div id="view-participantes"></div>
             </div>
 
             <!-- CLIENTES -->
-            <div id="block-clientes" style="display:none; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.02);">
-              <div style="display:flex; flex-direction:column; gap:16px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid var(--surface2);">
-                  <div style="font-size:1.1rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; letter-spacing:-0.02em;"><span style="width:32px;height:32px;background:rgba(16,185,129,0.1);color:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;"><i data-lucide="users" style="width:16px;height:16px;"></i></span> Clientes Convidados</div>
-                  <div id="view-clientes-count" style="font-size:0.75rem; font-weight:800; background:var(--bg); border:1px solid var(--border); padding:4px 12px; border-radius:100px; color:var(--text); box-shadow:var(--shadow-sm); letter-spacing:0.02em;"></div>
-                </div>
-                <div id="view-clientes" style="margin-top:-8px;">-</div>
+            <div id="block-clientes" style="display:none;">
+              <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:24px; border-bottom:2px solid var(--text); padding-bottom:16px;">
+                <h3 style="font-size:1.6rem; font-family:var(--font-heading); font-weight:800; color:var(--text); letter-spacing:-0.03em;">Clientes Convidados</h3>
+                <div id="view-clientes-count" style="font-size:0.9rem; font-weight:600; color:var(--muted);"></div>
               </div>
+              <div id="view-clientes"></div>
             </div>
 
             <!-- VIPS -->
-            <div id="block-vips" style="display:none; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.02);">
-              <div style="display:flex; flex-direction:column; gap:16px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid var(--surface2);">
-                  <div style="font-size:1.1rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; letter-spacing:-0.02em;"><span style="width:32px;height:32px;background:rgba(139,92,246,0.1);color:var(--purple);border-radius:10px;display:flex;align-items:center;justify-content:center;"><i data-lucide="star" style="width:16px;height:16px;"></i></span> Convidados VIP</div>
-                  <div id="view-vips-count" style="font-size:0.75rem; font-weight:800; background:var(--bg); border:1px solid var(--border); padding:4px 12px; border-radius:100px; color:var(--text); box-shadow:var(--shadow-sm); letter-spacing:0.02em;"></div>
+            <div id="block-vips" style="display:none;">
+              <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:24px; border-bottom:2px solid var(--text); padding-bottom:16px;">
+                <h3 style="font-size:1.6rem; font-family:var(--font-heading); font-weight:800; color:var(--text); letter-spacing:-0.03em;">Convidados VIP</h3>
+                <div id="view-vips-count" style="font-size:0.9rem; font-weight:600; color:var(--muted);"></div>
+              </div>
+              <div id="view-vips"></div>
+            </div>
+          </div>
                 </div>
                 <div id="view-vips" style="margin-top:-8px;">-</div>
               </div>
@@ -3306,13 +3312,13 @@
           if (item) unifBdg = `<span style="font-size:0.68rem;font-weight:700;background:rgba(5,150,105,0.1);color:var(--green);border:1px solid rgba(5,150,105,0.2);padding:2px 8px;border-radius:20px;white-space:nowrap;">👕 ${escapeHtml(item.nome||item.cor||'Uniforme')}${item.tamanho && item.tamanho!=='Único'?' '+item.tamanho:''}</span>`;
         }
         // Badge de tamanho do participante (campo do cadastro global)
-        const tamBdg = (!unifBdg && m.tamanho) ? `<span style="font-size:0.7rem;font-weight:700;background:rgba(3,87,213,0.10);color:var(--accent);padding:2px 8px;border-radius:20px;white-space:nowrap;">👕 ${escapeHtml(m.tamanho)}</span>` : '';
-        return `<div style="display:flex;align-items:center;gap:16px;padding:12px 16px;margin:0 -16px;border-bottom:1px solid var(--surface2);transition:background 0.15s;border-radius:12px;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
-          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 3px rgba(255,255,255,0.4),0 2px 6px rgba(3,87,213,0.25);">${initials}</div>
+        const tamBdg = (!unifBdg && m.tamanho) ? `<span style="font-size:0.7rem;font-weight:600;border:1px solid var(--border);color:var(--text);padding:2px 8px;border-radius:4px;white-space:nowrap;">Gola: ${escapeHtml(m.tamanho)}</span>` : '';
+        return `<div style="display:flex;align-items:center;gap:24px;padding:16px 0;border-bottom:1px solid var(--surface2);transition:opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
+          <div style="width:40px;height:40px;border-radius:12px;background:var(--text);color:var(--bg);font-size:0.9rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
           <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0;">
-              <div style="font-weight:800;font-size:0.95rem;color:var(--text);white-space:nowrap;">${escapeHtml(m.nome)}</div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;">${funcBdg}${unifBdg}${tamBdg}</div>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;min-width:0;">
+              <div style="font-weight:700;font-size:1.05rem;color:var(--text);white-space:nowrap;letter-spacing:-0.01em;">${escapeHtml(m.nome)}</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">${funcBdg}${unifBdg}${tamBdg}</div>
             </div>
           </div>
         </div>`;
@@ -3337,13 +3343,13 @@
       document.getElementById('block-clientes').style.display = 'block';
       const mapClientes = ev.clientes.map((m, i) => {
         const initials = (m.nome || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
-        const empBdg = m.empresa ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="building" style="width:14px;height:14px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
-        const cttBdg = m.contato ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="phone" style="width:14px;height:14px;"></i> ${escapeHtml(m.contato)}</span>` : '';
-        return `<div style="display:flex;align-items:center;gap:16px;padding:12px 16px;margin:0 -16px;border-bottom:1px solid var(--surface2);transition:background 0.15s;border-radius:12px;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
-          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--green),#10b981);color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 3px rgba(255,255,255,0.4),0 2px 6px rgba(16,185,129,0.25);">${initials}</div>
+        const empBdg = m.empresa ? `<span style="font-size:0.85rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="building" style="width:14px;height:14px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
+        const cttBdg = m.contato ? `<span style="font-size:0.85rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="phone" style="width:14px;height:14px;"></i> ${escapeHtml(m.contato)}</span>` : '';
+        return `<div style="display:flex;align-items:center;gap:24px;padding:16px 0;border-bottom:1px solid var(--surface2);transition:opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
+          <div style="width:40px;height:40px;border-radius:12px;background:var(--text);color:var(--bg);font-size:0.9rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
           <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-            <div style="font-weight:800;font-size:0.95rem;color:var(--text);white-space:nowrap;">${escapeHtml(m.nome)}</div>
-            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-left:auto;">${empBdg}${cttBdg}</div>
+            <div style="font-weight:700;font-size:1.05rem;color:var(--text);white-space:nowrap;letter-spacing:-0.01em;">${escapeHtml(m.nome)}</div>
+            <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-left:auto;">${empBdg}${cttBdg}</div>
           </div>
         </div>`;
       }).join('');
@@ -3364,13 +3370,13 @@
       document.getElementById('block-vips').style.display = 'block';
       const mapVips = ev.vips.map((m, i) => {
         const initials = (m.nome || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
-        const empBdg = m.empresa ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="building" style="width:14px;height:14px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
-        const cttBdg = m.contato ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="phone" style="width:14px;height:14px;"></i> ${escapeHtml(m.contato)}</span>` : '';
-        return `<div style="display:flex;align-items:center;gap:16px;padding:12px 16px;margin:0 -16px;border-bottom:1px solid var(--surface2);transition:background 0.15s;border-radius:12px;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
-          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--purple),#8b5cf6);color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 3px rgba(255,255,255,0.4),0 2px 6px rgba(139,92,246,0.25);">${initials}</div>
+        const empBdg = m.empresa ? `<span style="font-size:0.85rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="building" style="width:14px;height:14px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
+        const cttBdg = m.contato ? `<span style="font-size:0.85rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="phone" style="width:14px;height:14px;"></i> ${escapeHtml(m.contato)}</span>` : '';
+        return `<div style="display:flex;align-items:center;gap:24px;padding:16px 0;border-bottom:1px solid var(--surface2);transition:opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
+          <div style="width:40px;height:40px;border-radius:12px;background:var(--text);color:var(--bg);font-size:0.9rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
           <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-            <div style="font-weight:800;font-size:0.95rem;color:var(--text);white-space:nowrap;">${escapeHtml(m.nome)}</div>
-            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-left:auto;">${empBdg}${cttBdg}</div>
+            <div style="font-weight:700;font-size:1.05rem;color:var(--text);white-space:nowrap;letter-spacing:-0.01em;">${escapeHtml(m.nome)}</div>
+            <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-left:auto;">${empBdg}${cttBdg}</div>
           </div>
         </div>`;
       }).join('');
