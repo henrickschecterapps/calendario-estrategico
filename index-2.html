@@ -3199,18 +3199,12 @@
         }
         // Badge de tamanho do participante (campo do cadastro global)
         const tamBdg = (!unifBdg && m.tamanho) ? `<span style="font-size:0.68rem;font-weight:700;background:rgba(3,87,213,0.10);color:var(--accent);border:1px solid rgba(3,87,213,0.2);padding:2px 8px;border-radius:20px;white-space:nowrap;">👕 ${escapeHtml(m.tamanho)}</span>` : '';
-        const adminBtns = (userRole === 'admin' || userRole === 'editor') ? `
-          <div style="display:flex;gap:4px;flex-shrink:0;">
-            <button onclick="window.editEquipeMemberFromView('${ev.id}',${i})" title="Editar participante" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'"><i data-lucide="pencil" style="width:13px;height:13px;"></i></button>
-            <button onclick="window.delEquipeMemberFromView('${ev.id}',${i})" title="Remover do evento" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.2s;" onmouseover="this.style.color='var(--red)';this.style.borderColor='var(--red)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'"><i data-lucide="x" style="width:13px;height:13px;"></i></button>
-          </div>` : '';
-        return `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;transition:0.15s;" onmouseover="this.style.borderColor='var(--muted)'" onmouseout="this.style.borderColor='var(--border)'">
-          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:0.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
-          <div style="flex:1;min-width:0;">
-            <div style="font-weight:700;font-size:0.88rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(m.nome)}</div>
-            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;">${funcBdg}${unifBdg}${tamBdg}</div>
+        return `<div style="display:flex;align-items:center;gap:14px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.03);transition:0.15s;" onmouseover="this.style.borderColor='var(--muted)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:0.9rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(3,87,213,0.3);">${initials}</div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
+            <div style="font-weight:800;font-size:0.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(m.nome)}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">${funcBdg}${unifBdg}${tamBdg}</div>
           </div>
-          ${adminBtns}
         </div>`;
       }).join('');
       document.getElementById('view-participantes').innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;">${mapEquipe}</div>`;
@@ -3233,11 +3227,13 @@
       document.getElementById('block-clientes').style.display = 'block';
       const mapClientes = ev.clientes.map((m, i) => {
         const initials = (m.nome || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
-        return `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
-          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--green),#10b981);color:#fff;font-size:0.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
-          <div style="flex:1;min-width:0;">
-            <div style="font-weight:700;font-size:0.88rem;color:var(--text);">${escapeHtml(m.nome)}</div>
-            <div style="font-size:0.75rem;color:var(--muted);">${escapeHtml(m.empresa||'')} • ${escapeHtml(m.contato||'')}</div>
+        const empBdg = m.empresa ? `<span style="font-size:0.72rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="building" style="width:12px;height:12px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
+        const cttBdg = m.contato ? `<span style="font-size:0.72rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="phone" style="width:12px;height:12px;"></i> ${escapeHtml(m.contato)}</span>` : '';
+        return `<div style="display:flex;align-items:center;gap:14px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.03);transition:0.15s;" onmouseover="this.style.borderColor='var(--muted)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--green),#10b981);color:#fff;font-size:0.9rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(16,185,129,0.3);">${initials}</div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
+            <div style="font-weight:800;font-size:0.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(m.nome)}</div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">${empBdg}${cttBdg}</div>
           </div>
         </div>`;
       }).join('');
@@ -3258,11 +3254,13 @@
       document.getElementById('block-vips').style.display = 'block';
       const mapVips = ev.vips.map((m, i) => {
         const initials = (m.nome || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
-        return `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
-          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--purple),#8b5cf6);color:#fff;font-size:0.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
-          <div style="flex:1;min-width:0;">
-            <div style="font-weight:700;font-size:0.88rem;color:var(--text);">${escapeHtml(m.nome)}</div>
-            <div style="font-size:0.75rem;color:var(--muted);">${escapeHtml(m.empresa||'')} • ${escapeHtml(m.contato||'')}</div>
+        const empBdg = m.empresa ? `<span style="font-size:0.72rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="building" style="width:12px;height:12px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
+        const cttBdg = m.contato ? `<span style="font-size:0.72rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="phone" style="width:12px;height:12px;"></i> ${escapeHtml(m.contato)}</span>` : '';
+        return `<div style="display:flex;align-items:center;gap:14px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.03);transition:0.15s;" onmouseover="this.style.borderColor='var(--muted)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--purple),#8b5cf6);color:#fff;font-size:0.9rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(139,92,246,0.3);">${initials}</div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
+            <div style="font-weight:800;font-size:0.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(m.nome)}</div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">${empBdg}${cttBdg}</div>
           </div>
         </div>`;
       }).join('');
