@@ -3305,16 +3305,18 @@
           if (item) unifBdg = `<span style="font-size:0.68rem;font-weight:700;background:rgba(5,150,105,0.1);color:var(--green);border:1px solid rgba(5,150,105,0.2);padding:2px 8px;border-radius:20px;white-space:nowrap;">👕 ${escapeHtml(item.nome||item.cor||'Uniforme')}${item.tamanho && item.tamanho!=='Único'?' '+item.tamanho:''}</span>`;
         }
         // Badge de tamanho do participante (campo do cadastro global)
-        const tamBdg = (!unifBdg && m.tamanho) ? `<span style="font-size:0.65rem;font-weight:700;background:rgba(3,87,213,0.10);color:var(--accent);border:1px solid rgba(3,87,213,0.2);padding:2px 8px;border-radius:20px;white-space:nowrap;">👕 ${escapeHtml(m.tamanho)}</span>` : '';
-        return `<div style="display:flex;align-items:center;gap:12px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.02);transition:0.15s;" onmouseover="this.style.borderColor='var(--muted)'" onmouseout="this.style.borderColor='var(--border)'">
-          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:0.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(3,87,213,0.2);">${initials}</div>
-          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;">
-            <div style="font-weight:800;font-size:0.88rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(m.nome)}</div>
-            <div style="display:flex;gap:4px;flex-wrap:wrap;">${funcBdg}${unifBdg}${tamBdg}</div>
+        const tamBdg = (!unifBdg && m.tamanho) ? `<span style="font-size:0.7rem;font-weight:700;background:rgba(3,87,213,0.10);color:var(--accent);padding:2px 8px;border-radius:20px;white-space:nowrap;">👕 ${escapeHtml(m.tamanho)}</span>` : '';
+        return `<div style="display:flex;align-items:center;gap:16px;padding:8px 12px;border-radius:8px;transition:0.1s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+          <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0;">
+              <div style="font-weight:800;font-size:0.95rem;color:var(--text);white-space:nowrap;">${escapeHtml(m.nome)}</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">${funcBdg}${unifBdg}${tamBdg}</div>
+            </div>
           </div>
         </div>`;
       }).join('');
-      document.getElementById('view-participantes').innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(210px, 1fr));gap:8px;">${mapEquipe}</div>`;
+      document.getElementById('view-participantes').innerHTML = `<div style="display:flex;flex-direction:column;gap:2px;">${mapEquipe}</div>`;
       const countEl = document.getElementById('view-participantes-count');
       if (countEl) {
         let txt = `${ev.equipe.length} pessoa${ev.equipe.length !== 1 ? 's' : ''}`;
@@ -3334,17 +3336,17 @@
       document.getElementById('block-clientes').style.display = 'block';
       const mapClientes = ev.clientes.map((m, i) => {
         const initials = (m.nome || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
-        const empBdg = m.empresa ? `<span style="font-size:0.7rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="building" style="width:10px;height:10px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
-        const cttBdg = m.contato ? `<span style="font-size:0.7rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="phone" style="width:10px;height:10px;"></i> ${escapeHtml(m.contato)}</span>` : '';
-        return `<div style="display:flex;align-items:center;gap:12px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.02);transition:0.15s;" onmouseover="this.style.borderColor='var(--muted)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)';" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='0 1px 3px rgba(0,0,0,0.02)';">
-          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--green),#10b981);color:#fff;font-size:0.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(16,185,129,0.2);">${initials}</div>
-          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;">
-            <div style="font-weight:800;font-size:0.88rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(m.nome)}</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">${empBdg}${cttBdg}</div>
+        const empBdg = m.empresa ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="building" style="width:14px;height:14px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
+        const cttBdg = m.contato ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="phone" style="width:14px;height:14px;"></i> ${escapeHtml(m.contato)}</span>` : '';
+        return `<div style="display:flex;align-items:center;gap:16px;padding:8px 12px;border-radius:8px;transition:0.1s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--green),#10b981);color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+          <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+            <div style="font-weight:800;font-size:0.95rem;color:var(--text);white-space:nowrap;">${escapeHtml(m.nome)}</div>
+            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-left:auto;">${empBdg}${cttBdg}</div>
           </div>
         </div>`;
       }).join('');
-      document.getElementById('view-clientes').innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(210px, 1fr));gap:8px;">${mapClientes}</div>`;
+      document.getElementById('view-clientes').innerHTML = `<div style="display:flex;flex-direction:column;gap:2px;">${mapClientes}</div>`;
       const countEl = document.getElementById('view-clientes-count');
       if (countEl) {
         let txt = `${ev.clientes.length} convidado${ev.clientes.length !== 1 ? 's' : ''}`;
@@ -3361,17 +3363,17 @@
       document.getElementById('block-vips').style.display = 'block';
       const mapVips = ev.vips.map((m, i) => {
         const initials = (m.nome || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
-        const empBdg = m.empresa ? `<span style="font-size:0.7rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="building" style="width:10px;height:10px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
-        const cttBdg = m.contato ? `<span style="font-size:0.7rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="phone" style="width:10px;height:10px;"></i> ${escapeHtml(m.contato)}</span>` : '';
-        return `<div style="display:flex;align-items:center;gap:12px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.02);transition:0.15s;" onmouseover="this.style.borderColor='var(--muted)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)';" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='0 1px 3px rgba(0,0,0,0.02)';">
-          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),#8b5cf6);color:#fff;font-size:0.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(139,92,246,0.2);">${initials}</div>
-          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;">
-            <div style="font-weight:800;font-size:0.88rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(m.nome)}</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">${empBdg}${cttBdg}</div>
+        const empBdg = m.empresa ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="building" style="width:14px;height:14px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
+        const cttBdg = m.contato ? `<span style="font-size:0.8rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--muted);"><i data-lucide="phone" style="width:14px;height:14px;"></i> ${escapeHtml(m.contato)}</span>` : '';
+        return `<div style="display:flex;align-items:center;gap:16px;padding:8px 12px;border-radius:8px;transition:0.1s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--purple),#8b5cf6);color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+          <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+            <div style="font-weight:800;font-size:0.95rem;color:var(--text);white-space:nowrap;">${escapeHtml(m.nome)}</div>
+            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-left:auto;">${empBdg}${cttBdg}</div>
           </div>
         </div>`;
       }).join('');
-      document.getElementById('view-vips').innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(210px, 1fr));gap:8px;">${mapVips}</div>`;
+      document.getElementById('view-vips').innerHTML = `<div style="display:flex;flex-direction:column;gap:2px;">${mapVips}</div>`;
       const countEl = document.getElementById('view-vips-count');
       if (countEl) {
         let txt = `${ev.vips.length} convidado${ev.vips.length !== 1 ? 's' : ''}`;
