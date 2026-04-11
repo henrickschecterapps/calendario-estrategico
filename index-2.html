@@ -1620,39 +1620,145 @@
   <div class="modal" id="modal-container">
     
     <div id="mode-view">
-      <div class="modal-header-view" id="view-header">
-        <div class="modal-actions-top">
+      <div class="modal-header-view" id="view-header" style="background: linear-gradient(145deg, var(--surface) 0%, var(--surface2) 100%); border-bottom: none; padding: 48px 40px 36px; position:relative; overflow:hidden;">
+        <!-- Elementos decorativos (blobs) -->
+        <div style="position:absolute; top:-50px; right:-50px; width:200px; height:200px; background:var(--accent); filter:blur(100px); opacity:0.15; border-radius:50%; pointer-events:none;"></div>
+        <div style="position:absolute; bottom:-50px; left:-50px; width:150px; height:150px; background:var(--green); filter:blur(80px); opacity:0.1; border-radius:50%; pointer-events:none;"></div>
+        
+        <div class="modal-actions-top" style="z-index: 10;">
           <div id="view-temporal-badge-header"></div>
-          <button class="btn-icon" id="btn-export-pdf-modal" title="Exportar para PDF"><i data-lucide="file-output"></i> PDF</button>
-          <button class="btn-icon show-on-admin" id="btn-switch-edit"><i data-lucide="edit"></i> Editar</button>
-          <button class="btn-icon" id="modal-close-view"><i data-lucide="x"></i></button>
+          <button class="btn-icon" id="btn-export-pdf-modal" title="Exportar para PDF" style="background:var(--surface);box-shadow:var(--shadow-sm); font-weight:700;"><i data-lucide="file-output"></i> PDF</button>
+          <button class="btn-icon show-on-admin" id="btn-switch-edit" style="background:var(--surface);box-shadow:var(--shadow-sm); font-weight:700;"><i data-lucide="edit"></i> Editar</button>
+          <button class="btn-icon" id="modal-close-view" style="color:var(--muted);border:none;background:var(--surface2);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;transition:0.2s;" onmouseover="this.style.background='var(--red)';this.style.color='#fff'"><i data-lucide="x"></i></button>
         </div>
-        <div id="view-badges" style="margin-bottom: 16px; display:flex; gap:8px; flex-wrap:wrap;"></div>
-        <h2 class="modal-title" id="view-title">Nome do Evento</h2>
-        <div style="display:flex; flex-direction:column; gap:8px;">
-           <div style="font-size:0.95rem; font-weight:600; display:flex; align-items:center; gap:8px;" id="view-date"><i data-lucide="calendar" style="width:16px;height:16px;color:var(--muted)"></i> Data</div>
-           <div style="font-size:0.9rem; display:flex; align-items:center; gap:8px;"><i data-lucide="user" style="width:16px;height:16px;color:var(--muted)"></i> <span style="font-weight:600; color:var(--muted);">Organizadores:</span> <span id="view-resp-list"></span></div>
+        
+        <div id="view-badges" style="margin-bottom: 24px; display:flex; gap:8px; flex-wrap:wrap; z-index:10; position:relative;"></div>
+        
+        <h2 class="modal-title" id="view-title" style="font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; color: var(--text); z-index:10; position:relative; letter-spacing: -0.04em;">Nome do Evento</h2>
+        
+        <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:center; z-index:10; position:relative;">
+           <div style="display:flex; align-items:center; gap:8px; background:var(--bg); padding:10px 16px; border-radius:12px; border:1px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,0.02); font-weight:700; color:var(--text); font-size:0.95rem;" id="view-date"><i data-lucide="calendar" style="width:16px;height:16px;color:var(--accent)"></i> <span>Data</span></div>
+           <div style="display:flex; align-items:center; gap:8px; background:var(--bg); padding:10px 16px; border-radius:12px; border:1px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,0.02); font-size:0.95rem;"><i data-lucide="user" style="width:16px;height:16px;color:var(--muted)"></i> <span style="font-weight:600; color:var(--muted);">Organizadores:</span> <span id="view-resp-list" style="font-weight:700; color:var(--text);"></span></div>
         </div>
       </div>
-      <div class="modal-body">
-        <div class="bento-grid">
-          <div class="bento-item"><div class="bento-header"><i data-lucide="briefcase"></i> Operação</div><div class="bento-value"><span id="view-status">-</span><br><span style="font-size: 0.8rem; color:var(--muted);">Formato:</span> <span id="view-formato">-</span></div></div>
-          <div class="bento-item" id="block-cota"><div class="bento-header"><i data-lucide="award"></i> Comercial</div><div class="bento-value"><span id="view-cota">-</span><br><div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;font-size:0.82rem;"><span style="color:var(--accent);font-weight:700;">👷 Staff: <span id="view-vagas-staff">—</span></span><span style="color:var(--green);font-weight:700;">👥 Cliente: <span id="view-vagas-cliente">—</span></span><span style="color:var(--purple);font-weight:700;">⭐ VIP: <span id="view-vagas-vip">—</span></span></div></div></div>
-          <div class="bento-item full" id="block-participantes" style="background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2);"><div class="bento-header" style="color: var(--green);"><i data-lucide="users"></i> Participantes (Equipe Tripla) <span id="view-participantes-count" style="margin-left:auto;font-size:0.7rem;background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3);padding:2px 8px;border-radius:20px;font-weight:800;"></span></div><div class="bento-value" id="view-participantes" style="font-size: 0.9rem;">-</div></div>
-          <div class="bento-item full" id="block-clientes" style="display:none; background: rgba(5,150,105,0.05); border-color: rgba(5,150,105,0.2);"><div class="bento-header" style="color: var(--green);"><i data-lucide="users"></i> Clientes Convidados <span id="view-clientes-count" style="margin-left:auto;font-size:0.7rem;background:rgba(5,150,105,0.15);color:var(--green);border:1px solid rgba(5,150,105,0.3);padding:2px 8px;border-radius:20px;font-weight:800;"></span></div><div class="bento-value" id="view-clientes" style="font-size: 0.9rem;">-</div></div>
-          <div class="bento-item full" id="block-vips" style="display:none; background: rgba(124,58,237,0.05); border-color: rgba(124,58,237,0.2);"><div class="bento-header" style="color: var(--purple);"><i data-lucide="star"></i> Convidados VIP <span id="view-vips-count" style="margin-left:auto;font-size:0.7rem;background:rgba(124,58,237,0.15);color:var(--purple);border:1px solid rgba(124,58,237,0.3);padding:2px 8px;border-radius:20px;font-weight:800;"></span></div><div class="bento-value" id="view-vips" style="font-size: 0.9rem;">-</div></div>
-          <div class="bento-item full" id="block-publico"><div class="bento-header"><i data-lucide="users"></i> Público Alvo</div><div class="bento-value" id="view-publico">-</div></div>
-          <div class="bento-item full" id="block-beneficios"><div class="bento-header"><i data-lucide="sparkles"></i> Benefícios / Entregas</div><div class="bento-value" id="view-beneficios" style="white-space: pre-wrap;">-</div></div>
-          <div class="bento-item full" id="block-obs" style="background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2);"><div class="bento-header" style="color: var(--amber);"><i data-lucide="alert-triangle"></i> Observações</div><div class="bento-value" id="view-obs" style="white-space: pre-wrap;">-</div></div>
-          <div class="bento-item full" id="block-localidade"><div class="bento-header"><i data-lucide="map-pin"></i> Localização</div><div class="bento-value" id="view-localidade">-</div></div>
-          <div class="bento-item full" id="block-links"><div class="bento-header"><i data-lucide="link"></i> Links</div><div class="bento-value" id="view-links">-</div></div>
-          <div class="bento-item" id="block-hora"><div class="bento-header"><i data-lucide="clock"></i> Horário</div><div class="bento-value" id="view-hora">-</div></div>
-          <div class="bento-item full" id="block-financeiro" style="display:none; background: rgba(0,0,0,0.02); border-color: var(--border);">
-            <div class="bento-header" style="color:var(--text);"><i data-lucide="coins"></i> Financeiro Consolidado</div>
-            <div class="bento-value" style="display:flex; flex-direction:column; gap:4px; font-size:0.95rem;">
-               <div style="display:flex; justify-content:space-between; color:var(--text);"><span>Brindes (Total):</span><span id="view-fin-brindes" style="font-weight:600">—</span></div>
-               <div style="display:flex; justify-content:space-between; color:var(--text);"><span>Uniformes (Total):</span><span id="view-fin-unif" style="font-weight:600">—</span></div>
-               <div style="display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px solid var(--border); color:var(--text);"><strong>Custo Operacional Estimado:</strong><strong id="view-fin-total" style="font-size:1.1rem;">—</strong></div>
+
+      <div class="modal-body" style="padding: 0; background: var(--bg);">
+        
+        <!-- HIGH-LEVEL METRICS / OPERATIONAL SUMMARY -->
+        <div style="display:flex; flex-wrap:wrap; gap:0; background: var(--surface); border-bottom: 1px solid var(--border);">
+          <div style="flex:1; min-width:240px; border-right: 1px solid var(--border); padding: 24px 40px; display:flex; flex-direction:column; justify-content:center;">
+             <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:12px; display:flex; align-items:center; gap:6px;"><i data-lucide="briefcase"></i> Operacional</div>
+             <div style="font-size:1.15rem; font-weight:800; color:var(--text); margin-bottom:6px;" id="view-status">-</div>
+             <div style="font-size:0.9rem; color:var(--muted);"><span style="font-weight:600;">Formato:</span> <span id="view-formato">-</span></div>
+          </div>
+          
+          <div style="flex:2; min-width:350px; padding: 24px 40px;" id="block-cota">
+             <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:12px; display:flex; align-items:center; gap:6px;"><i data-lucide="award"></i> Estrutura Comercial & Vagas Globais</div>
+             <div style="margin-bottom:12px;" id="view-cota">-</div>
+             <div style="display:flex; gap:16px; flex-wrap:wrap; background:var(--surface2); padding:12px 20px; border-radius:12px; border:1px solid var(--border);">
+               <div style="display:flex;align-items:center;gap:8px;font-size:0.9rem;"><span style="display:flex;align-items:center;justify-content:center;width:26px;height:26px;background:rgba(3,87,213,0.1);color:var(--accent);border-radius:6px;"><i data-lucide="hard-hat" style="width:13px;height:13px;"></i></span><span style="font-weight:700;color:var(--text);">Staff: <span id="view-vagas-staff">—</span></span></div>
+               <div style="display:flex;align-items:center;gap:8px;font-size:0.9rem;"><span style="display:flex;align-items:center;justify-content:center;width:26px;height:26px;background:rgba(16,185,129,0.1);color:var(--green);border-radius:6px;"><i data-lucide="users" style="width:13px;height:13px;"></i></span><span style="font-weight:700;color:var(--text);">Cliente: <span id="view-vagas-cliente">—</span></span></div>
+               <div style="display:flex;align-items:center;gap:8px;font-size:0.9rem;"><span style="display:flex;align-items:center;justify-content:center;width:26px;height:26px;background:rgba(139,92,246,0.1);color:var(--purple);border-radius:6px;"><i data-lucide="star" style="width:13px;height:13px;"></i></span><span style="font-weight:700;color:var(--text);">VIP: <span id="view-vagas-vip">—</span></span></div>
+             </div>
+          </div>
+        </div>
+
+        <!-- MAIN CONTENT AREA -->
+        <div style="padding: 40px; display:flex; flex-direction:column; gap:40px;">
+          
+          <!-- PARTICIPANTS SECTION -->
+          <div id="wrapper-participantes" style="display:flex; flex-direction:column; gap:28px;">
+            <!-- EQUIPE -->
+            <div id="block-participantes">
+              <div style="display:flex; flex-direction:column; gap:16px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid var(--border);">
+                  <div style="font-size:1.15rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px;"><span style="width:34px;height:34px;background:rgba(3,87,213,0.1);color:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;"><i data-lucide="users" style="width:16px;height:16px;"></i></span> Equipe Tripla (Staff)</div>
+                  <div id="view-participantes-count" style="font-size:0.75rem; font-weight:800; background:var(--surface); border:1px solid var(--border); padding:6px 14px; border-radius:20px; color:var(--text); box-shadow:var(--shadow-sm);"></div>
+                </div>
+                <div id="view-participantes">-</div>
+              </div>
+            </div>
+
+            <!-- CLIENTES -->
+            <div id="block-clientes" style="display:none;">
+              <div style="display:flex; flex-direction:column; gap:16px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid var(--border);">
+                  <div style="font-size:1.15rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px;"><span style="width:34px;height:34px;background:rgba(16,185,129,0.1);color:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;"><i data-lucide="users" style="width:16px;height:16px;"></i></span> Clientes Convidados</div>
+                  <div id="view-clientes-count" style="font-size:0.75rem; font-weight:800; background:var(--surface); border:1px solid var(--border); padding:6px 14px; border-radius:20px; color:var(--text); box-shadow:var(--shadow-sm);"></div>
+                </div>
+                <div id="view-clientes">-</div>
+              </div>
+            </div>
+
+            <!-- VIPS -->
+            <div id="block-vips" style="display:none;">
+              <div style="display:flex; flex-direction:column; gap:16px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid var(--border);">
+                  <div style="font-size:1.15rem; font-family:var(--font-heading); font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px;"><span style="width:34px;height:34px;background:rgba(139,92,246,0.1);color:var(--purple);border-radius:8px;display:flex;align-items:center;justify-content:center;"><i data-lucide="star" style="width:16px;height:16px;"></i></span> Convidados VIP</div>
+                  <div id="view-vips-count" style="font-size:0.75rem; font-weight:800; background:var(--surface); border:1px solid var(--border); padding:6px 14px; border-radius:20px; color:var(--text); box-shadow:var(--shadow-sm);"></div>
+                </div>
+                <div id="view-vips">-</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DETAILS GRID -->
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:32px; padding:32px; background:var(--surface); border-radius:16px; border:1px solid var(--border); box-shadow:0 4px 20px rgba(0,0,0,0.02);">
+            <div id="block-publico">
+               <div style="display:flex; flex-direction:column; gap:10px;">
+                 <div style="font-size:0.8rem; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:8px;"><span style="color:var(--accent);"><i data-lucide="target" style="width:16px;height:16px;"></i></span> Público Alvo</div>
+                 <div id="view-publico" style="font-size:0.95rem; color:var(--text); font-weight:600;">-</div>
+               </div>
+            </div>
+            
+            <div id="block-localidade">
+               <div style="display:flex; flex-direction:column; gap:10px;">
+                 <div style="font-size:0.8rem; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:8px;"><span style="color:var(--amber);"><i data-lucide="map-pin" style="width:16px;height:16px;"></i></span> Localização</div>
+                 <div id="view-localidade" style="font-size:0.95rem; color:var(--text); font-weight:600;">-</div>
+               </div>
+            </div>
+
+            <div id="block-hora">
+               <div style="display:flex; flex-direction:column; gap:10px;">
+                 <div style="font-size:0.8rem; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:8px;"><span style="color:var(--green);"><i data-lucide="clock" style="width:16px;height:16px;"></i></span> Horário</div>
+                 <div id="view-hora" style="font-size:0.95rem; color:var(--text); font-weight:600;">-</div>
+               </div>
+            </div>
+            
+            <div id="block-links">
+               <div style="display:flex; flex-direction:column; gap:10px;">
+                 <div style="font-size:0.8rem; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:8px;"><span style="color:var(--purple);"><i data-lucide="link" style="width:16px;height:16px;"></i></span> Links Úteis</div>
+                 <div id="view-links" style="font-size:0.95rem; color:var(--text); font-weight:600;">-</div>
+               </div>
+            </div>
+          </div>
+
+          <!-- SPECIAL TEXT BLOCKS -->
+          <div style="display:flex; flex-direction:column; gap:24px;">
+            <div id="block-beneficios">
+               <div style="display:flex; flex-direction:column; gap:12px; background:linear-gradient(135deg, rgba(3,87,213,0.03), transparent); border:1px solid rgba(3,87,213,0.1); padding:24px; border-radius:16px;">
+                 <div style="font-size:0.85rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:8px;"><i data-lucide="sparkles" style="width:16px;height:16px;"></i> Benefícios / Entregas Relacionadas</div>
+                 <div id="view-beneficios" style="font-size:0.95rem; color:var(--text); white-space:pre-wrap; line-height:1.6;">-</div>
+               </div>
+            </div>
+
+            <div id="block-obs">
+               <div style="display:flex; flex-direction:column; gap:12px; background:linear-gradient(135deg, rgba(245,158,11,0.05), transparent); border:1px solid rgba(245,158,11,0.2); padding:24px; border-radius:16px;">
+                 <div style="font-size:0.85rem; font-weight:800; color:var(--amber); text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:8px;"><i data-lucide="alert-triangle" style="width:16px;height:16px;"></i> Observações Internas da Operação</div>
+                 <div id="view-obs" style="font-size:0.95rem; color:var(--text); white-space:pre-wrap; line-height:1.6;">-</div>
+               </div>
+            </div>
+          </div>
+
+          <!-- FINANCEIRO -->
+          <div id="block-financeiro" style="display:none;">
+            <div style="display:flex; flex-direction:column; gap:16px; background:var(--surface); border:1px solid var(--border); padding:32px; border-radius:16px; box-shadow:0 8px 30px rgba(0,0,0,0.04);">
+               <div style="font-size:0.95rem; font-family:var(--font-heading); font-weight:800; color:var(--text); text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:12px;"><span style="width:36px;height:36px;background:rgba(16,185,129,0.1);color:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;"><i data-lucide="coins" style="width:18px;height:18px;"></i></span> Financeiro Consolidado (Estimativa)</div>
+               <div style="display:flex; flex-direction:column; gap:12px; font-size:1rem;">
+                  <div style="display:flex; justify-content:space-between; color:var(--muted); font-weight:600;"><span>Brindes do Evento:</span><span id="view-fin-brindes" style="color:var(--text); font-weight:700; font-family:var(--font-mono);">—</span></div>
+                  <div style="display:flex; justify-content:space-between; color:var(--muted); font-weight:600;"><span>Uniformes Solicitados:</span><span id="view-fin-unif" style="color:var(--text); font-weight:700; font-family:var(--font-mono);">—</span></div>
+                  <div style="display:flex; justify-content:space-between; margin-top:12px; padding-top:16px; border-top:2px dashed var(--border); color:var(--text); font-size:1.25rem; font-weight:800;"><span>Total Operacional:</span><span id="view-fin-total" style="color:var(--green); font-family:var(--font-mono);">—</span></div>
+               </div>
             </div>
           </div>
         </div>
