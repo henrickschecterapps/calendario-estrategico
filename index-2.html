@@ -1621,13 +1621,6 @@
     
     <div id="mode-view">
       <div class="modal-header-view" id="view-header" style="background: var(--bg); border-bottom: 1px solid var(--border); padding: 24px 32px 20px; position:relative;">
-        <div class="modal-actions-top" style="z-index: 10;">
-          <div id="view-temporal-badge-header"></div>
-          <button class="btn-icon" id="btn-export-pdf-modal" title="Exportar para PDF" style="background:transparent; border:1px solid var(--border); font-weight:600; color:var(--text); font-size:0.8rem; height:32px;"><i data-lucide="file-output" style="width:14px;height:14px;"></i> PDF</button>
-          <button class="btn-icon show-on-admin" id="btn-switch-edit" style="background:transparent; border:1px solid var(--border); font-weight:600; color:var(--text); font-size:0.8rem; height:32px;"><i data-lucide="edit" style="width:14px;height:14px;"></i> Editar</button>
-          <button class="btn-icon" id="modal-close-view" style="color:var(--text); background:transparent; border:1px solid transparent; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; transition:0.2s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
-        </div>
-        
         <div id="view-badges" style="margin-bottom: 16px; display:flex; gap:8px; flex-wrap:wrap; z-index:10; position:relative;"></div>
         
         <h2 class="modal-title" id="view-title" style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; line-height: 1.1; margin-bottom: 16px; color: var(--text); z-index:10; position:relative; letter-spacing: -0.02em; text-wrap: balance;">Nome do Evento</h2>
@@ -1635,6 +1628,14 @@
         <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:center; z-index:10; position:relative; font-size:0.85rem; font-weight:500; color:var(--muted); letter-spacing:-0.01em;">
            <div style="display:flex; align-items:center; gap:6px;" id="view-date"><i data-lucide="calendar" style="width:14px;height:14px;"></i> <span>Data</span></div>
            <div style="display:flex; align-items:center; gap:6px;"><i data-lucide="user" style="width:14px;height:14px;"></i> <span>Responsáveis:</span> <span id="view-resp-list" style="font-weight:700; color:var(--text);"></span></div>
+        </div>
+
+        <!-- ACTIONS OVERLAY: Placed last in DOM to guarantee it paints over relative elements, preventing click swallowing -->
+        <div class="modal-actions-top" style="z-index: 999; position: absolute; top: 24px; right: 32px; display: flex; gap: 8px; pointer-events: auto;">
+          <div id="view-temporal-badge-header"></div>
+          <button class="btn-icon" id="btn-export-pdf-modal" title="Exportar para PDF" style="background:transparent; border:1px solid var(--border); font-weight:600; color:var(--text); font-size:0.8rem; height:32px; cursor:pointer;"><i data-lucide="file-output" style="width:14px;height:14px;"></i> PDF</button>
+          <button class="btn-icon show-on-admin" id="btn-switch-edit" style="background:transparent; border:1px solid var(--border); font-weight:600; color:var(--text); font-size:0.8rem; height:32px; cursor:pointer;"><i data-lucide="edit" style="width:14px;height:14px;"></i> Editar</button>
+          <button class="btn-icon" id="modal-close-view" style="color:var(--text); background:transparent; border:1px solid transparent; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; transition:0.2s; cursor:pointer;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
         </div>
       </div>
 
