@@ -1328,8 +1328,7 @@
                         <button class="btn-primary" id="btn-save-estoque" style="white-space:nowrap; height:42px;"><i data-lucide="check" style="width:14px;height:14px;"></i> Registrar</button>
                       </div>
                     </div>
-                  </div>
-                </div>
+
 
                 <!-- ── BRINDES (ALOCAÇÃO) ── -->
                 <div class="gestao-pane hide" id="gpane-brindes">
@@ -1347,6 +1346,8 @@
                     <select id="filtro-brinde-evento" onchange="renderBrindes()">
                       <option value="">Todos os Eventos</option>
                     </select>
+                    <div style="flex:1"></div>
+                    <button class="btn-primary" onclick="window.openGestaoDrawer('brinde')" style="white-space:nowrap;display:flex;align-items:center;gap:6px;"><i data-lucide="plus" style="width:15px;height:15px;"></i> Novo Brinde</button>
                   </div>
 
                   <div id="brindes-kanban" class="kanban-board"></div>
@@ -1432,6 +1433,8 @@
                     <select id="filtro-unif-evento" onchange="renderUniformes()">
                       <option value="">Todos os Eventos</option>
                     </select>
+                    <div style="flex:1"></div>
+                    <button class="btn-primary" onclick="window.openGestaoDrawer('uniforme')" style="white-space:nowrap;display:flex;align-items:center;gap:6px;"><i data-lucide="plus" style="width:15px;height:15px;"></i> Registrar Uniforme</button>
                   </div>
 
                   <div id="unif-kanban" class="kanban-board"></div>
@@ -1505,8 +1508,10 @@
                 <!-- ── FORNECEDORES ── -->
                 <div class="gestao-pane hide" id="gpane-fornecedores">
                   <div class="filter-bar-gestao">
-                    <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
-                    <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()">
+                    <i data-lucide="search" style="width:14px;height:14px;color:var(--muted);"></i>
+                    <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()" style="flex:1;min-width:100px;">
+                    <div style="flex:1"></div>
+                    <button class="btn-primary" onclick="window.openGestaoDrawer('fornecedor')" style="white-space:nowrap;display:flex;align-items:center;gap:6px;"><i data-lucide="plus" style="width:15px;height:15px;"></i> Novo Fornecedor</button>
                   </div>
 
                   <div class="gestao-table-wrap" id="forn-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
@@ -1544,13 +1549,13 @@
                 <!-- ── PASSAGEM E HOSPEDAGEM ── -->
                 <div class="gestao-pane hide" id="gpane-passagens">
                   <div class="filter-bar-gestao">
-                    <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
-                    <input type="text" id="filtro-pass-busca" placeholder="Nome ou evento..." oninput="window.renderViagens()" class="admin-input" style="width:240px; margin:0;">
-                    <select id="filtro-pass-evento" onchange="window.renderViagens()" class="admin-input" style="width:200px; margin:0; padding:6px 10px; height:auto;">
+                    <i data-lucide="search" style="width:14px;height:14px;color:var(--muted);"></i>
+                    <input type="text" id="filtro-pass-busca" placeholder="Nome ou evento..." oninput="window.renderViagens()" style="flex:1;min-width:100px;">
+                    <select id="filtro-pass-evento" onchange="window.renderViagens()" style="width:200px; margin:0; padding:6px 10px; height:auto;">
                       <option value="">Todos os Eventos</option>
                     </select>
                     <div style="flex:1"></div>
-                    <button class="btn-primary" onclick="window.toggleViagemForm(true)" id="btn-nova-viagem"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> Lançar Custos</button>
+                    <button class="btn-primary" onclick="window.toggleViagemForm(true)" id="btn-nova-viagem" style="white-space:nowrap;display:flex;align-items:center;gap:6px;"><i data-lucide="plus" style="width:15px;height:15px;"></i> Lançar Custos</button>
                   </div>
 
                   <div class="gestao-table-wrap" id="pass-table-wrap">
@@ -1610,10 +1615,10 @@
                 <!-- ── CADASTRO DE PARTICIPANTES ── -->
                 <div class="gestao-pane hide" id="gpane-participantes">
                   <div class="filter-bar-gestao">
-                    <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
-                    <input type="text" id="filtro-part-busca" placeholder="Nome ou telefone..." oninput="window.renderParticipantes()" class="admin-input" style="width:280px; margin:0;">
+                    <i data-lucide="search" style="width:14px;height:14px;color:var(--muted);"></i>
+                    <input type="text" id="filtro-part-busca" placeholder="Nome ou telefone..." oninput="window.renderParticipantes()" style="flex:1;min-width:100px;">
                     <div style="flex:1"></div>
-                    <button class="btn-primary" onclick="window.togglePartForm(true)" id="btn-novo-participante"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> Novo Participante</button>
+                    <button class="btn-primary" onclick="window.openGestaoDrawer('participante')" id="btn-novo-participante" style="white-space:nowrap;display:flex;align-items:center;gap:6px;"><i data-lucide="plus" style="width:15px;height:15px;"></i> Novo Participante</button>
                   </div>
                   <div class="gestao-table-wrap" id="part-table-wrap">
                     <table class="gestao-table">
@@ -5148,26 +5153,8 @@
   };
 
   window.togglePartForm = function(show) {
-    const form = document.getElementById('part-add-form');
-    const btnNovo = document.getElementById('btn-novo-participante');
-    if(!form) return;
-    if(show) {
-      form.style.display = 'flex';
-      if(btnNovo) btnNovo.style.display = 'none';
-      // Limpar se for novo registro
-      if(!document.getElementById('part-id').value) {
-        ['part-nome','part-email','part-tel','part-funcao'].forEach(fid => document.getElementById(fid).value = '');
-        document.getElementById('part-tamanho').value = 'M';
-        document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
-      }
-      setTimeout(() => { const el = document.getElementById('part-nome'); if(el) el.focus(); }, 100);
-    } else {
-      form.style.display = 'none';
-      if(btnNovo) btnNovo.style.display = '';
-      document.getElementById('part-id').value = '';
-      ['part-nome','part-email','part-tel','part-funcao'].forEach(fid => document.getElementById(fid).value = '');
-      document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
-    }
+    if(show) window.openGestaoDrawer('participante');
+    else window.closeGestaoDrawer();
   };
 
   window.deletePart = async (id) => {
@@ -5202,7 +5189,7 @@
         showToast('Participante cadastrado!', 'success');
       }
       await loadParticipantes();
-      window.togglePartForm(false);
+      window.closeGestaoDrawer();
     } catch(e) { showToast('Erro ao salvar.', 'error'); console.error(e); }
     finally { btn.textContent = '+ Salvar Participante'; btn.disabled = false; }
   };
@@ -5479,48 +5466,11 @@
     document.getElementById('brinde-status').value = 'Cotação';
     document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-brinde').style.display = 'none';
+    if(typeof window.closeGestaoDrawer === 'function') window.closeGestaoDrawer();
   };
 
-  document.getElementById('btn-save-brinde').onclick = async () => {
-    const id = document.getElementById('brinde-id').value;
-    const titulo = document.getElementById('brinde-titulo').value.trim();
-    if (!titulo) { showToast('Informe o nome do brinde.', 'warning'); return; }
-    const btn = document.getElementById('btn-save-brinde');
-    btn.textContent = 'Salvando...'; btn.disabled = true;
-    const qtd = parseInt(document.getElementById('brinde-qtd').value) || 0;
-    const vlr = parseFloat(document.getElementById('brinde-vlr').value) || 0;
-    const statusVal = document.getElementById('brinde-status').value;
-
-    const payload = {
-        titulo,
-        nivel:         document.getElementById('brinde-nivel').value,
-        status:        statusVal,
-        qtd,
-        vlr_unit:      vlr,
-        fornecedor_id: document.getElementById('brinde-fornecedor').value || '',
-        evento_id:     document.getElementById('brinde-evento').value || '',
-        descricao:     document.getElementById('brinde-desc')?.value?.trim() || ''
-    };
-    const existingUrl = document.getElementById('brinde-anexo-url')?.value;
-    if (existingUrl) payload.anexo_url = existingUrl;
-    
-    try {
-      if (id) {
-        await db.collection("brindes").doc(id).update(payload);
-        showToast('Brinde atualizado!', 'success');
-        window.lastSavedId = id;
-      } else {
-        payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
-        const docRef = await db.collection("brindes").add(payload);
-        showToast('Brinde adicionado! 🎁', 'success');
-        window.lastSavedId = docRef.id;
-      }
-      document.getElementById('btn-cancel-brinde').click();
-      await loadBrindes();
-      setTimeout(() => window.lastSavedId = null, 3000);
-    } catch(e) { showToast('Erro ao salvar brinde.', 'error'); }
-    finally { btn.textContent = id ? 'Salvar Alterações' : '+ Adicionar'; btn.disabled = false; }
-  };
+  // Redireciona para a função centralizada com sincronização de estoque
+  document.getElementById('btn-save-brinde').onclick = () => window.saveBrinde();
 
   window.deleteBrinde = async (id) => {
     const ok = await showConfirm('Excluir brinde?', 'Remover este brinde permanentemente?');
@@ -5720,8 +5670,7 @@
     if (document.getElementById('unif-anexo-url')) document.getElementById('unif-anexo-url').value = u.anexo_url || '';
     document.getElementById('btn-save-unif').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-unif').style.display = 'inline-block';
-    window.setUnifView('table');
-    setTimeout(() => document.getElementById('unif-add-form')?.scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
+    window.openGestaoDrawer('uniforme');
   };
 
   document.getElementById('btn-cancel-unif').onclick = () => {
@@ -5732,49 +5681,11 @@
     document.getElementById('unif-status').value = 'Pedido';
     document.getElementById('btn-save-unif').textContent = '+ Adicionar';
     document.getElementById('btn-cancel-unif').style.display = 'none';
+    if(typeof window.closeGestaoDrawer === 'function') window.closeGestaoDrawer();
   };
 
-  document.getElementById('btn-save-unif').onclick = async () => {
-    const id = document.getElementById('unif-id').value;
-    const cor = document.getElementById('unif-cor').value.trim();
-    if (!cor) { showToast('Informe a descrição do uniforme.', 'warning'); return; }
-    const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
-    if (!qtd) { showToast('Informe a quantidade.', 'warning'); return; }
-    const btn = document.getElementById('btn-save-unif');
-    btn.textContent = 'Salvando...'; btn.disabled = true;
-    const vlr = parseFloat(document.getElementById('unif-vlr').value) || 0;
-    
-    const payload = {
-        qtd,
-        tamanho:       document.getElementById('unif-tamanho').value,
-        cor,
-        vlr_unit:      vlr,
-        data_pedido:   document.getElementById('unif-data')?.value || '',
-        status:        document.getElementById('unif-status').value,
-        fornecedor_id: document.getElementById('unif-fornecedor').value || '',
-        evento_id:     document.getElementById('unif-evento').value || '',
-        obs:           document.getElementById('unif-obs')?.value?.trim() || ''
-    };
-    const existingUrl = document.getElementById('unif-anexo-url')?.value;
-    if (existingUrl) payload.anexo_url = existingUrl;
-
-    try {
-      if (id) {
-        await db.collection("uniformes").doc(id).update(payload);
-        showToast('Uniforme atualizado!', 'success');
-        window.lastSavedId = id;
-      } else {
-        payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
-        const docRef = await db.collection("uniformes").add(payload);
-        showToast('Uniforme cadastrado! 👕', 'success');
-        window.lastSavedId = docRef.id;
-      }
-      document.getElementById('btn-cancel-unif').click();
-      await loadUniformes();
-      setTimeout(() => window.lastSavedId = null, 3000);
-    } catch(e) { showToast('Erro ao salvar uniforme.', 'error'); }
-    finally { btn.textContent = id ? 'Salvar Alterações' : '+ Adicionar'; btn.disabled = false; }
-  };
+  // Redireciona para a função centralizada com sincronização de estoque
+  document.getElementById('btn-save-unif').onclick = () => window.saveUniforme();
 
   window.deleteUnif = async (id) => {
     const ok = await showConfirm('Excluir uniforme?', 'Remover este registro de uniforme permanentemente?');
@@ -6223,44 +6134,15 @@
   };
 
   // ── INIT DRAWER GESTÃO OPERACIONAL ──
+  // Move os formulários para o drawer (apenas isso, sem injetar botões)
   setTimeout(() => {
-    const drawerForms = ['estoque-add-form', 'brinde-add-form', 'unif-add-form', 'forn-add-form'];
+    const drawerForms = ['estoque-add-form', 'brinde-add-form', 'unif-add-form', 'forn-add-form', 'part-add-form'];
     const drawerBody = document.getElementById('gestao-drawer-body');
     if(drawerBody) {
       drawerForms.forEach(id => {
         const el = document.getElementById(id);
         if(el) { el.style.display = 'none'; drawerBody.appendChild(el); }
       });
-      const wrappers = {
-        'estoque-table-wrap': { type: 'estoque', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Add Almoxarifado' },
-        'brindes-table-wrap': { type: 'brinde', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo pedido de brinde' },
-        'unif-table-wrap': { type: 'uniforme', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Registrar Uniforme' },
-        'forn-table-wrap': { type: 'fornecedor', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Fornecedor' }
-      };
-      const kanbanButtons = {
-        'brindes-kanban': { type: 'brinde', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo pedido de brinde' },
-        'unif-kanban': { type: 'uniforme', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Registrar Uniforme' }
-      };
-      for(const [id, cfg] of Object.entries(kanbanButtons)) {
-        const wrap = document.getElementById(id);
-        if(wrap && !document.getElementById(`${id}-btn-bar`)) {
-          const div = document.createElement('div');
-          div.style = "padding:16px; background:var(--surface); border-top:1px solid var(--border); display:flex; justify-content:flex-end;";
-          div.id = `${id}-btn-bar`;
-          div.innerHTML = `<button class="btn-primary" onclick="window.openGestaoDrawer('${cfg.type}')" style="display:flex;align-items:center;gap:6px;">${cfg.label}</button>`;
-          wrap.parentNode.insertBefore(div, wrap.nextSibling);
-        }
-      }
-      for(const [id, cfg] of Object.entries(wrappers)) {
-        const wrap = document.getElementById(id);
-        if(wrap && !document.getElementById(`${id}-btn-bar-tbl`)) {
-            const div = document.createElement('div');
-            div.id = `${id}-btn-bar-tbl`;
-            div.style = "padding:16px; background:var(--surface); border-top:1px solid var(--border); display:flex; justify-content:flex-end;";
-            div.innerHTML = `<button class="btn-primary" onclick="window.openGestaoDrawer('${cfg.type}')" style="display:flex;align-items:center;gap:6px;">${cfg.label}</button>`;
-            wrap.parentNode.insertBefore(div, wrap.nextSibling);
-        }
-      }
     }
   }, 100);
 
@@ -6337,9 +6219,20 @@
   };
 
   window.closeGestaoDrawer = function(e) {
-     if(e && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
+     // Guard: só bloqueia se veio de um evento E o target não é o overlay nem o btn-X do header
+     if(e && e.target && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
      document.getElementById('gestao-drawer-overlay').classList.remove('open');
-     ['estoque-id', 'brinde-id', 'unif-id', 'forn-id', 'part-id'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+     // Esconder todos os forms e limpar IDs
+     ['estoque-add-form','brinde-add-form','unif-add-form','forn-add-form','part-add-form'].forEach(id => {
+       const el = document.getElementById(id); if(el) el.style.display = 'none';
+     });
+     ['estoque-id','brinde-id','unif-id','forn-id','part-id'].forEach(id => {
+       const el = document.getElementById(id); if(el) el.value = '';
+     });
+     // Esconder botões Cancelar
+     ['btn-cancel-brinde','btn-cancel-unif','btn-cancel-estoque','btn-cancel-forn'].forEach(id => {
+       const el = document.getElementById(id); if(el) el.style.display = 'none';
+     });
      // Reset button text
      if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
      if(document.getElementById('btn-save-brinde')) document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
@@ -6362,25 +6255,13 @@
      window.openGestaoDrawer('estoque');
   };
 
+  // novoRegistro: abre o drawer limpo para criar novo item
   window.novoRegistro = function(type) {
-    if (type === 'brinde') {
-      window.setBrindeView('table');
-      const btn = document.getElementById('btn-cancel-brinde');
-      if (btn) btn.click(); // reset form
-      setTimeout(() => {
-        document.getElementById('brinde-add-form')?.scrollIntoView({behavior:'smooth', block:'nearest'});
-      }, 150);
-    } else if (type === 'uniforme') {
-      window.setUnifView('table');
-      const btn = document.getElementById('btn-cancel-unif');
-      if (btn) btn.click(); // reset form
-      setTimeout(() => {
-        document.getElementById('unif-add-form')?.scrollIntoView({behavior:'smooth', block:'nearest'});
-      }, 150);
-    } else {
-      // fornecedor: open drawer as before
-      window.openGestaoDrawer(type);
-    }
+    // Limpar o ID do item para garantir que é criação, não edição
+    const idMap = { 'brinde': 'brinde-id', 'uniforme': 'unif-id', 'fornecedor': 'forn-id' };
+    const idEl = document.getElementById(idMap[type]);
+    if (idEl) idEl.value = '';
+    window.openGestaoDrawer(type);
   };
 
   // KANBAN DRAG E DROP API
@@ -6472,7 +6353,7 @@
     }
   };
 
-  // CRUD GESTÃO OPERACIONAL (UNIFORMES)
+  // editUnif: preenche o form e abre o drawer
   window.editUnif = function(id) {
     const u = UNIFORMES.find(x => x.id === id);
     if(!u) return;
@@ -6488,11 +6369,8 @@
     if (document.getElementById('unif-obs')) document.getElementById('unif-obs').value = u.obs || '';
     if (document.getElementById('unif-anexo-url')) document.getElementById('unif-anexo-url').value = u.anexo_url || '';
     document.getElementById('btn-save-unif').textContent = 'Salvar Alterações';
-    window.setUnifView('table');
-    setTimeout(() => {
-      document.getElementById('btn-cancel-unif').style.display = 'inline-block';
-      document.getElementById('unif-add-form')?.scrollIntoView({behavior:'smooth', block:'nearest'});
-    }, 100);
+    document.getElementById('btn-cancel-unif').style.display = 'inline-block';
+    window.openGestaoDrawer('uniforme');
   };
 
   window.saveUniforme = async function() {
@@ -6576,7 +6454,8 @@
           }
       }
 
-      document.getElementById('btn-cancel-unif')?.click();
+      // Fecha drawer após salvar com sucesso
+      if(typeof window.closeGestaoDrawer === 'function') window.closeGestaoDrawer();
       await loadUniformes();
     } catch(err) { 
         console.error(err);
@@ -6596,6 +6475,7 @@
   };
 
   // CRUD BRINDES
+  // editBrinde: preenche o form e abre o drawer
   window.editBrinde = function(id) {
     const b = BRINDES.find(x => x.id === id);
     if(!b) return;
@@ -6610,11 +6490,8 @@
     if (document.getElementById('brinde-desc')) document.getElementById('brinde-desc').value = b.descricao || '';
     if (document.getElementById('brinde-anexo-url')) document.getElementById('brinde-anexo-url').value = b.anexo_url || '';
     document.getElementById('btn-save-brinde').textContent = 'Salvar Alterações';
-    window.setBrindeView('table');
-    setTimeout(() => {
-      document.getElementById('btn-cancel-brinde').style.display = 'inline-block';
-      document.getElementById('brinde-add-form')?.scrollIntoView({behavior:'smooth', block:'nearest'});
-    }, 100);
+    document.getElementById('btn-cancel-brinde').style.display = 'inline-block';
+    window.openGestaoDrawer('brinde');
   };
 
   window.saveBrinde = async function() {
@@ -6694,7 +6571,8 @@
           }
       }
 
-      document.getElementById('btn-cancel-brinde')?.click();
+      // Fecha drawer após salvar com sucesso
+      if(typeof window.closeGestaoDrawer === 'function') window.closeGestaoDrawer();
       await loadBrindes();
     } catch(err) { 
         console.error(err);
