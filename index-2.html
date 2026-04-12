@@ -4694,6 +4694,7 @@
       const cur = sel.value;
       sel.innerHTML = selId.startsWith('filtro') ? '<option value="">Todos os Eventos</option>' : '<option value="">— Selecionar Evento —</option>';
       EVENTS.filter(e => e.tipo !== 'Feriado').sort((a,b) => (parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0))).forEach(e => {
+        const opt = document.createElement('option');
         opt.value = e.id; opt.textContent = `${e.evento} (${e.mes_ref||''})`;
         sel.appendChild(opt);
       });
@@ -4744,7 +4745,7 @@
     const tipo = document.getElementById('filtro-estoque-tipo')?.value || '';
     const evento = document.getElementById('filtro-estoque-evento')?.value || '';
     let list = ESTOQUE;
-    if (busca) list = list.filter(e => (e.nome||'').toLowerCase().includes(busca) || (e.cor||'').toLowerCase().includes(busca));
+    if (busca) list = list.filter(e => String(e.nome||'').toLowerCase().includes(busca) || String(e.cor||'').toLowerCase().includes(busca) || String(e.obs||'').toLowerCase().includes(busca));
     if (tipo) list = list.filter(e => e.tipo === tipo);
     if (evento) list = list.filter(e => e.evento_id === evento);
 
@@ -4819,8 +4820,9 @@
             <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', 1)" title="+1" style="padding:2px;border:1px solid var(--border);border-radius:4px;"><i data-lucide="plus" style="width:12px;height:12px;"></i></button>
           </td>
           <td style="font-size:0.75rem;color:var(--muted);">${fornNome(e.fornecedor_id)}</td>
-          <td style="text-align:right;">
-            <button class="tbl-action edit" onclick="event.stopPropagation(); window.editEstoque('${e.id}')"><i data-lucide="edit-2"></i></button>
+          <td style="text-align:right; white-space:nowrap;">
+            <button class="tbl-action edit" onclick="event.stopPropagation(); window.editEstoque('${e.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
+            <button class="tbl-action del" onclick="event.stopPropagation(); window.deleteEstoque('${e.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
           </td>
         </tr>`;
       }).join('');
@@ -4862,6 +4864,7 @@
     document.getElementById('estoque-id').value = id;
     document.getElementById('estoque-tipo').value = e.tipo || 'brinde';
     window.toggleEstoqueFields();
+    document.getElementById('estoque-nome').value = e.nome || '';
     document.getElementById('estoque-cor').value = e.cor || '';
     document.getElementById('estoque-qtd').value = e.qtd_inicial || '';
     if(document.getElementById('estoque-min')) document.getElementById('estoque-min').value = e.estoque_minimo || 0;
@@ -5390,7 +5393,7 @@
     const evento= document.getElementById('filtro-brinde-evento')?.value || '';
     
     let list = BRINDES;
-    if (busca) list = list.filter(b => (b.titulo||'').toLowerCase().includes(busca) || (b.descricao||'').toLowerCase().includes(busca));
+    if (busca) list = list.filter(b => String(b.titulo||'').toLowerCase().includes(busca) || String(b.descricao||'').toLowerCase().includes(busca));
     if (nivel) list = list.filter(b => b.nivel === nivel);
     if (evento) list = list.filter(b => b.evento_id === evento);
 
@@ -5472,7 +5475,21 @@
   window.deleteBrinde = async (id) => {
     const ok = await showConfirm('Excluir brinde?', 'Remover este brinde permanentemente?');
     if (!ok) return;
-    try { await db.collection("brindes").doc(id).delete(); showToast('Brinde excluído.', 'warning'); await loadBrindes(); } catch(e) { showToast('Erro ao excluir.', 'error'); }
+    try {
+      const doc = await db.collection("brindes").doc(id).get();
+      if(doc.exists) {
+        const item = doc.data();
+        const finishStatus = ['Recebido', 'Entregue', 'Concluído'];
+        if (finishStatus.includes(item.status) && item.estoque_id) {
+          const delta = -(parseInt(item.qtd) || 0);
+          await db.collection("estoque").doc(item.estoque_id).update({ qtd_inicial: firebase.firestore.FieldValue.increment(delta) });
+        }
+      }
+      await db.collection("brindes").doc(id).delete();
+      showToast('Brinde excluído.', 'warning');
+      await loadBrindes();
+      await loadEstoque();
+    } catch(e) { console.error(e); showToast('Erro ao excluir.', 'error'); }
   };
 
   // ════════════ UNIFORMES ════════════
@@ -5587,7 +5604,16 @@
   function renderUniformes() {
     const tbody = document.getElementById('unif-body');
     if (!tbody) return;
+
+    const busca  = (document.getElementById('filtro-unif-busca')?.value || '').toLowerCase();
+    const status = document.getElementById('filtro-unif-status')?.value || '';
+    const evento = document.getElementById('filtro-unif-evento')?.value || '';
     
+    let list = UNIFORMES;
+    if (busca)  list = list.filter(u => String(u.cor||'').toLowerCase().includes(busca) || String(u.obs||'').toLowerCase().includes(busca));
+    if (status) list = list.filter(u => u.status === status);
+    if (evento) list = list.filter(u => u.evento_id === evento);
+
     if (!window.currentUnifView || window.currentUnifView === 'kanban') {
       renderUniformesKanban(list);
     } else {
@@ -5661,11 +5687,6 @@
   // Redireciona para a função centralizada com sincronização de estoque
   document.getElementById('btn-save-unif').onclick = () => window.saveUniforme();
 
-  window.deleteUnif = async (id) => {
-    const ok = await showConfirm('Excluir uniforme?', 'Remover este registro de uniforme permanentemente?');
-    if (!ok) return;
-    try { await db.collection("uniformes").doc(id).delete(); showToast('Uniforme excluído.', 'warning'); await loadUniformes(); } catch(e) { showToast('Erro ao excluir.', 'error'); }
-  };
 
   // ── Cálculo automático de valor total ao digitar ──
   function bindValorTotal(qtdId, vlrId, displayId) {
