@@ -3653,7 +3653,20 @@
     if (typeof lucide !== 'undefined') lucide.createIcons();
   };
 
-  window.delEquipeMember = function(idx) {
+  window.delEquipeMember = async function(idx) {
+    const member = window.currentEquipe[idx];
+    if (member && member.estoque_id) {
+        try {
+            await db.collection("estoque").doc(member.estoque_id).update({
+                qtd_inicial: firebase.firestore.FieldValue.increment(1)
+            });
+            const item = ESTOQUE.find(e => e.id === member.estoque_id);
+            if (item) item.qtd_inicial = (parseInt(item.qtd_inicial)||0) + 1;
+            if (window.renderEstoque) window.renderEstoque();
+        } catch(err) {
+            console.error('Erro ao devolver estoque:', err);
+        }
+    }
     window.currentEquipe.splice(idx, 1);
     window.renderEquipeBuilder();
   };
@@ -3791,7 +3804,7 @@
     if (viEl) viEl.textContent = mkStr(s3, vip);
   };
 
-  document.getElementById('btn-add-equipe').onclick = (e) => {
+  document.getElementById('btn-add-equipe').onclick = async (e) => {
     e.preventDefault();
     const nomeSelect = document.getElementById('equipe-nome');
     const funcInp = document.getElementById('equipe-funcao');
@@ -3805,7 +3818,28 @@
     const partData = PARTICIPANTES_LIST.find(x => x.id === partId);
     const tamanho = (partData && partData.tamanho) ? partData.tamanho : '';
     
-    let mobj = { nome, funcao: funcInp.value.trim() || (selectedOpt.dataset.funcao || ''), camisa_id: '', estoque_id: '', part_id: partId, origem: 'global', tamanho };
+    let estoqueId = '';
+    // Lógica de subtração automática do estoque (Part 3)
+    if (tamanho && typeof ESTOQUE !== 'undefined') {
+        const itemEstoque = ESTOQUE.find(i => i.tipo === 'uniforme' && i.tamanho === tamanho && (parseInt(i.qtd_inicial)||0) > 0);
+        if (itemEstoque) {
+            estoqueId = itemEstoque.id;
+            try {
+                await db.collection("estoque").doc(estoqueId).update({
+                    qtd_inicial: firebase.firestore.FieldValue.increment(-1)
+                });
+                itemEstoque.qtd_inicial = (parseInt(itemEstoque.qtd_inicial)||0) - 1;
+                showToast(`Uniforme tam. ${tamanho} reservado no estoque.`, 'success');
+                if (window.renderEstoque) window.renderEstoque();
+            } catch(err) {
+                console.error('Erro ao abater estoque:', err);
+            }
+        } else {
+            showToast(`Atenção: Não há uniformes tam. ${tamanho} no estoque.`, 'warning');
+        }
+    }
+
+    let mobj = { nome, funcao: funcInp.value.trim() || (selectedOpt.dataset.funcao || ''), camisa_id: '', estoque_id: estoqueId, part_id: partId, origem: 'global', tamanho };
     
     window.currentEquipe.push(mobj);
     nomeSelect.value = '';
@@ -5532,23 +5566,49 @@
     const scMapping = { 'Pedido': 'var(--amber)', 'Em Produção': 'var(--purple)', 'Entregue': 'var(--green)', 'Cancelado': 'var(--red)' };
     
     kBoard.innerHTML = colunas.map(col => {
-      const items = list.filter(u => (u.status || 'Pedido') === col);
+      const colItems = list.filter(u => (u.status || 'Pedido') === col);
       const sc = scMapping[col] || 'var(--muted)';
-      const cardsHtml = items.length > 0 ? items.map(u => {
-        const tamPill = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.65rem;padding:2px 5px;background:var(--accent);color:#fff;border-radius:4px;margin-right:4px;">${u.tamanho}</span>` : '';
-        const vlrStr = u.vlr_unit > 0 ? fmtBRL(parseFloat(u.vlr_unit)) : '';
-        return `
-          <div class="kanban-card" draggable="true" ondragstart="window.dragStart(event, '${u.id}', 'uniforme')" onclick="window.editUnif('${u.id}')">
-            <div class="kanban-card-title">
-              <span>${tamPill}${escapeHtml(u.cor||'Uniforme')}</span>
+      
+      // Agrupar por evento_id
+      const grouped = {};
+      colItems.forEach(u => {
+        const evId = u.evento_id || 'sem_evento';
+        if (!grouped[evId]) grouped[evId] = [];
+        grouped[evId].push(u);
+      });
+
+      const cardsHtml = Object.keys(grouped).length > 0 ? Object.entries(grouped).map(([evId, items]) => {
+        if (evId === 'sem_evento') {
+          return items.map(u => {
+            const tamPill = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.65rem;padding:2px 5px;background:var(--accent);color:#fff;border-radius:4px;margin-right:4px;">${u.tamanho}</span>` : '';
+            return `
+              <div class="kanban-card" draggable="true" ondragstart="window.dragStart(event, '${u.id}', 'uniforme')" onclick="window.editUnif('${u.id}')">
+                <div class="kanban-card-title"><span>${tamPill}${escapeHtml(u.cor||'Uniforme')}</span></div>
+                <div class="kanban-card-desc">${escapeHtml(fornNome(u.fornecedor_id)||'—')}</div>
+                <div class="kanban-card-meta"><span class="kanban-card-badge">${u.qtd||0} un.</span></div>
+              </div>`;
+          }).join('');
+        } else {
+          // Card agrupado por evento
+          const evNome = eventoNome(evId);
+          const totalQtd = items.reduce((s, i) => s + (parseInt(i.qtd)||0), 0);
+          const details = items.map(i => `${i.qtd}x ${i.cor||'Item'} (${i.tamanho||'Padrão'})`).join('<br>');
+          
+          return `
+            <div class="kanban-card is-grouped" style="border-left: 4px solid var(--accent);" onclick="window.currentUnifFiltroEvento='${evId}'; document.getElementById('filtro-unif-evento').value='${evId}'; renderUniformes();">
+              <div class="kanban-card-title" style="color:var(--accent); font-weight:800;">
+                <i data-lucide="layers" style="width:14px;height:14px;margin-right:4px;"></i> ${escapeHtml(evNome)}
+              </div>
+              <div class="kanban-card-desc" style="font-size:0.75rem; margin-top:4px; line-height:1.4;">
+                ${details}
+              </div>
+              <div class="kanban-card-meta">
+                 <span class="kanban-card-badge" style="background:var(--accent); color:#fff;">Total: ${totalQtd} un.</span>
+                 <span style="font-size:0.65rem; color:var(--muted); font-weight:700;">${items.length} tipo${items.length!==1?'s':''}</span>
+              </div>
             </div>
-            <div class="kanban-card-desc">${escapeHtml(fornNome(u.fornecedor_id)||'—')}</div>
-            <div class="kanban-card-meta">
-               <span class="kanban-card-badge">${u.qtd||0} un.${vlrStr ? ' · ' + vlrStr : ''}</span>
-               ${u.evento_id ? `<span class="kanban-card-badge" style="color:var(--accent);">${escapeHtml(eventoNome(u.evento_id))}</span>` : ''}
-            </div>
-          </div>
-        `;
+          `;
+        }
       }).join('') : `<div class="kanban-empty-col"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg><span>Arraste cards aqui</span></div>`;
       
       return `
@@ -5558,7 +5618,7 @@
                <span style="width:8px;height:8px;border-radius:50%;background:${sc};"></span>
                ${col}
             </div>
-            <span class="kanban-column-count">${items.length}</span>
+            <span class="kanban-column-count">${colItems.length}</span>
           </div>
           <div class="kanban-column-body" id="col-unif-${col.replace(' ','-')}">
             ${cardsHtml}
@@ -5566,6 +5626,7 @@
         </div>
       `;
     }).join('');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
   }
 
   function renderUniformes() {
@@ -6355,11 +6416,63 @@
     
     const collectionName = type === 'uniforme' ? 'uniformes' : 'brindes';
     try {
-      await db.collection(collectionName).doc(draggingCardId).update({ status: newStatus });
+      // 1. Get old data to check status change
+      const docRef = db.collection(collectionName).doc(draggingCardId);
+      const docSnap = await docRef.get();
+      if (!docSnap.exists) return;
+      const data = docSnap.data();
+      const oldStatus = data.status || (type === 'uniforme' ? 'Pedido' : 'Cotação');
+      
+      // 2. Update status
+      await docRef.update({ status: newStatus });
+      
+      // 3. Stock Integration (Part 1)
+      if (type === 'uniforme' && oldStatus !== newStatus) {
+        // If becoming 'Entregue', add to stock. If leaving 'Entregue', subtract from stock.
+        const delta = (newStatus === 'Entregue') ? (parseInt(data.qtd)||0) : (oldStatus === 'Entregue' ? -(parseInt(data.qtd)||0) : 0);
+        
+        if (delta !== 0) {
+          let estId = data.estoque_id;
+          // Se não tiver estoque_id, tenta encontrar pelo nome/tamanho
+          if (!estId) {
+            const nomeProc = data.cor ? `Camisa ${data.cor}` : 'Uniforme';
+            const tamProc = data.tamanho || 'Único';
+            const found = ESTOQUE.find(e => e.tipo === 'uniforme' && e.nome === nomeProc && e.tamanho === tamProc);
+            if (found) {
+                estId = found.id;
+                await docRef.update({ estoque_id: estId });
+            } else {
+                // Criar novo item no almoxarifado se for uma nova remessa sem registro
+                const newEstDoc = await db.collection("estoque").add({
+                    tipo: 'uniforme',
+                    nome: nomeProc,
+                    tamanho: tamProc,
+                    cor: data.cor || '',
+                    qtd_inicial: 0,
+                    vlr_unit: parseFloat(data.vlr_unit) || 0,
+                    fornecedor_id: data.fornecedor_id || '',
+                    criado_em: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                estId = newEstDoc.id;
+                await docRef.update({ estoque_id: estId });
+                await loadEstoque();
+            }
+          }
+          
+          if (estId) {
+            await db.collection("estoque").doc(estId).update({
+              qtd_inicial: firebase.firestore.FieldValue.increment(delta)
+            });
+            await loadEstoque();
+          }
+        }
+      }
+      
       showToast('Status atualizado! ✅', 'success');
       if (type === 'uniforme') await loadUniformes();
       else if (type === 'brinde') await loadBrindes();
     } catch(err) {
+      console.error(err);
       showToast('Erro ao atualizar status.', 'error');
     }
   };
@@ -6391,32 +6504,86 @@
     const id = document.getElementById('unif-id').value;
     const cor = document.getElementById('unif-cor').value.trim();
     const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
+    const newStatus = document.getElementById('unif-status').value;
+    
     if(!cor) { showToast('Informe a descrição do uniforme!','warning'); return; }
     const btn = document.getElementById('btn-save-unif');
     if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
+    
     try {
+      let oldStatus = '';
+      let oldQtd = 0;
+      let estId = '';
+      
+      if(id) {
+        const doc = await db.collection("uniformes").doc(id).get();
+        if(doc.exists) {
+            oldStatus = doc.data().status || 'Pedido';
+            oldQtd = parseInt(doc.data().qtd) || 0;
+            estId = doc.data().estoque_id;
+        }
+      }
+
       const payload = {
         qtd, cor,
         tamanho: document.getElementById('unif-tamanho').value,
         vlr_unit: parseFloat(document.getElementById('unif-vlr').value) || 0,
         data_pedido: document.getElementById('unif-data')?.value || '',
-        status: document.getElementById('unif-status').value,
+        status: newStatus,
         fornecedor_id: document.getElementById('unif-fornecedor').value || '',
         evento_id: document.getElementById('unif-evento').value,
         obs: document.getElementById('unif-obs')?.value || '',
         anexo_url: document.getElementById('unif-anexo-url')?.value || ''
       };
+
       if(id) { 
         await db.collection("uniformes").doc(id).update(payload); 
         showToast('Uniforme salvo!','success'); 
       } else {
         payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
-        await db.collection("uniformes").add(payload);
+        const docRef = await db.collection("uniformes").add(payload);
+        id = docRef.id;
         showToast('Uniforme adicionado!','success');
       }
+
+      // Stock Sync (Part 1)
+      if (oldStatus !== newStatus || (newStatus === 'Entregue' && oldQtd !== qtd)) {
+          // If becoming 'Entregue', add new qty. If it was 'Entregue' and changed qty, adjust.
+          let delta = 0;
+          if (newStatus === 'Entregue' && oldStatus !== 'Entregue') delta = qtd;
+          else if (newStatus !== 'Entregue' && oldStatus === 'Entregue') delta = -oldQtd;
+          else if (newStatus === 'Entregue' && oldStatus === 'Entregue') delta = (qtd - oldQtd);
+          
+          if (delta !== 0) {
+              if (!estId) {
+                  const nomeProc = cor ? `Camisa ${cor}` : 'Uniforme';
+                  const tamProc = payload.tamanho || 'Único';
+                  const found = ESTOQUE.find(e => e.tipo === 'uniforme' && e.nome === nomeProc && e.tamanho === tamProc);
+                  if (found) {
+                      estId = found.id;
+                      await db.collection("uniformes").doc(id).update({ estoque_id: estId });
+                  } else {
+                      const newEstDoc = await db.collection("estoque").add({
+                          tipo: 'uniforme', nome: nomeProc, tamanho: tamProc, cor: cor||'',
+                          qtd_inicial: 0, vlr_unit: payload.vlr_unit, fornecedor_id: payload.fornecedor_id, criado_em: firebase.firestore.FieldValue.serverTimestamp()
+                      });
+                      estId = newEstDoc.id;
+                      await db.collection("uniformes").doc(id).update({ estoque_id: estId });
+                  }
+              }
+              if (estId) {
+                  await db.collection("estoque").doc(estId).update({ qtd_inicial: firebase.firestore.FieldValue.increment(delta) });
+                  await loadEstoque();
+              }
+          }
+      }
+
       document.getElementById('btn-cancel-unif')?.click();
       await loadUniformes();
-    } catch(err) { showToast('Erro ao salvar.', 'error'); }
+    } catch(err) { 
+        console.error(err);
+        showToast('Erro ao salvar.', 'error'); 
+    }
     finally { if(btn) { btn.textContent = id ? 'Salvar Alterações' : '+ Adicionar'; btn.disabled = false; } }
   };
 
