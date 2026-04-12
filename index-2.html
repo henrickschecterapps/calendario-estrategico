@@ -5817,7 +5817,7 @@
 
   // Ações Inline de Brinde do Evento
   window.addBrindeAoEvento = async function() {
-    const evId = window.currentEditId;
+    const evId = document.getElementById('edit-id')?.value;
     if (!evId || evId.startsWith('mock_')) return showToast('Salve (ou crie) o evento primeiro no botão salvar antes de alocar recursos físicos.', 'warning');
     
     const estId = document.getElementById('quick-brinde-sel').value;
@@ -5866,7 +5866,7 @@
   };
 
   window.removeBrindeDoEvento = async function(brindeId, estId, qtd) {
-     const evId = window.currentEditId;
+     const evId = document.getElementById('edit-id')?.value;
      if (!await showConfirm('Devolver ao Almoxarifado?', `Retirar brinde do evento e devolver fisicamente ${qtd} unidades ao painel de estoque?`)) return;
      try {
          await db.collection("brindes").doc(brindeId).delete();
