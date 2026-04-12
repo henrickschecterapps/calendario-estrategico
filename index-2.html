@@ -5396,51 +5396,48 @@
 
     const statusCores = { 'Cotação':'var(--muted)', 'Aprovado':'var(--teal)', 'Pedido':'var(--amber)', 'Recebido':'var(--green)' };
 
-    // Default: kanban
     if (!window.currentBrindeView || window.currentBrindeView === 'kanban') {
       renderBrindesKanban(list, statusCores);
-      return;
-    }
+    } else {
+      if (!list.length) {
+        const hasFiltros = busca || nivel || evento;
+        tbody.innerHTML = `<tr><td colspan="8">
+          <div class="empty-state" style="border:none;margin:8px 0;">
+            <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            <p class="empty-state-title">${hasFiltros ? 'Nenhum brinde encontrado' : 'Sem brindes cadastrados'}</p>
+            <p class="empty-state-desc">${hasFiltros ? 'Tente ajustar os filtros de busca para encontrar o que procura.' : 'Adicione o primeiro brinde para começar a acompanhar pedidos de compra.'}</p>
+            ${!hasFiltros ? `<button class="empty-state-action" onclick="window.openGestaoDrawer('brinde')">+ Novo Brinde</button>` : ''}
+          </div>
+        </td></tr>`;
+      } else {
+        tbody.innerHTML = list.map(b => {
+          const qtd  = parseInt(b.qtd) || 0;
+          const vlr  = parseFloat(b.vlr_unit) || 0;
+          const total = qtd * vlr;
+          const totalPill = total > 0
+            ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
+            : `<span class="valor-total-pill zero">—</span>`;
+          const isNew = window.lastSavedId === b.id ? 'flash-green' : '';
+          const sc = statusCores[b.status] || 'var(--muted)';
+          const statusHtml = `<span style="font-size:0.7rem;font-weight:700;border:1px solid ${sc};color:${sc};padding:2px 6px;border-radius:12px;white-space:nowrap;">${b.status||'Cotação'}</span>`;
 
-    if (!list.length) {
-      const hasFiltros = busca || nivel || evento;
-      tbody.innerHTML = `<tr><td colspan="8">
-        <div class="empty-state" style="border:none;margin:8px 0;">
-          <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-          <p class="empty-state-title">${hasFiltros ? 'Nenhum brinde encontrado' : 'Sem brindes cadastrados'}</p>
-          <p class="empty-state-desc">${hasFiltros ? 'Tente ajustar os filtros de busca para encontrar o que procura.' : 'Adicione o primeiro brinde para começar a acompanhar pedidos de compra.'}</p>
-          ${!hasFiltros ? `<button class="empty-state-action" onclick="window.openGestaoDrawer('brinde')">+ Novo Brinde</button>` : ''}
-        </div>
-      </td></tr>`;
-      return;
+          return `<tr class="${isNew}">
+            <td><strong>${highlight(b.titulo||'', busca)}</strong></td>
+            <td>${nivelBadge(b.nivel)}</td>
+            <td>${statusHtml}</td>
+            <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
+            <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
+            <td>${totalPill}</td>
+            <td style="font-size:0.78rem">${fornNome(b.fornecedor_id)}</td>
+            <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${b.evento_id ? escapeHtml(eventoNome(b.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
+            <td style="text-align:right;white-space:nowrap;">
+              <button class="tbl-action edit" onclick="window.editBrinde('${b.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
+              <button class="tbl-action del" onclick="window.deleteBrinde('${b.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
+            </td>
+          </tr>`;
+        }).join('');
+      }
     }
-    
-    tbody.innerHTML = list.map(b => {
-      const qtd  = parseInt(b.qtd) || 0;
-      const vlr  = parseFloat(b.vlr_unit) || 0;
-      const total = qtd * vlr;
-      const totalPill = total > 0
-        ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
-        : `<span class="valor-total-pill zero">—</span>`;
-      const isNew = window.lastSavedId === b.id ? 'flash-green' : '';
-      const sc = statusCores[b.status] || 'var(--muted)';
-      const statusHtml = `<span style="font-size:0.7rem;font-weight:700;border:1px solid ${sc};color:${sc};padding:2px 6px;border-radius:12px;white-space:nowrap;">${b.status||'Cotação'}</span>`;
-
-      return `<tr class="${isNew}">
-        <td><strong>${highlight(b.titulo||'', busca)}</strong></td>
-        <td>${nivelBadge(b.nivel)}</td>
-        <td>${statusHtml}</td>
-        <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
-        <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
-        <td>${totalPill}</td>
-        <td style="font-size:0.78rem">${fornNome(b.fornecedor_id)}</td>
-        <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${b.evento_id ? escapeHtml(eventoNome(b.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
-        <td style="text-align:right;white-space:nowrap;">
-          <button class="tbl-action edit" onclick="window.editBrinde('${b.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
-          <button class="tbl-action del" onclick="window.deleteBrinde('${b.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
-        </td>
-      </tr>`;
-    }).join('');
     if (typeof lucide !== 'undefined') lucide.createIcons();
   }
 
@@ -5544,17 +5541,23 @@
           // Card agrupado por evento
           const evNome = eventoNome(evId);
           const totalQtd = items.reduce((s, i) => s + (parseInt(i.qtd)||0), 0);
-          const details = items.map(i => `${i.qtd}x ${i.cor||'Item'} (${i.tamanho||'Padrão'})`).join('<br>');
+          const detailsHtml = items.map(i => `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+              <span>${i.qtd}x ${i.cor||'Item'} (${i.tamanho||'Padrão'})</span>
+              <button class="btn-icon" onclick="event.stopPropagation(); window.editUnif('${i.id}')" style="padding:4px; height:auto; width:auto; background:rgba(255,255,255,0.05); border-radius:4px;">
+                <i data-lucide="edit-3" style="width:12px;height:12px;"></i>
+              </button>
+            </div>`).join('');
           
           return `
-            <div class="kanban-card is-grouped" style="border-left: 4px solid var(--accent);" onclick="window.currentUnifFiltroEvento='${evId}'; document.getElementById('filtro-unif-evento').value='${evId}'; renderUniformes();">
-              <div class="kanban-card-title" style="color:var(--accent); font-weight:800;">
-                <i data-lucide="layers" style="width:14px;height:14px;margin-right:4px;"></i> ${escapeHtml(evNome)}
+            <div class="kanban-card is-grouped" draggable="true" ondragstart="window.dragStart(event, 'group:event:${evId}', 'uniforme')" style="border-left: 4px solid var(--accent); cursor:grab;" onclick="window.currentUnifFiltroEvento='${evId}'; document.getElementById('filtro-unif-evento').value='${evId}'; renderUniformes();">
+              <div class="kanban-card-title" style="color:var(--accent); font-weight:800; display:flex; justify-content:space-between; align-items:center;">
+                <span style="display:flex; align-items:center; gap:4px;"><i data-lucide="layers" style="width:14px;height:14px;"></i> ${escapeHtml(evNome)}</span>
               </div>
-              <div class="kanban-card-desc" style="font-size:0.75rem; margin-top:4px; line-height:1.4;">
-                ${details}
+              <div class="kanban-card-desc" style="font-size:0.75rem; margin-top:8px; line-height:1.4;">
+                ${detailsHtml}
               </div>
-              <div class="kanban-card-meta">
+              <div class="kanban-card-meta" style="margin-top:8px;">
                  <span class="kanban-card-badge" style="background:var(--accent); color:#fff;">Total: ${totalQtd} un.</span>
                  <span style="font-size:0.65rem; color:var(--muted); font-weight:700;">${items.length} tipo${items.length!==1?'s':''}</span>
               </div>
@@ -5585,60 +5588,48 @@
     const tbody = document.getElementById('unif-body');
     if (!tbody) return;
     
-    const busca = (document.getElementById('filtro-unif-busca')?.value || '').toLowerCase();
-    const status = document.getElementById('filtro-unif-status')?.value || '';
-    const evento= document.getElementById('filtro-unif-evento')?.value || '';
-    
-    let list = UNIFORMES;
-    if (busca) list = list.filter(u => (u.cor||'').toLowerCase().includes(busca) || (u.obs||'').toLowerCase().includes(busca));
-    if (status) list = list.filter(u => u.status === status);
-    if (evento) list = list.filter(u => u.evento_id === evento);
-
-    // Default: kanban
     if (!window.currentUnifView || window.currentUnifView === 'kanban') {
       renderUniformesKanban(list);
-      return;
-    }
+    } else {
+      if (!list.length) {
+        const hasFiltros = busca || status || evento;
+        tbody.innerHTML = `<tr><td colspan="9">
+          <div class="empty-state" style="border:none;margin:8px 0;">
+            <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <p class="empty-state-title">${hasFiltros ? 'Nenhum uniforme encontrado' : 'Sem uniformes cadastrados'}</p>
+            <p class="empty-state-desc">${hasFiltros ? 'Tente ajustar os filtros para encontrar o uniforme desejado.' : 'Registre o primeiro pedido de uniforme para começar o controle.'}</p>
+            ${!hasFiltros ? `<button class="empty-state-action" onclick="window.openGestaoDrawer('uniforme')">+ Registrar Uniforme</button>` : ''}
+          </div>
+        </td></tr>`;
+      } else {
+        tbody.innerHTML = list.map(u => {
+          const qtd   = parseInt(u.qtd) || 0;
+          const vlr   = parseFloat(u.vlr_unit) || 0;
+          const total = qtd * vlr;
+          const totalPill = total > 0
+            ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
+            : `<span class="valor-total-pill zero">—</span>`;
+          const isNew = window.lastSavedId === u.id ? 'flash-green' : '';
+          const desc = u.cor || '—';
+          const tam = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;">${u.tamanho}</span>` : '—';
 
-    if (!list.length) {
-      const hasFiltros = busca || status || evento;
-      tbody.innerHTML = `<tr><td colspan="9">
-        <div class="empty-state" style="border:none;margin:8px 0;">
-          <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-          <p class="empty-state-title">${hasFiltros ? 'Nenhum uniforme encontrado' : 'Sem uniformes cadastrados'}</p>
-          <p class="empty-state-desc">${hasFiltros ? 'Tente ajustar os filtros para encontrar o uniforme desejado.' : 'Registre o primeiro pedido de uniforme para começar o controle.'}</p>
-          ${!hasFiltros ? `<button class="empty-state-action" onclick="window.openGestaoDrawer('uniforme')">+ Registrar Uniforme</button>` : ''}
-        </div>
-      </td></tr>`;
-      return;
+          return `<tr class="${isNew}">
+            <td style="font-weight:600">${highlight(desc, busca)}</td>
+            <td>${tam}</td>
+            <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
+            <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
+            <td>${totalPill}</td>
+            <td>${unifStatusBadge(u.status)}</td>
+            <td style="font-size:0.78rem">${fornNome(u.fornecedor_id)}</td>
+            <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${u.evento_id ? escapeHtml(eventoNome(u.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
+            <td style="text-align:right;white-space:nowrap;">
+              <button class="tbl-action edit" onclick="window.editUnif('${u.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
+              <button class="tbl-action del" onclick="window.deleteUnif('${u.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
+            </td>
+          </tr>`;
+        }).join('');
+      }
     }
-    
-    tbody.innerHTML = list.map(u => {
-      const qtd   = parseInt(u.qtd) || 0;
-      const vlr   = parseFloat(u.vlr_unit) || 0;
-      const total = qtd * vlr;
-      const totalPill = total > 0
-        ? `<span class="valor-total-pill">${fmtBRL(total)}</span>`
-        : `<span class="valor-total-pill zero">—</span>`;
-      const isNew = window.lastSavedId === u.id ? 'flash-green' : '';
-      const desc = u.cor || '—';
-      const tam = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.7rem;padding:2px 4px;background:var(--accent);color:#fff;border-radius:4px;">${u.tamanho}</span>` : '—';
-
-      return `<tr class="${isNew}">
-        <td style="font-weight:600">${highlight(desc, busca)}</td>
-        <td>${tam}</td>
-        <td style="font-weight:700">${qtd > 0 ? qtd : '—'}</td>
-        <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
-        <td>${totalPill}</td>
-        <td>${unifStatusBadge(u.status)}</td>
-        <td style="font-size:0.78rem">${fornNome(u.fornecedor_id)}</td>
-        <td style="font-size:0.78rem;color:var(--accent);font-weight:600">${u.evento_id ? escapeHtml(eventoNome(u.evento_id)) : '<span style="color:var(--muted)">—</span>'}</td>
-        <td style="text-align:right;white-space:nowrap;">
-          <button class="tbl-action edit" onclick="window.editUnif('${u.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
-          <button class="tbl-action del" onclick="window.deleteUnif('${u.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
-        </td>
-      </tr>`;
-    }).join('');
     if (typeof lucide !== 'undefined') lucide.createIcons();
   }
 
@@ -5655,23 +5646,6 @@
       <div class="gestao-summary-card"><div class="gestao-summary-label">Entregues</div><div class="gestao-summary-value" style="color:var(--teal)">${entregue}</div></div>`;
   }
 
-  window.editUnif = (id) => {
-    const u = UNIFORMES.find(x => x.id === id); if(!u) return;
-    document.getElementById('unif-id').value = id;
-    document.getElementById('unif-cor').value = u.cor || '';
-    document.getElementById('unif-tamanho').value = u.tamanho || 'Único';
-    document.getElementById('unif-qtd').value = u.qtd || '';
-    document.getElementById('unif-vlr').value = u.vlr_unit || '';
-    document.getElementById('unif-status').value = u.status || 'Pedido';
-    document.getElementById('unif-fornecedor').value = u.fornecedor_id || '';
-    document.getElementById('unif-evento').value = u.evento_id || '';
-    if (document.getElementById('unif-data')) document.getElementById('unif-data').value = u.data_pedido || '';
-    if (document.getElementById('unif-obs')) document.getElementById('unif-obs').value = u.obs || '';
-    if (document.getElementById('unif-anexo-url')) document.getElementById('unif-anexo-url').value = u.anexo_url || '';
-    document.getElementById('btn-save-unif').textContent = 'Salvar Alterações';
-    document.getElementById('btn-cancel-unif').style.display = 'inline-block';
-    window.openGestaoDrawer('uniforme');
-  };
 
   document.getElementById('btn-cancel-unif').onclick = () => {
     document.getElementById('unif-id').value = '';
@@ -6292,61 +6266,67 @@
     document.querySelectorAll('.kanban-column').forEach(c => c.classList.remove('drag-over'));
     if (!draggingCardId || type !== draggingCardType) return;
     
+    const isGroupMove = draggingCardId.startsWith('group:');
     const collectionName = type === 'uniforme' ? 'uniformes' : 'brindes';
+    
     try {
-      // 1. Get old data to check status change
-      const docRef = db.collection(collectionName).doc(draggingCardId);
-      const docSnap = await docRef.get();
-      if (!docSnap.exists) return;
-      const data = docSnap.data();
-      const oldStatus = data.status || (type === 'uniforme' ? 'Pedido' : 'Cotação');
-      
-      // 2. Update status
-      await docRef.update({ status: newStatus });
-      
-      // 3. Stock Integration (Part 1 & 4)
-      if (oldStatus !== newStatus) {
-        // Integração Universal para Brindes e Uniformes
-        const finishStatus = ['Recebido', 'Entregue', 'Concluído'];
-        const totalQtd = parseInt(data.qtd) || 0;
-        
-        if (type === 'uniforme' || type === 'brinde') {
-            const isFinishing = finishStatus.includes(newStatus);
-            const wasFinishing = finishStatus.includes(oldStatus);
-            let delta = 0;
-            if (isFinishing && !wasFinishing) delta = totalQtd;
-            else if (!isFinishing && wasFinishing) delta = -totalQtd;
+      let itemsToUpdate = [];
+      if (isGroupMove) {
+        const [_, filterKey, filterVal] = draggingCardId.split(':');
+        if (filterKey === 'event') {
+          itemsToUpdate = (type === 'uniforme' ? UNIFORMES : BRINDES).filter(i => (i.evento_id || 'sem_evento') === filterVal);
+        }
+      } else {
+        const docRef = db.collection(collectionName).doc(draggingCardId);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) itemsToUpdate = [{ id: docSnap.id, ...docSnap.data() }];
+      }
 
-            if (delta !== 0) {
-              let estId = data.estoque_id;
-              if (!estId) {
-                const searchName = type === 'uniforme' ? (data.cor ? `Camisa ${data.cor}` : 'Uniforme') : (data.titulo || 'Brinde');
-                const searchTam = data.tamanho || 'Único';
-                const found = ESTOQUE.find(e => e.nome === searchName && (type === 'brinde' || e.tamanho === searchTam));
-                if (found) {
-                    estId = found.id;
-                    await docRef.update({ estoque_id: estId });
-                } else {
-                    const newEstDoc = await db.collection("estoque").add({
-                        tipo: type, nome: searchName, tamanho: searchTam, cor: data.cor || '', qtd_inicial: 0, vlr_unit: parseFloat(data.vlr_unit) || 0,
-                        fornecedor_id: data.fornecedor_id || '', criado_em: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    estId = newEstDoc.id;
-                    await docRef.update({ estoque_id: estId });
-                    await loadEstoque();
-                }
-              }
-              if (estId) {
-                await db.collection("estoque").doc(estId).update({ qtd_inicial: firebase.firestore.FieldValue.increment(delta) });
-                await loadEstoque();
-              }
-            }
+      if (itemsToUpdate.length === 0) return;
+      const finishStatus = ['Recebido', 'Entregue', 'Concluído'];
+      const isFinishingStatus = finishStatus.includes(newStatus);
+
+      for (const item of itemsToUpdate) {
+        const oldStatus = item.status || (type === 'uniforme' ? 'Pedido' : 'Cotação');
+        if (oldStatus === newStatus) continue;
+
+        // 1. Update status
+        await db.collection(collectionName).doc(item.id).update({ status: newStatus });
+        
+        // 2. Stock Integration
+        const wasFinishingStatus = finishStatus.includes(oldStatus);
+        let delta = 0;
+        if (isFinishingStatus && !wasFinishingStatus) delta = parseInt(item.qtd) || 0;
+        else if (!isFinishingStatus && wasFinishingStatus) delta = -(parseInt(item.qtd) || 0);
+
+        if (delta !== 0) {
+          let estId = item.estoque_id;
+          if (!estId) {
+             const searchName = type === 'uniforme' ? (item.cor ? `Camisa ${item.cor}` : 'Uniforme') : (item.titulo || 'Brinde');
+             const searchTam = item.tamanho || 'Único';
+             const found = ESTOQUE.find(e => e.nome === searchName && (type === 'brinde' || e.tamanho === searchTam));
+             if (found) {
+               estId = found.id;
+               await db.collection(collectionName).doc(item.id).update({ estoque_id: estId });
+             } else {
+               const newEstDoc = await db.collection("estoque").add({
+                 tipo: type, nome: searchName, tamanho: searchTam, cor: item.cor || '', qtd_inicial: 0, 
+                 vlr_unit: parseFloat(item.vlr_unit) || 0, fornecedor_id: item.fornecedor_id || '', 
+                 criado_em: firebase.firestore.FieldValue.serverTimestamp()
+               });
+               estId = newEstDoc.id;
+               await db.collection(collectionName).doc(item.id).update({ estoque_id: estId });
+             }
+          }
+          if (estId) {
+            await db.collection("estoque").doc(estId).update({ qtd_inicial: firebase.firestore.FieldValue.increment(delta) });
+          }
         }
       }
-      
-      showToast('Status atualizado! ✅', 'success');
-      if (type === 'uniforme') await loadUniformes();
-      else if (type === 'brinde') await loadBrindes();
+
+      showToast(`Status atualizado para ${newStatus}! ✅`, 'success');
+      if (type === 'uniforme') await loadUniformes(); else await loadBrindes();
+      await loadEstoque();
     } catch(err) {
       console.error(err);
       showToast('Erro ao atualizar status.', 'error');
