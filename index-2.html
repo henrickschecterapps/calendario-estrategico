@@ -5747,22 +5747,6 @@
   bindValorTotal('brinde-qtd','brinde-vlr','brinde-total-preview');
   bindValorTotal('unif-qtd','unif-vlr','unif-total-preview');
 
-  // ── Brindes no modal de evento (somente admin) ──
-  function renderBrindesNoEvento(eventoId) {
-    const block = document.getElementById('block-brindes-evento');
-    const list  = document.getElementById('brindes-evento-list');
-    const count = document.getElementById('brindes-evento-count');
-    if (!block || !isAdmin) { if(block) block.style.display='none'; return; }
-
-    const itens = BRINDES.filter(b => b.evento_id === eventoId);
-    
-    // Sempre exibimos o bloco para permitir alocar novos!
-    block.style.display = 'block';
-    
-    if (!itens.length) {
-      count.textContent = '';
-      list.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;margin-bottom:12px;">Nenhum brinde alocado para este evento.</div>';
-    } else {
   // ── Renderização Read-Only para o Modal View ──
   function renderBrindesNoEvento(eventoId) {
     const block = document.getElementById('block-brindes-evento');
