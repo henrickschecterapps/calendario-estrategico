@@ -1192,21 +1192,20 @@
 
             <!-- ════ SEÇÃO: OPERACIONAL ════ -->
             <div class="admin-section" id="asec-operacional" style="padding:0; gap:0;">
-              <!-- Sub-tabs operacional -->
-              <div style="padding:20px 28px 0; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0;">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+              <div class="admin-section-header" style="background:var(--surface); padding:24px 28px; border-bottom:1px solid var(--border); flex-direction:column; align-items:flex-start; gap:16px;">
+                <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
                   <div>
-                    <div class="admin-section-heading" style="font-size:1.2rem;">⚙️ Gestão Operacional</div>
-                    <div class="admin-section-sub">Estoque · Brindes · Uniformes · Fornecedores</div>
+                    <div class="admin-section-heading">⚙️ Gestão Operacional</div>
+                    <div class="admin-section-sub">Estoque Central, Pedidos de Brindes, Uniformes e Logística</div>
                   </div>
                 </div>
-                <div class="gestao-tabs" style="border-bottom:none; margin-bottom:0;">
-                  <button class="gestao-tab active" data-gtab="estoque"><i data-lucide="boxes" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Estoque</button>
-                  <button class="gestao-tab" data-gtab="brindes"><i data-lucide="gift" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Brindes</button>
-                  <button class="gestao-tab" data-gtab="uniformes"><i data-lucide="shirt" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Uniformes</button>
-                  <button class="gestao-tab" data-gtab="fornecedores"><i data-lucide="truck" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Fornecedores</button>
-                  <button class="gestao-tab" data-gtab="passagens"><i data-lucide="plane" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Passagem & Hospedagem</button>
-                  <button class="gestao-tab" data-gtab="participantes"><i data-lucide="users" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Participantes</button>
+                <div class="gestao-tabs" style="width:fit-content; margin:0;">
+                  <button class="gestao-tab active" data-gtab="estoque"><i data-lucide="boxes"></i> Almoxarifado</button>
+                  <button class="gestao-tab" data-gtab="brindes"><i data-lucide="gift"></i> Brindes</button>
+                  <button class="gestao-tab" data-gtab="uniformes"><i data-lucide="shirt"></i> Uniformes</button>
+                  <button class="gestao-tab" data-gtab="fornecedores"><i data-lucide="truck"></i> Fornecedores</button>
+                  <button class="gestao-tab" data-gtab="passagens"><i data-lucide="plane"></i> Viagens</button>
+                  <button class="gestao-tab" data-gtab="participantes"><i data-lucide="users"></i> Pessoas</button>
                 </div>
               </div>
 
@@ -1333,7 +1332,7 @@
                 </div>
 
                 <!-- ── BRINDES (ALOCAÇÃO) ── -->
-                <div class="gestao-pane" id="gpane-brindes">
+                <div class="gestao-pane hide" id="gpane-brindes">
                   <div class="gestao-summary" id="brindes-summary"></div>
 
                   <div class="filter-bar-gestao">
@@ -1417,7 +1416,7 @@
                 </div>
 
                 <!-- ── UNIFORMES ── -->
-                <div class="gestao-pane" id="gpane-uniformes">
+                <div class="gestao-pane hide" id="gpane-uniformes">
                   <div class="gestao-summary" id="uniformes-summary"></div>
 
                   <div class="filter-bar-gestao">
@@ -1504,7 +1503,7 @@
                 </div>
 
                 <!-- ── FORNECEDORES ── -->
-                <div class="gestao-pane" id="gpane-fornecedores">
+                <div class="gestao-pane hide" id="gpane-fornecedores">
                   <div class="filter-bar-gestao">
                     <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
                     <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()">
@@ -4618,7 +4617,10 @@
   document.querySelectorAll('.gestao-tab').forEach(tab => {
     tab.onclick = () => {
       document.querySelectorAll('.gestao-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.gestao-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.gestao-pane').forEach(p => {
+        p.classList.remove('active');
+        p.classList.add('hide');
+      });
       tab.classList.add('active');
       const pane = document.getElementById('gpane-' + tab.dataset.gtab);
       if(pane) {
@@ -6235,14 +6237,13 @@
         'unif-table-wrap': { type: 'uniforme', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Registrar Uniforme' },
         'forn-table-wrap': { type: 'fornecedor', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo Fornecedor' }
       };
-      // Botão flutuante também para kanban de brindes e uniformes
       const kanbanButtons = {
         'brindes-kanban': { type: 'brinde', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Novo pedido de brinde' },
         'unif-kanban': { type: 'uniforme', label: '<i data-lucide="plus" style="width:16px;height:16px;"></i> Registrar Uniforme' }
       };
       for(const [id, cfg] of Object.entries(kanbanButtons)) {
         const wrap = document.getElementById(id);
-        if(wrap) {
+        if(wrap && !document.getElementById(`${id}-btn-bar`)) {
           const div = document.createElement('div');
           div.style = "padding:16px; background:var(--surface); border-top:1px solid var(--border); display:flex; justify-content:flex-end;";
           div.id = `${id}-btn-bar`;
@@ -6252,11 +6253,12 @@
       }
       for(const [id, cfg] of Object.entries(wrappers)) {
         const wrap = document.getElementById(id);
-        if(wrap) {
-           const div = document.createElement('div');
-           div.style = "padding:16px; background:var(--surface); border-top:1px solid var(--border); display:flex; justify-content:flex-end;";
-           div.innerHTML = `<button class="btn-primary" onclick="window.openGestaoDrawer('${cfg.type}')" style="display:flex;align-items:center;gap:6px;">${cfg.label}</button>`;
-           wrap.parentNode.insertBefore(div, wrap.nextSibling);
+        if(wrap && !document.getElementById(`${id}-btn-bar-tbl`)) {
+            const div = document.createElement('div');
+            div.id = `${id}-btn-bar-tbl`;
+            div.style = "padding:16px; background:var(--surface); border-top:1px solid var(--border); display:flex; justify-content:flex-end;";
+            div.innerHTML = `<button class="btn-primary" onclick="window.openGestaoDrawer('${cfg.type}')" style="display:flex;align-items:center;gap:6px;">${cfg.label}</button>`;
+            wrap.parentNode.insertBefore(div, wrap.nextSibling);
         }
       }
     }
@@ -6310,15 +6312,16 @@
      const selectEl = document.getElementById(selectId);
      if (!selectEl) return;
      const container = selectEl.parentElement;
+     if (!container) return;
      const oldBadge = container.querySelector('.estoque-saldo-badge');
      if (oldBadge) oldBadge.remove();
      if (!selectEl.value) return;
      
      const item = ESTOQUE.find(e => e.id === selectEl.value);
      if (item) {
-         const alocado = getEstoqueAlocado(item.id);
-         const entradas = getEstoqueEntradas(item.id); const saidas = getEstoqueAlocado(item.id); let disp = entradas - saidas;
-         // Se editando, soma de volta o que já está reservado neste registro
+         const entradas = getEstoqueEntradas(item.id); 
+         const saidas = getEstoqueAlocado(item.id); 
+         let disp = entradas - saidas;
          const rid = document.getElementById(type === 'brinde' ? 'brinde-id' : 'unif-id').value;
          if (rid) {
              const r = (type === 'brinde' ? BRINDES : UNIFORMES).find(x => x.id === rid);
@@ -6326,7 +6329,7 @@
          }
          const badge = document.createElement('div');
          badge.className = 'estoque-saldo-badge';
-         badge.style = `font-size:0.72rem;font-weight:700;color:${disp>0?'var(--green)':'var(--red)'};margin-top:4px;display:flex;align-items:center;gap:4px;`;
+         badge.style = `font-size:0.72rem;font-weight:700;color:${disp>0?'#10b981':'#ef4444'};margin-top:4px;display:flex;align-items:center;gap:4px;`;
          badge.innerHTML = `<i data-lucide="package" style="width:12px;height:12px;"></i> Saldo Almoxarifado: ${disp} un.`;
          container.appendChild(badge);
          if(typeof lucide !== 'undefined') lucide.createIcons();
