@@ -6359,12 +6359,6 @@
      window.openGestaoDrawer('estoque');
   };
 
-  window.toggleEstoqueFields = function() {
-     const tipo = document.getElementById('estoque-tipo').value;
-     const isBrinde = tipo === 'brinde';
-     document.getElementById('lbl-estoque-nome').textContent = 'Nome do Item *';
-  };
-
   window.novoRegistro = function(type) {
     if (type === 'brinde') {
       window.setBrindeView('table');
@@ -6426,45 +6420,43 @@
       // 2. Update status
       await docRef.update({ status: newStatus });
       
-      // 3. Stock Integration (Part 1)
-      if (type === 'uniforme' && oldStatus !== newStatus) {
-        // If becoming 'Entregue', add to stock. If leaving 'Entregue', subtract from stock.
-        const delta = (newStatus === 'Entregue') ? (parseInt(data.qtd)||0) : (oldStatus === 'Entregue' ? -(parseInt(data.qtd)||0) : 0);
+      // 3. Stock Integration (Part 1 & 4)
+      if (oldStatus !== newStatus) {
+        // Integração Universal para Brindes e Uniformes
+        const finishStatus = ['Recebido', 'Entregue', 'Concluído'];
+        const totalQtd = parseInt(data.qtd) || 0;
         
-        if (delta !== 0) {
-          let estId = data.estoque_id;
-          // Se não tiver estoque_id, tenta encontrar pelo nome/tamanho
-          if (!estId) {
-            const nomeProc = data.cor ? `Camisa ${data.cor}` : 'Uniforme';
-            const tamProc = data.tamanho || 'Único';
-            const found = ESTOQUE.find(e => e.tipo === 'uniforme' && e.nome === nomeProc && e.tamanho === tamProc);
-            if (found) {
-                estId = found.id;
-                await docRef.update({ estoque_id: estId });
-            } else {
-                // Criar novo item no almoxarifado se for uma nova remessa sem registro
-                const newEstDoc = await db.collection("estoque").add({
-                    tipo: 'uniforme',
-                    nome: nomeProc,
-                    tamanho: tamProc,
-                    cor: data.cor || '',
-                    qtd_inicial: 0,
-                    vlr_unit: parseFloat(data.vlr_unit) || 0,
-                    fornecedor_id: data.fornecedor_id || '',
-                    criado_em: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                estId = newEstDoc.id;
-                await docRef.update({ estoque_id: estId });
+        if (type === 'uniforme' || type === 'brinde') {
+            const isFinishing = finishStatus.includes(newStatus);
+            const wasFinishing = finishStatus.includes(oldStatus);
+            let delta = 0;
+            if (isFinishing && !wasFinishing) delta = totalQtd;
+            else if (!isFinishing && wasFinishing) delta = -totalQtd;
+
+            if (delta !== 0) {
+              let estId = data.estoque_id;
+              if (!estId) {
+                const searchName = type === 'uniforme' ? (data.cor ? `Camisa ${data.cor}` : 'Uniforme') : (data.titulo || 'Brinde');
+                const searchTam = data.tamanho || 'Único';
+                const found = ESTOQUE.find(e => e.nome === searchName && (type === 'brinde' || e.tamanho === searchTam));
+                if (found) {
+                    estId = found.id;
+                    await docRef.update({ estoque_id: estId });
+                } else {
+                    const newEstDoc = await db.collection("estoque").add({
+                        tipo: type, nome: searchName, tamanho: searchTam, cor: data.cor || '', qtd_inicial: 0, vlr_unit: parseFloat(data.vlr_unit) || 0,
+                        fornecedor_id: data.fornecedor_id || '', criado_em: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    estId = newEstDoc.id;
+                    await docRef.update({ estoque_id: estId });
+                    await loadEstoque();
+                }
+              }
+              if (estId) {
+                await db.collection("estoque").doc(estId).update({ qtd_inicial: firebase.firestore.FieldValue.increment(delta) });
                 await loadEstoque();
+              }
             }
-          }
-          
-          if (estId) {
-            await db.collection("estoque").doc(estId).update({
-              qtd_inicial: firebase.firestore.FieldValue.increment(delta)
-            });
-            await loadEstoque();
-          }
         }
       }
       
@@ -6501,7 +6493,7 @@
   };
 
   window.saveUniforme = async function() {
-    const id = document.getElementById('unif-id').value;
+    let id = document.getElementById('unif-id').value;
     const cor = document.getElementById('unif-cor').value.trim();
     const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
     const newStatus = document.getElementById('unif-status').value;
@@ -6546,13 +6538,16 @@
         showToast('Uniforme adicionado!','success');
       }
 
-      // Stock Sync (Part 1)
-      if (oldStatus !== newStatus || (newStatus === 'Entregue' && oldQtd !== qtd)) {
-          // If becoming 'Entregue', add new qty. If it was 'Entregue' and changed qty, adjust.
+      // Stock Sync
+      const finishStatus = ['Recebido', 'Entregue', 'Concluído'];
+      const isFinishing = finishStatus.includes(newStatus);
+      const wasFinishing = finishStatus.includes(oldStatus);
+
+      if (oldStatus !== newStatus || (isFinishing && oldQtd !== qtd)) {
           let delta = 0;
-          if (newStatus === 'Entregue' && oldStatus !== 'Entregue') delta = qtd;
-          else if (newStatus !== 'Entregue' && oldStatus === 'Entregue') delta = -oldQtd;
-          else if (newStatus === 'Entregue' && oldStatus === 'Entregue') delta = (qtd - oldQtd);
+          if (isFinishing && !wasFinishing) delta = qtd;
+          else if (!isFinishing && wasFinishing) delta = -oldQtd;
+          else if (isFinishing && wasFinishing) delta = (qtd - oldQtd);
           
           if (delta !== 0) {
               if (!estId) {
@@ -6587,6 +6582,7 @@
     finally { if(btn) { btn.textContent = id ? 'Salvar Alterações' : '+ Adicionar'; btn.disabled = false; } }
   };
 
+
   window.deleteUnif = async function(id) {
     if(!await showConfirm('Excluir Uniforme?', 'Esta exclusão é permanente.')) return;
     try {
@@ -6619,36 +6615,91 @@
   };
 
   window.saveBrinde = async function() {
-    const id = document.getElementById('brinde-id').value;
+    let id = document.getElementById('brinde-id').value;
     const titulo = document.getElementById('brinde-titulo').value.trim();
     const qtd = parseInt(document.getElementById('brinde-qtd').value) || 0;
+    const newStatus = document.getElementById('brinde-status').value;
+    
     if(!titulo) { showToast('Nome do brinde é obrigatório!','warning'); return; }
     const btn = document.getElementById('btn-save-brinde');
     if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
+    
     try {
+      let oldStatus = '';
+      let oldQtd = 0;
+      let estId = '';
+      
+      if(id) {
+        const doc = await db.collection("brindes").doc(id).get();
+        if(doc.exists) {
+            oldStatus = doc.data().status || 'Cotação';
+            oldQtd = parseInt(doc.data().qtd) || 0;
+            estId = doc.data().estoque_id;
+        }
+      }
+
       const payload = {
         titulo, qtd,
         nivel: document.getElementById('brinde-nivel').value,
         descricao: document.getElementById('brinde-desc')?.value || '',
         vlr_unit: parseFloat(document.getElementById('brinde-vlr').value) || 0,
-        status: document.getElementById('brinde-status').value,
+        status: newStatus,
         fornecedor_id: document.getElementById('brinde-fornecedor').value || '',
         evento_id: document.getElementById('brinde-evento').value,
         anexo_url: document.getElementById('brinde-anexo-url')?.value || ''
       };
+
       if(id) { 
         await db.collection("brindes").doc(id).update(payload); 
         showToast('Brinde salvo!','success'); 
       } else {
         payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
-        await db.collection("brindes").add(payload);
+        const docRef = await db.collection("brindes").add(payload);
+        id = docRef.id;
         showToast('Brinde adicionado!','success');
       }
+
+      // Stock Sync
+      const finishStatus = ['Recebido', 'Entregue', 'Concluído'];
+      const isFinishing = finishStatus.includes(newStatus);
+      const wasFinishing = finishStatus.includes(oldStatus);
+
+      if (oldStatus !== newStatus || (isFinishing && oldQtd !== qtd)) {
+          let delta = 0;
+          if (isFinishing && !wasFinishing) delta = qtd;
+          else if (!isFinishing && wasFinishing) delta = -oldQtd;
+          else if (isFinishing && wasFinishing) delta = (qtd - oldQtd);
+          
+          if (delta !== 0) {
+              if (!estId) {
+                  const found = ESTOQUE.find(e => e.tipo === 'brinde' && e.nome === titulo);
+                  if (found) {
+                      estId = found.id;
+                      await db.collection("brindes").doc(id).update({ estoque_id: estId });
+                  } else {
+                      const newEstDoc = await db.collection("estoque").add({
+                          tipo: 'brinde', nome: titulo, qtd_inicial: 0, vlr_unit: payload.vlr_unit, fornecedor_id: payload.fornecedor_id, criado_em: firebase.firestore.FieldValue.serverTimestamp()
+                      });
+                      estId = newEstDoc.id;
+                      await db.collection("brindes").doc(id).update({ estoque_id: estId });
+                  }
+              }
+              if (estId) {
+                  await db.collection("estoque").doc(estId).update({ qtd_inicial: firebase.firestore.FieldValue.increment(delta) });
+                  await loadEstoque();
+              }
+          }
+      }
+
       document.getElementById('btn-cancel-brinde')?.click();
       await loadBrindes();
-    } catch(err) { showToast('Erro.', 'error'); }
+    } catch(err) { 
+        console.error(err);
+        showToast('Erro ao salvar.', 'error'); 
+    }
     finally { if(btn) { btn.textContent = id ? 'Salvar Alterações' : '+ Adicionar'; btn.disabled = false; } }
   };
+
 
   document.addEventListener('DOMContentLoaded', async () => {
     if (typeof lucide !== 'undefined') lucide.createIcons();
