@@ -635,6 +635,14 @@
   .qty-value.warning { color: var(--status-alerta); }
   
   .estoque-card-cost { font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+
+  /* Allocations list inside card */
+  .estoque-card-allocations { margin: 12px 0; padding: 10px; background: var(--surface2); border-radius: var(--radius-sm); border-left: 3px solid var(--accent); }
+  .alloc-title { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+  .alloc-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.03); }
+  .alloc-row:last-child { border-bottom: none; }
+  .alloc-event { font-size: 0.72rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+  .alloc-qty { font-size: 0.72rem; font-weight: 700; color: var(--red); white-space: nowrap; }
   
   /* Badge animado para estoque crítico */
   .critical-pulse { width: 8px; height: 8px; background: var(--status-critico); border-radius: 50%; display: inline-block; animation: critPulse 1.5s infinite; }
@@ -4779,6 +4787,26 @@
         const status = getStockStatus(qtd, min);
         const vlr = parseFloat(e.vlr_unit)||0;
         
+        // Busca alocações em eventos
+        const alocacoes = [
+          ...BRINDES.filter(b => b.estoque_id === e.id && b.evento_id),
+          ...UNIFORMES.filter(u => u.estoque_id === e.id && u.evento_id)
+        ];
+
+        let alocHtml = '';
+        if (alocacoes.length > 0) {
+          alocHtml = `
+            <div class="estoque-card-allocations">
+              <div class="alloc-title"><i data-lucide="share-2"></i> Alocações por Evento</div>
+              ${alocacoes.map(a => `
+                <div class="alloc-row">
+                  <span class="alloc-event">${escapeHtml(eventoNome(a.evento_id))}</span>
+                  <span class="alloc-qty">-${a.qtd} UN</span>
+                </div>
+              `).join('')}
+            </div>`;
+        }
+        
         return `<div class="estoque-card status-${status}" onclick="window.editEstoque('${e.id}')">
           <div class="estoque-card-header">
             <span class="estoque-card-tag">${emojiMap[e.tipo]||'📦'} ${e.tipo||'Item'}</span>
@@ -4791,6 +4819,8 @@
           </div>
           ${e.evento_id ? `<div class="estoque-card-event"><i data-lucide="calendar" style="width:12px;height:12px;"></i> ${escapeHtml(eventoNome(e.evento_id))}</div>` : ''}
           
+          ${alocHtml}
+
           <div class="estoque-card-footer">
             <div class="estoque-card-qty">
               <span class="qty-label">Saldo em Estoque</span>
