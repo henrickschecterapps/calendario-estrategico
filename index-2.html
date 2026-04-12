@@ -4627,10 +4627,18 @@
         p.classList.add('hide');
       });
       tab.classList.add('active');
-      const pane = document.getElementById('gpane-' + tab.dataset.gtab);
+      const dataTab = tab.dataset.gtab;
+      const pane = document.getElementById('gpane-' + dataTab);
       if(pane) {
         pane.classList.remove('hide');
         pane.classList.add('active');
+        // Disparar render específico da aba para garantir que os dados apareçam
+        if(dataTab === 'estoque') renderEstoque();
+        if(dataTab === 'brindes') renderBrindes();
+        if(dataTab === 'uniformes') renderUniformes();
+        if(dataTab === 'fornecedores') renderFornecedores();
+        if(dataTab === 'participantes') renderParticipantes();
+        if(dataTab === 'passagens') renderViagens();
       }
     };
   });
@@ -5548,9 +5556,14 @@
           return items.map(u => {
             const tamPill = u.tamanho && u.tamanho !== 'Único' ? `<span style="font-size:0.65rem;padding:2px 5px;background:var(--accent);color:#fff;border-radius:4px;margin-right:4px;">${u.tamanho}</span>` : '';
             return `
-              <div class="kanban-card" draggable="true" ondragstart="window.dragStart(event, '${u.id}', 'uniforme')" onclick="window.editUnif('${u.id}')">
-                <div class="kanban-card-title"><span>${tamPill}${escapeHtml(u.cor||'Uniforme')}</span></div>
-                <div class="kanban-card-desc">${escapeHtml(fornNome(u.fornecedor_id)||'—')}</div>
+              <div class="kanban-card" draggable="true" ondragstart="window.dragStart(event, '${u.id}', 'uniforme')">
+                <div class="kanban-card-title" style="display:flex; justify-content:space-between; align-items:flex-start;">
+                  <span onclick="window.editUnif('${u.id}')" style="cursor:pointer; flex: 1;">${tamPill}${escapeHtml(u.cor||'Uniforme')}</span>
+                  <button class="btn-icon" onclick="event.stopPropagation(); window.deleteUnif('${u.id}')" style="padding:4px; height:auto; width:auto; background:transparent; border:none; opacity:0.6;" title="Excluir">
+                    <i data-lucide="trash-2" style="width:12px;height:12px;color:var(--red);"></i>
+                  </button>
+                </div>
+                <div class="kanban-card-desc" onclick="window.editUnif('${u.id}')" style="cursor:pointer;">${escapeHtml(fornNome(u.fornecedor_id)||'—')}</div>
                 <div class="kanban-card-meta"><span class="kanban-card-badge">${u.qtd||0} un.</span></div>
               </div>`;
           }).join('');
@@ -5561,8 +5574,11 @@
           const detailsHtml = items.map(i => `
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
               <span>${i.qtd}x ${i.cor||'Item'} (${i.tamanho||'Padrão'})</span>
-              <button class="btn-icon" onclick="event.stopPropagation(); window.editUnif('${i.id}')" style="padding:4px; height:auto; width:auto; background:rgba(255,255,255,0.05); border-radius:4px;">
+              <button class="btn-icon" onclick="event.stopPropagation(); window.editUnif('${i.id}')" style="padding:4px; height:auto; width:auto; background:rgba(255,255,255,0.05); border-radius:4px;" title="Editar">
                 <i data-lucide="edit-3" style="width:12px;height:12px;"></i>
+              </button>
+              <button class="btn-icon" onclick="event.stopPropagation(); window.deleteUnif('${i.id}')" style="padding:4px; height:auto; width:auto; background:rgba(255,100,100,0.1); border-radius:4px; margin-left:4px;" title="Excluir">
+                <i data-lucide="trash-2" style="width:12px;height:12px;color:var(--red);"></i>
               </button>
             </div>`).join('');
           
