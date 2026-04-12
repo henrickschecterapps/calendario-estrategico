@@ -1919,6 +1919,18 @@
           <div class="admin-brinde-block" style="border-top:1px dashed var(--border); padding-top:24px;">
             <div class="admin-brinde-title" style="display:flex;align-items:center;gap:6px;"><i data-lucide="gift" style="color:var(--muted)"></i> Brindes deste Evento <span id="brindes-evento-count" style="font-size:0.7rem;font-weight:600;color:var(--muted);margin-left:4px;"></span></div>
             <div id="brindes-evento-list"></div>
+            
+            <div style="background:var(--surface2); padding:12px; border-radius:var(--radius); border:1px solid var(--border); display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; margin-top:16px;">
+              <div style="flex:2;min-width:180px;">
+                <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Brinde (Almoxarifado)</label>
+                <select id="quick-brinde-sel" class="admin-input" style="margin:0;"></select>
+              </div>
+              <div style="flex:1;min-width:80px;">
+                <label style="font-size:0.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Qtd.</label>
+                <input type="number" id="quick-brinde-qtd" min="1" class="admin-input" style="margin:0;" placeholder="0">
+              </div>
+              <button class="btn-primary" onclick="window.addBrindeAoEvento()" style="margin:0; height:42px;">+ Alocar</button>
+            </div>
           </div>
         </div>
 
@@ -5727,28 +5739,117 @@
     if (!block || !isAdmin) { if(block) block.style.display='none'; return; }
 
     const itens = BRINDES.filter(b => b.evento_id === eventoId);
-    if (!itens.length) {
-      block.style.display = 'none';
-      return;
-    }
+    
+    // Sempre exibimos o bloco para permitir alocar novos!
     block.style.display = 'block';
-    count.textContent = `${itens.length} item${itens.length!==1?'s':''}`;
-    list.innerHTML = itens.map(b => {
-      const qtd   = parseInt(b.qtd) || 0;
-      const vlr   = parseFloat(b.vlr_unit) || 0;
-      const total = qtd * vlr;
-      return `<div class="brinde-row">
-        <div>
-          <div class="brinde-name">${escapeHtml(b.titulo||'')} ${nivelBadge(b.nivel)}</div>
-          <div class="brinde-detail">${escapeHtml(b.descricao||'')}${b.fornecedor_id ? ' · ' + fornNome(b.fornecedor_id) : ''}</div>
-        </div>
-        <div style="text-align:right;flex-shrink:0;">
-          <div style="font-weight:700;font-size:0.8rem">${qtd > 0 ? qtd + ' un.' : '—'}</div>
-          ${total > 0 ? `<div class="valor-total-pill" style="margin-top:4px;">${fmtBRL(total)}</div>` : ''}
-        </div>
-      </div>`;
-    }).join('');
+    
+    if (!itens.length) {
+      count.textContent = '';
+      list.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;margin-bottom:12px;">Nenhum brinde alocado para este evento.</div>';
+    } else {
+      count.textContent = `${itens.length} item${itens.length!==1?'s':''}`;
+      list.innerHTML = itens.map(b => {
+        const qtd   = parseInt(b.qtd) || 0;
+        const vlr   = parseFloat(b.vlr_unit) || 0;
+        const total = qtd * vlr;
+        return `<div class="brinde-row">
+          <div>
+            <div class="brinde-name">${escapeHtml(b.titulo||'')} ${b.nivel ? nivelBadge(b.nivel) : ''}</div>
+            <div class="brinde-detail">${escapeHtml(b.descricao||'')}${b.fornecedor_id ? ' · ' + fornNome(b.fornecedor_id) : ''}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;display:flex;align-items:center;gap:12px;">
+            <div>
+              <div style="font-weight:700;font-size:0.8rem">${qtd > 0 ? qtd + ' un.' : '—'}</div>
+              ${total > 0 ? `<div class="valor-total-pill" style="margin-top:4px;">${fmtBRL(total)}</div>` : ''}
+            </div>
+            <button class="btn-icon" onclick="window.removeBrindeDoEvento('${b.id}', '${b.estoque_id}', ${qtd})" style="color:var(--red);border:1px solid rgba(220,38,38,0.2);padding:2px;border-radius:4px;" title="Devolver ao Estoque"><i data-lucide="corner-up-left" style="width:14px;height:14px;"></i></button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    
+    // Popula o Select com os brindes ativos
+    const sel = document.getElementById('quick-brinde-sel');
+    if (sel && typeof ESTOQUE !== 'undefined') {
+        const estBrindes = ESTOQUE.filter(e => e.tipo === 'brinde' && (parseInt(e.qtd_inicial)||0) > 0);
+        sel.innerHTML = '<option value="">— Selecione um brinde —</option>' + 
+            estBrindes.map(e => `<option value="${e.id}">${e.nome||'Item'} (${e.qtd_inicial} disp.)</option>`).join('');
+    }
   }
+
+  // Ações Inline de Brinde
+  window.addBrindeAoEvento = async function() {
+    const evId = window.currentEditId;
+    if (!evId) return;
+    const estId = document.getElementById('quick-brinde-sel').value;
+    const qtdStr = document.getElementById('quick-brinde-qtd').value;
+    const qtd = parseInt(qtdStr, 10);
+    
+    if (!estId) return showToast('Selecione um brinde.', 'warning');
+    if (!qtd || qtd <= 0) return showToast('Quantidade inválida.', 'warning');
+    
+    const item = ESTOQUE.find(e => e.id === estId);
+    if (!item) return;
+    const available = parseInt(item.qtd_inicial) || 0;
+    if (qtd > available) return showToast(`Apenas ${available} un. em estoque.`, 'warning');
+    
+    const btn = document.querySelector('button[onclick="window.addBrindeAoEvento()"]');
+    btn.textContent = '...'; btn.disabled = true;
+    
+    try {
+        const newVal = available - qtd;
+        await db.collection("estoque").doc(estId).update({ qtd_inicial: newVal });
+        item.qtd_inicial = newVal; 
+        if(window.renderEstoque) window.renderEstoque();
+        
+        await db.collection("brindes").add({
+            evento_id: evId,
+            estoque_id: estId,
+            titulo: item.nome,
+            descricao: 'Alocação de estoque: ' + (item.obs || ''),
+            qtd: qtd,
+            vlr_unit: parseFloat(item.vlr_unit) || 0,
+            status: 'Alocado',
+            origem: 'estoque',
+            nivel: 'Operacional'
+        });
+        
+        showToast('Brinde alocado!', 'success');
+        document.getElementById('quick-brinde-qtd').value = '';
+        document.getElementById('quick-brinde-sel').value = '';
+        
+        if(typeof loadBrindes === 'function') await loadBrindes();
+        window.openEventView(evId); // Refresh the modal
+    } catch(err) {
+        showToast('Erro ao alocar brinde.', 'error');
+    } finally {
+        btn.textContent = '+ Alocar'; btn.disabled = false;
+    }
+  };
+
+  window.removeBrindeDoEvento = async function(brindeId, estId, qtd) {
+     const evId = window.currentEditId;
+     if (!await showConfirm('Devolver Extoque?', `Devolver ${qtd} un. ao almoxarifado?`)) return;
+     try {
+         await db.collection("brindes").doc(brindeId).delete();
+         if (estId && ESTOQUE) {
+             const item = ESTOQUE.find(e => e.id === estId);
+             if (item) {
+                 const cur = parseInt(item.qtd_inicial) || 0;
+                 const newVal = cur + parseInt(qtd);
+                 await db.collection("estoque").doc(estId).update({ qtd_inicial: newVal });
+                 item.qtd_inicial = newVal;
+                 if(window.renderEstoque) window.renderEstoque();
+             }
+         }
+         
+         if(typeof loadBrindes === 'function') await loadBrindes();
+         showToast('Brinde removido.', 'success');
+         if(evId) window.openEventView(evId);
+     } catch(err) {
+         showToast('Erro ao remover.', 'error');
+     }
+  };
 
   // ── Patch openEventView para incluir brindes ──
   const _openEventViewOrig = window.openEventView;
