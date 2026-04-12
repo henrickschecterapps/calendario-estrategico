@@ -1181,6 +1181,9 @@
                       <option value="acessorio">🎒 Acessório</option>
                       <option value="outro">📦 Outro</option>
                     </select>
+                    <select id="filtro-estoque-evento" onchange="renderEstoque()" class="admin-input" style="width:200px; margin:0; padding:6px 10px; height:auto;">
+                      <option value="">Todos os Eventos</option>
+                    </select>
                     <div style="flex:1;"></div>
                     <button class="btn-primary" id="btn-novo-estoque" onclick="window.novoEstoque()" style="font-size:0.82rem;"><i data-lucide="plus" style="width:14px;height:14px;"></i> Novo Item</button>
                   </div>
@@ -1191,12 +1194,13 @@
                         <th>Tipo</th>
                         <th>Item</th>
                         <th>Tamanho / Cor</th>
+                        <th>Evento</th>
                         <th>Custo Unit.</th>
                         <th>Qtd em Estoque</th>
                         <th>Fornecedor</th>
                         <th></th>
                       </tr></thead>
-                      <tbody id="estoque-body"><tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item no estoque.</td></tr></tbody>
+                      <tbody id="estoque-body"><tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item no estoque.</td></tr></tbody>
                     </table>
                     <!-- FORM ADD ESTOQUE -->
                     <div class="gestao-add-bar" id="estoque-add-form" style="display:none; flex-direction:column; gap:12px; border:2px solid var(--accent); background:var(--surface2); padding:18px; border-radius:12px; margin:12px;">
@@ -4532,7 +4536,7 @@
     });
 
     // Filtros de evento nas tabelas
-    ['filtro-brinde-evento','filtro-unif-evento','filtro-pass-evento','viagem-evento'].forEach(selId => {
+    ['filtro-brinde-evento','filtro-unif-evento','filtro-pass-evento','filtro-estoque-evento','viagem-evento','estoque-evento'].forEach(selId => {
       const sel = document.getElementById(selId);
       if (!sel) return;
       const cur = sel.value;
@@ -4589,9 +4593,11 @@
     if (!tbody) return;
     const busca = (document.getElementById('filtro-estoque-busca')?.value || '').toLowerCase();
     const tipo = document.getElementById('filtro-estoque-tipo')?.value || '';
+    const evento = document.getElementById('filtro-estoque-evento')?.value || '';
     let list = ESTOQUE;
     if (busca) list = list.filter(e => (e.nome||'').toLowerCase().includes(busca) || (e.cor||'').toLowerCase().includes(busca));
     if (tipo) list = list.filter(e => e.tipo === tipo);
+    if (evento) list = list.filter(e => e.evento_id === evento);
 
     if (!list.length) {
       tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">Nenhum item cadastrado no Estoque.</td></tr>';
@@ -4609,6 +4615,7 @@
         <td><span class="badge nivel-massa" style="font-size:0.7rem;text-transform:capitalize;">${tipoEmoji} ${tipoLabel}</span></td>
         <td><strong>${highlight(e.nome, busca)}</strong></td>
         <td><span style="font-size:0.75rem;font-weight:700;">${e.tamanho && e.tamanho !== 'Único' ? e.tamanho : '—'} ${e.cor ? '· ' + e.cor : ''}</span></td>
+        <td><span style="font-size:0.7rem;font-weight:700;color:var(--accent)">${e.evento_id ? escapeHtml(eventoNome(e.evento_id)) : '—'}</span></td>
         <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
         <td style="font-weight:700;color:var(--text)">${parseInt(e.qtd_inicial)||0}</td>
         <td style="font-size:0.75rem">${typeof fornNome === 'function' ? fornNome(e.fornecedor_id) : (e.fornecedor_id||'—')}</td>
@@ -4626,12 +4633,11 @@
     document.getElementById('estoque-id').value = id;
     document.getElementById('estoque-tipo').value = e.tipo || 'brinde';
     window.toggleEstoqueFields();
-    document.getElementById('estoque-nome').value = e.nome || '';
-    document.getElementById('estoque-tamanho').value = e.tamanho || 'Único';
     document.getElementById('estoque-cor').value = e.cor || '';
     document.getElementById('estoque-qtd').value = e.qtd_inicial || '';
     document.getElementById('estoque-vlr').value = e.vlr_unit || '';
     document.getElementById('estoque-fornecedor').value = e.fornecedor_id || '';
+    document.getElementById('estoque-evento').value = e.evento_id || '';
     document.getElementById('estoque-obs').value = e.obs || '';
     document.getElementById('btn-save-estoque').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-estoque').style.display = 'inline-block';
@@ -4665,6 +4671,7 @@
       qtd_inicial: parseInt(document.getElementById('estoque-qtd').value) || 0,
       vlr_unit: parseFloat(document.getElementById('estoque-vlr').value) || 0,
       fornecedor_id: document.getElementById('estoque-fornecedor').value || '',
+      evento_id: document.getElementById('estoque-evento').value || '',
       obs: document.getElementById('estoque-obs').value.trim()
     };
     
