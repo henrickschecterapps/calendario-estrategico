@@ -3519,7 +3519,7 @@
       const mapClientes = ev.clientes.map((m, i) => {
         const initials = (m.nome || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
         const empBdg = m.empresa ? `<span style="font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="building" style="width:12px;height:12px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
-        const cttBdg = m.contato ? `<span style="font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="phone" style="width:12px;height:12px;"></i> ${escapeHtml(m.contato)}</span>` : '';
+        const cttBdg = (m.contato && isAdmin) ? `<span style="font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="phone" style="width:12px;height:12px;"></i> ${escapeHtml(m.contato)}</span>` : '';
         return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--surface2);transition:opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
           <div style="width:28px;height:28px;border-radius:8px;background:rgba(16,185,129,0.1);color:var(--green);font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
           <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
@@ -3546,7 +3546,7 @@
       const mapVips = ev.vips.map((m, i) => {
         const initials = (m.nome || '?').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
         const empBdg = m.empresa ? `<span style="font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="building" style="width:12px;height:12px;"></i> ${escapeHtml(m.empresa)}</span>` : '';
-        const cttBdg = m.contato ? `<span style="font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="phone" style="width:12px;height:12px;"></i> ${escapeHtml(m.contato)}</span>` : '';
+        const cttBdg = (m.contato && isAdmin) ? `<span style="font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;color:var(--muted);"><i data-lucide="phone" style="width:12px;height:12px;"></i> ${escapeHtml(m.contato)}</span>` : '';
         return `<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--surface2);transition:opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">
           <div style="width:28px;height:28px;border-radius:8px;background:rgba(139,92,246,0.1);color:var(--purple);font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
           <div style="flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
