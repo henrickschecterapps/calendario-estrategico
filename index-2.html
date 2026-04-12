@@ -1161,6 +1161,7 @@
                   <button class="gestao-tab" data-gtab="brindes"><i data-lucide="gift" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Brindes</button>
                   <button class="gestao-tab" data-gtab="uniformes"><i data-lucide="shirt" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Uniformes</button>
                   <button class="gestao-tab" data-gtab="fornecedores"><i data-lucide="truck" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Fornecedores</button>
+                  <button class="gestao-tab" data-gtab="passagens"><i data-lucide="plane" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Passagem & Hospedagem</button>
                   <button class="gestao-tab" data-gtab="participantes"><i data-lucide="users" style="margin-right:4px; vertical-align:middle; width:15px; height:15px;"></i> Participantes</button>
                 </div>
               </div>
@@ -1457,6 +1458,72 @@
                       </div>
                       <button class="btn-icon" id="btn-cancel-forn" style="display:none; align-self:flex-end;">✕ Cancelar</button>
                       <button class="btn-primary" id="btn-save-forn" style="align-self:flex-end;white-space:nowrap;">+ Adicionar</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ── PASSAGEM E HOSPEDAGEM ── -->
+                <div class="gestao-pane hide" id="gpane-passagens">
+                  <div class="filter-bar-gestao">
+                    <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
+                    <input type="text" id="filtro-pass-busca" placeholder="Nome ou evento..." oninput="window.renderViagens()" class="admin-input" style="width:240px; margin:0;">
+                    <select id="filtro-pass-evento" onchange="window.renderViagens()" class="admin-input" style="width:200px; margin:0; padding:6px 10px; height:auto;">
+                      <option value="">Todos os Eventos</option>
+                    </select>
+                    <div style="flex:1"></div>
+                    <button class="btn-primary" onclick="window.toggleViagemForm(true)" id="btn-nova-viagem"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> Lançar Custos</button>
+                  </div>
+
+                  <div class="gestao-table-wrap" id="pass-table-wrap">
+                    <table class="gestao-table">
+                      <thead>
+                        <tr>
+                          <th>Passageiro / Hóspede</th>
+                          <th>Evento</th>
+                          <th>Data / Período</th>
+                          <th>Passagem (R$)</th>
+                          <th>Hospedagem (R$)</th>
+                          <th>Total (R$)</th>
+                          <th style="text-align:right">Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody id="viagens-body"></tbody>
+                    </table>
+                  </div>
+
+                  <!-- FORM ADD VIAGEM -->
+                  <div id="viagem-add-form" style="display:none; flex-direction:column; gap:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-top:16px;">
+                    <input type="hidden" id="viagem-id">
+                    <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                      <div class="gestao-field" style="flex:2;min-width:180px;">
+                        <label>Nome do Passageiro / Hóspede *</label>
+                        <input type="text" class="gestao-input w-full" id="viagem-nome" placeholder="Ex: João Silva">
+                      </div>
+                      <div class="gestao-field" style="flex:2;min-width:180px;">
+                        <label>Evento Relacionado *</label>
+                        <select class="gestao-input w-full" id="viagem-evento">
+                          <option value="">— Selecionar Evento —</option>
+                        </select>
+                      </div>
+                      <div class="gestao-field" style="flex:1;min-width:140px;">
+                        <label>Data / Período</label>
+                        <input type="text" class="gestao-input w-full" id="viagem-data" placeholder="Ex: 10 a 15/Mai">
+                      </div>
+                    </div>
+                    <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; width:100%;">
+                      <div class="gestao-field" style="flex:1;min-width:120px;">
+                        <label>Valor Passagem (R$)</label>
+                        <input type="number" class="gestao-input w-full" id="viagem-vlr-pass" step="0.01" placeholder="0,00">
+                      </div>
+                      <div class="gestao-field" style="flex:1;min-width:120px;">
+                        <label>Valor Hospedagem (R$)</label>
+                        <input type="number" class="gestao-input w-full" id="viagem-vlr-hosp" step="0.01" placeholder="0,00">
+                      </div>
+                      <div style="flex:2"></div>
+                      <div style="display:flex; gap:8px; align-self:flex-end;">
+                        <button class="btn-icon" onclick="window.toggleViagemForm(false)"> Cancelar</button>
+                        <button class="btn-primary" id="btn-save-viagem" style="white-space:nowrap;">+ Salvar Lançamento</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1760,6 +1827,7 @@
                <div style="display:flex; flex-direction:column; gap:12px; font-size:1rem;">
                   <div style="display:flex; justify-content:space-between; color:var(--muted); font-weight:600;"><span>Brindes do Evento:</span><span id="view-fin-brindes" style="color:var(--text); font-weight:700; font-family:var(--font-mono);">—</span></div>
                   <div style="display:flex; justify-content:space-between; color:var(--muted); font-weight:600;"><span>Uniformes Solicitados:</span><span id="view-fin-unif" style="color:var(--text); font-weight:700; font-family:var(--font-mono);">—</span></div>
+                  <div style="display:flex; justify-content:space-between; color:var(--muted); font-weight:600;"><span>Passagem & Hospedagem:</span><span id="view-fin-viagens" style="color:var(--text); font-weight:700; font-family:var(--font-mono);">—</span></div>
                   <div style="display:flex; justify-content:space-between; margin-top:12px; padding-top:16px; border-top:2px dashed var(--border); color:var(--text); font-size:1.25rem; font-weight:800;"><span>Total Operacional:</span><span id="view-fin-total" style="color:var(--green); font-family:var(--font-mono);">—</span></div>
                </div>
             </div>
@@ -2086,7 +2154,7 @@
 
   let currentUser = null, userRole = null;
   let EVENTS = [], RESPONSAVEIS = [];
-  let ESTOQUE = [], BRINDES = [], UNIFORMES = [], FORNECEDORES_LIST = [], PARTICIPANTES_LIST = [];
+  let ESTOQUE = [], BRINDES = [], UNIFORMES = [], FORNECEDORES_LIST = [], PARTICIPANTES_LIST = [], VIAGENS = [];
   let KITS = [];
   let loadDataFromFirebase = async () => {}; // Declaração global para evitar erros de referência
   
@@ -3274,12 +3342,14 @@
     // Financeiro Consolidado
     const costBrindes = BRINDES.filter(b => b.evento_id === ev.id).reduce((s, b) => s + (parseFloat(b.vlr_unit)||0) * (parseInt(b.qtd)||0), 0);
     const costUniformes = UNIFORMES.filter(u => u.evento_id === ev.id).reduce((s, u) => s + (parseFloat(u.vlr_unit)||0) * (parseInt(u.qtd)||0), 0);
-    const costTotal = costBrindes + costUniformes;
+    const costViagens = VIAGENS.filter(v => v.evento_id === ev.id).reduce((s, v) => s + (parseFloat(v.vlr_pass)||0) + (parseFloat(v.vlr_hosp)||0), 0);
+    const costTotal = costBrindes + costUniformes + costViagens;
     if (costTotal > 0 && (userRole === 'admin' || userRole === 'editor')) {
       document.getElementById('block-financeiro').style.display = 'block';
       let fv = function(v){ return parseFloat(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); };
       document.getElementById('view-fin-brindes').textContent = fv(costBrindes);
       document.getElementById('view-fin-unif').textContent = fv(costUniformes);
+      document.getElementById('view-fin-viagens').textContent = fv(costViagens);
       document.getElementById('view-fin-total').textContent = fv(costTotal);
     } else {
       document.getElementById('block-financeiro').style.display = 'none';
@@ -4224,6 +4294,7 @@
       try { if (typeof loadEstoque === 'function') await loadEstoque(); } catch(e) { console.warn("loadEstoque:", e); }
       try { if (typeof loadUniformes === 'function') await loadUniformes(); } catch(e) { console.warn("loadUniformes:", e); }
       try { if (typeof loadBrindes === 'function') await loadBrindes(); } catch(e) { console.warn("loadBrindes:", e); }
+      try { if (typeof loadViagens === 'function') await loadViagens(); } catch(e) { console.warn("loadViagens:", e); }
     }, 500);
   };
 
@@ -4461,11 +4532,11 @@
     });
 
     // Filtros de evento nas tabelas
-    ['filtro-brinde-evento','filtro-unif-evento'].forEach(selId => {
+    ['filtro-brinde-evento','filtro-unif-evento','filtro-pass-evento','viagem-evento'].forEach(selId => {
       const sel = document.getElementById(selId);
       if (!sel) return;
       const cur = sel.value;
-      sel.innerHTML = '<option value="">Todos os Eventos</option>';
+      sel.innerHTML = selId.startsWith('filtro') ? '<option value="">Todos os Eventos</option>' : '<option value="">— Selecionar Evento —</option>';
       EVENTS.filter(e => e.tipo !== 'Feriado').sort((a,b) => (parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0))).forEach(e => {
         const opt = document.createElement('option');
         opt.value = e.id; opt.textContent = e.evento;
@@ -4903,6 +4974,125 @@
       window.togglePartForm(false);
     } catch(e) { showToast('Erro ao salvar.', 'error'); console.error(e); }
     finally { btn.textContent = '+ Salvar Participante'; btn.disabled = false; }
+  };
+
+  // ════════════ PASSAGEM E HOSPEDAGEM ════════════
+  async function loadViagens() {
+    try {
+      const snap = await db.collection("viagens").orderBy("nome").get();
+      VIAGENS = [];
+      snap.forEach(doc => VIAGENS.push({ id: doc.id, ...doc.data() }));
+    } catch(e) { VIAGENS = []; }
+    renderViagens();
+  }
+
+  window.renderViagens = function() {
+    const tbody = document.getElementById('viagens-body');
+    if (!tbody) return;
+    const busca = (document.getElementById('filtro-pass-busca')?.value || '').toLowerCase();
+    const evento = document.getElementById('filtro-pass-evento')?.value || '';
+    
+    let list = VIAGENS;
+    if (busca) list = list.filter(v => (v.nome||'').toLowerCase().includes(busca) || (eventoNome(v.evento_id)||'').toLowerCase().includes(busca));
+    if (evento) list = list.filter(v => v.evento_id === evento);
+
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="7">
+        <div class="empty-state" style="border:none;margin:8px 0;">
+          <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          <p class="empty-state-title">Nenhum custo de viagem encontrado</p>
+          <p class="empty-state-desc">Use o botão acima para lançar custos de passagens e hospedagem relacionados aos eventos.</p>
+        </div>
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = list.map(v => {
+      const isNew = window.lastSavedId === v.id ? 'flash-green' : '';
+      const total = (parseFloat(v.vlr_pass)||0) + (parseFloat(v.vlr_hosp)||0);
+      return `<tr class="${isNew}">
+        <td><strong>${highlight(v.nome, busca)}</strong></td>
+        <td><span style="font-size:0.75rem;font-weight:700;color:var(--accent)">${escapeHtml(eventoNome(v.evento_id))}</span></td>
+        <td>${v.data || '—'}</td>
+        <td style="font-weight:600">${fmtBRL(v.vlr_pass)}</td>
+        <td style="font-weight:600">${fmtBRL(v.vlr_hosp)}</td>
+        <td style="font-weight:800;color:var(--text)">${fmtBRL(total)}</td>
+        <td style="text-align:right">
+          <button class="tbl-action edit" onclick="window.editViagem('${v.id}')">✏️</button>
+          <button class="tbl-action del" onclick="window.deleteViagem('${v.id}')">🗑️</button>
+        </td>
+      </tr>`;
+    }).join('');
+  };
+
+  window.toggleViagemForm = function(show) {
+    const form = document.getElementById('viagem-add-form');
+    const btnNovo = document.getElementById('btn-nova-viagem');
+    if(!form) return;
+    if(show) {
+      form.style.display = 'flex';
+      if(btnNovo) btnNovo.style.display = 'none';
+      if(!document.getElementById('viagem-id').value) {
+        ['viagem-nome','viagem-data','viagem-vlr-pass','viagem-vlr-hosp','viagem-evento'].forEach(fid => document.getElementById(fid).value = '');
+      }
+      setTimeout(() => document.getElementById('viagem-nome').focus(), 100);
+    } else {
+      form.style.display = 'none';
+      if(btnNovo) btnNovo.style.display = '';
+      document.getElementById('viagem-id').value = '';
+    }
+  };
+
+  window.editViagem = (id) => {
+    const v = VIAGENS.find(x => x.id === id); if(!v) return;
+    document.getElementById('viagem-id').value = id;
+    document.getElementById('viagem-nome').value = v.nome || '';
+    document.getElementById('viagem-evento').value = v.evento_id || '';
+    document.getElementById('viagem-data').value = v.data || '';
+    document.getElementById('viagem-vlr-pass').value = v.vlr_pass || '';
+    document.getElementById('viagem-vlr-hosp').value = v.vlr_hosp || '';
+    document.getElementById('btn-save-viagem').textContent = 'Salvar Alterações';
+    window.toggleViagemForm(true);
+  };
+
+  document.getElementById('btn-save-viagem').onclick = async () => {
+    const id = document.getElementById('viagem-id').value;
+    const nome = document.getElementById('viagem-nome').value.trim();
+    const evId = document.getElementById('viagem-evento').value;
+    if(!nome || !evId) { showToast('Nome e Evento são obrigatórios!', 'warning'); return; }
+    
+    const payload = {
+      nome,
+      evento_id: evId,
+      data: document.getElementById('viagem-data').value.trim(),
+      vlr_pass: parseFloat(document.getElementById('viagem-vlr-pass').value) || 0,
+      vlr_hosp: parseFloat(document.getElementById('viagem-vlr-hosp').value) || 0
+    };
+    
+    const btn = document.getElementById('btn-save-viagem');
+    btn.textContent = 'Salvando...'; btn.disabled = true;
+    try {
+      if(id) {
+        await db.collection("viagens").doc(id).update(payload);
+        showToast('Lançamento atualizado!', 'success');
+      } else {
+        const docRef = await db.collection("viagens").add({ ...payload, criado_em: firebase.firestore.FieldValue.serverTimestamp() });
+        window.lastSavedId = docRef.id;
+        showToast('Custos lançados!', 'success');
+      }
+      await loadViagens();
+      window.toggleViagemForm(false);
+    } catch(e) { showToast('Erro ao salvar.', 'error'); }
+    finally { btn.textContent = '+ Salvar Lançamento'; btn.disabled = false; }
+  };
+
+  window.deleteViagem = async (id) => {
+    if(!await showConfirm('Excluir lançamento?', 'Esta ação é permanente.')) return;
+    try {
+      await db.collection("viagens").doc(id).delete();
+      showToast('Lançamento removido.', 'success');
+      await loadViagens();
+    } catch(e) { showToast('Erro ao remover.', 'error'); }
   };
 
   // ════════════ BRINDES ════════════
