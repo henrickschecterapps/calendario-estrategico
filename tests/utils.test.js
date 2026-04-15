@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { escapeHtml, fmtBRL } = require('../js/utils.js');
+const { escapeHtml, fmtBRL, timeAgo } = require('../js/utils.js');
 
 test('escapeHtml utility', async (t) => {
   await t.test('escapes basic HTML entities', () => {
@@ -79,5 +79,56 @@ test('fmtBRL utility', async (t) => {
     assert.strictEqual(normalize(fmtBRL('invalid')), normalize('R$ 0,00'));
     assert.strictEqual(normalize(fmtBRL({})), normalize('R$ 0,00'));
     assert.strictEqual(normalize(fmtBRL([])), normalize('R$ 0,00'));
+  });
+});
+
+test('timeAgo utility', async (t) => {
+  // We need to mock Date.now() or just use relative times since timeAgo uses `new Date()` internally for now
+
+  await t.test('returns "agora" for times less than a minute ago', () => {
+    const now = new Date();
+    assert.strictEqual(timeAgo(now), 'agora');
+
+    const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000);
+    assert.strictEqual(timeAgo(thirtySecondsAgo), 'agora');
+  });
+
+  await t.test('returns "Xm atrás" for times minutes ago', () => {
+    const now = new Date();
+    const oneMinuteAgo = new Date(now.getTime() - 60 * 1000);
+    assert.strictEqual(timeAgo(oneMinuteAgo), '1m atrás');
+
+    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+    assert.strictEqual(timeAgo(fiveMinutesAgo), '5m atrás');
+  });
+
+  await t.test('returns "Xh atrás" for times hours ago', () => {
+    const now = new Date();
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(oneHourAgo), '1h atrás');
+
+    const twoHoursAgo = new Date(now.getTime() - 2.5 * 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(twoHoursAgo), '2h atrás');
+  });
+
+  await t.test('returns "Xd atrás" for times days ago', () => {
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(oneDayAgo), '1d atrás');
+
+    const tenDaysAgo = new Date(now.getTime() - 10.5 * 24 * 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(tenDaysAgo), '10d atrás');
+  });
+
+  await t.test('handles string inputs correctly', () => {
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(oneDayAgo.toISOString()), '1d atrás');
+  });
+
+  await t.test('handles numeric timestamp inputs correctly', () => {
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(oneDayAgo.getTime()), '1d atrás');
   });
 });

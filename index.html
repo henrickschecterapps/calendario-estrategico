@@ -13,6 +13,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
+<script src="js/utils.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
@@ -1772,13 +1773,6 @@
     }).join('');
   }
 
-  function timeAgo(date) {
-    const diff = Math.floor((Date.now() - date.getTime()) / 1000);
-    if (diff < 60) return 'agora mesmo';
-    if (diff < 3600) return `há ${Math.floor(diff/60)} min`;
-    if (diff < 86400) return `há ${Math.floor(diff/3600)}h`;
-    return `há ${Math.floor(diff/86400)}d`;
-  }
 
   window.onNotifClick = (nid, eventId) => {
     const n = NOTIFICATIONS.find(x => String(x.id) === String(nid));
