@@ -576,6 +576,7 @@
 
   /* Fix Tabela Responsiva */
   .gestao-table-wrap { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+  .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   
   /* ── PDF EXPORT OPTIMIZATION ── */
   .pdf-capture { background: #fff !important; color: #000 !important; width: 1080px !important; padding: 40px !important; border-radius: 0 !important; }
@@ -764,10 +765,12 @@
       </div>
 
       <div id="view-list" class="view-container">
-        <table class="list-table">
-          <thead><tr><th data-sort="data_ini">Data ↕</th><th data-sort="evento">Evento ↕</th><th data-sort="tipo">Tipo ↕</th><th data-sort="status">Status ↕</th><th>Participantes (Tripla)</th></tr></thead>
-          <tbody id="list-body"></tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="list-table">
+            <thead><tr><th data-sort="data_ini">Data ↕</th><th data-sort="evento">Evento ↕</th><th data-sort="tipo">Tipo ↕</th><th data-sort="status">Status ↕</th><th>Participantes (Tripla)</th></tr></thead>
+            <tbody id="list-body"></tbody>
+          </table>
+        </div>
         <div id="list-no-results" class="empty-state hide"><i data-lucide="inbox" class="empty-icon"></i><div>Nenhum evento encontrado.</div></div>
       </div>
 
@@ -879,10 +882,12 @@
               </div>
 
               <div class="admin-panel" style="margin:0;">
-                <table class="list-table" style="border: none; box-shadow: none;">
-                  <thead><tr><th>Data</th><th>Evento</th><th>Responsável</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead>
-                  <tbody id="admin-event-list-body"></tbody>
-                </table>
+                <div class="table-responsive">
+                  <table class="list-table" style="border: none; box-shadow: none;">
+                    <thead><tr><th>Data</th><th>Evento</th><th>Responsável</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead>
+                    <tbody id="admin-event-list-body"></tbody>
+                  </table>
+                </div>
               </div>
             </div>
 
@@ -2742,25 +2747,27 @@
     }
 
     container.innerHTML = `
-      <table class="vagas-table">
-        <thead><tr><th>Evento</th><th>Data</th><th>Vagas</th><th>Cota</th><th>Status</th><th>Urgência</th></tr></thead>
-        <tbody>
-          ${eventsWithVagas.map(e => {
-            let urgClass = 'urgency-low', urgLabel = `${e.daysUntil}d`;
-            if (e.daysUntil <= 7)  { urgClass = 'urgency-high'; urgLabel = `🔴 ${e.daysUntil}d`; }
-            else if (e.daysUntil <= 30) { urgClass = 'urgency-mid'; urgLabel = `🟡 ${e.daysUntil}d`; }
-            else { urgLabel = `🟢 ${e.daysUntil}d`; }
-            return `<tr onclick="window.openEventView('${e.id}')">
-              <td style="font-weight:800;">${escapeHtml(e.evento)}</td>
-              <td>${dateFmt(e)}</td>
-              <td>${e.vagas}</td>
-              <td>${e.cota ? cotaBadge(e.cota) : '<span style="color:var(--muted)">—</span>'}</td>
-              <td>${statusBadge(e.status)}</td>
-              <td class="${urgClass}">${urgLabel}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>`;
+      <div class="table-responsive">
+        <table class="vagas-table">
+          <thead><tr><th>Evento</th><th>Data</th><th>Vagas</th><th>Cota</th><th>Status</th><th>Urgência</th></tr></thead>
+          <tbody>
+            ${eventsWithVagas.map(e => {
+              let urgClass = 'urgency-low', urgLabel = `${e.daysUntil}d`;
+              if (e.daysUntil <= 7)  { urgClass = 'urgency-high'; urgLabel = `🔴 ${e.daysUntil}d`; }
+              else if (e.daysUntil <= 30) { urgClass = 'urgency-mid'; urgLabel = `🟡 ${e.daysUntil}d`; }
+              else { urgLabel = `🟢 ${e.daysUntil}d`; }
+              return `<tr onclick="window.openEventView('${e.id}')">
+                <td style="font-weight:800;">${e.evento}</td>
+                <td>${dateFmt(e)}</td>
+                <td>${e.vagas}</td>
+                <td>${e.cota ? cotaBadge(e.cota) : '<span style="color:var(--muted)">—</span>'}</td>
+                <td>${statusBadge(e.status)}</td>
+                <td class="${urgClass}">${urgLabel}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
   }
   
   // ── ATENÇÃO COMENTÁRIO DE ENGENHARIA ──
