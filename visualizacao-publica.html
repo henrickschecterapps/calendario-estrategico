@@ -1184,7 +1184,6 @@ function renderCalendar() {
     const isOtherMonth = currentDate.getMonth() !== month;
     const isToday = currentDate.getTime() === today.getTime();
     
-    // Find events for this day
     const dayEvents = filteredEvents.filter(evento => {
       const eventoDate = evento.data_inicio?.toDate ? evento.data_inicio.toDate() : new Date(evento.data_inicio);
       eventoDate.setHours(0, 0, 0, 0);
