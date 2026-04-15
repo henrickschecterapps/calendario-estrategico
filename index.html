@@ -2380,7 +2380,7 @@
   function renderCalendar() {
     document.getElementById('cal-month-label').textContent = `${MONTHS_PT[calMonth]} ${calYear}`;
     const fd = new Date(calYear, calMonth, 1).getDay(), dim = new Date(calYear, calMonth+1, 0).getDate(), cells = Math.ceil((fd + dim) / 7) * 7, evMap = {};
-    getFilteredEvents().forEach(e => { const ini = parseDate(e.data_ini), fim = parseDate(e.data_fim) || ini; if (!ini) return; let d = new Date(ini); while (d <= fim) { if(d.getFullYear()===calYear && d.getMonth()===calMonth){ if(!evMap[d.getDate()]) evMap[d.getDate()]=[]; evMap[d.getDate()].push(e); } d.setDate(d.getDate()+1); } });
+    getFilteredEvents().forEach(e => { if (e._parsed_ini === undefined) { e._parsed_ini = parseDate(e.data_ini); e._parsed_fim = parseDate(e.data_fim) || e._parsed_ini; } const ini = e._parsed_ini, fim = e._parsed_fim; if (!ini) return; let d = new Date(ini); while (d <= fim) { if(d.getFullYear()===calYear && d.getMonth()===calMonth){ if(!evMap[d.getDate()]) evMap[d.getDate()]=[]; evMap[d.getDate()].push(e); } d.setDate(d.getDate()+1); } });
     let html = DAYS_PT.map(d => `<div class="cal-dow">${d}</div>`).join('');
     for (let i = 0; i < cells; i++) {
       const dNum = i - fd + 1, isOther = dNum<1||dNum>dim, isToday = !isOther&&dNum===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear(), evs = !isOther&&evMap[dNum] ? evMap[dNum] : [];
