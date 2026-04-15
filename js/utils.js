@@ -12,6 +12,11 @@ function escapeHtml(str) {
   }).replace(/\n/g, '<br>');
 }
 
+function fmtBRL(v) {
+  const n = parseFloat(v) || 0;
+  return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { escapeHtml };
+  module.exports = { escapeHtml, fmtBRL };
 }
