@@ -3256,14 +3256,7 @@
     if (typeof loadGestaoModules === 'function') loadGestaoModules();
   }
 
-  function renderHeatmap() {
-    const container = document.getElementById('heatmap-container');
-    const tooltip   = document.getElementById('hm-tooltip');
-    const year = new Date().getFullYear();
-    const jan1 = new Date(year, 0, 1);
-    const dec31 = new Date(year, 11, 31);
-
-    // Count events per day
+  function buildHeatmapDayMap(year) {
     const dayMap = {};
     EVENTS.forEach(e => {
       const ini = parseDate(e.data_ini), fim = parseDate(e.data_fim) || ini;
@@ -3273,18 +3266,17 @@
         if (d.getFullYear() === year) {
           const key = d.toISOString().slice(0,10);
           dayMap[key] = (dayMap[key]||[]);
-          dayMap[key].push(e.evento);
+          dayMap[key].push(escapeHtml(e.evento));
         }
         d.setDate(d.getDate()+1);
       }
     });
+    return dayMap;
+  }
 
-    const maxCount = Math.max(...Object.values(dayMap).map(a=>a.length), 1);
-
-    // Build weeks
+  function buildHeatmapWeeks(jan1, dec31) {
     const startDay = new Date(jan1);
     startDay.setDate(startDay.getDate() - startDay.getDay()); // align to Sunday
-
     const weeks = [];
     let cur = new Date(startDay);
     while (cur <= dec31) {
@@ -3295,28 +3287,33 @@
       }
       weeks.push(week);
     }
+    return weeks;
+  }
 
-    // Month labels
+  function buildHeatmapMonthLabels(weeks) {
     let labelHTML = '<div class="heatmap-month-labels" style="padding-left:20px;">';
     const monthPos = {};
     weeks.forEach((wk, wi) => {
       const m = wk[0].getMonth();
       if (monthPos[m] === undefined) monthPos[m] = wi;
     });
-    let lastM = -1;
     weeks.forEach((_, wi) => {
       const label = Object.entries(monthPos).find(([,v])=>v===wi);
       labelHTML += `<span style="width:16px;display:inline-block;flex-shrink:0;">${label ? MONTHS_SHORT[+label[0]] : ''}</span>`;
     });
     labelHTML += '</div>';
+    return labelHTML;
+  }
 
-    // Day labels
+  function buildHeatmapDayLabels() {
     const dayLetters = ['D','S','T','Q','Q','S','S'];
     let dayLabelsHTML = '<div style="display:flex;flex-direction:column;gap:3px;margin-right:4px;padding-top:0px;">';
     dayLetters.forEach(l => { dayLabelsHTML += `<div style="width:13px;height:13px;font-size:0.55rem;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;">${l}</div>`; });
     dayLabelsHTML += '</div>';
+    return dayLabelsHTML;
+  }
 
-    // Cells
+  function buildHeatmapGrid(weeks, dayMap, maxCount, year) {
     let gridHTML = '<div class="heatmap-grid">';
     weeks.forEach(wk => {
       gridHTML += '<div class="heatmap-col">';
@@ -3340,10 +3337,10 @@
       gridHTML += '</div>';
     });
     gridHTML += '</div>';
+    return gridHTML;
+  }
 
-    container.innerHTML = labelHTML + `<div style="display:flex;align-items:flex-start;">${dayLabelsHTML}${gridHTML}</div>`;
-
-    // Tooltip
+  function attachHeatmapTooltips(container, tooltip) {
     container.querySelectorAll('.heatmap-cell').forEach(cell => {
       cell.addEventListener('mouseenter', (e) => {
         const count = cell.dataset.count;
@@ -3358,6 +3355,26 @@
       });
       cell.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
     });
+  }
+
+  function renderHeatmap() {
+    const container = document.getElementById('heatmap-container');
+    const tooltip   = document.getElementById('hm-tooltip');
+    const year = new Date().getFullYear();
+    const jan1 = new Date(year, 0, 1);
+    const dec31 = new Date(year, 11, 31);
+
+    const dayMap = buildHeatmapDayMap(year);
+    const maxCount = Math.max(...Object.values(dayMap).map(a => a.length), 1);
+    const weeks = buildHeatmapWeeks(jan1, dec31);
+
+    const labelHTML = buildHeatmapMonthLabels(weeks);
+    const dayLabelsHTML = buildHeatmapDayLabels();
+    const gridHTML = buildHeatmapGrid(weeks, dayMap, maxCount, year);
+
+    container.innerHTML = labelHTML + `<div style="display:flex;align-items:flex-start;">${dayLabelsHTML}${gridHTML}</div>`;
+
+    attachHeatmapTooltips(container, tooltip);
   }
 
   function renderVagasTable() {
