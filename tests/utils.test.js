@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { escapeHtml, fmtBRL } = require('../js/utils.js');
+const { escapeHtml, fmtBRL, parseDate } = require('../js/utils.js');
 
 test('escapeHtml utility', async (t) => {
   await t.test('escapes basic HTML entities', () => {
@@ -79,5 +79,35 @@ test('fmtBRL utility', async (t) => {
     assert.strictEqual(normalize(fmtBRL('invalid')), normalize('R$ 0,00'));
     assert.strictEqual(normalize(fmtBRL({})), normalize('R$ 0,00'));
     assert.strictEqual(normalize(fmtBRL([])), normalize('R$ 0,00'));
+  });
+});
+
+test('parseDate utility', async (t) => {
+  await t.test('parses standard YYYY-MM-DD date strings', () => {
+    const date = parseDate('2023-10-15');
+    assert.strictEqual(date.getFullYear(), 2023);
+    assert.strictEqual(date.getMonth(), 9); // October is month 9 (0-indexed)
+    assert.strictEqual(date.getDate(), 15);
+  });
+
+  await t.test('handles empty, null, or undefined strings by returning null', () => {
+    assert.strictEqual(parseDate(''), null);
+    assert.strictEqual(parseDate(null), null);
+    assert.strictEqual(parseDate(undefined), null);
+  });
+
+  await t.test('handles single digit month and day', () => {
+    const date = parseDate('2024-05-08');
+    assert.strictEqual(date.getFullYear(), 2024);
+    assert.strictEqual(date.getMonth(), 4);
+    assert.strictEqual(date.getDate(), 8);
+  });
+
+  await t.test('handles invalid date strings gracefully', () => {
+    // Note: new Date with invalid parts will result in an Invalid Date object
+    // Depending on split('-') implementation it may be parsed differently,
+    // e.g. "not-a-date".split('-') => ["not", "a", "date"] => [NaN, NaN, NaN]
+    const date = parseDate('not-a-date');
+    assert.strictEqual(isNaN(date.getTime()), true);
   });
 });

@@ -14,6 +14,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<script src="js/utils.js"></script>
 
 <style>
   /* ── TEMA CLARO — PALETA TRIPLA ── */
@@ -1902,7 +1903,6 @@
   let currentEditId = null;
 
   // ── FUNÇÕES UTILITÁRIAS ──
-  function parseDate(s) { if (!s) return null; const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
   function getStartOfWeek(date) { const d = new Date(date); const day = d.getDay(); const diff = d.getDate() - day; return new Date(d.setDate(diff)); }
   function getStatus(ev) { const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim); if (!ini) return 'future'; if (fim && today >= ini && today <= fim) return 'ongoing'; if (today > (fim || ini)) return 'past'; return 'future'; }
   function dateFmt(ev) { const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim); if (!ini) return escapeHtml(ev.mes_ref) || ''; const opts = { day:'numeric', month:'short' }; if (!fim || ev.data_ini === ev.data_fim) return ini.toLocaleDateString('pt-BR', opts); return `${ini.toLocaleDateString('pt-BR',opts)} – ${fim.toLocaleDateString('pt-BR',opts)}`; }
