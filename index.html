@@ -1919,7 +1919,7 @@
   function typeBadge(t) { return t ? `<span class="badge badge-${t.toLowerCase()}">${t}</span>` : ''; }
   function statusBadge(s) { return s ? `<span class="badge badge-status-${STATUS_CLASS[s]||''}">${s}</span>` : ''; }
   function formatoBadge(f) { return f ? `<span class="badge badge-formato">${f}</span>` : ''; }
-  function getRespArray(str) { return !str ? [] : str.split(',').map(s=>s.trim()).filter(s=>s); }
+  function getRespArray(str, ev = null) { if (ev && ev._respArray && ev._respRawStr === str) return ev._respArray; const arr = !str ? [] : str.split(',').map(s=>s.trim()).filter(s=>s); if (ev) { ev._respArray = arr; ev._respRawStr = str; } return arr; }
   
   // -- Helper Functions for Gestão Operacional --
   function fmtBRL(v) { return (parseFloat(v)||0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
@@ -2160,7 +2160,7 @@
       if (filterFormato !== 'all' && (e.formato||'').toLowerCase() !== filterFormato.toLowerCase()) return false;
       // Multi-responsável
       if (filterRespMulti.size > 0) {
-        const respArr = getRespArray(e.responsavel);
+        const respArr = getRespArray(e.responsavel, e);
         if (!respArr.some(r => filterRespMulti.has(r))) return false;
       }
       // Date range
@@ -2204,7 +2204,7 @@
   // ── MULTI-RESP filter UI ──
   function renderMultiRespFilter() {
     const setResps = new Set(RESPONSAVEIS.map(r => r.nome));
-    EVENTS.forEach(e => getRespArray(e.responsavel).forEach(r => setResps.add(r)));
+    EVENTS.forEach(e => getRespArray(e.responsavel, e).forEach(r => setResps.add(r)));
     const arr = Array.from(setResps).sort();
     const container = document.getElementById('filter-resp-multi');
     if (!container) return;
@@ -2355,7 +2355,7 @@
         byMonth[m].forEach(e => {
             const d = parseDate(e.data_ini); 
             const color = TYPE_COLOR[e.tipo] || 'var(--accent)';
-            let respPills = getRespArray(e.responsavel).map(r => `<span class="resp-pill">${r}</span>`).join('');
+            let respPills = getRespArray(e.responsavel, e).map(r => `<span class="resp-pill">${r}</span>`).join('');
             
             html += `
             <div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
@@ -2447,7 +2447,7 @@
 
   // ── RESPONSÁVEIS CRUD ──
   function updateResponsiblesUI() {
-    const setResps = new Set(RESPONSAVEIS.map(r => r.nome)); EVENTS.forEach(e => { getRespArray(e.responsavel).forEach(r => setResps.add(r)); }); const arr = Array.from(setResps).sort();
+    const setResps = new Set(RESPONSAVEIS.map(r => r.nome)); EVENTS.forEach(e => { getRespArray(e.responsavel, e).forEach(r => setResps.add(r)); }); const arr = Array.from(setResps).sort();
     const filterSel = document.getElementById('filter-resp'); filterSel.innerHTML = '<option value="all">Todos os responsáveis</option>';
     const checkContainer = document.getElementById('edit-resp-checkboxes'); checkContainer.innerHTML = '';
     const adminList = document.getElementById('resp-list-admin'); adminList.innerHTML = '';
@@ -2468,8 +2468,8 @@
 
   document.getElementById('btn-add-resp').onclick = async () => { const inp = document.getElementById('new-resp-input'); const nome = inp.value.trim(); if(!nome) return; try { inp.value = "Salvando..."; inp.disabled = true; await db.collection("responsaveis").add({ nome }); inp.value = ""; await loadDataFromFirebase(); } catch(e) { console.error(e); } finally { inp.disabled = false; } };
   document.getElementById('btn-add-resp-modal').onclick = async (e) => { e.preventDefault(); const inp = document.getElementById('new-resp-input-modal'); const nome = inp.value.trim(); if(!nome) return; try { await db.collection("responsaveis").add({ nome }); inp.value = ""; await loadDataFromFirebase(); const idEditing = document.getElementById('edit-id').value; if(idEditing) window.openAdminForm(idEditing); else window.openAdminForm(''); } catch(er) {} }
-  window.editResp = async (id, oldName) => { const newName = prompt(`Editando: ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await db.collection("responsaveis").doc(id).update({ nome: newName.trim() }); const batch = db.batch(); let changed = false; EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(db.collection("eventos").doc(ev.id), { responsavel: newArr.join(', ') }); changed = true; } }); if(changed) await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
-  window.editLegacyResp = async (oldName) => { const newName = prompt(`Editando (Legado): ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await db.collection("responsaveis").add({ nome: newName.trim() }); const batch = db.batch(); EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(db.collection("eventos").doc(ev.id), { responsavel: newArr.join(', ') }); } }); await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
+  window.editResp = async (id, oldName) => { const newName = prompt(`Editando: ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await db.collection("responsaveis").doc(id).update({ nome: newName.trim() }); const batch = db.batch(); let changed = false; EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel, ev); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(db.collection("eventos").doc(ev.id), { responsavel: newArr.join(', ') }); changed = true; } }); if(changed) await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
+  window.editLegacyResp = async (oldName) => { const newName = prompt(`Editando (Legado): ${oldName}`, oldName); if (!newName || newName === oldName) return; try { await db.collection("responsaveis").add({ nome: newName.trim() }); const batch = db.batch(); EVENTS.forEach(ev => { let arr = getRespArray(ev.responsavel, ev); if (arr.includes(oldName)) { const newArr = arr.map(n => n === oldName ? newName.trim() : n); batch.update(db.collection("eventos").doc(ev.id), { responsavel: newArr.join(', ') }); } }); await batch.commit(); await loadDataFromFirebase(); } catch(e) {} };
   window.delResp = async (id) => {
     const ok = await showConfirm('Remover responsável?', 'Este responsável será removido da lista de opções.');
     if (!ok) return;
@@ -2493,7 +2493,7 @@
     
     tbody.innerHTML = sliced.length === 0
       ? '<tr><td colspan="5" class="empty-state">Nenhum evento encontrado.</td></tr>'
-      : sliced.map(e => `<tr><td style="font-size:0.85rem;font-weight:700;">${dateFmt(e)}</td><td style="font-weight:800;">${highlight(e.evento, q)}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">${getRespArray(e.responsavel).map(r=>`<span class="resp-pill">${highlight(r, q)}</span>`).join('')||'—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align:right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')"><i data-lucide="edit-2"></i></button></td></tr>`).join('');
+      : sliced.map(e => `<tr><td style="font-size:0.85rem;font-weight:700;">${dateFmt(e)}</td><td style="font-weight:800;">${highlight(e.evento, q)}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">${getRespArray(e.responsavel, e).map(r=>`<span class="resp-pill">${highlight(r, q)}</span>`).join('')||'—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align:right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')"><i data-lucide="edit-2"></i></button></td></tr>`).join('');
       
     if (typeof lucide !== 'undefined') lucide.createIcons();
     const cont = document.getElementById('admin-event-ver-mais-container');
@@ -2619,7 +2619,7 @@
     const ctxResp = document.getElementById('chartResp');
     if (chartResp) chartResp.destroy();
     const respCount = {};
-    EVENTS.forEach(e => { getRespArray(e.responsavel).forEach(r => { respCount[r] = (respCount[r]||0) + 1; }); });
+    EVENTS.forEach(e => { getRespArray(e.responsavel, e).forEach(r => { respCount[r] = (respCount[r]||0) + 1; }); });
     const respSorted = Object.entries(respCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
     chartResp = new Chart(ctxResp, {
       type: 'bar',
@@ -2802,7 +2802,7 @@
     if (ev.hora_ini) dateStr += ` · ⏰ ${ev.hora_ini}${ev.hora_fim ? ' – ' + ev.hora_fim : ''}`;
     document.getElementById('view-date').innerHTML = dateStr;
 
-    let rPills = getRespArray(ev.responsavel).map(r => `<span class="resp-pill">${r}</span>`).join('');
+    let rPills = getRespArray(ev.responsavel, ev).map(r => `<span class="resp-pill">${r}</span>`).join('');
     document.getElementById('view-resp-list').innerHTML = rPills || '<span style="color:var(--muted)">Não definido</span>';
 
     document.getElementById('view-status').textContent = ev.status || '-';
@@ -3044,7 +3044,7 @@
       document.getElementById('btn-cancel-edit').style.display = 'inline-block';
       loadEventHistory(id);
     }
-    const selectedArr = getRespArray(ev.responsavel);
+    const selectedArr = getRespArray(ev.responsavel, ev);
         document.querySelectorAll('.resp-checkbox').forEach(cb => { cb.checked = selectedArr.includes(cb.value); });
     const fields = { 
       'id':'id', 'nome':'evento', 'ini':'data_ini', 'fim':'data_fim', 
@@ -3340,7 +3340,7 @@
     if (!ev) return;
     clearTimeout(popTimeout);
     popTimeout = setTimeout(() => {
-      const respStr = getRespArray(ev.responsavel).join(', ') || '—';
+      const respStr = getRespArray(ev.responsavel, ev).join(', ') || '—';
       popover.innerHTML = `
         <div class="ev-popover-title">${escapeHtml(ev.evento)}</div>
         <div class="ev-popover-row">📅 ${dateFmt(ev)}${ev.hora_ini ? ' · ' + ev.hora_ini : ''}</div>
