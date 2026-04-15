@@ -685,7 +685,7 @@
       <div class="sidebar-section">
         <h3>Mês</h3>
         <div class="mini-cal">
-          <div class="mini-cal-header"><button class="mini-cal-nav" id="mini-prev">‹</button><span class="month-label" id="mini-month-label"></span><button class="mini-cal-nav" id="mini-next">›</button></div>
+          <div class="mini-cal-header"><button class="mini-cal-nav" id="mini-prev" aria-label="Mês anterior">‹</button><span class="month-label" id="mini-month-label"></span><button class="mini-cal-nav" id="mini-next" aria-label="Próximo mês">›</button></div>
           <div class="mini-cal-grid" id="mini-cal-grid"></div>
         </div>
       </div>
@@ -736,7 +736,7 @@
             <i data-lucide="search" style="color:var(--muted);width:16px;height:16px;"></i>
             <input type="text" id="search-input" placeholder="Buscar evento..." autocomplete="off">
             <span id="search-count" style="font-size:0.72rem;font-weight:700;color:var(--muted);white-space:nowrap;display:none;"></span>
-            <button id="btn-clear-search" onclick="clearSearch()" style="display:none;background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.9rem;padding:0;line-height:1;"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
+            <button id="btn-clear-search" aria-label="Limpar busca" onclick="clearSearch()" style="display:none;background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.9rem;padding:0;line-height:1;"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
           </div>
           <div class="view-tabs">
             <button class="view-tab active" data-view="timeline"><i data-lucide="align-left" style="margin-right:4px;"></i>Timeline</button>
@@ -754,12 +754,12 @@
       </div>
       
       <div id="view-calendar" class="view-container">
-        <div class="cal-nav"><button class="btn-icon" id="cal-prev"><i data-lucide="chevron-left"></i></button><span class="cal-month-label" id="cal-month-label"></span><button class="btn-icon" id="cal-next"><i data-lucide="chevron-right"></i></button></div>
+        <div class="cal-nav"><button class="btn-icon" id="cal-prev" aria-label="Mês anterior"><i data-lucide="chevron-left"></i></button><span class="cal-month-label" id="cal-month-label"></span><button class="btn-icon" id="cal-next" aria-label="Próximo mês"><i data-lucide="chevron-right"></i></button></div>
         <div class="cal-grid" id="cal-grid"></div>
       </div>
 
       <div id="view-week" class="view-container">
-        <div class="cal-nav"><button class="btn-icon" id="week-prev"><i data-lucide="chevron-left"></i></button><span class="cal-month-label" id="week-label"></span><button class="btn-icon" id="week-next"><i data-lucide="chevron-right"></i></button></div>
+        <div class="cal-nav"><button class="btn-icon" id="week-prev" aria-label="Semana anterior"><i data-lucide="chevron-left"></i></button><span class="cal-month-label" id="week-label"></span><button class="btn-icon" id="week-next" aria-label="Próxima semana"><i data-lucide="chevron-right"></i></button></div>
         <div class="week-grid" id="week-grid"></div>
       </div>
 
