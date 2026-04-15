@@ -14,6 +14,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<script src="js/utils.js"></script>
 
 <style>
   /* ── TEMA CLARO — PALETA TRIPLA ── */
@@ -1909,7 +1910,6 @@
   function typeBadge(t) { return t ? `<span class="badge badge-${t.toLowerCase()}">${escapeHtml(t)}</span>` : ''; }
   function statusBadge(s) { return s ? `<span class="badge badge-status-${STATUS_CLASS[s]||""}">${escapeHtml(s)}</span>` : ''; }
   function formatoBadge(f) { return f ? `<span class="badge badge-formato">${escapeHtml(f)}</span>` : ''; }
-  function getRespArray(str) { return !str ? [] : str.split(',').map(s=>s.trim()).filter(s=>s); }
   
   function cotaBadge(c) { 
     if(!c) return ''; let lowerC = c.toLowerCase(); let icon = '🏅', style = 'background: rgba(128,128,128,0.1); color: var(--text); border: 1px solid var(--border);';

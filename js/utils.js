@@ -17,6 +17,10 @@ function fmtBRL(v) {
   return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+function getRespArray(str) {
+  return !str ? [] : str.split(',').map(s=>s.trim()).filter(s=>s);
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { escapeHtml, fmtBRL };
+  module.exports = { escapeHtml, fmtBRL, getRespArray };
 }

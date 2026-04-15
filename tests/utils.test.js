@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { escapeHtml, fmtBRL } = require('../js/utils.js');
+const { escapeHtml, fmtBRL, getRespArray } = require('../js/utils.js');
 
 test('escapeHtml utility', async (t) => {
   await t.test('escapes basic HTML entities', () => {
@@ -42,9 +42,6 @@ test('escapeHtml utility', async (t) => {
 });
 
 test('fmtBRL utility', async (t) => {
-  // Save original language/locale settings if we were to change them,
-  // but toLocaleString will run in the Node.js environment's context.
-  // We can check strings by normalising non-breaking spaces that toLocaleString uses.
   const normalize = (str) => str.replace(/\s/g, ' ');
 
   await t.test('formats positive integers correctly', () => {
@@ -68,8 +65,6 @@ test('fmtBRL utility', async (t) => {
   });
 
   await t.test('formats negative numbers correctly', () => {
-    // Note: Node.js toLocaleString might format negative currency differently, usually -R$ 100,00 or R$ -100,00.
-    // Let's use a dynamic check or exact match based on standard Node.js behavior.
     assert.strictEqual(normalize(fmtBRL(-100)), normalize('-R$ 100,00'));
   });
 
@@ -79,5 +74,25 @@ test('fmtBRL utility', async (t) => {
     assert.strictEqual(normalize(fmtBRL('invalid')), normalize('R$ 0,00'));
     assert.strictEqual(normalize(fmtBRL({})), normalize('R$ 0,00'));
     assert.strictEqual(normalize(fmtBRL([])), normalize('R$ 0,00'));
+  });
+});
+
+test('getRespArray utility', async (t) => {
+  await t.test('handles empty, null, or undefined strings', () => {
+    assert.deepStrictEqual(getRespArray(''), []);
+    assert.deepStrictEqual(getRespArray(null), []);
+    assert.deepStrictEqual(getRespArray(undefined), []);
+  });
+
+  await t.test('parses basic comma-separated strings', () => {
+    assert.deepStrictEqual(getRespArray('Alice, Bob, Charlie'), ['Alice', 'Bob', 'Charlie']);
+  });
+
+  await t.test('trims spaces around names', () => {
+    assert.deepStrictEqual(getRespArray('  Alice  ,   Bob ,Charlie   '), ['Alice', 'Bob', 'Charlie']);
+  });
+
+  await t.test('ignores empty values between commas', () => {
+    assert.deepStrictEqual(getRespArray('Alice,,Bob, ,Charlie,'), ['Alice', 'Bob', 'Charlie']);
   });
 });
