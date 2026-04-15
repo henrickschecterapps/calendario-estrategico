@@ -909,7 +909,7 @@
                 <div class="gestao-pane active" id="gpane-estoque">
                   <div class="filter-bar-gestao">
                     <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
-                    <input type="text" id="filtro-estoque-busca" placeholder="Buscar no estoque..." oninput="renderEstoque()">
+                    <input type="text" id="filtro-estoque-busca" placeholder="Buscar no estoque..." oninput="debounceRenderEstoque()">
                     <select id="filtro-estoque-tipo" onchange="renderEstoque()">
                       <option value="">Qualquer Tipo</option>
                       <option value="brinde">Brinde</option>
@@ -1000,7 +1000,7 @@
                   <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                       <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="filter" style="width:14px;height:14px;"></i> Filtros:</span>
-                      <input type="text" id="filtro-brinde-busca" placeholder="Buscar brinde..." oninput="renderBrindes()">
+                      <input type="text" id="filtro-brinde-busca" placeholder="Buscar brinde..." oninput="debounceRenderBrindes()">
                       <select id="filtro-brinde-nivel" onchange="renderBrindes()">
                         <option value="">Todos os Níveis</option>
                         <option value="Massa">Massa</option>
@@ -1095,7 +1095,7 @@
                   <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                       <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="filter" style="width:14px;height:14px;"></i> Filtros:</span>
-                      <input type="text" id="filtro-unif-busca" placeholder="Cor ou observação..." oninput="renderUniformes()">
+                      <input type="text" id="filtro-unif-busca" placeholder="Cor ou observação..." oninput="debounceRenderUniformes()">
                       <select id="filtro-unif-status" onchange="renderUniformes()">
                         <option value="">Todos os Status</option>
                         <option value="Pedido">Pedido</option>
@@ -1198,7 +1198,7 @@
                 <div class="gestao-pane" id="gpane-fornecedores">
                   <div class="filter-bar-gestao">
                     <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
-                    <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()">
+                    <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="debounceRenderFornecedores()">
                   </div>
 
                   <div class="gestao-table-wrap" id="forn-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
@@ -1233,7 +1233,7 @@
                 <div class="gestao-pane hide" id="gpane-participantes">
                   <div class="filter-bar-gestao">
                     <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
-                    <input type="text" id="filtro-part-busca" placeholder="Nome ou telefone..." oninput="window.renderParticipantes()" class="admin-input" style="width:280px; margin:0;">
+                    <input type="text" id="filtro-part-busca" placeholder="Nome ou telefone..." oninput="debounceRenderParticipantes()" class="admin-input" style="width:280px; margin:0;">
                     <div style="flex:1"></div>
                     <button class="btn-primary" onclick="window.togglePartForm(true)" id="btn-novo-participante"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> Novo Participante</button>
                   </div>
@@ -1652,6 +1652,22 @@
     messagingSenderId: "941508404506",
     appId: "1:941508404506:web:af82455df11b35359538a3"
   };
+
+  // DEBOUNCE HELPER FUNCAO
+  function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+
+  // Global debounced render functions
+  const debounceRenderEstoque = debounce(() => renderEstoque(), 300);
+  const debounceRenderBrindes = debounce(() => renderBrindes(), 300);
+  const debounceRenderUniformes = debounce(() => renderUniformes(), 300);
+  const debounceRenderFornecedores = debounce(() => renderFornecedores(), 300);
+  const debounceRenderParticipantes = debounce(() => { if (window.renderParticipantes) window.renderParticipantes(); }, 300);
 
   if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   const db = firebase.firestore();
@@ -3448,7 +3464,7 @@
   document.querySelectorAll('[data-filter-type]').forEach(b => b.onclick = (e) => { filterType = e.currentTarget.dataset.filterType; document.querySelectorAll('[data-filter-type]').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active'); renderActiveFilterChips(); syncURLState(); initUI(); });
   document.querySelectorAll('[data-filter-status]').forEach(b => b.onclick = (e) => { filterStatus = e.currentTarget.dataset.filterStatus; document.querySelectorAll('[data-filter-status]').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active'); renderActiveFilterChips(); syncURLState(); initUI(); });
   document.getElementById('filter-resp').onchange = (e) => { filterResp = e.target.value; initUI(); };
-  document.getElementById('search-input').oninput = (e) => { searchQ = e.target.value; renderSearchCount(); syncURLState(); renderCurrentView(); };
+  document.getElementById('search-input').oninput = debounce((e) => { searchQ = e.target.value; renderSearchCount(); syncURLState(); renderCurrentView(); }, 300);
 
   // ── DATE RANGE LISTENERS ──
   document.getElementById('filter-date-from')?.addEventListener('change', (e) => {
