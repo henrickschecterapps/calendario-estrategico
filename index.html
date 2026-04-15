@@ -2340,8 +2340,7 @@
         byMonth[m].forEach(e => {
             const d = parseDate(e.data_ini); 
             const color = TYPE_COLOR[e.tipo] || 'var(--accent)';
-            let respPills = getRespArray(e.responsavel, e).map(r => `<span class="resp-pill">${r}</span>`).join('');
-            let respPills = getRespArray(e.responsavel).map(r => `<span class="resp-pill">${escapeHtml(r)}</span>`).join('');
+            const respPills = getRespArray(e.responsavel).map(r => `<span class="resp-pill">${escapeHtml(r)}</span>`).join('');
             
             html += `
             <div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
