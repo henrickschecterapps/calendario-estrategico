@@ -12,6 +12,7 @@ function escapeHtml(str) {
   }).replace(/\n/g, '<br>');
 }
 
+function parseDate(s) { if (!s) return null; const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); }
 function fmtBRL(v) {
   const n = parseFloat(v) || 0;
   return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
