@@ -2750,7 +2750,7 @@
               else if (e.daysUntil <= 30) { urgClass = 'urgency-mid'; urgLabel = `🟡 ${e.daysUntil}d`; }
               else { urgLabel = `🟢 ${e.daysUntil}d`; }
               return `<tr onclick="window.openEventView('${e.id}')">
-                <td style="font-weight:800;">${e.evento}</td>
+                <td style="font-weight:800;">${escapeHtml(e.evento)}</td>
                 <td>${dateFmt(e)}</td>
                 <td>${e.vagas}</td>
                 <td>${e.cota ? cotaBadge(e.cota) : '<span style="color:var(--muted)">—</span>'}</td>
