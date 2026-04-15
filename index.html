@@ -14,6 +14,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<script src="js/utils.js"></script>
 
 <style>
   /* ── TEMA CLARO — PALETA TRIPLA ── */
@@ -1854,9 +1855,7 @@
     }
   }
 
-  function escapeHtml(str) {
-    return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br>');
-  }
+
 
   window.submitComment = async function() {
     const textarea = document.getElementById('comment-text');
