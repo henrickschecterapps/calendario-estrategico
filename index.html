@@ -14,7 +14,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
-<script src="js/utils.js"></script>
 
 <style>
   /* ── TEMA CLARO — PALETA TRIPLA ── */
@@ -910,7 +909,7 @@
                 <div class="gestao-pane active" id="gpane-estoque">
                   <div class="filter-bar-gestao">
                     <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
-                    <input type="text" id="filtro-estoque-busca" placeholder="Buscar no estoque..." oninput="debounceRenderEstoque()">
+                    <input type="text" id="filtro-estoque-busca" placeholder="Buscar no estoque..." oninput="renderEstoque()">
                     <select id="filtro-estoque-tipo" onchange="renderEstoque()">
                       <option value="">Qualquer Tipo</option>
                       <option value="brinde">Brinde</option>
@@ -1001,7 +1000,7 @@
                   <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                       <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="filter" style="width:14px;height:14px;"></i> Filtros:</span>
-                      <input type="text" id="filtro-brinde-busca" placeholder="Buscar brinde..." oninput="debounceRenderBrindes()">
+                      <input type="text" id="filtro-brinde-busca" placeholder="Buscar brinde..." oninput="renderBrindes()">
                       <select id="filtro-brinde-nivel" onchange="renderBrindes()">
                         <option value="">Todos os Níveis</option>
                         <option value="Massa">Massa</option>
@@ -1096,7 +1095,7 @@
                   <div class="filter-bar-gestao" style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                       <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="filter" style="width:14px;height:14px;"></i> Filtros:</span>
-                      <input type="text" id="filtro-unif-busca" placeholder="Cor ou observação..." oninput="debounceRenderUniformes()">
+                      <input type="text" id="filtro-unif-busca" placeholder="Cor ou observação..." oninput="renderUniformes()">
                       <select id="filtro-unif-status" onchange="renderUniformes()">
                         <option value="">Todos os Status</option>
                         <option value="Pedido">Pedido</option>
@@ -1199,7 +1198,7 @@
                 <div class="gestao-pane" id="gpane-fornecedores">
                   <div class="filter-bar-gestao">
                     <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
-                    <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="debounceRenderFornecedores()">
+                    <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()">
                   </div>
 
                   <div class="gestao-table-wrap" id="forn-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
@@ -1234,7 +1233,7 @@
                 <div class="gestao-pane hide" id="gpane-participantes">
                   <div class="filter-bar-gestao">
                     <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
-                    <input type="text" id="filtro-part-busca" placeholder="Nome ou telefone..." oninput="debounceRenderParticipantes()" class="admin-input" style="width:280px; margin:0;">
+                    <input type="text" id="filtro-part-busca" placeholder="Nome ou telefone..." oninput="window.renderParticipantes()" class="admin-input" style="width:280px; margin:0;">
                     <div style="flex:1"></div>
                     <button class="btn-primary" onclick="window.togglePartForm(true)" id="btn-novo-participante"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> Novo Participante</button>
                   </div>
@@ -1654,22 +1653,6 @@
     appId: "1:941508404506:web:af82455df11b35359538a3"
   };
 
-  // DEBOUNCE HELPER FUNCAO
-  function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-  }
-
-  // Global debounced render functions
-  const debounceRenderEstoque = debounce(() => renderEstoque(), 300);
-  const debounceRenderBrindes = debounce(() => renderBrindes(), 300);
-  const debounceRenderUniformes = debounce(() => renderUniformes(), 300);
-  const debounceRenderFornecedores = debounce(() => renderFornecedores(), 300);
-  const debounceRenderParticipantes = debounce(() => { if (window.renderParticipantes) window.renderParticipantes(); }, 300);
-
   if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   const db = firebase.firestore();
   const auth = firebase.auth();
@@ -1823,9 +1806,9 @@
       const ini = parseDate(ev.data_ini);
       if (!ini || ev.tipo === 'Feriado') return;
       const diff = Math.ceil((ini - today) / (1000*60*60*24));
-      if (diff === 1) addNotification(`📅 <b>${ev.evento}</b> começa amanhã!`, ev.id);
-      else if (diff === 3) addNotification(`⏳ <b>${ev.evento}</b> em 3 dias.`, ev.id);
-      else if (diff === 7) addNotification(`🗓️ <b>${ev.evento}</b> em 1 semana.`, ev.id);
+      if (diff === 1) addNotification(`📅 <b>${escapeHtml(ev.evento)}</b> começa amanhã!`, ev.id);
+      else if (diff === 3) addNotification(`⏳ <b>${escapeHtml(ev.evento)}</b> em 3 dias.`, ev.id);
+      else if (diff === 7) addNotification(`🗓️ <b>${escapeHtml(ev.evento)}</b> em 1 semana.`, ev.id);
     });
   }
 
@@ -1871,7 +1854,9 @@
     }
   }
 
-
+  function escapeHtml(str) {
+    return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br>');
+  }
 
   window.submitComment = async function() {
     const textarea = document.getElementById('comment-text');
@@ -1915,16 +1900,16 @@
   function parseDate(s) { if (!s) return null; const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
   function getStartOfWeek(date) { const d = new Date(date); const day = d.getDay(); const diff = d.getDate() - day; return new Date(d.setDate(diff)); }
   function getStatus(ev) { const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim); if (!ini) return 'future'; if (fim && today >= ini && today <= fim) return 'ongoing'; if (today > (fim || ini)) return 'past'; return 'future'; }
-  function dateFmt(ev) { const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim); if (!ini) return ev.mes_ref || ''; const opts = { day:'numeric', month:'short' }; if (!fim || ev.data_ini === ev.data_fim) return ini.toLocaleDateString('pt-BR', opts); return `${ini.toLocaleDateString('pt-BR',opts)} – ${fim.toLocaleDateString('pt-BR',opts)}`; }
-  function typeBadge(t) { return t ? `<span class="badge badge-${t.toLowerCase()}">${t}</span>` : ''; }
-  function statusBadge(s) { return s ? `<span class="badge badge-status-${STATUS_CLASS[s]||''}">${s}</span>` : ''; }
-  function formatoBadge(f) { return f ? `<span class="badge badge-formato">${f}</span>` : ''; }
+  function dateFmt(ev) { const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim); if (!ini) return escapeHtml(ev.mes_ref) || ''; const opts = { day:'numeric', month:'short' }; if (!fim || ev.data_ini === ev.data_fim) return ini.toLocaleDateString('pt-BR', opts); return `${ini.toLocaleDateString('pt-BR',opts)} – ${fim.toLocaleDateString('pt-BR',opts)}`; }
+  function typeBadge(t) { return t ? `<span class="badge badge-${t.toLowerCase()}">${escapeHtml(t)}</span>` : ''; }
+  function statusBadge(s) { return s ? `<span class="badge badge-status-${STATUS_CLASS[s]||""}">${escapeHtml(s)}</span>` : ''; }
+  function formatoBadge(f) { return f ? `<span class="badge badge-formato">${escapeHtml(f)}</span>` : ''; }
   function getRespArray(str) { return !str ? [] : str.split(',').map(s=>s.trim()).filter(s=>s); }
   
   function cotaBadge(c) { 
     if(!c) return ''; let lowerC = c.toLowerCase(); let icon = '🏅', style = 'background: rgba(128,128,128,0.1); color: var(--text); border: 1px solid var(--border);';
     if (lowerC.includes('ouro') || lowerC.includes('gold')) { icon = '🥇'; style = 'background: rgba(234, 179, 8, 0.15); color: #d97706; border: 1px solid rgba(234, 179, 8, 0.3);'; } else if (lowerC.includes('prata') || lowerC.includes('silver')) { icon = '🥈'; style = 'background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);'; } else if (lowerC.includes('bronze')) { icon = '🥉'; style = 'background: rgba(180, 83, 9, 0.15); color: #b45309; border: 1px solid rgba(180, 83, 9, 0.3);'; } else if (lowerC.includes('diamond') || lowerC.includes('diamante')) { icon = '💎'; style = 'background: rgba(56, 189, 248, 0.15); color: #0284c7; border: 1px solid rgba(56, 189, 248, 0.3);'; } else if (lowerC.includes('platina') || lowerC.includes('platinum')) { icon = '💠'; style = 'background: rgba(167, 139, 250, 0.15); color: #7c3aed; border: 1px solid rgba(167, 139, 250, 0.3);'; }
-    return `<span class="badge" style="${style}">${icon} Cota: ${c}</span>`; 
+    return `<span class="badge" style="${style}">${icon} Cota: ${escapeHtml(c)}</span>`;
   }
   
   function temporalBadge(ev) {
@@ -2348,7 +2333,7 @@
         byMonth[m].forEach(e => {
             const d = parseDate(e.data_ini); 
             const color = TYPE_COLOR[e.tipo] || 'var(--accent)';
-            let respPills = getRespArray(e.responsavel).map(r => `<span class="resp-pill">${r}</span>`).join('');
+            let respPills = getRespArray(e.responsavel).map(r => `<span class="resp-pill">${escapeHtml(r)}</span>`).join('');
             
             html += `
             <div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
@@ -2358,7 +2343,7 @@
                 </div>
                 <div class="event-body">
                     <div class="event-header-row">
-                        <div class="event-name">${e.evento}</div>
+                        <div class="event-name">${escapeHtml(e.evento)}</div>
                         <div>${temporalBadge(e)}</div>
                     </div>
                     <div class="event-meta">
@@ -2382,7 +2367,7 @@
     if (evs.length===0) { body.innerHTML=''; noR.classList.remove('hide'); return; } noR.classList.add('hide');
     body.innerHTML = evs.map(e => `
         <tr onclick="window.openEventView('${e.id}')" class="${getStatus(e)}">
-        <td style="font-weight:700;">${dateFmt(e)}</td><td><div style="display:flex; align-items:center; gap:8px;"><strong style="font-size:0.95rem; color:var(--text);">${e.evento}</strong> ${temporalBadge(e)}</div></td><td>${typeBadge(e.tipo)}</td><td>${statusBadge(e.status)}</td><td><div style="color:var(--text); font-weight:600; font-size:0.85rem;">${e.participantes || '<span style="color:var(--muted);font-weight:400">-</span>'}</div></td></tr>`
+        <td style="font-weight:700;">${dateFmt(e)}</td><td><div style="display:flex; align-items:center; gap:8px;"><strong style="font-size:0.95rem; color:var(--text);">${escapeHtml(e.evento)}</strong> ${temporalBadge(e)}</div></td><td>${typeBadge(e.tipo)}</td><td>${statusBadge(e.status)}</td><td><div style="color:var(--text); font-weight:600; font-size:0.85rem;">${escapeHtml(e.participantes) || '<span style="color:var(--muted);font-weight:400">-</span>'}</div></td></tr>`
     ).join('');
   }
 
@@ -2393,7 +2378,7 @@
     let html = DAYS_PT.map(d => `<div class="cal-dow">${d}</div>`).join('');
     for (let i = 0; i < cells; i++) {
       const dNum = i - fd + 1, isOther = dNum<1||dNum>dim, isToday = !isOther&&dNum===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear(), evs = !isOther&&evMap[dNum] ? evMap[dNum] : [];
-      html += `<div class="cal-day ${isOther?'other-month':''} ${isToday?'today':''}"><div class="cal-day-num">${isOther?'':dNum}</div>${evs.slice(0,3).map(e => `<div class="cal-event-pill ${(e.tipo||'').toLowerCase()}" onclick="event.stopPropagation(); window.openEventView('${e.id}')">${e.evento}</div>`).join('')}${evs.length>3 ? `<div style="font-size:0.6rem;font-weight:700;color:var(--muted)">+${evs.length-3}</div>` : ''}</div>`;
+      html += `<div class="cal-day ${isOther?'other-month':''} ${isToday?'today':''}"><div class="cal-day-num">${isOther?'':dNum}</div>${evs.slice(0,3).map(e => `<div class="cal-event-pill ${(e.tipo||'').toLowerCase()}" onclick="event.stopPropagation(); window.openEventView('${e.id}')">${escapeHtml(e.evento)}</div>`).join('')}${evs.length>3 ? `<div style="font-size:0.6rem;font-weight:700;color:var(--muted)">+${evs.length-3}</div>` : ''}</div>`;
     } document.getElementById('cal-grid').innerHTML = html;
   }
 
@@ -2402,7 +2387,7 @@
     let html = '';
     for(let i=0; i<7; i++) {
       const cD = new Date(s); cD.setDate(s.getDate() + i); const evs = getFilteredEvents().filter(ev => { const iD=parseDate(ev.data_ini), fD=parseDate(ev.data_fim)||iD; return cD>=iD && cD<=fD; });
-      html += `<div class="week-col"><div class="week-col-header">${DAYS_PT[i]} ${cD.getDate()}</div><div class="week-col-body">${evs.map(ev => `<div class="week-event" style="border-left-color:${TYPE_COLOR[ev.tipo]||'var(--accent)'}" onclick="window.openEventView('${ev.id}')">${ev.evento}</div>`).join('')}</div></div>`;
+      html += `<div class="week-col"><div class="week-col-header">${DAYS_PT[i]} ${cD.getDate()}</div><div class="week-col-body">${evs.map(ev => `<div class="week-event" style="border-left-color:${TYPE_COLOR[ev.tipo]||'var(--accent)'}" onclick="window.openEventView('${ev.id}')">${escapeHtml(ev.evento)}</div>`).join('')}</div></div>`;
     } document.getElementById('week-grid').innerHTML = html;
   }
 
@@ -2433,7 +2418,7 @@
     container.innerHTML = up.map(e =>
       `<div class="upcoming-item" onclick="window.openEventView('${e.id}')">
         <div class="upcoming-dot" style="background:${TYPE_COLOR[e.tipo]||'var(--accent)'}"></div>
-        <div><div class="upcoming-name">${e.evento}</div><div class="upcoming-date">${dateFmt(e)}</div></div>
+        <div><div class="upcoming-name">${escapeHtml(e.evento)}</div><div class="upcoming-date">${dateFmt(e)}</div></div>
       </div>`
     ).join('');
   }
@@ -2650,7 +2635,7 @@
         if (d.getFullYear() === year) {
           const key = d.toISOString().slice(0,10);
           dayMap[key] = (dayMap[key]||[]);
-          dayMap[key].push(e.evento);
+          dayMap[key].push(escapeHtml(e.evento));
         }
         d.setDate(d.getDate()+1);
       }
@@ -2766,7 +2751,7 @@
             else if (e.daysUntil <= 30) { urgClass = 'urgency-mid'; urgLabel = `🟡 ${e.daysUntil}d`; }
             else { urgLabel = `🟢 ${e.daysUntil}d`; }
             return `<tr onclick="window.openEventView('${e.id}')">
-              <td style="font-weight:800;">${e.evento}</td>
+              <td style="font-weight:800;">${escapeHtml(e.evento)}</td>
               <td>${dateFmt(e)}</td>
               <td>${e.vagas}</td>
               <td>${e.cota ? cotaBadge(e.cota) : '<span style="color:var(--muted)">—</span>'}</td>
@@ -2792,10 +2777,10 @@
 
     // Date + hora
     let dateStr = `📅 ${dateFmt(ev)}`;
-    if (ev.hora_ini) dateStr += ` · ⏰ ${ev.hora_ini}${ev.hora_fim ? ' – ' + ev.hora_fim : ''}`;
+    if (ev.hora_ini) dateStr += ` · ⏰ ${escapeHtml(ev.hora_ini)}${ev.hora_fim ? ' – ' + escapeHtml(ev.hora_fim) : ''}`;
     document.getElementById('view-date').innerHTML = dateStr;
 
-    let rPills = getRespArray(ev.responsavel).map(r => `<span class="resp-pill">${r}</span>`).join('');
+    let rPills = getRespArray(ev.responsavel).map(r => `<span class="resp-pill">${escapeHtml(r)}</span>`).join('');
     document.getElementById('view-resp-list').innerHTML = rPills || '<span style="color:var(--muted)">Não definido</span>';
 
     document.getElementById('view-status').textContent = ev.status || '-';
@@ -2838,7 +2823,7 @@
       toggleBlock('block-participantes', ev.participantes);
     }
     toggleBlock('block-localidade', ev.localidade, v => `<a href="https://maps.google.com/?q=${encodeURIComponent(v)}" target="_blank" style="color:var(--accent);font-weight:700;">${escapeHtml(v)} 🗺️</a>`);
-    toggleBlock('block-hora', (ev.hora_ini ? ev.hora_ini + (ev.hora_fim ? ' – ' + ev.hora_fim : '') : null));
+    toggleBlock('block-hora', (ev.hora_ini ? ev.hora_ini + (ev.hora_fim ? ' – ' + escapeHtml(ev.hora_fim) : '') : null));
 
     // Links
     const linksBlock = document.getElementById('block-links');
@@ -3272,7 +3257,7 @@
       }
       document.getElementById('modal-overlay').classList.remove('open');
       showToast(isNew ? 'Evento criado com sucesso! 🎉' : 'Evento atualizado!', 'success');
-      addNotification(`${isNew ? '✨ Novo evento' : '✏️ Atualizado'}: <b>${data.evento}</b>`, null);
+      addNotification(`${isNew ? '✨ Novo evento' : '✏️ Atualizado'}: <b>${escapeHtml(data.evento)}</b>`, null);
       await loadDataFromFirebase();
     } catch (e) { showToast("Erro ao salvar no banco. Tente novamente.", 'error'); }
     finally { btn.textContent = "Salvar Alterações"; btn.disabled = false; }
@@ -3316,7 +3301,7 @@
     try {
       await db.collection("eventos").add(copy);
       document.getElementById('modal-overlay').classList.remove('open');
-      showToast(`Evento duplicado como "${copy.evento}"!`, 'success');
+      showToast(`Evento duplicado como "${escapeHtml(copy.evento)}"!`, 'success');
       await loadDataFromFirebase();
     } catch(e) { showToast('Erro ao duplicar evento.', 'error'); }
   };
@@ -3456,7 +3441,7 @@
   document.querySelectorAll('[data-filter-type]').forEach(b => b.onclick = (e) => { filterType = e.currentTarget.dataset.filterType; document.querySelectorAll('[data-filter-type]').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active'); renderActiveFilterChips(); syncURLState(); initUI(); });
   document.querySelectorAll('[data-filter-status]').forEach(b => b.onclick = (e) => { filterStatus = e.currentTarget.dataset.filterStatus; document.querySelectorAll('[data-filter-status]').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active'); renderActiveFilterChips(); syncURLState(); initUI(); });
   document.getElementById('filter-resp').onchange = (e) => { filterResp = e.target.value; initUI(); };
-  document.getElementById('search-input').oninput = debounce((e) => { searchQ = e.target.value; renderSearchCount(); syncURLState(); renderCurrentView(); }, 300);
+  document.getElementById('search-input').oninput = (e) => { searchQ = e.target.value; renderSearchCount(); syncURLState(); renderCurrentView(); };
 
   // ── DATE RANGE LISTENERS ──
   document.getElementById('filter-date-from')?.addEventListener('change', (e) => {
@@ -3609,7 +3594,7 @@
       <td style="font-weight:700;">${dateFmt(e)}</td>
       <td><div style="display:flex;align-items:center;gap:8px;"><strong style="font-size:0.95rem;color:var(--text);">${highlight(e.evento,searchQ)}</strong>${temporalBadge(e)}</div></td>
       <td>${typeBadge(e.tipo)}</td><td>${statusBadge(e.status)}</td>
-      <td><div style="color:var(--text);font-weight:600;font-size:0.85rem;">${e.participantes||'<span style="color:var(--muted);font-weight:400">-</span>'}</div></td>
+      <td><div style="color:var(--text);font-weight:600;font-size:0.85rem;">${escapeHtml(e.participantes)||'<span style="color:var(--muted);font-weight:400">-</span>'}</div></td>
       </tr>`).join('');
     renderListPagination(allEvs.length, totalPages);
   }
@@ -3743,10 +3728,6 @@
   });
 
   // ── Helpers de formatação ──
-  function fmtBRL(v) {
-    const n = parseFloat(v) || 0;
-    return n.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
-  }
   function nivelBadge(nivel) {
     const map = { 'Massa':'nivel-massa', 'Qualificação':'nivel-qualif', 'VIP':'nivel-vip' };
     return `<span class="badge ${map[nivel]||'nivel-massa'}">${nivel||'—'}</span>`;
