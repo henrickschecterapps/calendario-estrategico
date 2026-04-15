@@ -13,9 +13,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
-<script src="js/utils.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
-<script src="js/utils.js"></script>
 
 <style>
   /* ── TEMA CLARO — PALETA TRIPLA ── */
@@ -298,8 +296,7 @@
 
   /* show-on-admin: esconde por padrão — visibilidade controlada via JS para evitar
      o bug em que o botão se esconde ao clicar (ativando o próprio admin-mode) */
-  .show-on-admin { display: none !important; }
-  body.admin-mode .show-on-admin { display: flex !important; }
+  .show-on-admin { display: none; }
 
   /* ── ESTILOS FALTANTES ── */
   .mini-cal-dow { font-size: 0.65rem; font-weight: 700; color: var(--muted); padding: 2px 0 6px; text-align: center; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -1649,9 +1646,16 @@
   </div>
 </div>
 
-<script src="js/firebase-config.js"></script>
 <script>
   // ── FIREBASE CONFIGURAÇÕES (VERSÃO COMPAT PARA RODAR LOCALMENTE) ──
+  const firebaseConfig = {
+    apiKey: "AIzaSyCmuDrq-ctHOGu4Fe9gHoK2Fxhcfg3BE9g",
+    authDomain: "calendario-estrategico.firebaseapp.com",
+    projectId: "calendario-estrategico",
+    storageBucket: "calendario-estrategico.firebasestorage.app",
+    messagingSenderId: "941508404506",
+    appId: "1:941508404506:web:af82455df11b35359538a3"
+  };
 
   if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   const db = firebase.firestore();
@@ -1767,6 +1771,13 @@
     }).join('');
   }
 
+  function timeAgo(date) {
+    const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (diff < 60) return 'agora mesmo';
+    if (diff < 3600) return `há ${Math.floor(diff/60)} min`;
+    if (diff < 86400) return `há ${Math.floor(diff/3600)}h`;
+    return `há ${Math.floor(diff/86400)}d`;
+  }
 
   window.onNotifClick = (nid, eventId) => {
     const n = NOTIFICATIONS.find(x => String(x.id) === String(nid));
@@ -1890,6 +1901,7 @@
   let currentEditId = null;
 
   // ── FUNÇÕES UTILITÁRIAS ──
+  function parseDate(s) { if (!s) return null; const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
   function getStartOfWeek(date) { const d = new Date(date); const day = d.getDay(); const diff = d.getDate() - day; return new Date(d.setDate(diff)); }
   function getStatus(ev) { const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim); if (!ini) return 'future'; if (fim && today >= ini && today <= fim) return 'ongoing'; if (today > (fim || ini)) return 'past'; return 'future'; }
   function dateFmt(ev) { const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim); if (!ini) return escapeHtml(ev.mes_ref) || ''; const opts = { day:'numeric', month:'short' }; if (!fim || ev.data_ini === ev.data_fim) return ini.toLocaleDateString('pt-BR', opts); return `${ini.toLocaleDateString('pt-BR',opts)} – ${fim.toLocaleDateString('pt-BR',opts)}`; }
@@ -1923,6 +1935,9 @@
       btnAdmin.style.display = enabled ? 'flex' : 'none';
       btnAdmin.classList.toggle('active', enabled);
     }
+    document.querySelectorAll('.show-on-admin').forEach(el => {
+      el.style.display = enabled ? 'flex' : 'none';
+    });
     const canEdit = enabled || userRole === 'editor';
     const btnAdd = document.getElementById('btn-add-event');
     if (btnAdd) btnAdd.style.display = canEdit ? 'flex' : 'none';
@@ -2622,11 +2637,7 @@
     // Count events per day
     const dayMap = {};
     EVENTS.forEach(e => {
-      if (e._parsed_ini === undefined) {
-        e._parsed_ini = parseDate(e.data_ini);
-        e._parsed_fim = parseDate(e.data_fim) || e._parsed_ini;
-      }
-      const ini = e._parsed_ini, fim = e._parsed_fim;
+      const ini = parseDate(e.data_ini), fim = parseDate(e.data_fim) || ini;
       if (!ini) return;
       let d = new Date(ini);
       while (d <= fim) {

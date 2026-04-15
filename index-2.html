@@ -459,8 +459,7 @@
 
   /* show-on-admin: esconde por padrão — visibilidade controlada via JS para evitar
      o bug em que o botão se esconde ao clicar (ativando o próprio admin-mode) */
-  .show-on-admin { display: none !important; }
-  body.admin-mode .show-on-admin { display: flex !important; }
+  .show-on-admin { display: none; }
 
   /* ── ESTILOS FALTANTES ── */
   .mini-cal-dow { font-size: 0.65rem; font-weight: 700; color: var(--muted); padding: 2px 0 6px; text-align: center; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -2519,6 +2518,9 @@
       btnAdmin.style.display = enabled ? 'flex' : 'none';
       btnAdmin.classList.toggle('active', enabled);
     }
+    document.querySelectorAll('.show-on-admin').forEach(el => {
+      el.style.display = enabled ? 'flex' : 'none';
+    });
     const canEdit = enabled || userRole === 'editor';
     const btnAdd = document.getElementById('btn-add-event');
     if (btnAdd) btnAdd.style.display = canEdit ? 'flex' : 'none';

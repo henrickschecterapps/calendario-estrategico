@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { escapeHtml, fmtBRL, timeAgo } = require('../js/utils.js');
+const { escapeHtml, fmtBRL, getRespArray } = require('../js/utils.js');
 
 test('escapeHtml utility', async (t) => {
   await t.test('escapes basic HTML entities', () => {
@@ -42,9 +42,6 @@ test('escapeHtml utility', async (t) => {
 });
 
 test('fmtBRL utility', async (t) => {
-  // Save original language/locale settings if we were to change them,
-  // but toLocaleString will run in the Node.js environment's context.
-  // We can check strings by normalising non-breaking spaces that toLocaleString uses.
   const normalize = (str) => str.replace(/\s/g, ' ');
 
   await t.test('formats positive integers correctly', () => {
@@ -68,8 +65,6 @@ test('fmtBRL utility', async (t) => {
   });
 
   await t.test('formats negative numbers correctly', () => {
-    // Note: Node.js toLocaleString might format negative currency differently, usually -R$ 100,00 or R$ -100,00.
-    // Let's use a dynamic check or exact match based on standard Node.js behavior.
     assert.strictEqual(normalize(fmtBRL(-100)), normalize('-R$ 100,00'));
   });
 
@@ -82,53 +77,22 @@ test('fmtBRL utility', async (t) => {
   });
 });
 
-test('timeAgo utility', async (t) => {
-  // We need to mock Date.now() or just use relative times since timeAgo uses `new Date()` internally for now
-
-  await t.test('returns "agora" for times less than a minute ago', () => {
-    const now = new Date();
-    assert.strictEqual(timeAgo(now), 'agora');
-
-    const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000);
-    assert.strictEqual(timeAgo(thirtySecondsAgo), 'agora');
+test('getRespArray utility', async (t) => {
+  await t.test('handles empty, null, or undefined strings', () => {
+    assert.deepStrictEqual(getRespArray(''), []);
+    assert.deepStrictEqual(getRespArray(null), []);
+    assert.deepStrictEqual(getRespArray(undefined), []);
   });
 
-  await t.test('returns "Xm atrás" for times minutes ago', () => {
-    const now = new Date();
-    const oneMinuteAgo = new Date(now.getTime() - 60 * 1000);
-    assert.strictEqual(timeAgo(oneMinuteAgo), '1m atrás');
-
-    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
-    assert.strictEqual(timeAgo(fiveMinutesAgo), '5m atrás');
+  await t.test('parses basic comma-separated strings', () => {
+    assert.deepStrictEqual(getRespArray('Alice, Bob, Charlie'), ['Alice', 'Bob', 'Charlie']);
   });
 
-  await t.test('returns "Xh atrás" for times hours ago', () => {
-    const now = new Date();
-    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-    assert.strictEqual(timeAgo(oneHourAgo), '1h atrás');
-
-    const twoHoursAgo = new Date(now.getTime() - 2.5 * 60 * 60 * 1000);
-    assert.strictEqual(timeAgo(twoHoursAgo), '2h atrás');
+  await t.test('trims spaces around names', () => {
+    assert.deepStrictEqual(getRespArray('  Alice  ,   Bob ,Charlie   '), ['Alice', 'Bob', 'Charlie']);
   });
 
-  await t.test('returns "Xd atrás" for times days ago', () => {
-    const now = new Date();
-    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    assert.strictEqual(timeAgo(oneDayAgo), '1d atrás');
-
-    const tenDaysAgo = new Date(now.getTime() - 10.5 * 24 * 60 * 60 * 1000);
-    assert.strictEqual(timeAgo(tenDaysAgo), '10d atrás');
-  });
-
-  await t.test('handles string inputs correctly', () => {
-    const now = new Date();
-    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    assert.strictEqual(timeAgo(oneDayAgo.toISOString()), '1d atrás');
-  });
-
-  await t.test('handles numeric timestamp inputs correctly', () => {
-    const now = new Date();
-    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    assert.strictEqual(timeAgo(oneDayAgo.getTime()), '1d atrás');
+  await t.test('ignores empty values between commas', () => {
+    assert.deepStrictEqual(getRespArray('Alice,,Bob, ,Charlie,'), ['Alice', 'Bob', 'Charlie']);
   });
 });
