@@ -2494,12 +2494,6 @@
   function getRespArray(str) { return !str ? [] : str.split(',').map(s=>s.trim()).filter(s=>s); }
   
   // -- Helper Functions for Gestão Operacional --
-  function fmtBRL(v) { return (parseFloat(v)||0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
-  function eventoNome(id) { if(!id) return ''; const e = EVENTS.find(x => String(x.id) === String(id)); return e ? e.evento : 'Desconhecido'; }
-  function fornNome(id) { if(!id) return '—'; const list = window.FORNECEDORES_LIST || []; const f = list.find(x => String(x.id) === String(id)); return f ? f.nome : '—'; }
-  function nivelBadge(n) { if(!n) return ''; const m = { 'Massa': 'var(--muted)', 'Qualificação': 'var(--amber)', 'VIP': 'var(--accent)' }; return `<span style="font-size:0.7rem;padding:2px 4px;background:${m[n]||'var(--muted)'};color:#fff;border-radius:4px;margin-left:4px;white-space:nowrap;">${n}</span>`; }
-  function unifStatusBadge(s) { if(!s) return ''; const m = { 'Pedido': 'var(--amber)', 'Em Produção': 'var(--purple)', 'Entregue': 'var(--green)', 'Cancelado': 'var(--red)' }; return `<span style="font-size:0.7rem;padding:3px 6px;background:${m[s]||'var(--muted)'};color:#fff;border-radius:4px;white-space:nowrap;">${s}</span>`; }
-  
   function getStockStatus(qtd, min) {
     if (!min) return 'saudavel';
     if (qtd <= min) return 'critico';
