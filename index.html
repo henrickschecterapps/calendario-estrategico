@@ -1907,7 +1907,6 @@
   function getRespArray(str) { return !str ? [] : str.split(',').map(s=>s.trim()).filter(s=>s); }
   
   // -- Helper Functions for Gestão Operacional --
-  function fmtBRL(v) { return (parseFloat(v)||0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
   function eventoNome(id) { if(!id) return ''; const e = EVENTS.find(x => String(x.id) === String(id)); return e ? e.evento : 'Desconhecido'; }
   function fornNome(id) { if(!id) return '—'; const list = window.FORNECEDORES_LIST || []; const f = list.find(x => String(x.id) === String(id)); return f ? f.nome : '—'; }
   function nivelBadge(n) { if(!n) return ''; const m = { 'Massa': 'var(--muted)', 'Qualificação': 'var(--amber)', 'VIP': 'var(--accent)' }; return `<span style="font-size:0.7rem;padding:2px 4px;background:${m[n]||'var(--muted)'};color:#fff;border-radius:4px;margin-left:4px;white-space:nowrap;">${n}</span>`; }
@@ -3735,10 +3734,6 @@
   });
 
   // ── Helpers de formatação ──
-  function fmtBRL(v) {
-    const n = parseFloat(v) || 0;
-    return n.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
-  }
   function nivelBadge(nivel) {
     const map = { 'Massa':'nivel-massa', 'Qualificação':'nivel-qualif', 'VIP':'nivel-vip' };
     return `<span class="badge ${map[nivel]||'nivel-massa'}">${nivel||'—'}</span>`;
