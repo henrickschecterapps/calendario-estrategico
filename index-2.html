@@ -4097,7 +4097,6 @@
   document.getElementById('edit-nome')?.addEventListener('input', () => validateField('edit-nome','err-nome', v => v.trim().length > 0, 'Nome do evento é obrigatório.'));
   document.getElementById('edit-ini')?.addEventListener('change', () => {
     validateField('edit-ini','err-ini', v => v.length > 0, 'Data de início é obrigatória.');
-    // Auto-fill fim if empty
     const fim = document.getElementById('edit-fim');
     if (fim && !fim.value) fim.value = document.getElementById('edit-ini').value;
   });
