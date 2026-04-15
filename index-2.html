@@ -4746,16 +4746,113 @@
     return sum;
   }
 
+  function filterEstoqueList(list, busca, tipo, evento) {
+    let filteredList = list;
+    if (busca) {
+      filteredList = filteredList.filter(e =>
+        String(e.nome||'').toLowerCase().includes(busca) ||
+        String(e.cor||'').toLowerCase().includes(busca) ||
+        String(e.obs||'').toLowerCase().includes(busca)
+      );
+    }
+    if (tipo) filteredList = filteredList.filter(e => e.tipo === tipo);
+    if (evento) filteredList = filteredList.filter(e => e.evento_id === evento);
+    return filteredList;
+  }
+
+  function generateEstoqueGridItemHTML(e, emojiMap) {
+    const qtd = parseInt(e.qtd_inicial)||0;
+    const min = parseInt(e.estoque_minimo)||0;
+    const status = getStockStatus(qtd, min);
+    const vlr = parseFloat(e.vlr_unit)||0;
+
+    // Busca alocações em eventos
+    const alocacoes = [
+      ...BRINDES.filter(b => b.estoque_id === e.id && b.evento_id),
+      ...UNIFORMES.filter(u => u.estoque_id === e.id && u.evento_id)
+    ];
+
+    let alocHtml = '';
+    if (alocacoes.length > 0) {
+      alocHtml = `
+        <div class="estoque-card-allocations">
+          <div class="alloc-title"><i data-lucide="share-2"></i> Alocações por Evento</div>
+          ${alocacoes.map(a => `
+            <div class="alloc-row">
+              <span class="alloc-event">${escapeHtml(eventoNome(a.evento_id))}</span>
+              <span class="alloc-qty">-${a.qtd} UN</span>
+            </div>
+          `).join('')}
+        </div>`;
+    }
+
+    return `<div class="estoque-card status-${status}" onclick="window.editEstoque('${e.id}')">
+      <div class="estoque-card-header">
+        <span class="estoque-card-tag">${emojiMap[e.tipo]||'📦'} ${e.tipo||'Item'}</span>
+        ${status === 'critico' ? '<span class="critical-pulse" title="Estoque Crítico!"></span>' : ''}
+      </div>
+      <h4 class="estoque-card-title">${escapeHtml(e.nome)}</h4>
+      <div class="estoque-card-spec">
+        <i data-lucide="info" style="width:14px;height:14px;"></i>
+        ${e.tamanho && e.tamanho !== 'Único' ? e.tamanho : ''} ${e.cor ? '· ' + e.cor : ''}
+      </div>
+      ${e.evento_id ? `<div class="estoque-card-event"><i data-lucide="calendar" style="width:12px;height:12px;"></i> ${escapeHtml(eventoNome(e.evento_id))}</div>` : ''}
+
+      ${alocHtml}
+
+      <div class="estoque-card-footer">
+        <div class="estoque-card-qty">
+          <span class="qty-label">Saldo em Estoque</span>
+          <div class="qty-value ${status === 'critico' ? 'low' : (status === 'alerta' ? 'warning' : '')}">
+            <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', -1)" title="-1" style="padding:2px 6px;margin-right:4px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);"><i data-lucide="minus" style="width:14px;height:14px;"></i></button>
+            <span>${qtd}</span> <span style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-right:8px;">UN</span>
+            <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', 1)" title="+1" style="padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);"><i data-lucide="plus" style="width:14px;height:14px;"></i></button>
+          </div>
+        </div>
+        <div class="estoque-card-cost">
+          ${vlr > 0 ? fmtBRL(vlr) : ''}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function generateEstoqueRowHTML(e, emojiMap, busca) {
+    const vlr = parseFloat(e.vlr_unit)||0;
+    const isNew = window.lastSavedId === e.id ? 'flash-green' : '';
+    const qtd = parseInt(e.qtd_inicial)||0;
+    const min = parseInt(e.estoque_minimo)||0;
+    const status = getStockStatus(qtd, min);
+    const statusColor = status === 'critico' ? 'var(--status-critico)' : (status === 'alerta' ? 'var(--status-alerta)' : 'inherit');
+
+    return `<tr class="${isNew}" onclick="window.editEstoque('${e.id}')">
+      <td><span class="badge nivel-massa" style="font-size:0.7rem;text-transform:capitalize;">${emojiMap[e.tipo]||'📦'} ${e.tipo||'Item'}</span></td>
+      <td><strong>${highlight(e.nome, busca)}</strong></td>
+      <td><span style="font-size:0.8rem;font-weight:600;color:var(--muted);">${e.tamanho && e.tamanho !== 'Único' ? e.tamanho : ''} ${e.cor ? '· ' + e.cor : ''}</span></td>
+      <td><span style="font-size:0.7rem;font-weight:700;color:var(--accent)">${e.evento_id ? escapeHtml(eventoNome(e.evento_id)) : '<span style="color:var(--border)">—</span>'}</span></td>
+      <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
+      <td style="font-weight:800;color:${statusColor};white-space:nowrap;display:flex;align-items:center;gap:6px;">
+        ${status === 'critico' ? '<i data-lucide="alert-triangle" style="width:14px;height:14px;color:var(--status-critico);"></i>' : ''}
+        <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', -1)" title="-1" style="padding:2px;border:1px solid var(--border);border-radius:4px;"><i data-lucide="minus" style="width:12px;height:12px;"></i></button>
+        <span style="display:inline-block;min-width:24px;text-align:center;">${qtd}</span>
+        <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', 1)" title="+1" style="padding:2px;border:1px solid var(--border);border-radius:4px;"><i data-lucide="plus" style="width:12px;height:12px;"></i></button>
+      </td>
+      <td style="font-size:0.75rem;color:var(--muted);">${fornNome(e.fornecedor_id)}</td>
+      <td style="text-align:right; white-space:nowrap;">
+        <button class="tbl-action edit" onclick="event.stopPropagation(); window.editEstoque('${e.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
+        <button class="tbl-action del" onclick="event.stopPropagation(); window.deleteEstoque('${e.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
+      </td>
+    </tr>`;
+  }
+
   function renderEstoque() {
     const tbody = document.getElementById('estoque-body');
     if (!tbody) return;
+
     const busca = (document.getElementById('filtro-estoque-busca')?.value || '').toLowerCase();
     const tipo = document.getElementById('filtro-estoque-tipo')?.value || '';
     const evento = document.getElementById('filtro-estoque-evento')?.value || '';
-    let list = ESTOQUE;
-    if (busca) list = list.filter(e => String(e.nome||'').toLowerCase().includes(busca) || String(e.cor||'').toLowerCase().includes(busca) || String(e.obs||'').toLowerCase().includes(busca));
-    if (tipo) list = list.filter(e => e.tipo === tipo);
-    if (evento) list = list.filter(e => e.evento_id === evento);
+
+    const list = filterEstoqueList(ESTOQUE, busca, tipo, evento);
 
     // Gestão de visualização (Dual View)
     const isGrid = window.currentEstoqueView === 'grid';
@@ -4773,90 +4870,11 @@
 
     if (isGrid) {
       const grid = document.getElementById('estoque-grid');
-      grid.innerHTML = list.map(e => {
-        const qtd = parseInt(e.qtd_inicial)||0;
-        const min = parseInt(e.estoque_minimo)||0;
-        const status = getStockStatus(qtd, min);
-        const vlr = parseFloat(e.vlr_unit)||0;
-        
-        // Busca alocações em eventos
-        const alocacoes = [
-          ...BRINDES.filter(b => b.estoque_id === e.id && b.evento_id),
-          ...UNIFORMES.filter(u => u.estoque_id === e.id && u.evento_id)
-        ];
-
-        let alocHtml = '';
-        if (alocacoes.length > 0) {
-          alocHtml = `
-            <div class="estoque-card-allocations">
-              <div class="alloc-title"><i data-lucide="share-2"></i> Alocações por Evento</div>
-              ${alocacoes.map(a => `
-                <div class="alloc-row">
-                  <span class="alloc-event">${escapeHtml(eventoNome(a.evento_id))}</span>
-                  <span class="alloc-qty">-${a.qtd} UN</span>
-                </div>
-              `).join('')}
-            </div>`;
-        }
-        
-        return `<div class="estoque-card status-${status}" onclick="window.editEstoque('${e.id}')">
-          <div class="estoque-card-header">
-            <span class="estoque-card-tag">${emojiMap[e.tipo]||'📦'} ${e.tipo||'Item'}</span>
-            ${status === 'critico' ? '<span class="critical-pulse" title="Estoque Crítico!"></span>' : ''}
-          </div>
-          <h4 class="estoque-card-title">${escapeHtml(e.nome)}</h4>
-          <div class="estoque-card-spec">
-            <i data-lucide="info" style="width:14px;height:14px;"></i>
-            ${e.tamanho && e.tamanho !== 'Único' ? e.tamanho : ''} ${e.cor ? '· ' + e.cor : ''}
-          </div>
-          ${e.evento_id ? `<div class="estoque-card-event"><i data-lucide="calendar" style="width:12px;height:12px;"></i> ${escapeHtml(eventoNome(e.evento_id))}</div>` : ''}
-          
-          ${alocHtml}
-
-          <div class="estoque-card-footer">
-            <div class="estoque-card-qty">
-              <span class="qty-label">Saldo em Estoque</span>
-              <div class="qty-value ${status === 'critico' ? 'low' : (status === 'alerta' ? 'warning' : '')}">
-                <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', -1)" title="-1" style="padding:2px 6px;margin-right:4px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);"><i data-lucide="minus" style="width:14px;height:14px;"></i></button>
-                <span>${qtd}</span> <span style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-right:8px;">UN</span>
-                <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', 1)" title="+1" style="padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);"><i data-lucide="plus" style="width:14px;height:14px;"></i></button>
-              </div>
-            </div>
-            <div class="estoque-card-cost">
-              ${vlr > 0 ? fmtBRL(vlr) : ''}
-            </div>
-          </div>
-        </div>`;
-      }).join('');
+      grid.innerHTML = list.map(e => generateEstoqueGridItemHTML(e, emojiMap)).join('');
     } else {
-      tbody.innerHTML = list.map(e => {
-        const vlr = parseFloat(e.vlr_unit)||0;
-        const isNew = window.lastSavedId === e.id ? 'flash-green' : '';
-        const qtd = parseInt(e.qtd_inicial)||0;
-        const min = parseInt(e.estoque_minimo)||0;
-        const status = getStockStatus(qtd, min);
-        const statusColor = status === 'critico' ? 'var(--status-critico)' : (status === 'alerta' ? 'var(--status-alerta)' : 'inherit');
-        
-        return `<tr class="${isNew}" onclick="window.editEstoque('${e.id}')">
-          <td><span class="badge nivel-massa" style="font-size:0.7rem;text-transform:capitalize;">${emojiMap[e.tipo]||'📦'} ${e.tipo||'Item'}</span></td>
-          <td><strong>${highlight(e.nome, busca)}</strong></td>
-          <td><span style="font-size:0.8rem;font-weight:600;color:var(--muted);">${e.tamanho && e.tamanho !== 'Único' ? e.tamanho : ''} ${e.cor ? '· ' + e.cor : ''}</span></td>
-          <td><span style="font-size:0.7rem;font-weight:700;color:var(--accent)">${e.evento_id ? escapeHtml(eventoNome(e.evento_id)) : '<span style="color:var(--border)">—</span>'}</span></td>
-          <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
-          <td style="font-weight:800;color:${statusColor};white-space:nowrap;display:flex;align-items:center;gap:6px;">
-            ${status === 'critico' ? '<i data-lucide="alert-triangle" style="width:14px;height:14px;color:var(--status-critico);"></i>' : ''}
-            <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', -1)" title="-1" style="padding:2px;border:1px solid var(--border);border-radius:4px;"><i data-lucide="minus" style="width:12px;height:12px;"></i></button>
-            <span style="display:inline-block;min-width:24px;text-align:center;">${qtd}</span>
-            <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', 1)" title="+1" style="padding:2px;border:1px solid var(--border);border-radius:4px;"><i data-lucide="plus" style="width:12px;height:12px;"></i></button>
-          </td>
-          <td style="font-size:0.75rem;color:var(--muted);">${fornNome(e.fornecedor_id)}</td>
-          <td style="text-align:right; white-space:nowrap;">
-            <button class="tbl-action edit" onclick="event.stopPropagation(); window.editEstoque('${e.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
-            <button class="tbl-action del" onclick="event.stopPropagation(); window.deleteEstoque('${e.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
-          </td>
-        </tr>`;
-      }).join('');
+      tbody.innerHTML = list.map(e => generateEstoqueRowHTML(e, emojiMap, busca)).join('');
     }
+
     if (typeof lucide !== 'undefined') lucide.createIcons();
   };
 
