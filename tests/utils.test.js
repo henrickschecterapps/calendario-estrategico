@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { escapeHtml, fmtBRL, parseDate } = require('../js/utils.js');
+const { escapeHtml, fmtBRL, timeAgo } = require('../js/utils.js');
 
 test('escapeHtml utility', async (t) => {
   await t.test('escapes basic HTML entities', () => {
@@ -82,32 +82,53 @@ test('fmtBRL utility', async (t) => {
   });
 });
 
-test('parseDate utility', async (t) => {
-  await t.test('parses standard YYYY-MM-DD date strings', () => {
-    const date = parseDate('2023-10-15');
-    assert.strictEqual(date.getFullYear(), 2023);
-    assert.strictEqual(date.getMonth(), 9); // October is month 9 (0-indexed)
-    assert.strictEqual(date.getDate(), 15);
+test('timeAgo utility', async (t) => {
+  // We need to mock Date.now() or just use relative times since timeAgo uses `new Date()` internally for now
+
+  await t.test('returns "agora" for times less than a minute ago', () => {
+    const now = new Date();
+    assert.strictEqual(timeAgo(now), 'agora');
+
+    const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000);
+    assert.strictEqual(timeAgo(thirtySecondsAgo), 'agora');
   });
 
-  await t.test('handles empty, null, or undefined strings by returning null', () => {
-    assert.strictEqual(parseDate(''), null);
-    assert.strictEqual(parseDate(null), null);
-    assert.strictEqual(parseDate(undefined), null);
+  await t.test('returns "Xm atrás" for times minutes ago', () => {
+    const now = new Date();
+    const oneMinuteAgo = new Date(now.getTime() - 60 * 1000);
+    assert.strictEqual(timeAgo(oneMinuteAgo), '1m atrás');
+
+    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+    assert.strictEqual(timeAgo(fiveMinutesAgo), '5m atrás');
   });
 
-  await t.test('handles single digit month and day', () => {
-    const date = parseDate('2024-05-08');
-    assert.strictEqual(date.getFullYear(), 2024);
-    assert.strictEqual(date.getMonth(), 4);
-    assert.strictEqual(date.getDate(), 8);
+  await t.test('returns "Xh atrás" for times hours ago', () => {
+    const now = new Date();
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(oneHourAgo), '1h atrás');
+
+    const twoHoursAgo = new Date(now.getTime() - 2.5 * 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(twoHoursAgo), '2h atrás');
   });
 
-  await t.test('handles invalid date strings gracefully', () => {
-    // Note: new Date with invalid parts will result in an Invalid Date object
-    // Depending on split('-') implementation it may be parsed differently,
-    // e.g. "not-a-date".split('-') => ["not", "a", "date"] => [NaN, NaN, NaN]
-    const date = parseDate('not-a-date');
-    assert.strictEqual(isNaN(date.getTime()), true);
+  await t.test('returns "Xd atrás" for times days ago', () => {
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(oneDayAgo), '1d atrás');
+
+    const tenDaysAgo = new Date(now.getTime() - 10.5 * 24 * 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(tenDaysAgo), '10d atrás');
+  });
+
+  await t.test('handles string inputs correctly', () => {
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(oneDayAgo.toISOString()), '1d atrás');
+  });
+
+  await t.test('handles numeric timestamp inputs correctly', () => {
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    assert.strictEqual(timeAgo(oneDayAgo.getTime()), '1d atrás');
   });
 });
