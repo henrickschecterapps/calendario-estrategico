@@ -2407,8 +2407,9 @@
   function renderWeek() {
     const s = new Date(currentWeekStart), e = new Date(s); e.setDate(e.getDate() + 6); document.getElementById('week-label').textContent = `${s.getDate()}/${s.getMonth()+1} até ${e.getDate()}/${e.getMonth()+1}`;
     let html = '';
+    const allEvs = getFilteredEvents().map(ev => ({ ev, iD: parseDate(ev.data_ini), fD: parseDate(ev.data_fim) || parseDate(ev.data_ini) }));
     for(let i=0; i<7; i++) {
-      const cD = new Date(s); cD.setDate(s.getDate() + i); const evs = getFilteredEvents().filter(ev => { const iD=parseDate(ev.data_ini), fD=parseDate(ev.data_fim)||iD; return cD>=iD && cD<=fD; });
+      const cD = new Date(s); cD.setDate(s.getDate() + i); const evs = allEvs.filter(e => cD >= e.iD && cD <= e.fD).map(e => e.ev);
       html += `<div class="week-col"><div class="week-col-header">${DAYS_PT[i]} ${cD.getDate()}</div><div class="week-col-body">${evs.map(ev => `<div class="week-event" style="border-left-color:${TYPE_COLOR[ev.tipo]||'var(--accent)'}" onclick="window.openEventView('${ev.id}')">${ev.evento}</div>`).join('')}</div></div>`;
     } document.getElementById('week-grid').innerHTML = html;
   }
