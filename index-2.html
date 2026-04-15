@@ -3100,7 +3100,7 @@
     requestAnimationFrame(update);
   }
 
-  function renderDashboardAdmin() {
+  function updateDashboardKPIs() {
     const now = new Date(); now.setHours(0,0,0,0);
     const in30 = new Date(now); in30.setDate(in30.getDate() + 30);
 
@@ -3153,12 +3153,9 @@
     sub('dash-vagas-cliente-sub', 'em aberto');
     sub('dash-vagas-vip-sub', 'em aberto');
     sub('dash-concluidos-sub', `${Math.round((concluidos/Math.max(total,1))*100)}% do total`);
+  }
 
-    // Lista rápida de edição
-    window.renderAdminEventList();
-
-    if (userRole !== 'admin') return;
-
+  function renderDashboardCharts() {
     const tc = getChartTextColor();
     const chartDefaults = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { weight: '600' } } } } };
 
@@ -3176,6 +3173,8 @@
       el.innerHTML = '<i data-lucide="alert-triangle" class="chart-state-icon" style="color:var(--red);opacity:0.7;width:32px;height:32px;"></i><span>Não foi possível carregar</span>';
       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
+
+    const internos = EVENTS.filter(e => e.tipo === 'Interno').length;
 
     // ── CHART 1: Tipo (doughnut) ──
     const ctxTipo = document.getElementById('chartTipos');
@@ -3245,6 +3244,17 @@
       });
       chartReady('chart-state-resp');
     } catch(e) { chartError('chart-state-resp'); }
+  }
+
+  function renderDashboardAdmin() {
+    updateDashboardKPIs();
+
+    // Lista rápida de edição
+    window.renderAdminEventList();
+
+    if (userRole !== 'admin') return;
+
+    renderDashboardCharts();
 
     // ── HEATMAP ANUAL ──
     renderHeatmap();
