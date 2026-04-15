@@ -2231,16 +2231,9 @@
   </div>
 </div>
 
+<script src="js/firebase-config.js"></script>
 <script>
   // ── FIREBASE CONFIGURAÇÕES (VERSÃO COMPAT PARA RODAR LOCALMENTE) ──
-  const firebaseConfig = {
-    apiKey: "AIzaSyCmuDrq-ctHOGu4Fe9gHoK2Fxhcfg3BE9g",
-    authDomain: "calendario-estrategico.firebaseapp.com",
-    projectId: "calendario-estrategico",
-    storageBucket: "calendario-estrategico.firebasestorage.app",
-    messagingSenderId: "941508404506",
-    appId: "1:941508404506:web:af82455df11b35359538a3"
-  };
 
   if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   const db = firebase.firestore();
@@ -3100,7 +3093,7 @@
     requestAnimationFrame(update);
   }
 
-  function renderDashboardAdmin() {
+  function updateDashboardKPIs() {
     const now = new Date(); now.setHours(0,0,0,0);
     const in30 = new Date(now); in30.setDate(in30.getDate() + 30);
 
@@ -3153,12 +3146,9 @@
     sub('dash-vagas-cliente-sub', 'em aberto');
     sub('dash-vagas-vip-sub', 'em aberto');
     sub('dash-concluidos-sub', `${Math.round((concluidos/Math.max(total,1))*100)}% do total`);
+  }
 
-    // Lista rápida de edição
-    window.renderAdminEventList();
-
-    if (userRole !== 'admin') return;
-
+  function renderDashboardCharts() {
     const tc = getChartTextColor();
     const chartDefaults = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tc, font: { weight: '600' } } } } };
 
@@ -3176,6 +3166,8 @@
       el.innerHTML = '<i data-lucide="alert-triangle" class="chart-state-icon" style="color:var(--red);opacity:0.7;width:32px;height:32px;"></i><span>Não foi possível carregar</span>';
       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
+
+    const internos = EVENTS.filter(e => e.tipo === 'Interno').length;
 
     // ── CHART 1: Tipo (doughnut) ──
     const ctxTipo = document.getElementById('chartTipos');
@@ -3245,6 +3237,17 @@
       });
       chartReady('chart-state-resp');
     } catch(e) { chartError('chart-state-resp'); }
+  }
+
+  function renderDashboardAdmin() {
+    updateDashboardKPIs();
+
+    // Lista rápida de edição
+    window.renderAdminEventList();
+
+    if (userRole !== 'admin') return;
+
+    renderDashboardCharts();
 
     // ── HEATMAP ANUAL ──
     renderHeatmap();
@@ -3256,14 +3259,7 @@
     if (typeof loadGestaoModules === 'function') loadGestaoModules();
   }
 
-  function renderHeatmap() {
-    const container = document.getElementById('heatmap-container');
-    const tooltip   = document.getElementById('hm-tooltip');
-    const year = new Date().getFullYear();
-    const jan1 = new Date(year, 0, 1);
-    const dec31 = new Date(year, 11, 31);
-
-    // Count events per day
+  function buildHeatmapDayMap(year) {
     const dayMap = {};
     EVENTS.forEach(e => {
       const ini = parseDate(e.data_ini), fim = parseDate(e.data_fim) || ini;
@@ -3273,18 +3269,17 @@
         if (d.getFullYear() === year) {
           const key = d.toISOString().slice(0,10);
           dayMap[key] = (dayMap[key]||[]);
-          dayMap[key].push(e.evento);
+          dayMap[key].push(escapeHtml(e.evento));
         }
         d.setDate(d.getDate()+1);
       }
     });
+    return dayMap;
+  }
 
-    const maxCount = Math.max(...Object.values(dayMap).map(a=>a.length), 1);
-
-    // Build weeks
+  function buildHeatmapWeeks(jan1, dec31) {
     const startDay = new Date(jan1);
     startDay.setDate(startDay.getDate() - startDay.getDay()); // align to Sunday
-
     const weeks = [];
     let cur = new Date(startDay);
     while (cur <= dec31) {
@@ -3295,28 +3290,33 @@
       }
       weeks.push(week);
     }
+    return weeks;
+  }
 
-    // Month labels
+  function buildHeatmapMonthLabels(weeks) {
     let labelHTML = '<div class="heatmap-month-labels" style="padding-left:20px;">';
     const monthPos = {};
     weeks.forEach((wk, wi) => {
       const m = wk[0].getMonth();
       if (monthPos[m] === undefined) monthPos[m] = wi;
     });
-    let lastM = -1;
     weeks.forEach((_, wi) => {
       const label = Object.entries(monthPos).find(([,v])=>v===wi);
       labelHTML += `<span style="width:16px;display:inline-block;flex-shrink:0;">${label ? MONTHS_SHORT[+label[0]] : ''}</span>`;
     });
     labelHTML += '</div>';
+    return labelHTML;
+  }
 
-    // Day labels
+  function buildHeatmapDayLabels() {
     const dayLetters = ['D','S','T','Q','Q','S','S'];
     let dayLabelsHTML = '<div style="display:flex;flex-direction:column;gap:3px;margin-right:4px;padding-top:0px;">';
     dayLetters.forEach(l => { dayLabelsHTML += `<div style="width:13px;height:13px;font-size:0.55rem;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;">${l}</div>`; });
     dayLabelsHTML += '</div>';
+    return dayLabelsHTML;
+  }
 
-    // Cells
+  function buildHeatmapGrid(weeks, dayMap, maxCount, year) {
     let gridHTML = '<div class="heatmap-grid">';
     weeks.forEach(wk => {
       gridHTML += '<div class="heatmap-col">';
@@ -3340,10 +3340,10 @@
       gridHTML += '</div>';
     });
     gridHTML += '</div>';
+    return gridHTML;
+  }
 
-    container.innerHTML = labelHTML + `<div style="display:flex;align-items:flex-start;">${dayLabelsHTML}${gridHTML}</div>`;
-
-    // Tooltip
+  function attachHeatmapTooltips(container, tooltip) {
     container.querySelectorAll('.heatmap-cell').forEach(cell => {
       cell.addEventListener('mouseenter', (e) => {
         const count = cell.dataset.count;
@@ -3358,6 +3358,26 @@
       });
       cell.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
     });
+  }
+
+  function renderHeatmap() {
+    const container = document.getElementById('heatmap-container');
+    const tooltip   = document.getElementById('hm-tooltip');
+    const year = new Date().getFullYear();
+    const jan1 = new Date(year, 0, 1);
+    const dec31 = new Date(year, 11, 31);
+
+    const dayMap = buildHeatmapDayMap(year);
+    const maxCount = Math.max(...Object.values(dayMap).map(a => a.length), 1);
+    const weeks = buildHeatmapWeeks(jan1, dec31);
+
+    const labelHTML = buildHeatmapMonthLabels(weeks);
+    const dayLabelsHTML = buildHeatmapDayLabels();
+    const gridHTML = buildHeatmapGrid(weeks, dayMap, maxCount, year);
+
+    container.innerHTML = labelHTML + `<div style="display:flex;align-items:flex-start;">${dayLabelsHTML}${gridHTML}</div>`;
+
+    attachHeatmapTooltips(container, tooltip);
   }
 
   function renderVagasTable() {
@@ -4746,16 +4766,113 @@
     return sum;
   }
 
+  function filterEstoqueList(list, busca, tipo, evento) {
+    let filteredList = list;
+    if (busca) {
+      filteredList = filteredList.filter(e =>
+        String(e.nome||'').toLowerCase().includes(busca) ||
+        String(e.cor||'').toLowerCase().includes(busca) ||
+        String(e.obs||'').toLowerCase().includes(busca)
+      );
+    }
+    if (tipo) filteredList = filteredList.filter(e => e.tipo === tipo);
+    if (evento) filteredList = filteredList.filter(e => e.evento_id === evento);
+    return filteredList;
+  }
+
+  function generateEstoqueGridItemHTML(e, emojiMap) {
+    const qtd = parseInt(e.qtd_inicial)||0;
+    const min = parseInt(e.estoque_minimo)||0;
+    const status = getStockStatus(qtd, min);
+    const vlr = parseFloat(e.vlr_unit)||0;
+
+    // Busca alocações em eventos
+    const alocacoes = [
+      ...BRINDES.filter(b => b.estoque_id === e.id && b.evento_id),
+      ...UNIFORMES.filter(u => u.estoque_id === e.id && u.evento_id)
+    ];
+
+    let alocHtml = '';
+    if (alocacoes.length > 0) {
+      alocHtml = `
+        <div class="estoque-card-allocations">
+          <div class="alloc-title"><i data-lucide="share-2"></i> Alocações por Evento</div>
+          ${alocacoes.map(a => `
+            <div class="alloc-row">
+              <span class="alloc-event">${escapeHtml(eventoNome(a.evento_id))}</span>
+              <span class="alloc-qty">-${a.qtd} UN</span>
+            </div>
+          `).join('')}
+        </div>`;
+    }
+
+    return `<div class="estoque-card status-${status}" onclick="window.editEstoque('${e.id}')">
+      <div class="estoque-card-header">
+        <span class="estoque-card-tag">${emojiMap[e.tipo]||'📦'} ${e.tipo||'Item'}</span>
+        ${status === 'critico' ? '<span class="critical-pulse" title="Estoque Crítico!"></span>' : ''}
+      </div>
+      <h4 class="estoque-card-title">${escapeHtml(e.nome)}</h4>
+      <div class="estoque-card-spec">
+        <i data-lucide="info" style="width:14px;height:14px;"></i>
+        ${e.tamanho && e.tamanho !== 'Único' ? e.tamanho : ''} ${e.cor ? '· ' + e.cor : ''}
+      </div>
+      ${e.evento_id ? `<div class="estoque-card-event"><i data-lucide="calendar" style="width:12px;height:12px;"></i> ${escapeHtml(eventoNome(e.evento_id))}</div>` : ''}
+
+      ${alocHtml}
+
+      <div class="estoque-card-footer">
+        <div class="estoque-card-qty">
+          <span class="qty-label">Saldo em Estoque</span>
+          <div class="qty-value ${status === 'critico' ? 'low' : (status === 'alerta' ? 'warning' : '')}">
+            <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', -1)" title="-1" style="padding:2px 6px;margin-right:4px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);"><i data-lucide="minus" style="width:14px;height:14px;"></i></button>
+            <span>${qtd}</span> <span style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-right:8px;">UN</span>
+            <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', 1)" title="+1" style="padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);"><i data-lucide="plus" style="width:14px;height:14px;"></i></button>
+          </div>
+        </div>
+        <div class="estoque-card-cost">
+          ${vlr > 0 ? fmtBRL(vlr) : ''}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function generateEstoqueRowHTML(e, emojiMap, busca) {
+    const vlr = parseFloat(e.vlr_unit)||0;
+    const isNew = window.lastSavedId === e.id ? 'flash-green' : '';
+    const qtd = parseInt(e.qtd_inicial)||0;
+    const min = parseInt(e.estoque_minimo)||0;
+    const status = getStockStatus(qtd, min);
+    const statusColor = status === 'critico' ? 'var(--status-critico)' : (status === 'alerta' ? 'var(--status-alerta)' : 'inherit');
+
+    return `<tr class="${isNew}" onclick="window.editEstoque('${e.id}')">
+      <td><span class="badge nivel-massa" style="font-size:0.7rem;text-transform:capitalize;">${emojiMap[e.tipo]||'📦'} ${e.tipo||'Item'}</span></td>
+      <td><strong>${highlight(e.nome, busca)}</strong></td>
+      <td><span style="font-size:0.8rem;font-weight:600;color:var(--muted);">${e.tamanho && e.tamanho !== 'Único' ? e.tamanho : ''} ${e.cor ? '· ' + e.cor : ''}</span></td>
+      <td><span style="font-size:0.7rem;font-weight:700;color:var(--accent)">${e.evento_id ? escapeHtml(eventoNome(e.evento_id)) : '<span style="color:var(--border)">—</span>'}</span></td>
+      <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
+      <td style="font-weight:800;color:${statusColor};white-space:nowrap;display:flex;align-items:center;gap:6px;">
+        ${status === 'critico' ? '<i data-lucide="alert-triangle" style="width:14px;height:14px;color:var(--status-critico);"></i>' : ''}
+        <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', -1)" title="-1" style="padding:2px;border:1px solid var(--border);border-radius:4px;"><i data-lucide="minus" style="width:12px;height:12px;"></i></button>
+        <span style="display:inline-block;min-width:24px;text-align:center;">${qtd}</span>
+        <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', 1)" title="+1" style="padding:2px;border:1px solid var(--border);border-radius:4px;"><i data-lucide="plus" style="width:12px;height:12px;"></i></button>
+      </td>
+      <td style="font-size:0.75rem;color:var(--muted);">${fornNome(e.fornecedor_id)}</td>
+      <td style="text-align:right; white-space:nowrap;">
+        <button class="tbl-action edit" onclick="event.stopPropagation(); window.editEstoque('${e.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
+        <button class="tbl-action del" onclick="event.stopPropagation(); window.deleteEstoque('${e.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
+      </td>
+    </tr>`;
+  }
+
   function renderEstoque() {
     const tbody = document.getElementById('estoque-body');
     if (!tbody) return;
+
     const busca = (document.getElementById('filtro-estoque-busca')?.value || '').toLowerCase();
     const tipo = document.getElementById('filtro-estoque-tipo')?.value || '';
     const evento = document.getElementById('filtro-estoque-evento')?.value || '';
-    let list = ESTOQUE;
-    if (busca) list = list.filter(e => String(e.nome||'').toLowerCase().includes(busca) || String(e.cor||'').toLowerCase().includes(busca) || String(e.obs||'').toLowerCase().includes(busca));
-    if (tipo) list = list.filter(e => e.tipo === tipo);
-    if (evento) list = list.filter(e => e.evento_id === evento);
+
+    const list = filterEstoqueList(ESTOQUE, busca, tipo, evento);
 
     // Gestão de visualização (Dual View)
     const isGrid = window.currentEstoqueView === 'grid';
@@ -4773,90 +4890,11 @@
 
     if (isGrid) {
       const grid = document.getElementById('estoque-grid');
-      grid.innerHTML = list.map(e => {
-        const qtd = parseInt(e.qtd_inicial)||0;
-        const min = parseInt(e.estoque_minimo)||0;
-        const status = getStockStatus(qtd, min);
-        const vlr = parseFloat(e.vlr_unit)||0;
-        
-        // Busca alocações em eventos
-        const alocacoes = [
-          ...BRINDES.filter(b => b.estoque_id === e.id && b.evento_id),
-          ...UNIFORMES.filter(u => u.estoque_id === e.id && u.evento_id)
-        ];
-
-        let alocHtml = '';
-        if (alocacoes.length > 0) {
-          alocHtml = `
-            <div class="estoque-card-allocations">
-              <div class="alloc-title"><i data-lucide="share-2"></i> Alocações por Evento</div>
-              ${alocacoes.map(a => `
-                <div class="alloc-row">
-                  <span class="alloc-event">${escapeHtml(eventoNome(a.evento_id))}</span>
-                  <span class="alloc-qty">-${a.qtd} UN</span>
-                </div>
-              `).join('')}
-            </div>`;
-        }
-        
-        return `<div class="estoque-card status-${status}" onclick="window.editEstoque('${e.id}')">
-          <div class="estoque-card-header">
-            <span class="estoque-card-tag">${emojiMap[e.tipo]||'📦'} ${e.tipo||'Item'}</span>
-            ${status === 'critico' ? '<span class="critical-pulse" title="Estoque Crítico!"></span>' : ''}
-          </div>
-          <h4 class="estoque-card-title">${escapeHtml(e.nome)}</h4>
-          <div class="estoque-card-spec">
-            <i data-lucide="info" style="width:14px;height:14px;"></i>
-            ${e.tamanho && e.tamanho !== 'Único' ? e.tamanho : ''} ${e.cor ? '· ' + e.cor : ''}
-          </div>
-          ${e.evento_id ? `<div class="estoque-card-event"><i data-lucide="calendar" style="width:12px;height:12px;"></i> ${escapeHtml(eventoNome(e.evento_id))}</div>` : ''}
-          
-          ${alocHtml}
-
-          <div class="estoque-card-footer">
-            <div class="estoque-card-qty">
-              <span class="qty-label">Saldo em Estoque</span>
-              <div class="qty-value ${status === 'critico' ? 'low' : (status === 'alerta' ? 'warning' : '')}">
-                <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', -1)" title="-1" style="padding:2px 6px;margin-right:4px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);"><i data-lucide="minus" style="width:14px;height:14px;"></i></button>
-                <span>${qtd}</span> <span style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-right:8px;">UN</span>
-                <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', 1)" title="+1" style="padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);"><i data-lucide="plus" style="width:14px;height:14px;"></i></button>
-              </div>
-            </div>
-            <div class="estoque-card-cost">
-              ${vlr > 0 ? fmtBRL(vlr) : ''}
-            </div>
-          </div>
-        </div>`;
-      }).join('');
+      grid.innerHTML = list.map(e => generateEstoqueGridItemHTML(e, emojiMap)).join('');
     } else {
-      tbody.innerHTML = list.map(e => {
-        const vlr = parseFloat(e.vlr_unit)||0;
-        const isNew = window.lastSavedId === e.id ? 'flash-green' : '';
-        const qtd = parseInt(e.qtd_inicial)||0;
-        const min = parseInt(e.estoque_minimo)||0;
-        const status = getStockStatus(qtd, min);
-        const statusColor = status === 'critico' ? 'var(--status-critico)' : (status === 'alerta' ? 'var(--status-alerta)' : 'inherit');
-        
-        return `<tr class="${isNew}" onclick="window.editEstoque('${e.id}')">
-          <td><span class="badge nivel-massa" style="font-size:0.7rem;text-transform:capitalize;">${emojiMap[e.tipo]||'📦'} ${e.tipo||'Item'}</span></td>
-          <td><strong>${highlight(e.nome, busca)}</strong></td>
-          <td><span style="font-size:0.8rem;font-weight:600;color:var(--muted);">${e.tamanho && e.tamanho !== 'Único' ? e.tamanho : ''} ${e.cor ? '· ' + e.cor : ''}</span></td>
-          <td><span style="font-size:0.7rem;font-weight:700;color:var(--accent)">${e.evento_id ? escapeHtml(eventoNome(e.evento_id)) : '<span style="color:var(--border)">—</span>'}</span></td>
-          <td style="font-weight:600">${vlr > 0 ? fmtBRL(vlr) : '—'}</td>
-          <td style="font-weight:800;color:${statusColor};white-space:nowrap;display:flex;align-items:center;gap:6px;">
-            ${status === 'critico' ? '<i data-lucide="alert-triangle" style="width:14px;height:14px;color:var(--status-critico);"></i>' : ''}
-            <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', -1)" title="-1" style="padding:2px;border:1px solid var(--border);border-radius:4px;"><i data-lucide="minus" style="width:12px;height:12px;"></i></button>
-            <span style="display:inline-block;min-width:24px;text-align:center;">${qtd}</span>
-            <button class="btn-icon btn-qty" onclick="event.stopPropagation(); window.updateEstoqueQtd('${e.id}', 1)" title="+1" style="padding:2px;border:1px solid var(--border);border-radius:4px;"><i data-lucide="plus" style="width:12px;height:12px;"></i></button>
-          </td>
-          <td style="font-size:0.75rem;color:var(--muted);">${fornNome(e.fornecedor_id)}</td>
-          <td style="text-align:right; white-space:nowrap;">
-            <button class="tbl-action edit" onclick="event.stopPropagation(); window.editEstoque('${e.id}')" title="Editar"><i data-lucide="edit-2"></i></button>
-            <button class="tbl-action del" onclick="event.stopPropagation(); window.deleteEstoque('${e.id}')" title="Excluir"><i data-lucide="trash-2"></i></button>
-          </td>
-        </tr>`;
-      }).join('');
+      tbody.innerHTML = list.map(e => generateEstoqueRowHTML(e, emojiMap, busca)).join('');
     }
+
     if (typeof lucide !== 'undefined') lucide.createIcons();
   };
 
