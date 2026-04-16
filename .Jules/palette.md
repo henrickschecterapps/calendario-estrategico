@@ -16,3 +16,7 @@
 ## 2026-04-15 - [Refine Structural UI Component Styling]
 **Learning:** Found static and somewhat cramped configurations in major structural components like `.admin-card`, `.modal`, and global form inputs (`.auth-input`, `.admin-input`), which detracted from the modern aesthetic.
 **Action:** Applied comprehensive CSS updates to inputs, cards, and modals: increased paddings for better breathing room, standardized all transitions to the `cubic-bezier(0.16, 1, 0.3, 1)` easing curve, and implemented layered, modern `box-shadow` values to ensure sufficient depth and focus state clarity.
+
+## 2026-04-15 - [Refine UI Easing & Gestão Operacional]
+**Learning:** The previously applied `cubic-bezier` easing curve felt unnatural for standard web UI interactions on this project. Furthermore, the "Gestão Operacional" table and tab components appeared cramped compared to the modernized cards.
+**Action:** Reverted `cubic-bezier` usage globally to the more standard and predictable `ease-out` timing function. Upgraded `.gestao-tabs` and `.gestao-table` with larger padding, stronger typography (larger `font-size`, more `letter-spacing`), layered box-shadows, and strict CSS variable usage to align with the rest of the modernized UI.
