@@ -64,7 +64,7 @@
   .auth-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #0357D5, #00A0FF); color: #fff; border: none; border-radius: var(--radius-sm); font-weight: 700; cursor: pointer; transition: 0.2s; margin-bottom: 12px; font-size: 0.95rem; box-shadow: 0 4px 16px rgba(3,87,213,0.35); letter-spacing: 0.01em; }
   .auth-btn:hover { background: linear-gradient(135deg, #152454, #0357D5); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(3,87,213,0.45); }
   .auth-switch { background: none; border: none; color: #4a6080; font-size: 0.85rem; cursor: pointer; text-decoration: underline; font-weight: 500; }
-  
+
   /* ── HEADER ── */
   header { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 72px; box-shadow: 0 1px 12px rgba(3,87,213,0.10); transition: background-color 0.3s; }
   [data-theme="dark"] header { background: rgba(8, 14, 31, 0.88); border-bottom-color: rgba(56,219,255,0.12); box-shadow: 0 1px 12px rgba(0,0,0,0.5); }
@@ -73,13 +73,13 @@
   [data-theme="dark"] .logo span { background: linear-gradient(90deg, #00A0FF, #38DBFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .header-right { display: flex; align-items: center; gap: 12px; }
   .user-badge { font-size: 0.85rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 8px; padding-right: 16px; border-right: 1px solid var(--border); }
-  .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+  .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.2s ease-out; }
   .btn-icon:hover { background: var(--border); transform: translateY(-1px); }
   .btn-icon:active { transform: scale(0.96); }
   .btn-icon.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-light, #00A0FF)); color: #fff; border: none; padding: 10px 20px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 4px 14px var(--accent-glow); display: flex; align-items: center; gap: 8px; justify-content: center; letter-spacing: 0.01em; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-light, #00A0FF)); color: #fff; border: none; padding: 10px 20px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s ease-out; box-shadow: 0 4px 14px var(--accent-glow); display: flex; align-items: center; gap: 8px; justify-content: center; letter-spacing: 0.01em; }
   .btn-primary:hover { opacity: 0.92; transform: translateY(-2px); box-shadow: 0 8px 24px var(--accent-glow); }
-  
+
   /* Icon Utilities */
   .lucide { width: 1.1em; height: 1.1em; stroke-width: 2.2; flex-shrink: 0; }
 
@@ -99,7 +99,7 @@
   .filter-btn.active { font-weight: 700; box-shadow: inset 3px 0 0 var(--accent); }
   .filter-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .filter-count { margin-left: auto; font-size: 0.72rem; background: rgba(128,128,128,0.15); padding: 2px 8px; border-radius: 20px; font-weight: 700; color: var(--text); }
-  
+
   /* Mini Cal */
   .mini-cal-header { display: flex; justify-content: space-between; margin-bottom: 16px; padding: 0 4px; font-weight: 700; color: var(--text); }
   .mini-cal-nav { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.2rem; width: 30px; height: 30px; border-radius: var(--radius-sm); transition: 0.2s; }
@@ -131,7 +131,7 @@
   .view-tab { padding: 8px 16px; border-radius: 6px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
   .view-tab:hover, .view-tab.active { color: var(--text); }
   .view-tab.active { background: var(--surface2); box-shadow: var(--shadow-sm); }
-  
+
   .view-container { display: none; animation: fadeIn 0.3s ease; }
   .view-container.active { display: block; }
   @keyframes fadeIn { from{opacity:0; transform:translateY(5px);} to{opacity:1; transform:translateY(0);} }
@@ -141,19 +141,19 @@
   .badge-comercial { background: rgba(3,87,213,0.12); color: #0357D5; border: 1px solid rgba(3,87,213,0.25); }
   .badge-interno { background: rgba(5,150,105,0.12); color: var(--c-interno); border: 1px solid rgba(5,150,105,0.22); }
   .badge-feriado { background: rgba(217,119,6,0.12); color: var(--c-feriado); border: 1px solid rgba(217,119,6,0.22); }
-  
+
   .badge-status-planejado { background: rgba(107,114,128,0.15); color: var(--muted); border: 1px solid rgba(107,114,128,0.2); }
   .badge-status-confirmado { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
   .badge-status-negociacao { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
   .badge-status-concluido { background: rgba(139,92,246,0.15); color: var(--purple); border: 1px solid rgba(139,92,246,0.2); }
   .badge-status-cancelado { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
-  
+
   .badge-formato { background: rgba(20,184,166,0.15); color: var(--teal); border: 1px solid rgba(20,184,166,0.2); }
-  
+
   .badge-temporal-agora { background: rgba(16,185,129,0.2); color: var(--green); border: 1px solid rgba(16,185,129,0.5); animation: pulse-green 2s infinite; }
   .badge-temporal-breve { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.4); text-transform: none; letter-spacing: 0;}
   @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); } 70% { box-shadow: 0 0 0 8px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
-  
+
   .resp-pill { font-size: 0.7rem; font-weight: 700; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 3px 10px; border-radius: 12px; }
 
   /* ── TIMELINE ROBUSTA ── */
@@ -167,17 +167,17 @@
   .month-name { font-size: 1.5rem; font-weight: 800; color: var(--text); text-transform: capitalize; }
   .month-count { font-size: 0.8rem; color: var(--text); background: var(--surface2); padding: 4px 12px; border-radius: 12px; border: 1px solid var(--border); }
   .month-line { flex: 1; height: 2px; background: var(--border); border-radius: 2px; }
-  
+
   .event-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; display: flex; align-items: stretch; gap: 24px; cursor: pointer; position: relative; box-shadow: var(--shadow-sm); transition: all 0.2s ease; }
   .event-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--card-color, var(--accent)); border-radius: 6px 0 0 6px; }
   .event-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--muted); }
   .event-card.past { opacity: 0.6; filter: grayscale(30%); }
   .event-card.past:hover { opacity: 1; filter: grayscale(0%); }
-  
+
   .event-date-col { min-width: 80px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid var(--border); padding-right: 24px; }
   .event-date-day { font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; line-height: 1; letter-spacing: -0.05em; color: var(--text); }
   .event-date-month { font-size: 0.8rem; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-top: 6px; }
-  
+
   .event-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
   .event-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
   .event-name { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--text); line-height: 1.3;}
@@ -188,9 +188,9 @@
   .view-toggle { background: transparent; border: none; padding: 6px 12px; font-size: 0.8rem; font-weight: 600; color: var(--muted); border-radius: 6px; cursor: pointer; transition: 0.2s; }
   .view-toggle:hover { color: var(--text); }
   .view-toggle.active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-sm); }
-  
+
   .kit-item-row { display:flex; gap:8px; align-items:center; background:var(--surface2); padding:8px; border-radius:6px; border:1px solid var(--border); }
-  
+
   .kanban-board { display: flex; gap: 16px; min-height: 400px; padding: 24px; overflow-x: auto; background: var(--bg); border: 1px solid var(--border); border-top: none; border-bottom-left-radius: var(--radius); border-bottom-right-radius: var(--radius); }
   .kanban-column { flex: 1; min-width: 250px; background: var(--surface2); border: 1px dashed var(--border); border-radius: var(--radius-sm); display: flex; flex-direction: column; }
   .kanban-column-header { padding: 12px 16px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text); border-bottom: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center; }
@@ -212,7 +212,7 @@
   .skeleton-text { height: 1em; width: 60%; margin-bottom: 4px; }
   .skeleton-card { height: 120px; width: 100%; border-radius: var(--radius); }
   .skeleton-chart { height: 250px; width: 100%; border-radius: var(--radius); }
-  
+
   .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-weight: 500; background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
   .empty-icon { color: var(--muted); opacity: 0.5; width: 48px; height: 48px; }
 
@@ -251,12 +251,12 @@
   .admin-card:hover { transform: translateY(-3px); border-color: var(--muted); }
   .admin-card-title { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 12px; }
   .admin-card-value { font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: var(--text); line-height: 1; }
-  
+
   .admin-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; }
   .admin-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow-sm); }
   .admin-panel h3 { font-family: var(--font-heading); font-size: 1.25rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
   .chart-container { position: relative; height: 250px; width: 100%; margin-bottom: 16px; }
-  
+
   .admin-input { width: 100%; padding: 12px 16px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); font-family: inherit; font-weight: 500; font-size: 0.9rem; margin-bottom: 16px; transition: 0.2s; }
   .admin-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); outline: none; }
   .file-drop { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px; text-align: center; transition: 0.3s; cursor: pointer; margin-bottom: 20px; background: var(--surface2); }
@@ -268,26 +268,26 @@
   .modal-overlay.open { display: flex; opacity: 1; }
   .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 680px; max-height: 88vh; overflow-y: auto; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; transform: translateY(20px); transition: 0.3s; }
   .modal-overlay.open .modal { transform: translateY(0); }
-  
+
   .modal-header-view { padding: 40px 32px 24px; position: relative; background: var(--surface); border-bottom: 1px solid var(--border); }
   .modal-header-view::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: var(--card-color, var(--accent)); }
   .modal-title { font-family: var(--font-heading); font-size: 1.8rem; letter-spacing: -0.02em; margin-bottom: 16px; color: var(--text); }
   .modal-actions-top { position: absolute; top: 24px; right: 24px; display: flex; gap: 8px; }
   .modal-body { padding: 32px; background: var(--surface); }
-  
+
   .bento-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px; }
   .bento-item { background: var(--surface2); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); }
   .bento-item.full { grid-column: 1 / -1; }
   .bento-header { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
   .bento-value { font-size: 0.95rem; color: var(--text); font-weight: 600; line-height: 1.5; }
-  
+
   .modal-header-admin { padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: var(--surface2); }
   .admin-section-title { font-family: var(--font-heading); font-size: 0.85rem; color: var(--accent); text-transform: uppercase; margin: 32px 0 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .form-full { grid-column: span 2; }
   .form-label { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-bottom: 6px; display: block; }
   .modal-footer { padding: 20px 32px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 16px; background: var(--surface2); border-radius: 0 0 20px 20px; }
-  
+
   .checkbox-list-container { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface2); max-height: 160px; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
   .checkbox-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
   .checkbox-item:hover { background: rgba(0,0,0,0.05); }
@@ -308,7 +308,7 @@
   ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; border: 2px solid var(--bg); }
 
   /* ── TOAST ── */
-  .toast { pointer-events: all; display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow-lg); font-size: 0.88rem; font-weight: 600; min-width: 280px; max-width: 380px; animation: toastIn 0.3s cubic-bezier(.34,1.56,.64,1); }
+  .toast { pointer-events: all; display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow-lg); font-size: 0.88rem; font-weight: 600; min-width: 280px; max-width: 380px; animation: toastIn 0.3s ease-out; }
   .toast.removing { animation: toastOut 0.25s ease forwards; }
   .toast-success { border-left: 4px solid var(--green); }
   .toast-error { border-left: 4px solid var(--red); }
@@ -385,7 +385,7 @@
   .admin-nav-badge { margin-left: auto; font-size: 0.68rem; font-weight: 800; padding: 2px 7px; border-radius: 10px; background: var(--red); color: #fff; animation: pulse-red 2s infinite; }
   @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); } 70% { box-shadow: 0 0 0 8px rgba(220,38,38,0); } 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); } }
   .admin-nav-divider { height: 1px; background: var(--border); margin: 8px 20px; }
-  .admin-section { display: none; padding: 32px; flex-direction: column; gap: 24px; animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; flex: 1; }
+  .admin-section { display: none; padding: 32px; flex-direction: column; gap: 24px; animation: slideInUp 0.3s ease-out; overflow-y: auto; flex: 1; }
   @keyframes slideInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
   .admin-section.active { display: flex; }
   #asec-operacional.active { display: flex; flex-direction: column; padding: 0; gap: 0; overflow: hidden; }
@@ -414,7 +414,7 @@
     .today-badge { display: none; }
     .user-badge { border: none; padding: 0; }
     .user-badge span { display: none; }
-    .sidebar { position: fixed; left: -320px; top: 60px; height: calc(100vh - 60px); z-index: 150; transition: left 0.3s cubic-bezier(.34,1.2,.64,1); box-shadow: var(--shadow-lg); }
+    .sidebar { position: fixed; left: -320px; top: 60px; height: calc(100vh - 60px); z-index: 150; transition: left 0.3s ease-out; box-shadow: var(--shadow-lg); }
     .sidebar.open { left: 0; }
     .main { padding: 20px 16px; }
     .view-title { font-size: 1.5rem; }
@@ -480,16 +480,16 @@
 
   /* ── GESTÃO: BRINDES / FORNECEDORES / UNIFORMES ── */
   .gestao-tabs { display: flex; gap: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; margin-bottom: 24px; flex-wrap: wrap; }
-  .gestao-tab { padding: 8px 18px; border-radius: 7px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.85rem; font-weight: 600; font-family: var(--font-body); transition: 0.2s; }
+  .gestao-tab { padding: 12px 24px; border-radius: 8px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.95rem; font-weight: 700; letter-spacing: 0.01em; font-family: var(--font-body); transition: all 0.3s ease-out; }
   .gestao-tab:hover { color: var(--text); }
-  .gestao-tab.active { background: var(--surface); color: #0357D5; box-shadow: var(--shadow-sm); font-weight: 700; border-bottom: 2px solid #0357D5; }
+  .gestao-tab.active { background: var(--surface); color: var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.05), inset 0 -2px 0 var(--accent); font-weight: 800; border-bottom: none; transform: translateY(-1px); }
   .gestao-pane { display: none; animation: fadeIn 0.25s ease; }
   .gestao-pane.active { display: block; }
 
   /* Cards de itens nas tabelas de gestão */
   .gestao-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .gestao-table th { text-align: left; padding: 11px 14px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: var(--muted); background: var(--surface2); border-bottom: 2px solid var(--border); letter-spacing: 0.06em; white-space: nowrap; }
-  .gestao-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-weight: 500; vertical-align: middle; }
+  .gestao-table th { text-align: left; padding: 16px 20px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: var(--muted); background: var(--surface2); border-bottom: 2px solid var(--border); letter-spacing: 0.06em; white-space: nowrap; }
+  .gestao-table td { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 500; vertical-align: middle; }
   .gestao-table tr:last-child td { border-bottom: none; }
   .gestao-table tr:hover td { background: var(--surface2); }
   .gestao-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
@@ -552,7 +552,7 @@
   /* ── SIDE DRAWER (GESTÃO OPERACIONAL) ── */
   .drawer-overlay { position: fixed; inset: 0; background: rgba(8,14,31,0.55); backdrop-filter: blur(6px); z-index: 9999; display: flex; justify-content: flex-end; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
   .drawer-overlay.open { opacity: 1; visibility: visible; }
-  .drawer { width: 100%; max-width: 520px; background: var(--surface); height: 100vh; box-shadow: -8px 0 48px rgba(3,87,213,0.18), -2px 0 12px rgba(0,0,0,0.3); transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
+  .drawer { width: 100%; max-width: 520px; background: var(--surface); height: 100vh; box-shadow: -8px 0 48px rgba(3,87,213,0.18), -2px 0 12px rgba(0,0,0,0.3); transform: translateX(100%); transition: transform 0.35s ease-out; display: flex; flex-direction: column; }
   .drawer-overlay.open .drawer { transform: translateX(0); }
   .drawer-header { padding: 24px 28px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #152454 0%, #0357D5 100%); }
   .drawer-title { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 10px; color: #fff; }
@@ -560,7 +560,7 @@
   .drawer-header .btn-icon:hover { background: rgba(255,255,255,0.25); }
   .drawer-body { padding: 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: var(--bg); }
   .drawer-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); }
-  
+
   .drawer .gestao-add-bar { display: flex; flex-direction: column; padding: 0; background: transparent; border: none; border-radius: 0; gap: 16px; }
   .drawer .gestao-field { min-width: 100% !important; flex: none !important; }
   .drawer .form-row { display: flex; gap: 12px; width: 100%; }
@@ -576,7 +576,7 @@
   /* Fix Tabela Responsiva */
   .gestao-table-wrap { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
   .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  
+
   /* ── PDF EXPORT OPTIMIZATION ── */
   .pdf-capture { background: #fff !important; color: #000 !important; width: 1080px !important; padding: 40px !important; border-radius: 0 !important; }
   .pdf-capture * { transition: none !important; animation: none !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
@@ -589,8 +589,8 @@
   .pdf-capture h1, .pdf-capture h2, .pdf-capture h3 { color: #000 !important; }
   .pdf-capture .resp-pill { background: #eee !important; border: 1px solid #ccc !important; }
   .pdf-capture .comment-bubble { background: #fdfdfd !important; border: 1px solid #eee !important; }
-  .pdf-capture .modal, .pdf-capture .admin-section, .pdf-capture #notif-list, .pdf-capture .checkbox-list-container { 
-    max-height: none !important; height: auto !important; overflow: visible !important; display: block !important; 
+  .pdf-capture .modal, .pdf-capture .admin-section, .pdf-capture #notif-list, .pdf-capture .checkbox-list-container {
+    max-height: none !important; height: auto !important; overflow: visible !important; display: block !important;
   }
   .pdf-capture .admin-layout { display: block !important; height: auto !important; border: none !important; }
   .pdf-capture .admin-panels { grid-template-columns: 1fr !important; }
@@ -609,7 +609,7 @@
     <button class="auth-btn" id="btn-login-submit">Entrar</button>
     <button class="auth-switch" id="btn-show-register">Criar acesso corporativo</button>
   </div>
-  
+
   <div class="auth-card hide" id="register-box">
     <div class="auth-logo">Solicitar <span>Acesso</span></div>
     <div class="auth-subtitle">Utilize seu e-mail @tripla.com.br</div>
@@ -619,7 +619,7 @@
     <button class="auth-btn" id="btn-reg-submit">Enviar Solicitação</button>
     <button class="auth-switch" id="btn-show-login">Voltar para o Login</button>
   </div>
-  
+
   <div class="auth-card hide" id="pending-screen">
     <div style="display:flex; justify-content:center; margin-bottom:24px; color:var(--accent)"><i data-lucide="hourglass" style="width:48px; height:48px; stroke-width:1.5;"></i></div>
     <h3 style="font-family: var(--font-heading); margin-bottom: 8px;">Aguardando Aprovação</h3>
@@ -752,7 +752,7 @@
         <div class="timeline-toggle-container"><button id="btn-toggle-past" class="btn-toggle-past"><i data-lucide="history" style="margin-right:6px"></i> Ver meses anteriores</button></div>
         <div id="timeline-content"></div>
       </div>
-      
+
       <div id="view-calendar" class="view-container">
         <div class="cal-nav"><button class="btn-icon" id="cal-prev" aria-label="Mês anterior"><i data-lucide="chevron-left"></i></button><span class="cal-month-label" id="cal-month-label"></span><button class="btn-icon" id="cal-next" aria-label="Próximo mês"><i data-lucide="chevron-right"></i></button></div>
         <div class="cal-grid" id="cal-grid"></div>
@@ -923,7 +923,7 @@
                     <button class="btn-primary" id="btn-novo-estoque" onclick="window.novoEstoque()" style="font-size:0.82rem;"><i data-lucide="plus" style="width:14px;height:14px;"></i> Novo Item de Estoque</button>
                   </div>
 
-                  <div class="gestao-table-wrap" id="estoque-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap" id="estoque-table-wrap">
                     <table class="gestao-table" id="estoque-table">
                       <thead><tr>
                         <th>Tipo</th>
@@ -1024,7 +1024,7 @@
 
                   <div id="brindes-kanban" class="hide kanban-board"></div>
 
-                  <div class="gestao-table-wrap" id="brindes-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap" id="brindes-table-wrap">
                     <table class="gestao-table" id="brindes-table">
                       <thead><tr>
                         <th>Brinde</th><th>Descrição</th><th>Nível</th><th>Status</th>
@@ -1120,7 +1120,7 @@
 
                   <div id="unif-kanban" class="hide kanban-board"></div>
 
-                  <div class="gestao-table-wrap" id="unif-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap" id="unif-table-wrap">
                     <table class="gestao-table" id="unif-table">
                       <thead><tr>
                         <th>Qtd</th><th>Cor / Tamanho</th><th>Vlr Unit.</th><th>Total</th>
@@ -1205,7 +1205,7 @@
                     <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()">
                   </div>
 
-                  <div class="gestao-table-wrap" id="forn-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap" id="forn-table-wrap">
                     <table class="gestao-table" id="forn-table">
                       <thead><tr>
                         <th>Nome do Fornecedor</th><th>E-mail</th><th>Telefone</th><th>Itens Vinculados</th><th></th>
@@ -1246,10 +1246,10 @@
                       <thead><tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Função Padrão</th><th>Tam. Camisa</th><th style="text-align:right">Ações</th></tr></thead>
                       <tbody id="participantes-body"></tbody>
                     </table>
-                  </div>
 
-                  <!-- FORM ADD PARTICIPANTE (inline, nao usa drawer) -->
-                  <div id="part-add-form" style="display:none; flex-direction:column; gap:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-top:16px;">
+
+
+<div class="gestao-add-bar" id="part-add-form" style="display:none; flex-direction:column; gap:16px;">
                     <input type="hidden" id="part-id">
                     <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
                       <div class="gestao-field" style="flex:2;min-width:180px;">
@@ -1287,6 +1287,10 @@
                         <button class="btn-primary" id="btn-save-part" style="white-space:nowrap;">+ Salvar Participante</button>
                       </div>
                     </div>
+</div>
+
+                  <!-- FORM ADD PARTICIPANTE (inline, nao usa drawer) -->
+
                   </div>
                 </div>
 
@@ -1386,7 +1390,7 @@
 
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal" id="modal-container">
-    
+
     <div id="mode-view">
       <div class="modal-header-view" id="view-header">
         <div class="modal-actions-top">
@@ -1441,7 +1445,7 @@
         </div>
       </div>
     </div>
-    
+
     <div id="mode-edit" class="hide">
       <div class="modal-header-admin">
         <h3 id="form-title" style="font-family:var(--font-heading); font-size:1.3rem;">Editar Evento</h3>
@@ -1573,7 +1577,7 @@
     </div>
     <div class="modal-body" style="padding: 24px; background:var(--bg);">
       <div style="display:flex; gap:24px; flex-wrap:wrap;">
-        
+
         <!-- Lista de Kits -->
         <div style="flex:1; min-width:250px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column;">
           <div style="padding:16px; border-bottom:1px solid var(--border); font-weight:800; display:flex; justify-content:space-between; align-items:center;">
@@ -1584,7 +1588,7 @@
             <!-- Renderizado via JS -->
           </div>
         </div>
-        
+
         <!-- Formulário de Edição -->
         <div style="flex:2; min-width:300px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; display:none;" id="kit-form-panel">
           <input type="hidden" id="kit-id">
@@ -1604,7 +1608,7 @@
             <button class="btn-primary" id="btn-save-kit" onclick="window.saveKit()">Salvar Kit</button>
           </div>
         </div>
-        
+
       </div>
     </div>
   </div>
@@ -1619,7 +1623,7 @@
     </div>
     <div class="modal-body">
       <p style="font-size:0.85rem; color:var(--muted); margin-bottom:20px;">Escolha um evento, um kit previamente configurado e a quantidade. Os itens serão deduzidos do almoxarifado global e alocados imediatamente ao evento selecionado.</p>
-      
+
       <div class="form-grid">
         <div class="form-full">
           <label class="form-label">Evento Destino *</label>
@@ -1683,14 +1687,14 @@
   let ESTOQUE = [], BRINDES = [], UNIFORMES = [], FORNECEDORES_LIST = [], PARTICIPANTES_LIST = [];
   let KITS = [];
   let loadDataFromFirebase = async () => {}; // Declaração global para evitar erros de referência
-  
+
   const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const DAYS_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   const STATUS_CLASS = {'Planejado':'planejado','Confirmado':'confirmado','Em negociação':'negociacao','Concluído':'concluido','Cancelado':'cancelado'};
   const TYPE_COLOR = { Comercial:'var(--c-comercial)', Interno:'var(--c-interno)', Feriado:'var(--c-feriado)' };
   let isAdmin = false;
-  
+
   // ── TOAST SYSTEM ──
   function showToast(msg, type = 'info', duration = 3500) {
     const icons = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' };
@@ -1888,10 +1892,10 @@
 
   const today = new Date(); today.setHours(0,0,0,0);
   const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-  let calMonth = today.getMonth(), calYear = today.getFullYear(); 
+  let calMonth = today.getMonth(), calYear = today.getFullYear();
   let miniMonth = today.getMonth(), miniYear = today.getFullYear();
-  let currentWeekStart = getStartOfWeek(today); 
-  
+  let currentWeekStart = getStartOfWeek(today);
+
   let filterType = 'all', filterStatus = 'all', filterResp = 'all', searchQ = '';
   let filterRespMulti = new Set(); // multi-select responsável
   let filterFormato = 'all';
@@ -1909,13 +1913,13 @@
   function statusBadge(s) { return s ? `<span class="badge badge-status-${STATUS_CLASS[s]||""}">${escapeHtml(s)}</span>` : ''; }
   function formatoBadge(f) { return f ? `<span class="badge badge-formato">${escapeHtml(f)}</span>` : ''; }
   function getRespArray(str) { return !str ? [] : str.split(',').map(s=>s.trim()).filter(s=>s); }
-  
-  function cotaBadge(c) { 
+
+  function cotaBadge(c) {
     if(!c) return ''; let lowerC = c.toLowerCase(); let icon = '🏅', style = 'background: rgba(128,128,128,0.1); color: var(--text); border: 1px solid var(--border);';
     if (lowerC.includes('ouro') || lowerC.includes('gold')) { icon = '🥇'; style = 'background: rgba(234, 179, 8, 0.15); color: #d97706; border: 1px solid rgba(234, 179, 8, 0.3);'; } else if (lowerC.includes('prata') || lowerC.includes('silver')) { icon = '🥈'; style = 'background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);'; } else if (lowerC.includes('bronze')) { icon = '🥉'; style = 'background: rgba(180, 83, 9, 0.15); color: #b45309; border: 1px solid rgba(180, 83, 9, 0.3);'; } else if (lowerC.includes('diamond') || lowerC.includes('diamante')) { icon = '💎'; style = 'background: rgba(56, 189, 248, 0.15); color: #0284c7; border: 1px solid rgba(56, 189, 248, 0.3);'; } else if (lowerC.includes('platina') || lowerC.includes('platinum')) { icon = '💠'; style = 'background: rgba(167, 139, 250, 0.15); color: #7c3aed; border: 1px solid rgba(167, 139, 250, 0.3);'; }
     return `<span class="badge" style="${style}">${icon} Cota: ${escapeHtml(c)}</span>`;
   }
-  
+
   function temporalBadge(ev) {
     const ini = parseDate(ev.data_ini), fim = parseDate(ev.data_fim) || ini; if(!ini) return '';
     const t = new Date(today); t.setHours(0,0,0,0); const i = new Date(ini); i.setHours(0,0,0,0); const f = new Date(fim); f.setHours(0,0,0,0);
@@ -1941,21 +1945,21 @@
     const canEdit = enabled || userRole === 'editor';
     const btnAdd = document.getElementById('btn-add-event');
     if (btnAdd) btnAdd.style.display = canEdit ? 'flex' : 'none';
-    
+
     const tabAdm = document.getElementById('tab-admin');
     if (tabAdm) tabAdm.style.display = enabled ? 'flex' : 'none';
-    
+
     // Garantir que os botões do modal de detalhes sigam o papel correto
     const btnSave = document.getElementById('btn-save');
     const btnDel = document.getElementById('btn-delete');
     if (btnSave) btnSave.style.display = canEdit ? 'flex' : 'none';
     if (btnDel) btnDel.style.display = enabled ? 'flex' : 'none';
-    
+
     renderRoleBadge(userRole);
     // Show edit button in modal for admin and editor
     const _bse2 = document.getElementById('btn-switch-edit');
     if (_bse2) _bse2.style.display = (enabled || userRole === 'editor') ? 'flex' : 'none';
-    
+
     // Hide delete for editors specifically
     if (userRole === 'editor' && btnDel) btnDel.style.display = 'none';
 
@@ -2019,14 +2023,14 @@
     const btn = document.getElementById('btn-login-submit');
     const em = document.getElementById('auth-email').value, pw = document.getElementById('auth-pass').value, err = document.getElementById('auth-error');
     if(!em || !pw) return;
-    try { 
-      btn.textContent = "Aguarde..."; 
+    try {
+      btn.textContent = "Aguarde...";
       btn.disabled = true;
-      await auth.signInWithEmailAndPassword(em, pw); 
-    } catch(error) { 
-      err.textContent = "Email ou senha incorretos."; 
-      err.style.display = 'block'; 
-      btn.textContent = "Entrar"; 
+      await auth.signInWithEmailAndPassword(em, pw);
+    } catch(error) {
+      err.textContent = "Email ou senha incorretos.";
+      err.style.display = 'block';
+      btn.textContent = "Entrar";
       btn.disabled = false;
     }
   };
@@ -2086,7 +2090,7 @@
       refreshIcons();
     } catch(e) {}
   }
-  
+
   window.deleteResp = async (id) => {
     if(confirm('Tem certeza que deseja remover este organizador?')) {
       try {
@@ -2299,16 +2303,16 @@
   }
 
   // ── TIMELINE ROBUSTA ──
-  document.getElementById('btn-toggle-past').onclick = () => { 
-      showPastEvents = !showPastEvents; 
-      document.getElementById('btn-toggle-past').textContent = showPastEvents ? "Ocultar meses anteriores" : "⏳ Ver meses anteriores"; 
-      renderTimeline(); 
+  document.getElementById('btn-toggle-past').onclick = () => {
+      showPastEvents = !showPastEvents;
+      document.getElementById('btn-toggle-past').textContent = showPastEvents ? "Ocultar meses anteriores" : "⏳ Ver meses anteriores";
+      renderTimeline();
   };
 
   function renderTimeline() {
     const container = document.getElementById('timeline-content');
     let evs = getFilteredEvents();
-    
+
     if(!showPastEvents) {
         evs = evs.filter(e => {
             const d = parseDate(e.data_ini);
@@ -2317,19 +2321,19 @@
             return evMonthStart.getTime() >= currentMonthStart.getTime();
         });
     }
-    
+
     evs.sort((a,b) => (parseDate(a.data_ini) || new Date(2030,0)) - (parseDate(b.data_ini) || new Date(2030,0)));
-    
-    if(evs.length === 0) { 
-        container.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div>Nenhum evento encontrado no período.</div></div>`; 
-        return; 
+
+    if(evs.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div>Nenhum evento encontrado no período.</div></div>`;
+        return;
     }
 
-    const byMonth = {}; 
-    evs.forEach(e => { 
-        const m = e.mes_ref || (parseDate(e.data_ini) ? MONTHS_PT[parseDate(e.data_ini).getMonth()] : 'Sem mês'); 
-        if(!byMonth[m]) byMonth[m]=[]; 
-        byMonth[m].push(e); 
+    const byMonth = {};
+    evs.forEach(e => {
+        const m = e.mes_ref || (parseDate(e.data_ini) ? MONTHS_PT[parseDate(e.data_ini).getMonth()] : 'Sem mês');
+        if(!byMonth[m]) byMonth[m]=[];
+        byMonth[m].push(e);
     });
 
     let html = '';
@@ -2338,10 +2342,10 @@
     monthsOrdered.forEach(m => {
         html += `<div class="month-block"><div class="month-header"><span class="month-name">${m}</span><span class="month-count">${byMonth[m].length}</span><div class="month-line"></div></div><div class="event-list">`;
         byMonth[m].forEach(e => {
-            const d = parseDate(e.data_ini); 
+            const d = parseDate(e.data_ini);
             const color = TYPE_COLOR[e.tipo] || 'var(--accent)';
             const respPills = getRespArray(e.responsavel).map(r => `<span class="resp-pill">${escapeHtml(r)}</span>`).join('');
-            
+
             html += `
             <div class="event-card ${getStatus(e)}" style="--card-color:${color}" onclick="window.openEventView('${e.id}')">
                 <div class="event-date-col">
@@ -2357,14 +2361,14 @@
                         ${typeBadge(e.tipo)}
                         ${statusBadge(e.status)}
                         ${formatoBadge(e.formato)}
-                        ${cotaBadge(e.cota)} 
+                        ${cotaBadge(e.cota)}
                         ${respPills ? `<div class="event-resp-area">${respPills}</div>`:''}
                     </div>
                 </div>
             </div>`;
         });
         html += `</div></div>`;
-    }); 
+    });
     container.innerHTML = html;
   }
 
@@ -2412,7 +2416,7 @@
     }
     document.getElementById('mini-cal-grid').innerHTML = html;
   }
-  
+
   function renderUpcoming() {
     const up = EVENTS
       .filter(e => { const d = parseDate(e.data_ini); return d && d >= today && e.tipo !== 'Feriado'; })
@@ -2443,7 +2447,7 @@
       const lbl = document.createElement('label'); lbl.className = 'checkbox-item'; lbl.innerHTML = `<input type="checkbox" class="resp-checkbox" value="${r}"> <span>${r}</span>`; checkContainer.appendChild(lbl);
       const div = document.createElement('div'); div.style = "padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.9rem; display:flex; justify-content:space-between; align-items:center;";
       const bdResp = RESPONSAVEIS.find(x => x.nome === r);
-      if(bdResp) { div.innerHTML = `<span style="font-weight:700; color:var(--text)">👤 ${r}</span> <div style="display:flex; gap:16px;"><span style="color:var(--accent); cursor:pointer; font-weight:700;" onclick="window.editResp('${bdResp.id}', '${r}')"><i data-lucide="edit-2" style="width:16px;height:16px;"></i></span><span style="color:var(--red); cursor:pointer; font-weight:700;" onclick="window.delResp('${bdResp.id}')"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></span></div>`; } 
+      if(bdResp) { div.innerHTML = `<span style="font-weight:700; color:var(--text)">👤 ${r}</span> <div style="display:flex; gap:16px;"><span style="color:var(--accent); cursor:pointer; font-weight:700;" onclick="window.editResp('${bdResp.id}', '${r}')"><i data-lucide="edit-2" style="width:16px;height:16px;"></i></span><span style="color:var(--red); cursor:pointer; font-weight:700;" onclick="window.delResp('${bdResp.id}')"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></span></div>`; }
       else { div.innerHTML = `<span><span style="font-weight:700; color:var(--text)">👤 ${r}</span> <small style="color:var(--muted); margin-left:8px;">(via evento)</small></span><div style="display:flex; gap:16px;"><span style="color:var(--accent); cursor:pointer; font-weight:700;" onclick="window.editLegacyResp('${r}')"><i data-lucide="save" style="width:16px;height:16px;"></i> Salvar</span></div>`; }
       adminList.appendChild(div);
     });
@@ -2470,17 +2474,17 @@
     const tbody = document.getElementById('admin-event-list-body');
     if (!tbody) return;
     const q = (document.getElementById('admin-event-search')?.value || '').toLowerCase();
-    
+
     let evs = getFilteredEvents().sort((a,b) => (parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0)));
     if (q) evs = evs.filter(e => (e.evento||'').toLowerCase().includes(q) || (e.responsavel||'').toLowerCase().includes(q));
-    
+
     const count = evs.length;
     const sliced = evs.slice(0, window.adminEventLimit);
-    
+
     tbody.innerHTML = sliced.length === 0
       ? '<tr><td colspan="5" class="empty-state">Nenhum evento encontrado.</td></tr>'
       : sliced.map(e => `<tr><td style="font-size:0.85rem;font-weight:700;">${dateFmt(e)}</td><td style="font-weight:800;">${highlight(e.evento, q)}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">${getRespArray(e.responsavel, e).map(r=>`<span class="resp-pill">${highlight(r, q)}</span>`).join('')||'—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align:right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')"><i data-lucide="edit-2"></i></button></td></tr>`).join('');
-      
+
     if (typeof lucide !== 'undefined') lucide.createIcons();
     const cont = document.getElementById('admin-event-ver-mais-container');
     if (cont) cont.style.display = window.adminEventLimit < count ? 'block' : 'none';
@@ -2772,7 +2776,7 @@
         </table>
       </div>`;
   }
-  
+
   // ── ATENÇÃO COMENTÁRIO DE ENGENHARIA ──
   // Blocos legados de PDF / CSV removidos daqui porque tentavam atrelar .onclick a botões que não existem mais (TypeError letal).
   // O sistema correto de Relatórios PDF está implementado nas linhas abaixo usando `generateProfessionalPDF`.
@@ -2858,17 +2862,17 @@
   };
 
   window.currentEquipe = [];
-  
+
   window.renderEquipeBuilder = function() {
     const listEl = document.getElementById('equipe-builder-list');
     const selectEl = document.getElementById('equipe-camisa');
     if(!listEl || !selectEl) return;
-    
+
     // Atualizar o saldo de vagas quando a equipe muda
     if (window.updateVagasSaldo) window.updateVagasSaldo();
     // 1. Calculate Options from Almoxarifado (Direct) + Legacy Uniformes
     let optionsHtml = '<option value="">Sem item / uniforme</option>';
-    
+
     // Direct from Almoxarifado (Central)
     if (typeof ESTOQUE !== 'undefined' && ESTOQUE.length > 0) {
         optionsHtml += '<optgroup label="Almoxarifado Central">';
@@ -2896,9 +2900,9 @@
         });
         optionsHtml += '</optgroup>';
     }
-    
+
     selectEl.innerHTML = optionsHtml;
-    
+
     // 2. Render List
     if(window.currentEquipe.length === 0) {
       listEl.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:8px 0;background:var(--surface2);border-radius:var(--radius-sm);">Nenhum participante adicionado.</div>';
@@ -2913,9 +2917,9 @@
          const e = ESTOQUE.find(x => x.id === m.estoque_id);
          if (e) unifBadge = `<span style="font-size:0.7rem;color:var(--teal);font-weight:700;"><i data-lucide="box" style="width:12px;height:12px;"></i> Master: ${e.nome}</span>`;
       }
-      
+
       const funcBadge = m.funcao ? `<span style="font-size:0.7rem;background:var(--border);padding:2px 6px;border-radius:4px;font-weight:700;">${escapeHtml(m.funcao)}</span>` : '';
-      
+
       return `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);padding:8px 12px;border-radius:var(--radius-sm);">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-weight:700;font-size:0.9rem;">${escapeHtml(m.nome)}</span>
@@ -2947,7 +2951,7 @@
     const restam = Math.max(0, total - ocupadas);
 
     saldoValEl.textContent = restam;
-    
+
     // Alerta visual se as vagas acabarem ou ficarem negativas
     if (restam === 0 && total > 0) {
       saldoValEl.style.color = 'var(--red)';
@@ -2968,16 +2972,16 @@
     const partId = nomeSelect.value;
     if(!partId) return showToast('Selecione um participante da lista.', 'warning');
     if(window.currentEquipe.some(m => m.part_id === partId)) return showToast('Este participante já foi adicionado.', 'warning');
-    
+
     let mid = camInp.value || '';
     let mobj = { nome, funcao: funcInp.value.trim() || (selectedOpt.dataset.funcao || ''), camisa_id: '', estoque_id: '', part_id: partId, origem: 'global' };
-    
+
     if (mid.startsWith('est_')) {
         mobj.estoque_id = mid.replace('est_', '');
     } else if (mid.startsWith('unif_')) {
         mobj.camisa_id = mid.replace('unif_', '');
     }
-    
+
     window.currentEquipe.push(mobj);
     nomeSelect.value = '';
     funcInp.value = '';
@@ -3034,24 +3038,24 @@
     }
     const selectedArr = getRespArray(ev.responsavel, ev);
         document.querySelectorAll('.resp-checkbox').forEach(cb => { cb.checked = selectedArr.includes(cb.value); });
-    const fields = { 
-      'id':'id', 'nome':'evento', 'ini':'data_ini', 'fim':'data_fim', 
-      'hora-ini':'hora_ini', 'hora-fim':'hora_fim', 'tipo':'tipo', 
-      'status':'status', 'formato':'formato', 'cota':'cota', 
-      'vagas':'vagas', 'publico':'publico', 'beneficios':'beneficios', 
-      'obs':'obs', 'participantes':'participantes', 
-      'localidade':'localidade', 'links':'links' 
+    const fields = {
+      'id':'id', 'nome':'evento', 'ini':'data_ini', 'fim':'data_fim',
+      'hora-ini':'hora_ini', 'hora-fim':'hora_fim', 'tipo':'tipo',
+      'status':'status', 'formato':'formato', 'cota':'cota',
+      'vagas':'vagas', 'publico':'publico', 'beneficios':'beneficios',
+      'obs':'obs', 'participantes':'participantes',
+      'localidade':'localidade', 'links':'links'
     };
-    Object.entries(fields).forEach(([k, evKey]) => { 
-      const input = document.getElementById(`edit-${k}`); 
-      if(input) input.value = ev[evKey] || ""; 
+    Object.entries(fields).forEach(([k, evKey]) => {
+      const input = document.getElementById(`edit-${k}`);
+      if(input) input.value = ev[evKey] || "";
     });
-    
+
     // Hydrate Equipe Builder
     window.currentEquipe = ev.equipe ? JSON.parse(JSON.stringify(ev.equipe)) : [];
     if (window.currentEquipe.length === 0 && ev.participantes) window.currentEquipe = [{nome: ev.participantes, funcao: '', camisa_id: ''}];
     window.renderEquipeBuilder();
-    
+
     // Garantir que o dropdown de participantes esteja populado e campos limpos
     if (typeof updateParticipantDatalist === 'function') updateParticipantDatalist();
     document.getElementById('equipe-funcao').value = '';
@@ -3060,7 +3064,7 @@
     // Reset UI state
     document.querySelectorAll('.admin-input').forEach(i => i.classList.remove('valid','invalid'));
     document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
-    
+
     document.getElementById('mode-view').classList.add('hide');
     document.getElementById('mode-edit').classList.remove('hide');
     document.getElementById('modal-overlay').classList.add('open');
@@ -3078,7 +3082,7 @@
     // Criar clone para manipulação sem afetar a UI
     const clone = original.cloneNode(true);
     clone.classList.add('pdf-capture');
-    
+
     // Configurar container invisível mas renderizável
     const container = document.createElement('div');
     container.style.position = 'absolute';
@@ -3106,7 +3110,7 @@
 
     // Ajustes específicos no clone (remover botões, expandir scrolls)
     clone.querySelectorAll('button, .modal-actions-top, .admin-sidenav').forEach(el => el.remove());
-    
+
     // CORREÇÃO CRÍTICA: Copiar conteúdo de Canvas (Chart.js) para o clone
     const originalCanvases = original.querySelectorAll('canvas');
     const clonedCanvases = clone.querySelectorAll('canvas');
@@ -3119,17 +3123,17 @@
       }
     });
 
-    const opt = { 
-      margin: 0.4, 
-      filename: filename, 
-      image: { type: 'jpeg', quality: 1.0 }, 
-      html2canvas: { 
-        scale: 3, 
-        useCORS: true, 
+    const opt = {
+      margin: 0.4,
+      filename: filename,
+      image: { type: 'jpeg', quality: 1.0 },
+      html2canvas: {
+        scale: 3,
+        useCORS: true,
         letterRendering: true,
         backgroundColor: '#ffffff',
         logging: false
-      }, 
+      },
       jsPDF: { unit: 'in', format: 'a4', orientation: isLandscape ? 'landscape' : 'portrait' },
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
@@ -3147,10 +3151,10 @@
       _btnPdfModal.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Gerando Ficha...';
       _btnPdfModal.disabled = true;
       refreshIcons();
-      
+
       const evName = EVENTS.find(e => e.id === currentEditId)?.evento.replace(/\s+/g,'_') || 'Evento';
       await generateProfessionalPDF('mode-view', `Ficha_Evento_${evName}.pdf`, false);
-      
+
       _btnPdfModal.innerHTML = originalText;
       _btnPdfModal.disabled = false;
       refreshIcons();
@@ -3480,7 +3484,7 @@
 
   // Load URL state on init
   loadURLState();
-  
+
   document.getElementById('mini-prev').onclick = () => { miniMonth--; if(miniMonth<0){miniMonth=11;miniYear--;} renderMiniCal(); };
   document.getElementById('mini-next').onclick = () => { miniMonth++; if(miniMonth>11){miniMonth=0;miniYear++;} renderMiniCal(); };
   document.getElementById('cal-prev').onclick = () => { calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); };
@@ -3797,7 +3801,7 @@
       });
       if (cur) sel.value = cur;
     });
-    
+
     // Populate Brindes/Uniformes base items from Estoque Global
     ['brinde-estoque-id','unif-estoque-id'].forEach(selId => {
       const sel = document.getElementById(selId);
@@ -3877,7 +3881,7 @@
       const isBrinde = e.tipo === 'brinde';
       const isUniforme = e.tipo === 'uniforme';
       const isNew = window.lastSavedId === e.id ? 'flash-green' : '';
-      
+
       const emojiMap = { brinde:'🎁', uniforme:'👕', moletom:'🧥', meia:'🧦', acessorio:'🎒', outro:'📦' };
       const tipoEmoji = emojiMap[e.tipo] || '📦';
       const tipoLabel = e.tipo ? e.tipo.charAt(0).toUpperCase() + e.tipo.slice(1) : 'Item';
@@ -3933,10 +3937,10 @@
     const id = document.getElementById('estoque-id').value;
     const nome = document.getElementById('estoque-nome').value.trim();
     if (!nome) { showToast('Nome do item é obrigatório.', 'warning'); return; }
-    
+
     const btn = document.getElementById('btn-save-estoque');
     btn.textContent = 'Salvando...'; btn.disabled = true;
-    
+
     const payload = {
       tipo: document.getElementById('estoque-tipo').value,
       nome,
@@ -3947,7 +3951,7 @@
       fornecedor_id: document.getElementById('estoque-fornecedor').value || '',
       obs: document.getElementById('estoque-obs').value.trim()
     };
-    
+
     try {
       if (id) {
         await db.collection("estoque").doc(id).update(payload);
@@ -3977,7 +3981,7 @@
     if (!ok) return;
     try {
       const batch = db.batch();
-      const stIds = {}; 
+      const stIds = {};
 
       // 1. Unifica Brindes
       for(let b of BRINDES) {
@@ -4029,7 +4033,7 @@
   function renderFornecedores() {
     const tbody = document.getElementById('forn-body');
     if (!tbody) return;
-    
+
     const busca = (document.getElementById('filtro-forn-busca')?.value || '').toLowerCase();
     let list = FORNECEDORES_LIST;
     if (busca) list = list.filter(f => (f.nome||'').toLowerCase().includes(busca) || (f.email||'').toLowerCase().includes(busca) || (f.telefone||'').toLowerCase().includes(busca));
@@ -4038,7 +4042,7 @@
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Nenhum fornecedor encontrado.</td></tr>';
       return;
     }
-    
+
     tbody.innerHTML = list.map(f => {
       const bCount = BRINDES.filter(b => b.fornecedor_id === f.id).length;
       const uCount = UNIFORMES.filter(u => u.fornecedor_id === f.id).length;
@@ -4145,7 +4149,7 @@
         </td>
       </tr>`;
     }).join('');
-    
+
     updateParticipantDatalist();
   };
 
@@ -4252,7 +4256,7 @@
     window.currentBrindeView = view;
     document.getElementById('btn-brinde-view-table').classList.toggle('active', view==='table');
     document.getElementById('btn-brinde-view-kanban').classList.toggle('active', view==='kanban');
-    
+
     if (view === 'table') {
       document.getElementById('brindes-table-wrap').classList.remove('hide');
       document.getElementById('brindes-kanban').classList.add('hide');
@@ -4267,7 +4271,7 @@
     const kBoard = document.getElementById('brindes-kanban');
     if (!kBoard) return;
     const colunas = ['Cotação', 'Aprovado', 'Pedido', 'Recebido'];
-    
+
     kBoard.innerHTML = colunas.map(col => {
       const items = list.filter(b => (b.status || 'Cotação') === col);
       const sc = statusCores[col] || 'var(--muted)';
@@ -4287,7 +4291,7 @@
           </div>
         `;
       }).join('');
-      
+
       return `
         <div class="kanban-column" ondragover="window.dragOver(event)" ondrop="window.drop(event, '${col}', 'brinde')">
           <div class="kanban-column-header">
@@ -4308,11 +4312,11 @@
   function renderBrindes() {
     const tbody = document.getElementById('brindes-body');
     if (!tbody) return;
-    
+
     const busca = (document.getElementById('filtro-brinde-busca')?.value || '').toLowerCase();
     const nivel = document.getElementById('filtro-brinde-nivel')?.value || '';
     const evento= document.getElementById('filtro-brinde-evento')?.value || '';
-    
+
     let list = BRINDES;
     if (busca) list = list.filter(b => (b.titulo||'').toLowerCase().includes(busca) || (b.descricao||'').toLowerCase().includes(busca));
     if (nivel) list = list.filter(b => b.nivel === nivel);
@@ -4329,7 +4333,7 @@
       tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--muted);">Nenhum brinde encontrado.</td></tr>';
       return;
     }
-    
+
     tbody.innerHTML = list.map(b => {
       const qtd  = parseInt(b.qtd) || 0;
       const vlr  = parseFloat(b.vlr_unit) || 0;
@@ -4413,7 +4417,7 @@
     if (document.getElementById('brinde-anexo-name')) document.getElementById('brinde-anexo-name').innerHTML = b.anexo_url ? `<a href="${b.anexo_url}" target="_blank">Ver anexo atual</a>` : '';
     document.getElementById('btn-save-brinde').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-brinde').style.display = 'inline-block';
-    
+
     window.autofillBrinde(); // Atualiza saldo visualmente
     document.getElementById('brinde-qtd').dispatchEvent(new Event('input'));
     const form = document.getElementById('brinde-add-form');
@@ -4438,13 +4442,13 @@
     const id = document.getElementById('brinde-id').value;
     const estId = document.getElementById('brinde-estoque-id').value;
     if (!estId) { showToast('Selecione um Brinde mestre do Almoxarifado.', 'warning'); return; }
-    
+
     const titulo = document.getElementById('brinde-titulo').value.trim();
     const btn = document.getElementById('btn-save-brinde');
     btn.textContent = 'Salvando...'; btn.disabled = true;
     const qtd    = parseInt(document.getElementById('brinde-qtd').value) || 0;
     const vlr    = parseFloat(document.getElementById('brinde-vlr').value) || 0;
-    
+
     let statusEl = document.getElementById('brinde-status');
     const statusVal = statusEl ? statusEl.value : 'Cotação';
 
@@ -4468,7 +4472,7 @@
       const existingUrl = document.getElementById('brinde-anexo-url')?.value;
       if (existingUrl) payload.anexo_url = existingUrl;
     }
-    
+
     try {
       if (id) {
         await db.collection("brindes").doc(id).update(payload);
@@ -4516,7 +4520,7 @@
     window.currentUnifView = view;
     document.getElementById('btn-unif-view-table').classList.toggle('active', view==='table');
     document.getElementById('btn-unif-view-kanban').classList.toggle('active', view==='kanban');
-    
+
     if (view === 'table') {
       document.getElementById('unif-table-wrap').classList.remove('hide');
       document.getElementById('unif-kanban').classList.add('hide');
@@ -4532,7 +4536,7 @@
     if (!kBoard) return;
     const colunas = ['Pedido', 'Em Produção', 'Entregue', 'Cancelado'];
     const scMapping = { 'Pedido': 'var(--amber)', 'Em Produção': 'var(--purple)', 'Entregue': 'var(--green)', 'Cancelado': 'var(--red)' };
-    
+
     kBoard.innerHTML = colunas.map(col => {
       const items = list.filter(u => (u.status || 'Pedido') === col);
       const sc = scMapping[col] || 'var(--muted)';
@@ -4553,7 +4557,7 @@
           </div>
         `;
       }).join('');
-      
+
       return `
         <div class="kanban-column" ondragover="window.dragOver(event)" ondrop="window.drop(event, '${col}', 'uniforme')">
           <div class="kanban-column-header">
@@ -4574,11 +4578,11 @@
   function renderUniformes() {
     const tbody = document.getElementById('unif-body');
     if (!tbody) return;
-    
+
     const busca = (document.getElementById('filtro-unif-busca')?.value || '').toLowerCase();
     const status = document.getElementById('filtro-unif-status')?.value || '';
     const evento= document.getElementById('filtro-unif-evento')?.value || '';
-    
+
     let list = UNIFORMES;
     if (busca) list = list.filter(u => (u.cor||'').toLowerCase().includes(busca) || (u.obs||'').toLowerCase().includes(busca));
     if (status) list = list.filter(u => u.status === status);
@@ -4593,7 +4597,7 @@
       tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:32px;color:var(--muted);">Nenhum uniforme encontrado.</td></tr>';
       return;
     }
-    
+
     tbody.innerHTML = list.map(u => {
       const qtd   = parseInt(u.qtd) || 0;
       const vlr   = parseFloat(u.vlr_unit) || 0;
@@ -4682,7 +4686,7 @@
     if (document.getElementById('unif-anexo-name')) document.getElementById('unif-anexo-name').innerHTML = u.anexo_url ? `<a href="${u.anexo_url}" target="_blank">Ver anexo atual</a>` : '';
     document.getElementById('btn-save-unif').textContent = 'Salvar Alterações';
     document.getElementById('btn-cancel-unif').style.display = 'inline-block';
-    
+
     // Apenas atualiza saldo — não sobrescreve campos já preenchidos
     const lbl = document.getElementById('lbl-saldo-unif');
     const estItem = ESTOQUE.find(x => x.id === u.estoque_id);
@@ -4714,13 +4718,13 @@
     const id = document.getElementById('unif-id').value;
     const estId = document.getElementById('unif-estoque-id').value;
     if (!estId) { showToast('Selecione um Uniforme mestre do Almoxarifado.', 'warning'); return; }
-    
+
     const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
     if (!qtd) { showToast('Informe a quantidade de saídas (alocações).', 'warning'); return; }
     const btn = document.getElementById('btn-save-unif');
     btn.textContent = 'Salvando...'; btn.disabled = true;
     const vlr = parseFloat(document.getElementById('unif-vlr').value) || 0;
-    
+
     const payload = {
         estoque_id:    estId,
         qtd,
@@ -4734,7 +4738,7 @@
         evento_id:     document.getElementById('unif-evento').value || '',
         obs:           document.getElementById('unif-obs').value.trim()
     };
-    
+
     // Preservar anexo existente se não selecionar novo arquivo
     const fileInputUnif = document.getElementById('unif-anexo');
     if (fileInputUnif && fileInputUnif.files[0]) {
@@ -4901,7 +4905,7 @@
       renderKitsList();
     } catch(e) { console.error('Erro carregando kits', e); }
   }
-  
+
   function renderKitsList() {
     const list = document.getElementById('kits-list');
     if (!list) return;
@@ -4922,7 +4926,7 @@
         </div>
       </div>`;
     }).join('');
-    
+
     // Atualiza selects de kits
     const kitSel = document.getElementById('deploy-kit-id');
     if(kitSel) {
@@ -4935,15 +4939,15 @@
     if(KITS.length === 0) await loadKits(); // Garante q estao carregados
     else renderKitsList();
   };
-  
+
   window.newKit = function() {
     document.getElementById('kit-id').value = '';
     document.getElementById('kit-nome').value = '';
     document.getElementById('kit-items-container').innerHTML = '';
     document.getElementById('kit-form-panel').style.display = 'block';
-    window.addKitItemField(); 
+    window.addKitItemField();
   };
-  
+
   window.editKit = function(id) {
     const k = KITS.find(x => x.id === id); if(!k) return;
     document.getElementById('kit-id').value = id;
@@ -4954,18 +4958,18 @@
     });
     document.getElementById('kit-form-panel').style.display = 'block';
   };
-  
+
   window.addKitItemField = function(estId='', q=1) {
     const cont = document.getElementById('kit-items-container');
     const div = document.createElement('div');
     div.className = 'kit-item-row';
-    
+
     let optHtml = '<option value="">— Selecionar Item do Almoxarifado —</option>';
     ESTOQUE.forEach(e => {
        const tipo = e.tipo==='brinde'?'🎁 Brinde':'👕 Uniforme';
        optHtml += `<option value="${e.id}" ${e.id===estId?'selected':''}>${tipo} - ${escapeHtml(e.nome)}</option>`;
     });
-    
+
     div.innerHTML = `
       <select class="gestao-input kit-item-select" style="flex:1;min-width:120px;">
         ${optHtml}
@@ -4975,12 +4979,12 @@
     `;
     cont.appendChild(div);
   };
-  
+
   window.saveKit = async function() {
     const id = document.getElementById('kit-id').value;
     const nome = document.getElementById('kit-nome').value.trim();
     if(!nome) { showToast('Escreva o nome do Kit!', 'warning'); return; }
-    
+
     const rows = document.querySelectorAll('.kit-item-row');
     const itens = [];
     rows.forEach(r => {
@@ -4989,8 +4993,8 @@
        if(estId && qtd > 0) itens.push({ estoque_id: estId, qtd });
     });
     if(!itens.length) { showToast('Inclua ao menos um item válido.', 'warning'); return; }
-    
-    document.getElementById('btn-save-kit').textContent = 'Salvando...'; 
+
+    document.getElementById('btn-save-kit').textContent = 'Salvando...';
     document.getElementById('btn-save-kit').disabled = true;
     try {
       if(id) {
@@ -5009,7 +5013,7 @@
       document.getElementById('btn-save-kit').disabled = false;
     }
   };
-  
+
   window.deleteKit = async function(id) {
     if(!await showConfirm('Excluir Kit?', 'Certeza que deseja deletar permanentemente este modelo de Kit?')) return;
     try {
@@ -5023,7 +5027,7 @@
   window.openDeployKitModal = async function() {
      document.getElementById('modal-deploy-kit-overlay').classList.add('open');
      if(KITS.length === 0) await loadKits();
-     
+
      const evSel = document.getElementById('deploy-kit-evento');
      evSel.innerHTML = '<option value="">— Selecione o Evento —</option>' + EVENTS.map(e => `<option value="${e.id}">${escapeHtml(e.evento)}</option>`).join('');
      document.getElementById('deploy-kit-qtd').value = 1;
@@ -5033,20 +5037,20 @@
      const eventoId = document.getElementById('deploy-kit-evento').value;
      const kitId = document.getElementById('deploy-kit-id').value;
      const mult = parseInt(document.getElementById('deploy-kit-qtd').value) || 0;
-     
+
      if(!eventoId || !kitId || mult < 1) { showToast('Preencha Evento, Kit e Qtd!', 'warning'); return; }
-     
+
      const k = KITS.find(x => x.id === kitId);
      if(!k || !k.itens || !k.itens.length) return;
-     
+
      document.getElementById('btn-deploy-kit').textContent = 'Alocando...';
      document.getElementById('btn-deploy-kit').disabled = true;
-     
+
      try {
        for(const it of k.itens) {
          const e = ESTOQUE.find(x => x.id === it.estoque_id);
          if(!e) continue;
-         
+
          const payload = {
            estoque_id: e.id,
            evento_id: eventoId,
@@ -5056,12 +5060,12 @@
            criado_em: firebase.firestore.FieldValue.serverTimestamp(),
            status: 'Pedido' // Status inicial padrão na alocação
          };
-         
+
          if(e.tipo === 'brinde') {
             payload.titulo = e.nome;
             payload.descricao = 'Alocado via Kit: ' + k.nome;
             payload.nivel = e.nivel || 'Massa';
-            payload.status = 'Cotação'; 
+            payload.status = 'Cotação';
             await db.collection("brindes").add(payload);
          } else if(e.tipo === 'uniforme') {
             payload.cor = e.cor || e.nome;
@@ -5073,7 +5077,7 @@
        }
        showToast(`Kit '${k.nome}' alocado com sucesso!`, 'success');
        document.getElementById('modal-deploy-kit-overlay').classList.remove('open');
-       
+
        // Atualizar as visões globais
        await loadBrindes();
        await loadUniformes();
@@ -5082,7 +5086,7 @@
        console.error(err);
        showToast('Ocorreu um erro na alocação.', 'error');
      }
-     
+
      document.getElementById('btn-deploy-kit').textContent = 'Alocar no Evento';
      document.getElementById('btn-deploy-kit').disabled = false;
   };
@@ -5117,17 +5121,17 @@
   // ── GESTÃO OPERACIONAL CORE (DRAWERS E CRUD) ──
   window.openGestaoDrawer = function(type) {
      const drawerOverlay = document.getElementById('gestao-drawer-overlay');
-     const forms = { 
-       'estoque': 'estoque-add-form', 
-       'brinde': 'brinde-add-form', 
-       'uniforme': 'unif-add-form', 
+     const forms = {
+       'estoque': 'estoque-add-form',
+       'brinde': 'brinde-add-form',
+       'uniforme': 'unif-add-form',
        'fornecedor': 'forn-add-form',
        'participante': 'part-add-form'
      };
-     const titles = { 
-       'estoque': 'Almoxarifado', 
-       'brinde': 'Brinde (Pedido de Compra)', 
-       'uniforme': 'Uniforme (Pedido de Compra)', 
+     const titles = {
+       'estoque': 'Almoxarifado',
+       'brinde': 'Brinde (Pedido de Compra)',
+       'uniforme': 'Uniforme (Pedido de Compra)',
        'fornecedor': 'Fornecedor',
        'participante': 'Participante'
      };
@@ -5137,15 +5141,15 @@
      document.getElementById('drawer-title').innerHTML = `<i data-lucide="edit-3"></i> <span>Gestão: ${titles[type]}</span>`;
      if(typeof lucide !== 'undefined') lucide.createIcons();
      drawerOverlay.classList.add('open');
-     
+
      const btnSaveId = type === 'uniforme' ? 'unif' : (type === 'fornecedor' ? 'forn' : (type === 'participante' ? 'part' : type));
      const btnSave = document.getElementById(`btn-save-${btnSaveId}`);
      if(btnSave && (type === 'uniforme' || type === 'brinde' || type === 'participante')) {
         // As funções de save já possuem seus próprios listeners via onclick no HTML ou declarados no JS
         // Mas garantimos que o texto esteja correto
-        if (btnSave.textContent.includes('Salvando')) return; 
+        if (btnSave.textContent.includes('Salvando')) return;
      }
-     
+
      // Stock badge logic
      if (type === 'brinde' || type === 'uniforme') {
          const selectId = type === 'brinde' ? 'brinde-estoque-id' : 'unif-estoque-id';
@@ -5165,7 +5169,7 @@
      const oldBadge = container.querySelector('.estoque-saldo-badge');
      if (oldBadge) oldBadge.remove();
      if (!selectEl.value) return;
-     
+
      const item = ESTOQUE.find(e => e.id === selectEl.value);
      if (item) {
          const alocado = getEstoqueAlocado(item.id);
@@ -5233,14 +5237,14 @@
   // KANBAN DRAG E DROP API
   let draggingCardId = null;
   let draggingCardType = null;
-  
+
   window.dragStart = function(e, id, type) {
     draggingCardId = id;
     draggingCardType = type;
     e.dataTransfer.effectAllowed = 'move';
     e.target.classList.add('dragging');
   };
-  
+
   document.addEventListener('dragend', (e) => {
     if (e.target.classList && e.target.classList.remove) e.target.classList.remove('dragging');
     document.querySelectorAll('.kanban-column').forEach(c => c.classList.remove('drag-over'));
@@ -5257,7 +5261,7 @@
     e.preventDefault();
     document.querySelectorAll('.kanban-column').forEach(c => c.classList.remove('drag-over'));
     if (!draggingCardId || type !== draggingCardType) return;
-    
+
     const collectionName = type === 'uniforme' ? 'uniformes' : 'brindes';
     try {
       await db.collection(collectionName).doc(draggingCardId).update({ status: newStatus });
@@ -5296,12 +5300,12 @@
     const estoque_id = document.getElementById('unif-estoque-id').value;
     const qtd = parseInt(document.getElementById('unif-qtd').value) || 0;
     if(!estoque_id || qtd < 1) { showToast('Item do estoque e Qtd exigidos!','warning'); return; }
-    
+
     let axUrl = document.getElementById('unif-anexo-url').value;
     const axFile = document.getElementById('unif-anexo').files[0];
-    
+
     const btn = document.getElementById('btn-save-unif');
-    
+
     // VALIDACAO DE ESTOQUE
     const estItem = ESTOQUE.find(e => e.id === estoque_id);
     if (estItem) {
@@ -5319,7 +5323,7 @@
     }
 
     if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
-    
+
     try {
       if(axFile) {
         showToast('Fazendo upload do anexo...', 'info');
@@ -5328,7 +5332,7 @@
         const snap = await fRef.put(axFile);
         axUrl = await snap.ref.getDownloadURL();
       }
-      
+
       const payload = {
         estoque_id, qtd,
         cor: document.getElementById('unif-cor').value,
@@ -5342,10 +5346,10 @@
         obs: document.getElementById('unif-obs').value,
         anexo_url: axUrl
       };
-      
-      if(id) { 
-        await db.collection("uniformes").doc(id).update(payload); 
-        showToast('Uniforme salvo!','success'); 
+
+      if(id) {
+        await db.collection("uniformes").doc(id).update(payload);
+        showToast('Uniforme salvo!','success');
       } else {
         payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
         await db.collection("uniformes").add(payload);
@@ -5353,7 +5357,7 @@
       }
       window.closeGestaoDrawer();
       await loadUniformes();
-      if (typeof loadEstoque === 'function') await loadEstoque(); 
+      if (typeof loadEstoque === 'function') await loadEstoque();
     } catch(err) { showToast('Erro ao salvar.', 'error'); }
     finally { if(btn) { btn.textContent = 'Adicionar'; btn.disabled = false; } }
   };
@@ -5393,10 +5397,10 @@
     const estoque_id = document.getElementById('brinde-estoque-id').value;
     const qtd = parseInt(document.getElementById('brinde-qtd').value) || 0;
     if(!estoque_id || qtd < 1) { showToast('Item e Qtd exigidos!','warning'); return; }
-    
+
     let axUrl = document.getElementById('brinde-anexo-url').value;
     const axFile = document.getElementById('brinde-anexo').files[0];
-    
+
     const btn = document.getElementById('btn-save-brinde');
 
     // VALIDACAO DE ESTOQUE
@@ -5415,7 +5419,7 @@
     }
 
     if(btn) { btn.textContent = 'Salvando...'; btn.disabled = true; }
-    
+
     try {
       if(axFile) {
         showToast('Fazendo upload...', 'info');
@@ -5434,10 +5438,10 @@
         evento_id: document.getElementById('brinde-evento').value,
         anexo_url: axUrl
       };
-      
-      if(id) { 
-        await db.collection("brindes").doc(id).update(payload); 
-        showToast('Brinde salvo!','success'); 
+
+      if(id) {
+        await db.collection("brindes").doc(id).update(payload);
+        showToast('Brinde salvo!','success');
       } else {
         payload.criado_em = firebase.firestore.FieldValue.serverTimestamp();
         await db.collection("brindes").add(payload);
@@ -5469,29 +5473,29 @@
         const isEditMode = !document.getElementById('mode-edit').classList.contains('hide');
         if (modalOpen && isEditMode) {
           e.preventDefault();
-          window.saveAdminForm(); 
+          window.saveAdminForm();
         }
       }
     });
   });
 
-  /** 
+  /**
    * SCRIPT DE MIGRAÇÃO ÚNICA:
-   * Define o status de todos os Brindes e Uniformes como 'Recebido' 
+   * Define o status de todos os Brindes e Uniformes como 'Recebido'
    * para que o Almoxarifado reconheça como entrada de estoque.
    */
   window.migrarStatusEstoque = async function() {
     if(!await showConfirm('Migrar Status de Estoque?', 'Isso marcará todos os Brindes e Uniformes atuais como "Recebido" para alimentar o saldo do Almoxarifado. Deseja continuar?')) return;
-    
+
     showToast('Iniciando migração de status...', 'info');
     try {
       const bSnap = await db.collection("brindes").get();
       const uSnap = await db.collection("uniformes").get();
       const batch = db.batch();
-      
+
       bSnap.forEach(doc => { if(!doc.data().status) batch.update(doc.ref, { status: 'Recebido' }); });
       uSnap.forEach(doc => { if(!doc.data().status) batch.update(doc.ref, { status: 'Recebido' }); });
-      
+
       await batch.commit();
       showToast('Migração concluída com sucesso! 📦', 'success');
       // Recarregar tudo
