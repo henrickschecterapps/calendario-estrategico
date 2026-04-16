@@ -705,7 +705,7 @@
   .gestao-table tr:last-child td { border-bottom: none; }
   .gestao-table tr { transition: all 0.3s ease-out; }
   .gestao-table tr:hover td { background: var(--surface2); }
-  .gestao-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: 0 8px 24px rgba(3,87,213,0.06), 0 2px 8px rgba(3,87,213,0.04); }
+  .gestao-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius); overflow: hidden; box-shadow: 0 12px 32px rgba(3,87,213,0.06), 0 4px 12px rgba(3,87,213,0.04); }
 
   /* Nível badge para brindes */
   .nivel-massa      { background: rgba(107,114,128,0.12); color: var(--muted);   border: 1px solid rgba(107,114,128,0.2); }
@@ -754,8 +754,8 @@
   .tbl-action.edit:hover { color: #0357D5; background: rgba(3,87,213,0.10); }
 
   /* Filtro de Tabelas */
-  .filter-bar-gestao { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-bottom: none; border-radius: var(--radius) var(--radius) 0 0; }
-  .filter-bar-gestao input, .filter-bar-gestao select { padding: 6px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; font-size: 0.82rem; font-family: inherit; color: var(--text); outline: none; transition: 0.2s; }
+  .filter-bar-gestao { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; padding: 20px 24px; background: var(--surface); border: 1px solid var(--border); border-bottom: none; border-radius: var(--radius) var(--radius) 0 0; box-shadow: 0 -4px 12px rgba(3,87,213,0.02); }
+  .filter-bar-gestao input, .filter-bar-gestao select { padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.88rem; font-weight: 500; font-family: inherit; color: var(--text); outline: none; transition: all 0.3s ease-out; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); }
   .filter-bar-gestao input:focus, .filter-bar-gestao select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
 
   /* Animation New Row */
@@ -1363,7 +1363,7 @@
 
                   <div id="brindes-kanban" class="kanban-board"></div>
 
-                  <div class="gestao-table-wrap hide" id="brindes-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap hide" id="brindes-table-wrap" >
                     <table class="gestao-table" id="brindes-table">
                       <thead><tr>
                         <th>Brinde</th><th>Nível</th><th>Status</th>
@@ -1450,7 +1450,7 @@
 
                   <div id="unif-kanban" class="kanban-board"></div>
 
-                  <div class="gestao-table-wrap hide" id="unif-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap hide" id="unif-table-wrap" >
                     <table class="gestao-table" id="unif-table">
                       <thead><tr>
                         <th>Descrição</th><th>Tam.</th><th>Qtd</th><th>Vlr Unit.</th><th>Total</th>
@@ -1525,7 +1525,7 @@
                     <button class="btn-primary" onclick="window.openGestaoDrawer('fornecedor')" style="white-space:nowrap;display:flex;align-items:center;gap:6px;"><i data-lucide="plus" style="width:15px;height:15px;"></i> Novo Fornecedor</button>
                   </div>
 
-                  <div class="gestao-table-wrap" id="forn-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap" id="forn-table-wrap" >
                     <table class="gestao-table" id="forn-table">
                       <thead><tr>
                         <th>Empresa Fornecedora</th><th>Contato (Responsável)</th><th>E-mail</th><th>Telefone</th><th>Itens Vinculados</th><th></th>

@@ -20,3 +20,7 @@
 ## 2026-04-15 - [Refine UI Easing & Gestão Operacional]
 **Learning:** The previously applied `cubic-bezier` easing curve felt unnatural for standard web UI interactions on this project. Furthermore, the "Gestão Operacional" table and tab components appeared cramped compared to the modernized cards.
 **Action:** Reverted `cubic-bezier` usage globally to the more standard and predictable `ease-out` timing function. Upgraded `.gestao-tabs` and `.gestao-table` with larger padding, stronger typography (larger `font-size`, more `letter-spacing`), layered box-shadows, and strict CSS variable usage to align with the rest of the modernized UI.
+
+## 2026-04-15 - [Unify Gestão Operacional Table Layout]
+**Learning:** The "Gestão Operacional" filter bars and tables previously appeared as disjointed elements due to manual inline border-radius overrides (`border-top-left-radius: 0; ...`) and lack of shared styling, which caused layout fragmentation.
+**Action:** Removed inline `style` overrides for border radii on table wrappers. Unified the `.filter-bar-gestao` (top radius, bottom flat) with `.gestao-table-wrap` (top flat, bottom radius) via class rules, using matching border colors and layered box shadows to create the illusion of a single, continuous, modern card component.
