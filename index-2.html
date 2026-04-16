@@ -713,11 +713,11 @@
   .nivel-vip        { background: rgba(139,92,246,0.15);  color: var(--purple);  border: 1px solid rgba(139,92,246,0.3); }
 
   /* Inline add-row form */
-  .gestao-add-bar { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; padding: 16px; background: var(--surface2); border-top: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius); }
+  .gestao-add-bar { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius) var(--radius); box-shadow: inset 0 4px 6px rgba(0,0,0,0.01), 0 8px 24px rgba(3,87,213,0.04); }
   .gestao-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-  .gestao-field label { font-size: 0.65rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
-  .gestao-input { padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 0.82rem; font-weight: 500; transition: 0.2s; outline: none; }
-  .gestao-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .gestao-field label { font-size: 0.72rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; margin-bottom: 2px; }
+  .gestao-input { padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.88rem; font-weight: 500; transition: all 0.3s ease-out; outline: none; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); }
+  .gestao-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow), inset 0 1px 3px rgba(0,0,0,0.02); }
   .gestao-input.w-sm { width: 80px; }
   .gestao-input.w-md { width: 130px; }
   .gestao-input.w-lg { width: 200px; }
@@ -774,7 +774,7 @@
   .drawer-body { padding: 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: var(--bg); }
   .drawer-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); }
   
-  .drawer .gestao-add-bar { display: flex; flex-direction: column; padding: 0; background: transparent; border: none; border-radius: 0; gap: 16px; }
+  .drawer .gestao-add-bar { display: flex; flex-direction: column; padding: 0; background: transparent; border: none; border-radius: 0; gap: 16px; box-shadow: none; }
   .drawer .gestao-field { min-width: 100% !important; flex: none !important; }
   .drawer .form-row { display: flex; gap: 12px; width: 100%; }
   .drawer .form-row .gestao-field { min-width: 0 !important; flex: 1 !important; }

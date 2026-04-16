@@ -24,3 +24,7 @@
 ## 2026-04-15 - [Unify Gestão Operacional Table Layout]
 **Learning:** The "Gestão Operacional" filter bars and tables previously appeared as disjointed elements due to manual inline border-radius overrides (`border-top-left-radius: 0; ...`) and lack of shared styling, which caused layout fragmentation.
 **Action:** Removed inline `style` overrides for border radii on table wrappers. Unified the `.filter-bar-gestao` (top radius, bottom flat) with `.gestao-table-wrap` (top flat, bottom radius) via class rules, using matching border colors and layered box shadows to create the illusion of a single, continuous, modern card component.
+
+## 2026-04-15 - [Refine Gestão Operacional Forms]
+**Learning:** Embedded list-management forms (`.gestao-add-bar`) lacked the necessary padding and hierarchical distinction, making them feel like an afterthought attached to the table component.
+**Action:** Overhauled the `.gestao-add-bar` UI by upgrading padding, increasing input label readability, standardizing standard `.gestao-input` elements with deeper inset shadows and `ease-out` transitions. This effectively anchors the form component cleanly to the bottom of the unified data-table card.
