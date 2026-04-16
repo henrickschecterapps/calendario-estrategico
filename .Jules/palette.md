@@ -12,3 +12,7 @@
 ## 2026-04-15 - [Modernize Primary Components]
 **Learning:** Evaluated the `.btn-primary` and `::-webkit-scrollbar` components for visual coherence.
 **Action:** Replaced static colors with inner box-shadow highlights, added consistent text-shadows, and increased scrollbar thumb width/radius to establish a distinct, modern identity aligned with standard UI/UX heuristics across static views.
+
+## 2026-04-15 - [Refine Structural UI Component Styling]
+**Learning:** Found static and somewhat cramped configurations in major structural components like `.admin-card`, `.modal`, and global form inputs (`.auth-input`, `.admin-input`), which detracted from the modern aesthetic.
+**Action:** Applied comprehensive CSS updates to inputs, cards, and modals: increased paddings for better breathing room, standardized all transitions to the `cubic-bezier(0.16, 1, 0.3, 1)` easing curve, and implemented layered, modern `box-shadow` values to ensure sufficient depth and focus state clarity.
