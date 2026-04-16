@@ -692,16 +692,16 @@
 
   /* ── GESTÃO: BRINDES / FORNECEDORES / UNIFORMES ── */
   .gestao-tabs { display: flex; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px; margin-bottom: 32px; flex-wrap: wrap; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-  .gestao-tab { padding: 8px 18px; border-radius: 7px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.85rem; font-weight: 600; font-family: var(--font-body); transition: all 0.3s ease-out; }
+  .gestao-tab { padding: 12px 24px; border-radius: 8px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.95rem; font-weight: 700; letter-spacing: 0.01em; font-family: var(--font-body); transition: all 0.3s ease-out; }
   .gestao-tab:hover { color: var(--text); transform: translateY(-1px); background: rgba(0,0,0,0.02); }
-  .gestao-tab.active { background: var(--surface); color: var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-weight: 800; border-bottom: 2px solid var(--accent); }
+  .gestao-tab.active { background: var(--surface); color: var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.05), inset 0 -2px 0 var(--accent); font-weight: 800; border-bottom: none; transform: translateY(-1px); }
   .gestao-pane { display: none; animation: fadeIn 0.25s ease; }
   .gestao-pane.active { display: block; }
 
   /* Cards de itens nas tabelas de gestão */
   .gestao-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .gestao-table th { text-align: left; padding: 14px 18px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--muted); background: var(--surface2); border-bottom: 2px solid var(--border); letter-spacing: 0.08em; white-space: nowrap; }
-  .gestao-table td { padding: 16px 18px; border-bottom: 1px solid var(--border); font-weight: 500; vertical-align: middle; font-size: 0.9rem; }
+  .gestao-table th { text-align: left; padding: 16px 20px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--muted); background: var(--surface2); border-bottom: 2px solid var(--border); letter-spacing: 0.08em; white-space: nowrap; }
+  .gestao-table td { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 500; vertical-align: middle; font-size: 0.9rem; }
   .gestao-table tr:last-child td { border-bottom: none; }
   .gestao-table tr { transition: all 0.3s ease-out; }
   .gestao-table tr:hover td { background: var(--surface2); }
@@ -1363,7 +1363,7 @@
 
                   <div id="brindes-kanban" class="kanban-board"></div>
 
-                  <div class="gestao-table-wrap hide" id="brindes-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap hide" id="brindes-table-wrap">
                     <table class="gestao-table" id="brindes-table">
                       <thead><tr>
                         <th>Brinde</th><th>Nível</th><th>Status</th>
@@ -1450,7 +1450,7 @@
 
                   <div id="unif-kanban" class="kanban-board"></div>
 
-                  <div class="gestao-table-wrap hide" id="unif-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap hide" id="unif-table-wrap">
                     <table class="gestao-table" id="unif-table">
                       <thead><tr>
                         <th>Descrição</th><th>Tam.</th><th>Qtd</th><th>Vlr Unit.</th><th>Total</th>
@@ -1525,7 +1525,7 @@
                     <button class="btn-primary" onclick="window.openGestaoDrawer('fornecedor')" style="white-space:nowrap;display:flex;align-items:center;gap:6px;"><i data-lucide="plus" style="width:15px;height:15px;"></i> Novo Fornecedor</button>
                   </div>
 
-                  <div class="gestao-table-wrap" id="forn-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                  <div class="gestao-table-wrap" id="forn-table-wrap">
                     <table class="gestao-table" id="forn-table">
                       <thead><tr>
                         <th>Empresa Fornecedora</th><th>Contato (Responsável)</th><th>E-mail</th><th>Telefone</th><th>Itens Vinculados</th><th></th>
@@ -1584,10 +1584,10 @@
                       </thead>
                       <tbody id="viagens-body"></tbody>
                     </table>
-                  </div>
 
-                  <!-- FORM ADD VIAGEM -->
-                  <div id="viagem-add-form" style="display:none; flex-direction:column; gap:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-top:16px;">
+
+
+<div class="gestao-add-bar" id="viagem-add-form" style="display:none; flex-direction:column; gap:16px;">
                     <input type="hidden" id="viagem-id">
                     <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; width:100%;">
                       <div class="gestao-field" style="flex:2;min-width:180px;">
@@ -1620,6 +1620,10 @@
                         <button class="btn-primary" id="btn-save-viagem" style="white-space:nowrap;">+ Salvar Lançamento</button>
                       </div>
                     </div>
+</div>
+
+                  <!-- FORM ADD VIAGEM -->
+
                   </div>
                 </div>
 
@@ -1636,10 +1640,10 @@
                       <thead><tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Função Padrão</th><th>Tam. Camisa</th><th style="text-align:right">Ações</th></tr></thead>
                       <tbody id="participantes-body"></tbody>
                     </table>
-                  </div>
 
-                  <!-- FORM ADD PARTICIPANTE (inline, nao usa drawer) -->
-                  <div id="part-add-form" style="display:none; flex-direction:column; gap:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-top:16px;">
+
+
+<div class="gestao-add-bar" id="part-add-form" style="display:none; flex-direction:column; gap:16px;">
                     <input type="hidden" id="part-id">
                     <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
                       <div class="gestao-field" style="flex:2;min-width:180px;">
@@ -1681,6 +1685,10 @@
                         <button class="btn-primary" id="btn-save-part" style="white-space:nowrap;">+ Salvar Participante</button>
                       </div>
                     </div>
+</div>
+
+                  <!-- FORM ADD PARTICIPANTE (inline, nao usa drawer) -->
+
                   </div>
                 </div>
 
