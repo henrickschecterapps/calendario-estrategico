@@ -28,3 +28,7 @@
 ## 2026-04-15 - [Refine Gestão Operacional Forms]
 **Learning:** Embedded list-management forms (`.gestao-add-bar`) lacked the necessary padding and hierarchical distinction, making them feel like an afterthought attached to the table component.
 **Action:** Overhauled the `.gestao-add-bar` UI by upgrading padding, increasing input label readability, standardizing standard `.gestao-input` elements with deeper inset shadows and `ease-out` transitions. This effectively anchors the form component cleanly to the bottom of the unified data-table card.
+
+## 2026-04-15 - [Unify Inline Form Styling]
+**Learning:** Found multiple inline forms (`#viagem-add-form`, `#part-add-form`) in the Operacional module with hardcoded inline structural styling (`margin-top`, `padding`, `border-radius`, etc.), making them inconsistent with the standard `.gestao-add-bar` UI.
+**Action:** Removed redundant inline styles and applied the `.gestao-add-bar` CSS class to ensure they instantly inherit global, modern UI styling (like updated `padding`, inset `box-shadow`, flat top borders) uniformly unifying them with the overarching layout card.
