@@ -1331,7 +1331,9 @@
               </div><!-- /operacional inner -->
             </div>
 
-            <!-- ════ SEÇÃO: CONFIGURAÇÕES ════ -->
+            </div>
+</div>
+<!-- ════ SEÇÃO: CONFIGURAÇÕES ════ -->
             <div class="admin-section" id="asec-configuracoes">
               <div class="admin-section-header">
                 <div>
@@ -5225,7 +5227,7 @@
      }
   };
 
-    window.closeGestaoDrawer = function(e) {
+      window.closeGestaoDrawer = function(e) {
      if(e && e.target && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
      document.getElementById('gestao-drawer-overlay').classList.remove('open');
      ['estoque-add-form','brinde-add-form','unif-add-form','forn-add-form','part-add-form','viagem-add-form'].forEach(id => {
@@ -5241,6 +5243,8 @@
      if(document.getElementById('btn-save-part')) document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
      if(document.getElementById('btn-save-viagem')) document.getElementById('btn-save-viagem').textContent = '+ Lançar Custo';
   };
+
+
 
 
      // Reset button text
