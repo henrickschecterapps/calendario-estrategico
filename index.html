@@ -595,24 +595,6 @@
   .pdf-capture .admin-layout { display: block !important; height: auto !important; border: none !important; }
   .pdf-capture .admin-panels { grid-template-columns: 1fr !important; }
 
-
-  /* ── GESTÃO OPERACIONAL: SPLIT LAYOUT ── */
-  .gestao-split-layout { display: flex; gap: 24px; min-height: 500px; height: 100%; align-items: flex-start; }
-  .gestao-sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid var(--border); padding-right: 16px; }
-  .gestao-menu-item { padding: 12px 16px; border-radius: 8px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.9rem; font-weight: 600; text-align: left; transition: all 0.2s ease-out; display: flex; align-items: center; gap: 10px; }
-  .gestao-menu-item:hover { color: var(--text); background: rgba(0,0,0,0.02); }
-  .gestao-menu-item.active { background: var(--surface2); color: var(--accent); font-weight: 700; box-shadow: inset 3px 0 0 var(--accent); border-radius: 0 8px 8px 0; }
-  .gestao-content { flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
-
-  .gestao-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .gestao-kpi-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 8px; }
-  .kpi-val { font-size: 1.8rem; font-weight: 800; font-family: var(--font-heading); color: var(--text); line-height: 1; }
-  .kpi-lbl { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.02em; }
-
-  /* Sticky toolbar override */
-  .filter-bar-gestao { position: sticky; top: 0; z-index: 10; border-top: none; border-left: none; border-right: none; border-radius: 0; }
-  .gestao-table-wrap { border: none; box-shadow: none; border-radius: 0; }
-
 </style>
 </head>
 <body>
@@ -925,6 +907,7 @@
                     <button class="gestao-menu-item" data-gtab="brindes"><i data-lucide="gift"></i> Brindes</button>
                     <button class="gestao-menu-item" data-gtab="uniformes"><i data-lucide="shirt"></i> Uniformes</button>
                     <button class="gestao-menu-item" data-gtab="fornecedores"><i data-lucide="truck"></i> Fornecedores</button>
+                    <button class="gestao-menu-item" data-gtab="passagens"><i data-lucide="plane"></i> Viagens</button>
                     <button class="gestao-menu-item" data-gtab="participantes"><i data-lucide="users"></i> Participantes</button>
                   </div>
 
@@ -1287,7 +1270,7 @@
                   </div>
 
                   <!-- FORM ADD PARTICIPANTE (inline, nao usa drawer) -->
-                  <div class="gestao-add-bar" id="part-add-form" style="display:none; flex-direction:column; gap:16px;">
+                  <div id="part-add-form" style="display:none; flex-direction:column; gap:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-top:16px;">
                     <input type="hidden" id="part-id">
                     <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
                       <div class="gestao-field" style="flex:2;min-width:180px;">
@@ -3764,9 +3747,9 @@
   window.lastSavedId = null; // Usado para destacar (flash-green) itens editados ou criados
 
   // ── Sub-tabs de gestão ──
-  document.querySelectorAll('.gestao-menu-item').forEach(tab => {
+  document.querySelectorAll('.gestao-tab').forEach(tab => {
     tab.onclick = () => {
-      document.querySelectorAll('.gestao-menu-item').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.gestao-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.gestao-pane').forEach(p => p.classList.remove('active'));
       tab.classList.add('active');
       const pane = document.getElementById('gpane-' + tab.dataset.gtab);
@@ -4217,7 +4200,7 @@
     window.openGestaoDrawer('participante');
   };
 
-  window.togglePartForm = function(show) { if(show) window.openGestaoDrawer('participante'); else window.closeGestaoDrawer(); return;
+  window.togglePartForm = function(show) {
     const form = document.getElementById('part-add-form');
     const btnNovo = document.getElementById('btn-novo-participante');
     if(!form) return;
@@ -5129,7 +5112,7 @@
 
   // ── INIT DRAWER GESTÃO OPERACIONAL ──
   setTimeout(() => {
-    const drawerForms = ['estoque-add-form', 'brinde-add-form', 'unif-add-form', 'forn-add-form', 'part-add-form', 'viagem-add-form'];
+    const drawerForms = ['brinde-add-form', 'unif-add-form', 'forn-add-form'];
     const drawerBody = document.getElementById('gestao-drawer-body');
     if(drawerBody) {
       drawerForms.forEach(id => {
@@ -5162,16 +5145,14 @@
        'brinde': 'brinde-add-form',
        'uniforme': 'unif-add-form',
        'fornecedor': 'forn-add-form',
-       'participante': 'part-add-form',
-       'viagem': 'viagem-add-form'
+       'participante': 'part-add-form'
      };
      const titles = {
        'estoque': 'Almoxarifado',
        'brinde': 'Brinde (Pedido de Compra)',
        'uniforme': 'Uniforme (Pedido de Compra)',
        'fornecedor': 'Fornecedor',
-       'participante': 'Participante',
-       'viagem': 'Passagem / Hospedagem'
+       'participante': 'Participante'
      };
      Object.values(forms).forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
      const formId = forms[type];
@@ -5227,7 +5208,7 @@
      }
   };
 
-      window.closeGestaoDrawer = function(e) {
+    window.closeGestaoDrawer = function(e) {
      if(e && e.target && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
      document.getElementById('gestao-drawer-overlay').classList.remove('open');
      ['estoque-add-form','brinde-add-form','unif-add-form','forn-add-form','part-add-form','viagem-add-form'].forEach(id => {
@@ -5243,8 +5224,6 @@
      if(document.getElementById('btn-save-part')) document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
      if(document.getElementById('btn-save-viagem')) document.getElementById('btn-save-viagem').textContent = '+ Lançar Custo';
   };
-
-
 
 
      // Reset button text
@@ -5559,27 +5538,6 @@
     } catch(err) {
       console.error(err);
       showToast('Erro ao realizar migração.', 'error');
-    }
-  };
-
-  // ── KANBAN VS TABLE TOGGLE ──
-  window.switchView = function(btn, viewType) {
-    const pane = btn.closest('.gestao-pane');
-    if(!pane) return;
-    pane.querySelectorAll('.view-btn').forEach(b => { b.classList.remove('active'); b.style.background = 'transparent'; b.style.boxShadow = 'none'; });
-    btn.classList.add('active');
-    btn.style.background = 'var(--surface)';
-    btn.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-    const kanban = pane.querySelector('.kanban-board');
-    const tableWrap = pane.querySelector('.gestao-table-wrap');
-    if(kanban && tableWrap) {
-      if(viewType === 'kanban') {
-        kanban.classList.remove('hide');
-        tableWrap.classList.add('hide');
-      } else {
-        kanban.classList.add('hide');
-        tableWrap.classList.remove('hide');
-      }
     }
   };
 </script>
