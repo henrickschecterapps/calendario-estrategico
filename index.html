@@ -73,11 +73,11 @@
   [data-theme="dark"] .logo span { background: linear-gradient(90deg, #00A0FF, #38DBFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .header-right { display: flex; align-items: center; gap: 12px; }
   .user-badge { font-size: 0.85rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 8px; padding-right: 16px; border-right: 1px solid var(--border); }
-  .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.2s ease-out; }
+  .btn-icon { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
   .btn-icon:hover { background: var(--border); transform: translateY(-1px); }
   .btn-icon:active { transform: scale(0.96); }
   .btn-icon.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-light, #00A0FF)); color: #fff; border: none; padding: 10px 20px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s ease-out; box-shadow: 0 4px 14px var(--accent-glow); display: flex; align-items: center; gap: 8px; justify-content: center; letter-spacing: 0.01em; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-light, #00A0FF)); color: #fff; border: none; padding: 10px 20px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 4px 14px var(--accent-glow); display: flex; align-items: center; gap: 8px; justify-content: center; letter-spacing: 0.01em; }
   .btn-primary:hover { opacity: 0.92; transform: translateY(-2px); box-shadow: 0 8px 24px var(--accent-glow); }
 
   /* Icon Utilities */
@@ -308,7 +308,7 @@
   ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; border: 2px solid var(--bg); }
 
   /* ── TOAST ── */
-  .toast { pointer-events: all; display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow-lg); font-size: 0.88rem; font-weight: 600; min-width: 280px; max-width: 380px; animation: toastIn 0.3s ease-out; }
+  .toast { pointer-events: all; display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow-lg); font-size: 0.88rem; font-weight: 600; min-width: 280px; max-width: 380px; animation: toastIn 0.3s cubic-bezier(.34,1.56,.64,1); }
   .toast.removing { animation: toastOut 0.25s ease forwards; }
   .toast-success { border-left: 4px solid var(--green); }
   .toast-error { border-left: 4px solid var(--red); }
@@ -385,7 +385,7 @@
   .admin-nav-badge { margin-left: auto; font-size: 0.68rem; font-weight: 800; padding: 2px 7px; border-radius: 10px; background: var(--red); color: #fff; animation: pulse-red 2s infinite; }
   @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); } 70% { box-shadow: 0 0 0 8px rgba(220,38,38,0); } 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); } }
   .admin-nav-divider { height: 1px; background: var(--border); margin: 8px 20px; }
-  .admin-section { display: none; padding: 32px; flex-direction: column; gap: 24px; animation: slideInUp 0.3s ease-out; overflow-y: auto; flex: 1; }
+  .admin-section { display: none; padding: 32px; flex-direction: column; gap: 24px; animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; flex: 1; }
   @keyframes slideInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
   .admin-section.active { display: flex; }
   #asec-operacional.active { display: flex; flex-direction: column; padding: 0; gap: 0; overflow: hidden; }
@@ -414,7 +414,7 @@
     .today-badge { display: none; }
     .user-badge { border: none; padding: 0; }
     .user-badge span { display: none; }
-    .sidebar { position: fixed; left: -320px; top: 60px; height: calc(100vh - 60px); z-index: 150; transition: left 0.3s ease-out; box-shadow: var(--shadow-lg); }
+    .sidebar { position: fixed; left: -320px; top: 60px; height: calc(100vh - 60px); z-index: 150; transition: left 0.3s cubic-bezier(.34,1.2,.64,1); box-shadow: var(--shadow-lg); }
     .sidebar.open { left: 0; }
     .main { padding: 20px 16px; }
     .view-title { font-size: 1.5rem; }
@@ -480,16 +480,16 @@
 
   /* ── GESTÃO: BRINDES / FORNECEDORES / UNIFORMES ── */
   .gestao-tabs { display: flex; gap: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px; margin-bottom: 24px; flex-wrap: wrap; }
-  .gestao-tab { padding: 12px 24px; border-radius: 8px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.95rem; font-weight: 700; letter-spacing: 0.01em; font-family: var(--font-body); transition: all 0.3s ease-out; }
+  .gestao-tab { padding: 8px 18px; border-radius: 7px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.85rem; font-weight: 600; font-family: var(--font-body); transition: 0.2s; }
   .gestao-tab:hover { color: var(--text); }
-  .gestao-tab.active { background: var(--surface); color: var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.05), inset 0 -2px 0 var(--accent); font-weight: 800; border-bottom: none; transform: translateY(-1px); }
+  .gestao-tab.active { background: var(--surface); color: #0357D5; box-shadow: var(--shadow-sm); font-weight: 700; border-bottom: 2px solid #0357D5; }
   .gestao-pane { display: none; animation: fadeIn 0.25s ease; }
   .gestao-pane.active { display: block; }
 
   /* Cards de itens nas tabelas de gestão */
   .gestao-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .gestao-table th { text-align: left; padding: 16px 20px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: var(--muted); background: var(--surface2); border-bottom: 2px solid var(--border); letter-spacing: 0.06em; white-space: nowrap; }
-  .gestao-table td { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 500; vertical-align: middle; }
+  .gestao-table th { text-align: left; padding: 11px 14px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: var(--muted); background: var(--surface2); border-bottom: 2px solid var(--border); letter-spacing: 0.06em; white-space: nowrap; }
+  .gestao-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-weight: 500; vertical-align: middle; }
   .gestao-table tr:last-child td { border-bottom: none; }
   .gestao-table tr:hover td { background: var(--surface2); }
   .gestao-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
@@ -552,7 +552,7 @@
   /* ── SIDE DRAWER (GESTÃO OPERACIONAL) ── */
   .drawer-overlay { position: fixed; inset: 0; background: rgba(8,14,31,0.55); backdrop-filter: blur(6px); z-index: 9999; display: flex; justify-content: flex-end; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
   .drawer-overlay.open { opacity: 1; visibility: visible; }
-  .drawer { width: 100%; max-width: 520px; background: var(--surface); height: 100vh; box-shadow: -8px 0 48px rgba(3,87,213,0.18), -2px 0 12px rgba(0,0,0,0.3); transform: translateX(100%); transition: transform 0.35s ease-out; display: flex; flex-direction: column; }
+  .drawer { width: 100%; max-width: 520px; background: var(--surface); height: 100vh; box-shadow: -8px 0 48px rgba(3,87,213,0.18), -2px 0 12px rgba(0,0,0,0.3); transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
   .drawer-overlay.open .drawer { transform: translateX(0); }
   .drawer-header { padding: 24px 28px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #152454 0%, #0357D5 100%); }
   .drawer-title { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 10px; color: #fff; }
@@ -594,6 +594,24 @@
   }
   .pdf-capture .admin-layout { display: block !important; height: auto !important; border: none !important; }
   .pdf-capture .admin-panels { grid-template-columns: 1fr !important; }
+
+
+  /* ── GESTÃO OPERACIONAL: SPLIT LAYOUT ── */
+  .gestao-split-layout { display: flex; gap: 24px; min-height: 500px; height: 100%; align-items: flex-start; }
+  .gestao-sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid var(--border); padding-right: 16px; }
+  .gestao-menu-item { padding: 12px 16px; border-radius: 8px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.9rem; font-weight: 600; text-align: left; transition: all 0.2s ease-out; display: flex; align-items: center; gap: 10px; }
+  .gestao-menu-item:hover { color: var(--text); background: rgba(0,0,0,0.02); }
+  .gestao-menu-item.active { background: var(--surface2); color: var(--accent); font-weight: 700; box-shadow: inset 3px 0 0 var(--accent); border-radius: 0 8px 8px 0; }
+  .gestao-content { flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+
+  .gestao-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .gestao-kpi-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+  .kpi-val { font-size: 1.8rem; font-weight: 800; font-family: var(--font-heading); color: var(--text); line-height: 1; }
+  .kpi-lbl { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.02em; }
+
+  /* Sticky toolbar override */
+  .filter-bar-gestao { position: sticky; top: 0; z-index: 10; border-top: none; border-left: none; border-right: none; border-radius: 0; }
+  .gestao-table-wrap { border: none; box-shadow: none; border-radius: 0; }
 
 </style>
 </head>
@@ -893,24 +911,44 @@
             <!-- ════ SEÇÃO: OPERACIONAL ════ -->
             <div class="admin-section" id="asec-operacional" style="padding:0; gap:0;">
               <!-- Sub-tabs operacional -->
-              <div style="padding:24px 32px 0; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0;">
-                <div style="margin-bottom:16px;">
-                  <div class="admin-section-heading">Gestão de Estoque</div>
-                  <div class="admin-section-sub">Controle de brindes, uniformes e itens operacionais</div>
-                </div>
-                <div class="gestao-tabs" style="border-bottom:none; margin-bottom:0;">
-                  <button class="gestao-tab active" data-gtab="estoque"><i data-lucide="boxes" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Estoque</button>
-                  <button class="gestao-tab" data-gtab="brindes"><i data-lucide="gift" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Brindes</button>
-                  <button class="gestao-tab" data-gtab="uniformes"><i data-lucide="shirt" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Uniformes</button>
-                  <button class="gestao-tab" data-gtab="fornecedores"><i data-lucide="truck" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Fornecedores</button>
-                  <button class="gestao-tab" data-gtab="participantes"><i data-lucide="users" style="margin-right:4px; vertical-align:middle; width:16px; height:16px;"></i> Participantes</button>
-                </div>
+
+              <div class="admin-section-header" style="padding:24px 28px 16px; flex-direction:column; align-items:flex-start; gap:8px;">
+                <div class="admin-section-heading">⚙️ Gestão Operacional</div>
+                <div class="admin-section-sub">Estoque Central, Pedidos de Brindes, Uniformes e Logística</div>
               </div>
 
-              <div style="padding:24px 32px; overflow-y:auto; flex:1;">
+              <div style="padding:0 28px 28px; flex:1; display:flex; flex-direction:column;">
+                <div class="gestao-split-layout">
+                  <div class="gestao-sidebar">
+                    <button class="gestao-menu-item active" data-gtab="overview"><i data-lucide="layout-dashboard"></i> Visão Geral</button>
+                    <button class="gestao-menu-item" data-gtab="estoque"><i data-lucide="boxes"></i> Almoxarifado</button>
+                    <button class="gestao-menu-item" data-gtab="brindes"><i data-lucide="gift"></i> Brindes</button>
+                    <button class="gestao-menu-item" data-gtab="uniformes"><i data-lucide="shirt"></i> Uniformes</button>
+                    <button class="gestao-menu-item" data-gtab="fornecedores"><i data-lucide="truck"></i> Fornecedores</button>
+                    <button class="gestao-menu-item" data-gtab="participantes"><i data-lucide="users"></i> Participantes</button>
+                  </div>
+
+                  <div class="gestao-content">
+
+                    <!-- ── OVERVIEW ── -->
+                    <div class="gestao-pane active" id="gpane-overview" style="padding:24px;">
+                      <h3 style="font-family:var(--font-heading); margin-bottom:20px;">Resumo Operacional</h3>
+                      <div class="gestao-kpi-grid">
+                        <div class="gestao-kpi-card">
+                          <div class="kpi-lbl">Estoque Baixo</div>
+                          <div class="kpi-val" style="color:var(--red);">3</div>
+                        </div>
+                        <div class="gestao-kpi-card">
+                          <div class="kpi-lbl">Pedidos Pendentes</div>
+                          <div class="kpi-val" style="color:var(--accent);">5</div>
+                        </div>
+                      </div>
+                      <p style="color:var(--muted); font-size:0.9rem;">Selecione um módulo no menu lateral para gerenciar os detalhes.</p>
+                    </div>
+
 
                 <!-- ── ESTOQUE GLOBAL (MATRIZ) ── -->
-                <div class="gestao-pane active" id="gpane-estoque">
+                <div class="gestao-pane" id="gpane-estoque">
                   <div class="filter-bar-gestao">
                     <span style="font-size:0.85rem;font-weight:700;color:var(--muted)">🔍 Filtros:</span>
                     <input type="text" id="filtro-estoque-busca" placeholder="Buscar no estoque..." oninput="renderEstoque()">
@@ -923,7 +961,7 @@
                     <button class="btn-primary" id="btn-novo-estoque" onclick="window.novoEstoque()" style="font-size:0.82rem;"><i data-lucide="plus" style="width:14px;height:14px;"></i> Novo Item de Estoque</button>
                   </div>
 
-                  <div class="gestao-table-wrap" id="estoque-table-wrap">
+                  <div class="gestao-table-wrap" id="estoque-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <table class="gestao-table" id="estoque-table">
                       <thead><tr>
                         <th>Tipo</th>
@@ -1024,7 +1062,7 @@
 
                   <div id="brindes-kanban" class="hide kanban-board"></div>
 
-                  <div class="gestao-table-wrap" id="brindes-table-wrap">
+                  <div class="gestao-table-wrap" id="brindes-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <table class="gestao-table" id="brindes-table">
                       <thead><tr>
                         <th>Brinde</th><th>Descrição</th><th>Nível</th><th>Status</th>
@@ -1120,7 +1158,7 @@
 
                   <div id="unif-kanban" class="hide kanban-board"></div>
 
-                  <div class="gestao-table-wrap" id="unif-table-wrap">
+                  <div class="gestao-table-wrap" id="unif-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <table class="gestao-table" id="unif-table">
                       <thead><tr>
                         <th>Qtd</th><th>Cor / Tamanho</th><th>Vlr Unit.</th><th>Total</th>
@@ -1205,7 +1243,7 @@
                     <input type="text" id="filtro-forn-busca" placeholder="Nome, email ou telefone..." oninput="renderFornecedores()">
                   </div>
 
-                  <div class="gestao-table-wrap" id="forn-table-wrap">
+                  <div class="gestao-table-wrap" id="forn-table-wrap" style="border-top-left-radius: 0; border-top-right-radius: 0;">
                     <table class="gestao-table" id="forn-table">
                       <thead><tr>
                         <th>Nome do Fornecedor</th><th>E-mail</th><th>Telefone</th><th>Itens Vinculados</th><th></th>
@@ -1239,17 +1277,17 @@
                     <span style="font-size:0.85rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;"><i data-lucide="search" style="width:14px;height:14px;"></i> Buscar:</span>
                     <input type="text" id="filtro-part-busca" placeholder="Nome ou telefone..." oninput="window.renderParticipantes()" class="admin-input" style="width:280px; margin:0;">
                     <div style="flex:1"></div>
-                    <button class="btn-primary" onclick="window.togglePartForm(true)" id="btn-novo-participante"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> Novo Participante</button>
+                    <button class="btn-primary" onclick="window.openGestaoDrawer('participante')" id="btn-novo-participante"><i data-lucide="plus" style="width:15px;height:15px;vertical-align:middle;"></i> Novo Participante</button>
                   </div>
                   <div class="gestao-table-wrap" id="part-table-wrap">
                     <table class="gestao-table">
                       <thead><tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Função Padrão</th><th>Tam. Camisa</th><th style="text-align:right">Ações</th></tr></thead>
                       <tbody id="participantes-body"></tbody>
                     </table>
+                  </div>
 
-
-
-<div class="gestao-add-bar" id="part-add-form" style="display:none; flex-direction:column; gap:16px;">
+                  <!-- FORM ADD PARTICIPANTE (inline, nao usa drawer) -->
+                  <div class="gestao-add-bar" id="part-add-form" style="display:none; flex-direction:column; gap:16px;">
                     <input type="hidden" id="part-id">
                     <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; width:100%;">
                       <div class="gestao-field" style="flex:2;min-width:180px;">
@@ -1283,14 +1321,10 @@
                         </select>
                       </div>
                       <div style="display:flex; gap:8px; align-self:flex-end;">
-                        <button class="btn-icon" id="btn-cancel-part" onclick="window.togglePartForm(false)"> Cancelar</button>
+                        <button class="btn-icon" id="btn-cancel-part" onclick="window.closeGestaoDrawer()"> Cancelar</button>
                         <button class="btn-primary" id="btn-save-part" style="white-space:nowrap;">+ Salvar Participante</button>
                       </div>
                     </div>
-</div>
-
-                  <!-- FORM ADD PARTICIPANTE (inline, nao usa drawer) -->
-
                   </div>
                 </div>
 
@@ -3728,9 +3762,9 @@
   window.lastSavedId = null; // Usado para destacar (flash-green) itens editados ou criados
 
   // ── Sub-tabs de gestão ──
-  document.querySelectorAll('.gestao-tab').forEach(tab => {
+  document.querySelectorAll('.gestao-menu-item').forEach(tab => {
     tab.onclick = () => {
-      document.querySelectorAll('.gestao-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.gestao-menu-item').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.gestao-pane').forEach(p => p.classList.remove('active'));
       tab.classList.add('active');
       const pane = document.getElementById('gpane-' + tab.dataset.gtab);
@@ -4178,10 +4212,10 @@
     document.getElementById('part-funcao').value = p.funcao || '';
     document.getElementById('part-tamanho').value = p.tamanho || 'M';
     document.getElementById('btn-save-part').textContent = 'Salvar Alterações';
-    window.togglePartForm(true);
+    window.openGestaoDrawer('participante');
   };
 
-  window.togglePartForm = function(show) {
+  window.togglePartForm = function(show) { if(show) window.openGestaoDrawer('participante'); else window.closeGestaoDrawer(); return;
     const form = document.getElementById('part-add-form');
     const btnNovo = document.getElementById('btn-novo-participante');
     if(!form) return;
@@ -4236,7 +4270,7 @@
         showToast('Participante cadastrado!', 'success');
       }
       await loadParticipantes();
-      window.togglePartForm(false);
+      window.closeGestaoDrawer();
     } catch(e) { showToast('Erro ao salvar.', 'error'); console.error(e); }
     finally { btn.textContent = '+ Salvar Participante'; btn.disabled = false; }
   };
@@ -5093,7 +5127,7 @@
 
   // ── INIT DRAWER GESTÃO OPERACIONAL ──
   setTimeout(() => {
-    const drawerForms = ['brinde-add-form', 'unif-add-form', 'forn-add-form'];
+    const drawerForms = ['estoque-add-form', 'brinde-add-form', 'unif-add-form', 'forn-add-form', 'part-add-form', 'viagem-add-form'];
     const drawerBody = document.getElementById('gestao-drawer-body');
     if(drawerBody) {
       drawerForms.forEach(id => {
@@ -5126,14 +5160,16 @@
        'brinde': 'brinde-add-form',
        'uniforme': 'unif-add-form',
        'fornecedor': 'forn-add-form',
-       'participante': 'part-add-form'
+       'participante': 'part-add-form',
+       'viagem': 'viagem-add-form'
      };
      const titles = {
        'estoque': 'Almoxarifado',
        'brinde': 'Brinde (Pedido de Compra)',
        'uniforme': 'Uniforme (Pedido de Compra)',
        'fornecedor': 'Fornecedor',
-       'participante': 'Participante'
+       'participante': 'Participante',
+       'viagem': 'Passagem / Hospedagem'
      };
      Object.values(forms).forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
      const formId = forms[type];
@@ -5189,10 +5225,24 @@
      }
   };
 
-  window.closeGestaoDrawer = function(e) {
-     if(e && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
+    window.closeGestaoDrawer = function(e) {
+     if(e && e.target && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
      document.getElementById('gestao-drawer-overlay').classList.remove('open');
-     ['estoque-id', 'brinde-id', 'unif-id', 'forn-id', 'part-id'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+     ['estoque-add-form','brinde-add-form','unif-add-form','forn-add-form','part-add-form','viagem-add-form'].forEach(id => {
+       const el = document.getElementById(id); if(el) el.style.display = 'none';
+     });
+     ['estoque-id','brinde-id','unif-id','forn-id','part-id','viagem-id'].forEach(id => {
+       const el = document.getElementById(id); if(el) el.value = '';
+     });
+     if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
+     if(document.getElementById('btn-save-brinde')) document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
+     if(document.getElementById('btn-save-unif')) document.getElementById('btn-save-unif').textContent = '+ Adicionar';
+     if(document.getElementById('btn-save-forn')) document.getElementById('btn-save-forn').textContent = '+ Adicionar';
+     if(document.getElementById('btn-save-part')) document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
+     if(document.getElementById('btn-save-viagem')) document.getElementById('btn-save-viagem').textContent = '+ Lançar Custo';
+  };
+
+
      // Reset button text
      if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
      if(document.getElementById('btn-save-brinde')) document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
@@ -5505,6 +5555,27 @@
     } catch(err) {
       console.error(err);
       showToast('Erro ao realizar migração.', 'error');
+    }
+  };
+
+  // ── KANBAN VS TABLE TOGGLE ──
+  window.switchView = function(btn, viewType) {
+    const pane = btn.closest('.gestao-pane');
+    if(!pane) return;
+    pane.querySelectorAll('.view-btn').forEach(b => { b.classList.remove('active'); b.style.background = 'transparent'; b.style.boxShadow = 'none'; });
+    btn.classList.add('active');
+    btn.style.background = 'var(--surface)';
+    btn.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+    const kanban = pane.querySelector('.kanban-board');
+    const tableWrap = pane.querySelector('.gestao-table-wrap');
+    if(kanban && tableWrap) {
+      if(viewType === 'kanban') {
+        kanban.classList.remove('hide');
+        tableWrap.classList.add('hide');
+      } else {
+        kanban.classList.add('hide');
+        tableWrap.classList.remove('hide');
+      }
     }
   };
 </script>
