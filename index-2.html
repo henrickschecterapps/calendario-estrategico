@@ -6357,30 +6357,6 @@
   };
 
 
-     // Guard: só bloqueia se veio de um evento E o target não é o overlay nem o btn-X do header
-     if(e && e.target && e.target !== document.getElementById('gestao-drawer-overlay') && !e.target.closest('.drawer > .drawer-header > .btn-icon')) return;
-     document.getElementById('gestao-drawer-overlay').classList.remove('open');
-     // Esconder todos os forms e limpar IDs
-     ['estoque-add-form','brinde-add-form','unif-add-form','forn-add-form','part-add-form','viagem-add-form'].forEach(id => {
-       const el = document.getElementById(id); if(el) el.style.display = 'none';
-     });
-     ['estoque-id','brinde-id','unif-id','forn-id','part-id','viagem-id'].forEach(id => {
-       const el = document.getElementById(id); if(el) el.value = '';
-     });
-     // Esconder botões Cancelar
-     ['btn-cancel-brinde','btn-cancel-unif','btn-cancel-estoque','btn-cancel-forn'].forEach(id => {
-       const el = document.getElementById(id); if(el) el.style.display = 'none';
-     });
-     // Reset button text
-     if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
-     if(document.getElementById('btn-save-brinde')) document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
-     if(document.getElementById('btn-save-unif')) document.getElementById('btn-save-unif').textContent = '+ Adicionar';
-     if(document.getElementById('btn-save-forn')) document.getElementById('btn-save-forn').textContent = '+ Adicionar';
-     if(document.getElementById('btn-save-part')) document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
-     // Clear badges
-     document.querySelectorAll('.estoque-saldo-badge').forEach(b => b.remove());
-  };
-
   // Funções para os Novos Botões
   window.novoEstoque = function() {
      // Limpa campos do estoque

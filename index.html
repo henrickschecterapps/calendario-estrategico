@@ -5241,16 +5241,6 @@
   };
 
 
-     // Reset button text
-     if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
-     if(document.getElementById('btn-save-brinde')) document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
-     if(document.getElementById('btn-save-unif')) document.getElementById('btn-save-unif').textContent = '+ Adicionar';
-     if(document.getElementById('btn-save-forn')) document.getElementById('btn-save-forn').textContent = '+ Adicionar';
-     if(document.getElementById('btn-save-part')) document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
-     // Clear badges
-     document.querySelectorAll('.estoque-saldo-badge').forEach(b => b.remove());
-  };
-
   // Funções para os Novos Botões
   window.novoEstoque = function() {
      // Limpa campos do estoque
