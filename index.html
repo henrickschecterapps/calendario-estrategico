@@ -388,8 +388,8 @@
   .admin-section { display: none; padding: 32px; flex-direction: column; gap: 24px; animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; flex: 1; }
   @keyframes slideInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
   .admin-section.active { display: flex; }
-  #asec-operacional.active { display: flex; flex-direction: column; padding: 0; gap: 0; overflow: hidden; }
-  #asec-operacional > div:last-child { overflow-y: auto; flex: 1; }
+  #asec-operacional.active { display: flex; flex-direction: column; padding: 32px; gap: 24px; overflow: hidden; }
+  #asec-operacional > div:last-child { overflow-y: visible; flex: 1; }
   .admin-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-shrink: 0; }
   .admin-section-heading { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text); }
   .admin-section-sub { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
@@ -594,6 +594,24 @@
   }
   .pdf-capture .admin-layout { display: block !important; height: auto !important; border: none !important; }
   .pdf-capture .admin-panels { grid-template-columns: 1fr !important; }
+
+
+  /* ── GESTÃO OPERACIONAL: SPLIT LAYOUT ── */
+  .gestao-split-layout { display: flex; gap: 32px; height: 100%; align-items: stretch; }
+  .gestao-sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; padding-right: 0; border-right: none; }
+  .gestao-menu-item { padding: 12px 16px; border-radius: 8px; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.9rem; font-weight: 600; text-align: left; transition: all 0.2s ease-out; display: flex; align-items: center; gap: 10px; }
+  .gestao-menu-item:hover { color: var(--text); background: rgba(0,0,0,0.02); }
+  .gestao-menu-item.active { background: var(--surface2); color: var(--accent); font-weight: 700; box-shadow: inset 3px 0 0 var(--accent); border-radius: 0 8px 8px 0; }
+  .gestao-content { flex: 1; min-width: 0; display: flex; flex-direction: column; border: none; border-radius: 0; background: transparent; overflow-y: auto; padding-right: 16px; }
+
+  .gestao-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .gestao-kpi-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+  .kpi-val { font-size: 1.8rem; font-weight: 800; font-family: var(--font-heading); color: var(--text); line-height: 1; }
+  .kpi-lbl { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.02em; }
+
+  /* Sticky toolbar override */
+  .filter-bar-gestao { position: sticky; top: 0; z-index: 10; border-top: none; border-left: none; border-right: none; border-radius: 0; }
+  .gestao-table-wrap { border: none; box-shadow: none; border-radius: 0; }
 
 </style>
 </head>
@@ -891,16 +909,15 @@
             </div>
 
             <!-- ════ SEÇÃO: OPERACIONAL ════ -->
-            <div class="admin-section" id="asec-operacional" style="padding:0; gap:0;">
+            <div class="admin-section" id="asec-operacional" style="padding: 32px; gap: 24px; flex-direction: column; overflow: hidden; display: flex;">
               <!-- Sub-tabs operacional -->
 
-              <div class="admin-section-header" style="padding:24px 28px 16px; flex-direction:column; align-items:flex-start; gap:8px;">
+              <div class="admin-section-header" style="flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 0; flex-shrink: 0; display: flex;">
                 <div class="admin-section-heading">⚙️ Gestão Operacional</div>
                 <div class="admin-section-sub">Estoque Central, Pedidos de Brindes, Uniformes e Logística</div>
               </div>
 
-              <div style="padding:0 28px 28px; flex:1; display:flex; flex-direction:column;">
-                <div class="gestao-split-layout">
+              <div class="gestao-split-layout">
                   <div class="gestao-sidebar">
                     <button class="gestao-menu-item active" data-gtab="overview"><i data-lucide="layout-dashboard"></i> Visão Geral</button>
                     <button class="gestao-menu-item" data-gtab="estoque"><i data-lucide="boxes"></i> Almoxarifado</button>
@@ -1313,10 +1330,8 @@
 
               </div><!-- /operacional inner -->
             </div>
-
-            </div>
-</div>
-<!-- ════ SEÇÃO: CONFIGURAÇÕES ════ -->
+              </div>
+              <!-- ════ SEÇÃO: CONFIGURAÇÕES ════ -->
             <div class="admin-section" id="asec-configuracoes">
               <div class="admin-section-header">
                 <div>
@@ -3747,9 +3762,9 @@
   window.lastSavedId = null; // Usado para destacar (flash-green) itens editados ou criados
 
   // ── Sub-tabs de gestão ──
-  document.querySelectorAll('.gestao-tab').forEach(tab => {
+  document.querySelectorAll('.gestao-menu-item').forEach(tab => {
     tab.onclick = () => {
-      document.querySelectorAll('.gestao-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.gestao-menu-item').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.gestao-pane').forEach(p => p.classList.remove('active'));
       tab.classList.add('active');
       const pane = document.getElementById('gpane-' + tab.dataset.gtab);
@@ -5226,16 +5241,6 @@
   };
 
 
-     // Reset button text
-     if(document.getElementById('btn-save-estoque')) document.getElementById('btn-save-estoque').textContent = '+ Registrar no Almoxarifado';
-     if(document.getElementById('btn-save-brinde')) document.getElementById('btn-save-brinde').textContent = '+ Adicionar';
-     if(document.getElementById('btn-save-unif')) document.getElementById('btn-save-unif').textContent = '+ Adicionar';
-     if(document.getElementById('btn-save-forn')) document.getElementById('btn-save-forn').textContent = '+ Adicionar';
-     if(document.getElementById('btn-save-part')) document.getElementById('btn-save-part').textContent = '+ Salvar Participante';
-     // Clear badges
-     document.querySelectorAll('.estoque-saldo-badge').forEach(b => b.remove());
-  };
-
   // Funções para os Novos Botões
   window.novoEstoque = function() {
      // Limpa campos do estoque
@@ -5538,6 +5543,27 @@
     } catch(err) {
       console.error(err);
       showToast('Erro ao realizar migração.', 'error');
+    }
+  };
+
+  // ── KANBAN VS TABLE TOGGLE ──
+  window.switchView = function(btn, viewType) {
+    const pane = btn.closest('.gestao-pane');
+    if(!pane) return;
+    pane.querySelectorAll('.view-btn').forEach(b => { b.classList.remove('active'); b.style.background = 'transparent'; b.style.boxShadow = 'none'; });
+    btn.classList.add('active');
+    btn.style.background = 'var(--surface)';
+    btn.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+    const kanban = pane.querySelector('.kanban-board');
+    const tableWrap = pane.querySelector('.gestao-table-wrap');
+    if(kanban && tableWrap) {
+      if(viewType === 'kanban') {
+        kanban.classList.remove('hide');
+        tableWrap.classList.add('hide');
+      } else {
+        kanban.classList.add('hide');
+        tableWrap.classList.remove('hide');
+      }
     }
   };
 </script>
