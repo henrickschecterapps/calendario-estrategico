@@ -537,19 +537,19 @@
   #btn-export-pdf-dash:hover, #btn-export-pdf-modal:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
   /* ── ADMIN LAYOUT COM ABAS LATERAIS ── */
-  .admin-layout { display: grid; grid-template-columns: 220px 1fr; gap: 0; min-height: 700px; height: calc(100vh - 200px); max-height: 900px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
-  .admin-sidenav { background: var(--surface2); border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+  .admin-layout { display: flex; flex-direction: column; gap: 0; min-height: 700px; height: calc(100vh - 200px); max-height: 900px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  .admin-sidenav { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 12px 24px; display: flex; flex-direction: row; gap: 8px; overflow-x: auto; align-items: center; }
   .admin-sidenav-header { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
   .admin-sidenav-title { font-family: var(--font-heading); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
-  .admin-nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; cursor: pointer; border: none; background: transparent; width: 100%; text-align: left; font-family: inherit; font-size: 0.88rem; font-weight: 600; color: var(--muted); border-radius: 0; transition: all 0.2s; position: relative; }
+  .admin-nav-item { display: flex; align-items: center; gap: 8px; padding: 10px 18px; cursor: pointer; border: none; background: transparent; width: auto; white-space: nowrap; text-align: left; font-family: inherit; font-size: 0.9rem; font-weight: 600; color: var(--muted); border-radius: 8px; transition: all 0.2s ease-out; position: relative; }
   .admin-nav-item:hover { background: rgba(0,0,0,0.04); color: var(--text); }
   [data-theme="dark"] .admin-nav-item:hover { background: rgba(255,255,255,0.05); }
-  .admin-nav-item.active { color: #0357D5; background: rgba(3,87,213,0.08); font-weight: 700; }
-  .admin-nav-item.active::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: linear-gradient(to bottom, #0357D5, #00A0FF); border-radius: 0 3px 3px 0; }
+  .admin-nav-item.active { color: var(--accent); background: var(--surface); box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-weight: 700; border: 1px solid var(--border); }
+  .admin-nav-item.active::before { display: none; }
   .admin-nav-item .nav-icon { font-size: 1.1rem; flex-shrink: 0; width: 22px; text-align: center; }
   .admin-nav-badge { margin-left: auto; font-size: 0.68rem; font-weight: 800; padding: 2px 7px; border-radius: 10px; background: var(--red); color: #fff; animation: pulse-red 2s infinite; }
   @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); } 70% { box-shadow: 0 0 0 8px rgba(220,38,38,0); } 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); } }
-  .admin-nav-divider { height: 1px; background: var(--border); margin: 8px 20px; }
+  .admin-nav-divider { width: 1px; height: 24px; background: var(--border); margin: 0 8px; }
   .admin-section { display: none; padding: 32px; flex-direction: column; gap: 24px; animation: slideInUp 0.3s ease-out; overflow-y: auto; flex: 1; }
   @keyframes slideInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
   .admin-section.active { display: flex; }
@@ -559,7 +559,7 @@
   .admin-section-heading { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text); }
   .admin-section-sub { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
   /* Sections wrapper */
-  .admin-layout > div:last-child { display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+  .admin-layout > div:last-child { display: flex; flex-direction: column; overflow: hidden; min-width: 0; flex: 1; }
 
   @media (max-width: 900px) {
     .admin-layout { grid-template-columns: 1fr; height: auto; max-height: none; }

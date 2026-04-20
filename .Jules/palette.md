@@ -23,3 +23,6 @@
 ## 2026-04-16 - [CSS DOM Nesting and Flex/Grid Layout Overflows]
 **Learning:** When replacing structural HTML wrappers like `.gestao-tabs` within a complex CSS Grid/Flex parent (like `.admin-layout`), ensuring the exact number of matching `</div>` tags is critical. Failing to properly close the original wrapper `div` caused the entire trailing module to pop outside of the Grid container visually, despite the DOM parsing it logically inside the document.
 **Action:** Always recount original open and close tags before applying string `replace` manipulations. To fix the issue, the injected `asec-operacional` wrapper structure was flattened to remove the extraneous flex-wrapper and restore the exact div depth the parent layout CSS expected.
+## 2026-04-16 - [Horizontal Navigation Layout]
+**Learning:** A vertical sidebar for top-level navigation inside a restricted flex container reduced the available horizontal screen real-estate for dense operational tables, creating a cramped interface.
+**Action:** Converted `.admin-sidenav` from a vertical column layout to a horizontal scrollable top navigation bar by switching its `flex-direction` to `row`. Stripped `.admin-nav-item` full-width constraints and removed `.admin-sidenav-header` to maximize vertical content space while retaining Master-Detail organization.
