@@ -1211,6 +1211,8 @@
                 <button class="btn-primary" onclick="window.openAdminForm('')" style="gap:8px;"><i data-lucide="plus"></i> Novo Evento</button>
               </div>
 
+              <div class="timeline-toggle-container" style="margin-top: 10px; margin-bottom: 24px;"><button id="btn-toggle-past-admin" class="btn-toggle-past"><i data-lucide="history" style="margin-right:6px"></i> Ver eventos anteriores</button></div>
+
               <div class="admin-panel" style="margin:0;">
                 <table class="list-table" style="border: none; box-shadow: none;">
                   <thead><tr><th>Data</th><th>Evento</th><th>Responsável</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead>
@@ -3112,26 +3114,45 @@
 
   // ── DASHBOARD ADMIN (ANALYTICS COMPLETO) ──
   let myChart = null, chartMeses = null, chartStatus = null, chartResp = null;
-  window.adminEventLimit = 10;
+  let showPastAdminEvents = false; // Estado global para eventos passados na aba painel admin
 
   window.renderAdminEventList = function() {
     const tbody = document.getElementById('admin-event-list-body');
     if (!tbody) return;
     const q = (document.getElementById('admin-event-search')?.value || '').toLowerCase();
     
-    let evs = getFilteredEvents().sort((a,b) => (parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0)));
+    let evs = getFilteredEvents();
+    
+    if(!showPastAdminEvents && !q) { // Oculta meses anteriores por padrão, exceto ao fazer busca
+        evs = evs.filter(e => {
+            const d = parseDate(e.data_ini);
+            if(!d) return true;
+            const evMonthStart = new Date(d.getFullYear(), d.getMonth(), 1);
+            return evMonthStart.getTime() >= currentMonthStart.getTime();
+        });
+    }
+
+    evs.sort((a,b) => (parseDate(a.data_ini)||new Date(2030,0))-(parseDate(b.data_ini)||new Date(2030,0)));
+
     if (q) evs = evs.filter(e => (e.evento||'').toLowerCase().includes(q) || (e.responsavel||'').toLowerCase().includes(q));
     
-    const count = evs.length;
-    const sliced = evs.slice(0, window.adminEventLimit);
-    
-    tbody.innerHTML = sliced.length === 0
+    tbody.innerHTML = evs.length === 0
       ? '<tr><td colspan="5" class="empty-state">Nenhum evento encontrado.</td></tr>'
-      : sliced.map(e => `<tr><td style="font-size:0.85rem;font-weight:700;">${dateFmt(e)}</td><td style="font-weight:800;">${highlight(e.evento, q)}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">${getRespArray(e.responsavel).map(r=>`<span class="resp-pill">${highlight(r, q)}</span>`).join('')||'—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align:right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')"><i data-lucide="edit-2"></i></button></td></tr>`).join('');
+      : evs.map(e => `<tr><td style="font-size:0.85rem;font-weight:700;">${dateFmt(e)}</td><td style="font-weight:800;">${highlight(e.evento, q)}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;">${getRespArray(e.responsavel).map(r=>`<span class="resp-pill">${highlight(r, q)}</span>`).join('')||'—'}</div></td><td>${statusBadge(e.status)}</td><td style="text-align:right;"><button class="btn-icon" onclick="window.openAdminForm('${e.id}')"><i data-lucide="edit-2"></i></button></td></tr>`).join('');
       
     if (typeof lucide !== 'undefined') lucide.createIcons();
-    const cont = document.getElementById('admin-event-ver-mais-container');
-    if (cont) cont.style.display = window.adminEventLimit < count ? 'block' : 'none';
+
+    // Ligar evento de click no btn-toggle-past-admin caso exista e ainda não esteja ligado
+    const btnToggle = document.getElementById('btn-toggle-past-admin');
+    if (btnToggle && !btnToggle.hasAttribute('data-bound')) {
+       btnToggle.setAttribute('data-bound', 'true');
+       btnToggle.onclick = () => {
+           showPastAdminEvents = !showPastAdminEvents;
+           btnToggle.innerHTML = showPastAdminEvents ? '<i data-lucide="history" style="margin-right:6px"></i> Ocultar eventos anteriores' : '<i data-lucide="history" style="margin-right:6px"></i> Ver eventos anteriores';
+           if (typeof lucide !== 'undefined') lucide.createIcons();
+           window.renderAdminEventList();
+       };
+    }
   };
 
   function getChartTextColor() {
