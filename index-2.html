@@ -1208,10 +1208,11 @@
                   <div class="admin-section-heading">Gerenciar Eventos</div>
                   <div class="admin-section-sub">Edite, crie e gerencie todos os eventos do calendário</div>
                 </div>
-                <button class="btn-primary" onclick="window.openAdminForm('')" style="gap:8px;"><i data-lucide="plus"></i> Novo Evento</button>
+                <div style="display:flex; gap:12px; align-items:center;">
+                  <button id="btn-toggle-past-admin" class="btn-toggle-past" style="margin:0;"><i data-lucide="history" style="margin-right:6px"></i> Ver eventos anteriores</button>
+                  <button class="btn-primary" onclick="window.openAdminForm('')" style="gap:8px;"><i data-lucide="plus"></i> Novo Evento</button>
+                </div>
               </div>
-
-              <div class="timeline-toggle-container" style="margin-top: 10px; margin-bottom: 24px;"><button id="btn-toggle-past-admin" class="btn-toggle-past"><i data-lucide="history" style="margin-right:6px"></i> Ver eventos anteriores</button></div>
 
               <div class="admin-panel" style="margin:0;">
                 <table class="list-table" style="border: none; box-shadow: none;">
