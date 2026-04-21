@@ -539,8 +539,8 @@
   /* ── ADMIN LAYOUT COM ABAS LATERAIS ── */
   .admin-layout { display: flex; flex-direction: column; gap: 0; min-height: 700px; height: calc(100vh - 200px); max-height: 900px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
   .admin-sidenav { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 12px 24px; display: flex; flex-direction: row; gap: 8px; overflow-x: auto; align-items: center; }
-  .admin-sidenav-header { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
-  .admin-sidenav-title { font-family: var(--font-heading); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .admin-sidenav-header { padding-right: 20px; border-right: 1px solid var(--border); margin-right: 8px; display: flex; align-items: center; }
+  .admin-sidenav-title { font-family: var(--font-heading); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding-top: 2px; }
   .admin-nav-item { display: flex; align-items: center; gap: 8px; padding: 10px 18px; cursor: pointer; border: none; background: transparent; width: auto; white-space: nowrap; text-align: left; font-family: inherit; font-size: 0.9rem; font-weight: 600; color: var(--muted); border-radius: 8px; transition: all 0.2s ease-out; position: relative; }
   .admin-nav-item:hover { background: rgba(0,0,0,0.04); color: var(--text); }
   [data-theme="dark"] .admin-nav-item:hover { background: rgba(255,255,255,0.05); }
@@ -1243,14 +1243,26 @@
                     <!-- ── OVERVIEW ── -->
                     <div class="gestao-pane active" id="gpane-overview" style="padding:24px;">
                       <h3 style="font-family:var(--font-heading); margin-bottom:20px;">Resumo Operacional</h3>
-                      <div class="gestao-kpi-grid">
+                      <div class="gestao-kpi-grid" id="gestao-overview-kpis">
                         <div class="gestao-kpi-card">
-                          <div class="kpi-lbl">Estoque Baixo</div>
-                          <div class="kpi-val" style="color:var(--red);">3</div>
+                          <div class="kpi-lbl">Total no Estoque</div>
+                          <div class="kpi-val" id="kpi-estoque-total">0</div>
                         </div>
                         <div class="gestao-kpi-card">
-                          <div class="kpi-lbl">Pedidos Pendentes</div>
-                          <div class="kpi-val" style="color:var(--accent);">5</div>
+                          <div class="kpi-lbl">Estoque Crítico</div>
+                          <div class="kpi-val" id="kpi-estoque-critico" style="color:var(--red);">0</div>
+                        </div>
+                        <div class="gestao-kpi-card">
+                          <div class="kpi-lbl">Brindes Pendentes</div>
+                          <div class="kpi-val" id="kpi-brindes-pedidos" style="color:var(--accent);">0</div>
+                        </div>
+                        <div class="gestao-kpi-card">
+                          <div class="kpi-lbl">Uniformes em Produção</div>
+                          <div class="kpi-val" id="kpi-unif-producao" style="color:var(--amber);">0</div>
+                        </div>
+                        <div class="gestao-kpi-card">
+                          <div class="kpi-lbl">Custo Total em Estoque</div>
+                          <div class="kpi-val" id="kpi-valor-brindes" style="color:var(--green);">R$ 0,00</div>
                         </div>
                       </div>
                       <p style="color:var(--muted); font-size:0.9rem;">Selecione um módulo no menu lateral para gerenciar os detalhes.</p>
@@ -4638,7 +4650,7 @@
   }
 
   // Also patch renderAll to use patched versions
-  function renderAll() { renderMiniCal(); renderUpcoming(); renderDashboardAdmin(); renderCurrentView(); }
+  function renderAll() { renderMiniCal(); renderUpcoming(); renderDashboardAdmin(); renderCurrentView(); if(typeof window.updateGestaoOverview === 'function') window.updateGestaoOverview(); }
   // And initUI to reset page
   function initUI() { listPage=1; document.getElementById('today-badge').textContent = today.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}); updateResponsiblesUI(); renderFormatoFilter(); renderActiveFilterChips(); syncURLState(); renderAll(); }
 
@@ -4709,9 +4721,40 @@
         if(dataTab === 'fornecedores') renderFornecedores();
         if(dataTab === 'participantes') renderParticipantes();
         if(dataTab === 'passagens') renderViagens();
+        if(dataTab === 'overview' && typeof window.updateGestaoOverview === 'function') window.updateGestaoOverview();
       }
     };
   });
+
+  window.updateGestaoOverview = function() {
+    const qtdTotalEstoque = (typeof ESTOQUE !== 'undefined' ? ESTOQUE : []).reduce((s, item) => s + (parseInt(item.qtd) || 0), 0);
+    const criticoEstoque = (typeof ESTOQUE !== 'undefined' ? ESTOQUE : []).filter(item => (parseInt(item.qtd) || 0) <= (parseInt(item.min) || 0)).length;
+    const brindesPendentes = (typeof BRINDES !== 'undefined' ? BRINDES : []).filter(b => b.status !== 'Recebido').length;
+    const unifProducao = (typeof UNIFORMES !== 'undefined' ? UNIFORMES : []).filter(u => u.status === 'Em Produção').length;
+    
+    let custoEstoque = 0;
+    if (typeof ESTOQUE !== 'undefined') {
+      custoEstoque += ESTOQUE.reduce((s, i) => s + ((parseFloat(i.vlr) || 0) * (parseInt(i.qtd) || 0)), 0);
+    }
+    if (typeof BRINDES !== 'undefined') {
+       custoEstoque += BRINDES.reduce((s, b) => s + ((parseFloat(b.vlr_unit) || 0) * (parseInt(b.qtd) || 0)), 0);
+    }
+    if (typeof UNIFORMES !== 'undefined') {
+       custoEstoque += UNIFORMES.reduce((s, u) => s + ((parseFloat(u.vlr_unit) || 0) * (parseInt(u.qtd) || 0)), 0);
+    }
+
+    const elTotal = document.getElementById('kpi-estoque-total');
+    const elCrit = document.getElementById('kpi-estoque-critico');
+    const elPend = document.getElementById('kpi-brindes-pedidos');
+    const elUnif = document.getElementById('kpi-unif-producao');
+    const elVlr = document.getElementById('kpi-valor-brindes');
+
+    if(elTotal) elTotal.textContent = qtdTotalEstoque.toLocaleString('pt-BR');
+    if(elCrit) elCrit.textContent = criticoEstoque.toLocaleString('pt-BR');
+    if(elPend) elPend.textContent = brindesPendentes.toLocaleString('pt-BR');
+    if(elUnif) elUnif.textContent = unifProducao.toLocaleString('pt-BR');
+    if(elVlr && typeof fmtBRL === 'function') elVlr.textContent = fmtBRL(custoEstoque);
+  };
 
   // ── Helpers de formatação ──
   function fmtBRL(v) {
@@ -6835,6 +6878,17 @@
         kanban.classList.add('hide');
         tableWrap.classList.remove('hide');
       }
+    }
+    
+    if (pane.id === 'gpane-brindes') {
+      window.currentBrindeView = viewType;
+      if (typeof window.renderBrindes === 'function') window.renderBrindes();
+    } else if (pane.id === 'gpane-uniformes') {
+      window.currentUnifView = viewType;
+      if (typeof window.renderUniformes === 'function') window.renderUniformes();
+    } else if (pane.id === 'gpane-estoque') {
+      window.currentEstoqueView = viewType;
+      if (typeof window.renderEstoque === 'function') window.renderEstoque();
     }
   };
 </script>
